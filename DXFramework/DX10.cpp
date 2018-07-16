@@ -31,7 +31,6 @@ namespace DXFramework
 	}
 	BOOL DX10::Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter1* pAdapter)
 	{
-		m_hWND = hWND;
 		DXGI_SWAP_CHAIN_DESC swapDesc;
 		ZeroMemory(&swapDesc, sizeof(swapDesc));
 		swapDesc.BufferCount = 2;
@@ -108,12 +107,6 @@ namespace DXFramework
 		blenddesc.SrcBlendAlpha = D3D10_BLEND_ONE;
 		blenddesc.DestBlendAlpha = D3D10_BLEND_ZERO;
 		blenddesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
-		/*blenddesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
-		blenddesc.BlendOp = D3D10_BLEND_OP_ADD;
-		blenddesc.SrcBlendAlpha = D3D10_BLEND_ONE;
-		blenddesc.DestBlendAlpha = D3D10_BLEND_ZERO;
-		blenddesc.SrcBlend = D3D10_BLEND_ONE;
-		blenddesc.DestBlend = D3D10_BLEND_ZERO;*/
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_enableBlendState);
 		if (hRes != S_OK)
 			return FALSE;
@@ -131,6 +124,7 @@ namespace DXFramework
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_disableBlendState);
 		if (hRes != S_OK)
 			return FALSE;
+		m_hWND = hWND;
 		m_size.cx = cx;
 		m_size.cy = cy;
 		return TRUE;

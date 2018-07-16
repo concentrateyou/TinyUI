@@ -103,6 +103,7 @@ namespace DXFramework
 	}
 	void DX10TextureShader::SetShaderParameters(DX10& dx10, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX10Texture2D* texture2D)
 	{
+		ASSERT(m_buffer);
 		if (texture2D != NULL)
 		{
 			XMMATRIX worldMatrix1 = XMMatrixTranspose(worldMatrix);

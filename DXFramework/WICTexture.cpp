@@ -760,44 +760,25 @@ namespace DXFramework
 			if (hRes != S_OK)
 				return hRes;
 		}
-		BOOL autogen = FALSE;
-		if (textureView != 0)
-		{
-			UINT fmtSupport = 0;
-			hRes = d3dDevice->CheckFormatSupport(format, &fmtSupport);
-			if (SUCCEEDED(hRes) && (fmtSupport & D3D10_FORMAT_SUPPORT_MIP_AUTOGEN))
-			{
-				autogen = TRUE;
-			}
-		}
 		D3D10_TEXTURE2D_DESC desc;
 		desc.Width = twidth;
 		desc.Height = theight;
-		desc.MipLevels = (autogen) ? 0 : 1;
+		desc.MipLevels = 1;
 		desc.ArraySize = 1;
 		desc.Format = format;
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.Usage = usage;
 		desc.CPUAccessFlags = cpuAccessFlags;
-
-		if (autogen)
-		{
-			desc.BindFlags = bindFlags | D3D10_BIND_RENDER_TARGET;
-			desc.MiscFlags = miscFlags | D3D10_RESOURCE_MISC_GENERATE_MIPS;
-		}
-		else
-		{
-			desc.BindFlags = bindFlags;
-			desc.MiscFlags = miscFlags;
-		}
+		desc.BindFlags = bindFlags;
+		desc.MiscFlags = miscFlags;
 
 		D3D10_SUBRESOURCE_DATA initData;
 		initData.pSysMem = temp.get();
 		initData.SysMemPitch = static_cast<UINT>(rowPitch);
 		initData.SysMemSlicePitch = static_cast<UINT>(imageSize);
 		ID3D10Texture2D* tex = nullptr;
-		hRes = d3dDevice->CreateTexture2D(&desc, (autogen) ? nullptr : &initData, &tex);
+		hRes = d3dDevice->CreateTexture2D(&desc, &initData, &tex);
 		if (SUCCEEDED(hRes) && tex != 0)
 		{
 			if (textureView != 0)
@@ -805,17 +786,12 @@ namespace DXFramework
 				D3D10_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 				SRVDesc.Format = desc.Format;
 				SRVDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
-				SRVDesc.Texture2D.MipLevels = (autogen) ? -1 : 1;
+				SRVDesc.Texture2D.MipLevels = 1;
 				hRes = d3dDevice->CreateShaderResourceView(tex, &SRVDesc, textureView);
 				if (hRes != S_OK)
 				{
 					tex->Release();
 					return hRes;
-				}
-				if (autogen)
-				{
-					d3dDevice->UpdateSubresource(tex, 0, nullptr, temp.get(), static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize));
-					d3dDevice->GenerateMips(*textureView);
 				}
 			}
 			if (texture != 0)
@@ -1547,7 +1523,7 @@ namespace DXFramework
 		size_t maxsize)
 	{
 		return DX10CreateWICTextureFromMemoryEx(d3dDevice, wicData, wicDataSize, maxsize,
-			D3D10_USAGE_DEFAULT, D3D10_BIND_SHADER_RESOURCE, 0, D3D10_RESOURCE_MISC_SHARED, WIC_LOADER_DEFAULT,
+			D3D10_USAGE_DEFAULT, D3D10_BIND_SHADER_RESOURCE, 0, 0, WIC_LOADER_DEFAULT,
 			texture, textureView);
 	}
 
@@ -1559,7 +1535,7 @@ namespace DXFramework
 		size_t maxsize)
 	{
 		return DX10CreateWICTextureFromFileEx(d3dDevice, fileName, maxsize,
-			D3D10_USAGE_DEFAULT, D3D10_BIND_SHADER_RESOURCE, 0, D3D10_RESOURCE_MISC_SHARED, WIC_LOADER_DEFAULT,
+			D3D10_USAGE_DEFAULT, D3D10_BIND_SHADER_RESOURCE, 0, 0, WIC_LOADER_DEFAULT,
 			texture, textureView);
 	}
 

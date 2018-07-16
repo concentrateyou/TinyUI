@@ -31,39 +31,39 @@ namespace DXFramework
 		str.resize(MAX_PATH);
 		GetModuleFileName(NULL, &str[0], MAX_PATH);
 		str = str.substr(0, str.find_last_of("\\", string::npos, 1));
-		string vs = str + "\\texture.vs";
+		string vs = str + "\\Shader\\DX10\\texture.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		string ps = str + "\\texture.ps";
+		string ps = str + "\\Shader\\DX10\\texture.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_textureShader.Initialize(m_dx10, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\color.vs";
+		vs = str + "\\Shader\\DX10\\color.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\color.ps";
+		ps = str + "\\Shader\\DX10\\color.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_colorSharder.Initialize(m_dx10, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\NV12BT601.vs";
+		vs = str + "\\Shader\\DX10\\NV12BT601.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\NV12BT601.ps";
+		ps = str + "\\Shader\\DX10\\NV12BT601.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_shaderNV12BT601.Initialize(m_dx10, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\NV12BT709.vs";
+		vs = str + "\\Shader\\DX10\\NV12BT709.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\NV12BT709.ps";
+		ps = str + "\\Shader\\DX10\\NV12BT709.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_shaderNV12BT709.Initialize(m_dx10, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\YUVBT601.vs";
+		vs = str + "\\Shader\\DX10\\YUVBT601.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\YUVBT601.ps";
+		ps = str + "\\Shader\\DX10\\YUVBT601.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_shaderYUVBT601.Initialize(m_dx10, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\YUVBT709.vs";
+		vs = str + "\\Shader\\DX10\\YUVBT709.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\YUVBT709.ps";
+		ps = str + "\\Shader\\DX10\\YUVBT709.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_shaderYUVBT709.Initialize(m_dx10, vs.c_str(), ps.c_str()))
 			return FALSE;
