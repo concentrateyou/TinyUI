@@ -169,12 +169,12 @@ namespace DXFramework
 	BOOL DX10Texture2D::SaveAs(DX10& dx10, const CHAR* pzFile, IMAGE_FILE_FORMAT format)
 	{
 		ASSERT(m_texture2D);
-		/*wstring ws = StringToWString(pzFile);
-		HRESULT hRes = SaveWICTextureToFile(dx10.GetImmediateContext(), m_texture2D, GetWICCodec(format), ws.c_str(), &GUID_WICPixelFormat32bppBGRA, NULL);
+		wstring ws = StringToWString(pzFile);
+		HRESULT hRes = DX10SaveWICTextureToFile(dx10.GetD3D(), m_texture2D, GetWICCodec(format), ws.c_str(), &GUID_WICPixelFormat32bppBGRA, NULL);
 		if (SUCCEEDED(hRes))
 		{
 			return TRUE;
-		}*/
+		}
 		return FALSE;
 	}
 	BOOL DX10Texture2D::Copy(DX10& dx10, ID3D10Texture2D* texture2D)
@@ -206,9 +206,9 @@ namespace DXFramework
 		HRESULT hRes = S_OK;
 		wstring wpzFile = StringToWString(pzFile);
 		TinyComPtr<ID3D10Resource> resource;
-		/*hRes = CreateWICTextureFromFile(dx10.GetD3D(), wpzFile.c_str(), &resource, &m_resourceView);
+		hRes = DX10CreateWICTextureFromFile(dx10.GetD3D(), wpzFile.c_str(), &resource, &m_resourceView);
 		if (hRes != S_OK)
-			return FALSE;*/
+			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D10Texture2D), (void**)&m_texture2D)))
 			return FALSE;
 		return TRUE;
@@ -245,8 +245,8 @@ namespace DXFramework
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Resource> resource;
-		/*if (!CreateWICTextureFromMemory(dx11.GetD3D(), bits, size, &resource, &m_resourceView))
-			return FALSE;*/
+		if (!DX10CreateWICTextureFromMemory(dx10.GetD3D(), bits, size, &resource, &m_resourceView))
+			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D10Texture2D), (void**)&m_texture2D)))
 			return FALSE;
 		return TRUE;

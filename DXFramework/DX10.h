@@ -25,7 +25,7 @@ namespace DXFramework
 	public:
 		HWND					GetHWND() const;
 		BOOL					IsEmpty() const;
-		ID3D10Device*			GetD3D() const;
+		ID3D10Device1*			GetD3D() const;
 		IDXGISwapChain*			GetSwapChain() const;
 		XMMATRIX*				GetMatrixs();
 		TinySize				GetSize() const;

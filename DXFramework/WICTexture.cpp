@@ -1223,7 +1223,7 @@ namespace DXFramework
 		}
 	}
 
-	HRESULT CaptureTexture(ID3D11DeviceContext* pContext, ID3D11Resource* pSource, D3D11_TEXTURE2D_DESC& desc, TinyComPtr<ID3D11Texture2D>& pStaging)
+	HRESULT DX11CaptureTexture(ID3D11DeviceContext* pContext, ID3D11Resource* pSource, D3D11_TEXTURE2D_DESC& desc, TinyComPtr<ID3D11Texture2D>& pStaging)
 	{
 		if (!pContext || !pSource)
 			return E_INVALIDARG;
@@ -1309,7 +1309,7 @@ namespace DXFramework
 
 		D3D11_TEXTURE2D_DESC desc = {};
 		TinyComPtr<ID3D11Texture2D> pStaging;
-		HRESULT hRes = CaptureTexture(pContext, pSource, desc, pStaging);
+		HRESULT hRes = DX11CaptureTexture(pContext, pSource, desc, pStaging);
 		if (hRes != S_OK)
 			return hRes;
 		WICPixelFormatGUID pfGuid;
@@ -1659,6 +1659,76 @@ namespace DXFramework
 		return hRes;
 	}
 
+	HRESULT DX10CaptureTexture(ID3D10Device1* d3dDevice, ID3D10Resource* pSource, D3D10_TEXTURE2D_DESC& desc, TinyComPtr<ID3D10Texture2D>& pStaging)
+	{
+		if (!d3dDevice || !pSource)
+			return E_INVALIDARG;
+		D3D10_RESOURCE_DIMENSION resType = D3D10_RESOURCE_DIMENSION_UNKNOWN;
+		pSource->GetType(&resType);
+		if (resType != D3D10_RESOURCE_DIMENSION_TEXTURE2D)
+			return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+		TinyComPtr<ID3D10Texture2D> texture;
+		HRESULT hRes = pSource->QueryInterface(&texture);
+		if (hRes != S_OK)
+			return hRes;
+		ASSERT(texture);
+		texture->GetDesc(&desc);
+		if (desc.SampleDesc.Count > 1)
+		{
+			desc.SampleDesc.Count = 1;
+			desc.SampleDesc.Quality = 0;
+			TinyComPtr<ID3D10Texture2D> newTexture;
+			hRes = d3dDevice->CreateTexture2D(&desc, NULL, &newTexture);
+			if (hRes != S_OK)
+				return hRes;
+			ASSERT(newTexture);
+			DXGI_FORMAT fmt = EnsureNotTypeless(desc.Format);
+			UINT support = 0;
+			hRes = d3dDevice->CheckFormatSupport(fmt, &support);
+			if (hRes != S_OK)
+				return hRes;
+
+			if (!(support & D3D10_FORMAT_SUPPORT_MULTISAMPLE_RESOLVE))
+				return E_FAIL;
+
+			for (UINT item = 0; item < desc.ArraySize; ++item)
+			{
+				for (UINT level = 0; level < desc.MipLevels; ++level)
+				{
+					UINT index = D3D10CalcSubresource(level, item, desc.MipLevels);
+					d3dDevice->ResolveSubresource(newTexture.Ptr(), index, pSource, index, fmt);
+				}
+			}
+			desc.BindFlags = 0;
+			desc.MiscFlags &= D3D10_RESOURCE_MISC_TEXTURECUBE;
+			desc.CPUAccessFlags = D3D10_CPU_ACCESS_READ;
+			desc.Usage = D3D10_USAGE_STAGING;
+			pStaging.Release();
+			hRes = d3dDevice->CreateTexture2D(&desc, 0, &pStaging);
+			if (hRes != S_OK)
+				return hRes;
+			ASSERT(pStaging);
+			d3dDevice->CopyResource(pStaging, newTexture);
+		}
+		else if ((desc.Usage == D3D10_USAGE_STAGING) && (desc.CPUAccessFlags & D3D10_CPU_ACCESS_READ))
+		{
+			pStaging = texture;
+		}
+		else
+		{
+			desc.BindFlags = 0;
+			desc.MiscFlags &= D3D10_RESOURCE_MISC_TEXTURECUBE;
+			desc.CPUAccessFlags = D3D10_CPU_ACCESS_READ;
+			desc.Usage = D3D10_USAGE_STAGING;
+			pStaging.Release();
+			hRes = d3dDevice->CreateTexture2D(&desc, 0, &pStaging);
+			if (hRes != S_OK)
+				return hRes;
+			ASSERT(pStaging);
+			d3dDevice->CopyResource(pStaging, pSource);
+		}
+		return S_OK;
+	}
 
 	HRESULT __cdecl DX10SaveWICTextureToFile(
 		ID3D10Device1* d3dDevice,
@@ -1668,6 +1738,237 @@ namespace DXFramework
 		const GUID* targetFormat,
 		std::function<void __cdecl(IPropertyBag2*)> setCustomProps)
 	{
+		if (!fileName)
+			return E_INVALIDARG;
+
+		D3D10_TEXTURE2D_DESC desc = {};
+		TinyComPtr<ID3D10Texture2D> pStaging;
+		HRESULT hRes = DX10CaptureTexture(d3dDevice, pSource, desc, pStaging);
+		if (hRes != S_OK)
+			return hRes;
+		WICPixelFormatGUID pfGuid;
+		BOOL sRGB = FALSE;
+		switch (desc.Format)
+		{
+		case DXGI_FORMAT_R32G32B32A32_FLOAT:            pfGuid = GUID_WICPixelFormat128bppRGBAFloat; break;
+		case DXGI_FORMAT_R16G16B16A16_FLOAT:            pfGuid = GUID_WICPixelFormat64bppRGBAHalf; break;
+		case DXGI_FORMAT_R16G16B16A16_UNORM:            pfGuid = GUID_WICPixelFormat64bppRGBA; break;
+		case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM:    pfGuid = GUID_WICPixelFormat32bppRGBA1010102XR; break;
+		case DXGI_FORMAT_R10G10B10A2_UNORM:             pfGuid = GUID_WICPixelFormat32bppRGBA1010102; break;
+		case DXGI_FORMAT_B5G5R5A1_UNORM:                pfGuid = GUID_WICPixelFormat16bppBGRA5551; break;
+		case DXGI_FORMAT_B5G6R5_UNORM:                  pfGuid = GUID_WICPixelFormat16bppBGR565; break;
+		case DXGI_FORMAT_R32_FLOAT:                     pfGuid = GUID_WICPixelFormat32bppGrayFloat; break;
+		case DXGI_FORMAT_R16_FLOAT:                     pfGuid = GUID_WICPixelFormat16bppGrayHalf; break;
+		case DXGI_FORMAT_R16_UNORM:                     pfGuid = GUID_WICPixelFormat16bppGray; break;
+		case DXGI_FORMAT_R8_UNORM:                      pfGuid = GUID_WICPixelFormat8bppGray; break;
+		case DXGI_FORMAT_A8_UNORM:                      pfGuid = GUID_WICPixelFormat8bppAlpha; break;
+
+		case DXGI_FORMAT_R8G8B8A8_UNORM:
+			pfGuid = GUID_WICPixelFormat32bppRGBA;
+			break;
+
+		case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+			pfGuid = GUID_WICPixelFormat32bppRGBA;
+			sRGB = TRUE;
+			break;
+
+		case DXGI_FORMAT_B8G8R8A8_UNORM:
+			pfGuid = GUID_WICPixelFormat32bppBGRA;
+			break;
+
+		case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+			pfGuid = GUID_WICPixelFormat32bppBGRA;
+			sRGB = TRUE;
+			break;
+
+		case DXGI_FORMAT_B8G8R8X8_UNORM:
+			pfGuid = GUID_WICPixelFormat32bppBGR;
+			break;
+
+		case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:
+			pfGuid = GUID_WICPixelFormat32bppBGR;
+			sRGB = TRUE;
+			break;
+		default:
+			return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+		}
+		auto pWIC = GetWIC();
+		if (!pWIC)
+			return E_NOINTERFACE;
+
+		TinyComPtr<IWICStream> stream;
+		hRes = pWIC->CreateStream(&stream);
+		if (hRes != S_OK)
+			return hRes;
+
+		hRes = stream->InitializeFromFilename(fileName, GENERIC_WRITE);
+		if (hRes != S_OK)
+			return hRes;
+
+		TinyComPtr<IWICBitmapEncoder> encoder;
+		hRes = pWIC->CreateEncoder(guidContainerFormat, 0, &encoder);
+		if (hRes != S_OK)
+			return hRes;
+
+		hRes = encoder->Initialize(stream, WICBitmapEncoderNoCache);
+		if (hRes != S_OK)
+			return hRes;
+
+		TinyComPtr<IWICBitmapFrameEncode> frame;
+		TinyComPtr<IPropertyBag2> props;
+		hRes = encoder->CreateNewFrame(&frame, &props);
+		if (hRes != S_OK)
+			return hRes;
+		if (targetFormat && memcmp(&guidContainerFormat, &GUID_ContainerFormatBmp, sizeof(WICPixelFormatGUID)) == 0 && IsWIC2())
+		{
+			PROPBAG2 option = {};
+			option.pstrName = L"EnableV5Header32bppBGRA";
+			VARIANT varValue;
+			varValue.vt = VT_BOOL;
+			varValue.boolVal = VARIANT_TRUE;
+			(void)props->Write(1, &option, &varValue);
+		}
+		if (setCustomProps)
+		{
+			setCustomProps(props);
+		}
+		hRes = frame->Initialize(props);
+		if (hRes != S_OK)
+			return hRes;
+		hRes = frame->SetSize(desc.Width, desc.Height);
+		if (hRes != S_OK)
+			return hRes;
+		hRes = frame->SetResolution(72, 72);
+		if (hRes != S_OK)
+			return hRes;
+		WICPixelFormatGUID targetGuid;
+		if (targetFormat)
+		{
+			targetGuid = *targetFormat;
+		}
+		else
+		{
+			switch (desc.Format)
+			{
+#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8) || defined(_WIN7_PLATFORM_UPDATE)
+			case DXGI_FORMAT_R32G32B32A32_FLOAT:
+			case DXGI_FORMAT_R16G16B16A16_FLOAT:
+				if (IsWIC2())
+				{
+					targetGuid = GUID_WICPixelFormat96bppRGBFloat;
+				}
+				else
+				{
+					targetGuid = GUID_WICPixelFormat24bppBGR;
+				}
+				break;
+#endif
+
+			case DXGI_FORMAT_R16G16B16A16_UNORM: targetGuid = GUID_WICPixelFormat48bppBGR; break;
+			case DXGI_FORMAT_B5G5R5A1_UNORM:     targetGuid = GUID_WICPixelFormat16bppBGR555; break;
+			case DXGI_FORMAT_B5G6R5_UNORM:       targetGuid = GUID_WICPixelFormat16bppBGR565; break;
+
+			case DXGI_FORMAT_R32_FLOAT:
+			case DXGI_FORMAT_R16_FLOAT:
+			case DXGI_FORMAT_R16_UNORM:
+			case DXGI_FORMAT_R8_UNORM:
+			case DXGI_FORMAT_A8_UNORM:
+				targetGuid = GUID_WICPixelFormat8bppGray;
+				break;
+
+			default:
+				targetGuid = GUID_WICPixelFormat24bppBGR;
+				break;
+			}
+		}
+
+		hRes = frame->SetPixelFormat(&targetGuid);
+		if (hRes != S_OK)
+			return hRes;
+
+		if (targetFormat && memcmp(targetFormat, &targetGuid, sizeof(WICPixelFormatGUID)) != 0)
+		{
+			return E_FAIL;
+		}
+		TinyComPtr<IWICMetadataQueryWriter> metawriter;
+		if (SUCCEEDED(frame->GetMetadataQueryWriter(&metawriter)))
+		{
+			PROPVARIANT value;
+			PropVariantInit(&value);
+			value.vt = VT_LPSTR;
+			value.pszVal = "WIC";
+			if (memcmp(&guidContainerFormat, &GUID_ContainerFormatPng, sizeof(GUID)) == 0)
+			{
+				(void)metawriter->SetMetadataByName(L"/tEXt/{str=Software}", &value);
+				if (sRGB)
+				{
+					value.vt = VT_UI1;
+					value.bVal = 0;
+					(void)metawriter->SetMetadataByName(L"/sRGB/RenderingIntent", &value);
+				}
+			}
+			(void)metawriter->SetMetadataByName(L"System.ApplicationName", &value);
+			if (sRGB)
+			{
+				value.vt = VT_UI2;
+				value.uiVal = 1;
+				(void)metawriter->SetMetadataByName(L"System.Image.ColorSpace", &value);
+			}
+		}
+
+		D3D10_MAPPED_TEXTURE2D mapped;
+		hRes = pStaging->Map(0, D3D10_MAP_READ, 0, &mapped);
+		if (hRes != S_OK)
+			return hRes;
+		if (memcmp(&targetGuid, &pfGuid, sizeof(WICPixelFormatGUID)) != 0)
+		{
+			TinyComPtr<IWICBitmap> source;
+			hRes = pWIC->CreateBitmapFromMemory(desc.Width, desc.Height, pfGuid, mapped.RowPitch, mapped.RowPitch * desc.Height, reinterpret_cast<BYTE*>(mapped.pData), &source);
+			if (hRes != S_OK)
+			{
+				pStaging->Unmap(0);
+				return hRes;
+			}
+			TinyComPtr<IWICFormatConverter> FC;
+			hRes = pWIC->CreateFormatConverter(&FC);
+			if (hRes != S_OK)
+			{
+				pStaging->Unmap(0);
+				return hRes;
+			}
+			BOOL canConvert = FALSE;
+			hRes = FC->CanConvert(pfGuid, targetGuid, &canConvert);
+			if (FAILED(hRes) || !canConvert)
+			{
+				return E_UNEXPECTED;
+			}
+			hRes = FC->Initialize(source, targetGuid, WICBitmapDitherTypeNone, 0, 0, WICBitmapPaletteTypeCustom);
+			if (hRes != S_OK)
+			{
+				pStaging->Unmap(0);
+				return hRes;
+			}
+			WICRect rect = { 0, 0, static_cast<INT>(desc.Width), static_cast<INT>(desc.Height) };
+			hRes = frame->WriteSource(FC, &rect);
+			if (hRes != S_OK)
+			{
+				pStaging->Unmap(0);
+				return hRes;
+			}
+		}
+		else
+		{
+			hRes = frame->WritePixels(desc.Height, mapped.RowPitch, mapped.RowPitch * desc.Height, reinterpret_cast<BYTE*>(mapped.pData));
+			if (hRes != S_OK)
+				return hRes;
+		}
+		pStaging->Unmap(0);
+		hRes = frame->Commit();
+		if (hRes != S_OK)
+			return hRes;
+		hRes = encoder->Commit();
+		if (hRes != S_OK)
+			return hRes;
 		return S_OK;
 	}
 }

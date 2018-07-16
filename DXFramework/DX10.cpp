@@ -197,9 +197,9 @@ namespace DXFramework
 	{
 		return m_size;
 	}
-	ID3D10Device* DX10::GetD3D() const
+	ID3D10Device1* DX10::GetD3D() const
 	{
-		return static_cast<ID3D10Device*>(m_d3d);
+		return m_d3d;
 	}
 	IDXGISwapChain*	DX10::GetSwapChain() const
 	{
