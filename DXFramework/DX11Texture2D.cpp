@@ -169,7 +169,7 @@ namespace DXFramework
 	{
 		ASSERT(m_texture2D);
 		wstring ws = StringToWString(pzFile);
-		HRESULT hRes = SaveWICTextureToFile(dx11.GetImmediateContext(), m_texture2D, GetWICCodec(format), ws.c_str(), &GUID_WICPixelFormat32bppBGRA, NULL);
+		HRESULT hRes = DX11SaveWICTextureToFile(dx11.GetImmediateContext(), m_texture2D, GetWICCodec(format), ws.c_str(), &GUID_WICPixelFormat32bppBGRA, NULL);
 		if (SUCCEEDED(hRes))
 		{
 			return TRUE;
@@ -205,7 +205,7 @@ namespace DXFramework
 		HRESULT hRes = S_OK;
 		wstring wpzFile = StringToWString(pzFile);
 		TinyComPtr<ID3D11Resource> resource;
-		hRes = CreateWICTextureFromFile(dx11.GetD3D(), wpzFile.c_str(), &resource, &m_resourceView);
+		hRes = DX11CreateWICTextureFromFile(dx11.GetD3D(), wpzFile.c_str(), &resource, &m_resourceView);
 		if (hRes != S_OK)
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
@@ -244,7 +244,7 @@ namespace DXFramework
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D11Resource> resource;
-		if (!CreateWICTextureFromMemory(dx11.GetD3D(), bits, size, &resource, &m_resourceView))
+		if (!DX11CreateWICTextureFromMemory(dx11.GetD3D(), bits, size, &resource, &m_resourceView))
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;

@@ -377,7 +377,7 @@ namespace DXFramework
 		wstring ws = StringToWString(pzName);
 		if (m_render2D != NULL)
 		{
-			HRESULT hRes = SaveWICTextureToFile(m_dx11.GetImmediateContext(), m_render2D, GetWICCodec(format), ws.c_str());
+			HRESULT hRes = DX11SaveWICTextureToFile(m_dx11.GetImmediateContext(), m_render2D, GetWICCodec(format), ws.c_str());
 			if (SUCCEEDED(hRes))
 			{
 				return TRUE;
@@ -389,7 +389,7 @@ namespace DXFramework
 			HRESULT hRes = m_dx11.GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&texture2D);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = SaveWICTextureToFile(m_dx11.GetImmediateContext(), texture2D, GetWICCodec(format), ws.c_str());
+			hRes = DX11SaveWICTextureToFile(m_dx11.GetImmediateContext(), texture2D, GetWICCodec(format), ws.c_str());
 			if (SUCCEEDED(hRes))
 			{
 				return TRUE;

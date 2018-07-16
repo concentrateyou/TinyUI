@@ -2,6 +2,7 @@
 #include <dxgi.h>
 #include <d3dcommon.h>
 #include <d3d11.h>
+#include <d3d10_1.h>
 #include <DXGIFormat.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>

@@ -98,7 +98,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>..\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;D2D1.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3d10_1.lib;dxgi.lib;d3dcompiler.lib;d2d1.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>

@@ -12,8 +12,8 @@ namespace DXFramework
 	public:
 		DX10();
 		virtual ~DX10();
-		BOOL					EnumAdapters(vector<IDXGIAdapter*>& adapters);
-		BOOL					Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter* pAdapter = NULL);
+		BOOL					EnumAdapters(vector<IDXGIAdapter1*>& adapters);
+		BOOL					Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter1* pAdapter = NULL);
 		void					Uninitialize();
 		BOOL					Resize(INT cx, INT cy);
 		BOOL					SetViewport(const TinyPoint& pos, const TinySize& size);
@@ -33,7 +33,7 @@ namespace DXFramework
 		HWND								m_hWND;
 		XMMATRIX							m_matrixs[3];
 		TinySize							m_size;
-		TinyComPtr<ID3D10Device>			m_d3d;
+		TinyComPtr<ID3D10Device1>			m_d3d;
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D10RasterizerState>	m_rasterizerState;
 		TinyComPtr<ID3D10BlendState>		m_enableBlendState;

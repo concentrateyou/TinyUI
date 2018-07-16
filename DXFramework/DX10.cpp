@@ -14,22 +14,22 @@ namespace DXFramework
 	{
 
 	}
-	BOOL DX10::EnumAdapters(vector<IDXGIAdapter*>& adapters)
+	BOOL DX10::EnumAdapters(vector<IDXGIAdapter1*>& adapters)
 	{
-		TinyComPtr<IDXGIFactory> factory;
-		HRESULT hRes = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
+		TinyComPtr<IDXGIFactory1> factory;
+		HRESULT hRes = CreateDXGIFactory1(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(&factory));
 		if (hRes != S_OK)
 			return FALSE;
-		IDXGIAdapter* adapter;
+		IDXGIAdapter1* adapter;
 		UINT index = 0;
-		while (factory->EnumAdapters(index, &adapter) != DXGI_ERROR_NOT_FOUND)
+		while (factory->EnumAdapters1(index, &adapter) != DXGI_ERROR_NOT_FOUND)
 		{
 			adapters.push_back(adapter);
 			++index;
 		}
 		return TRUE;
 	}
-	BOOL DX10::Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter* pAdapter)
+	BOOL DX10::Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter1* pAdapter)
 	{
 		m_hWND = hWND;
 		DXGI_SWAP_CHAIN_DESC swapDesc;
@@ -50,11 +50,12 @@ namespace DXFramework
 		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		swapDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE;
 		HRESULT hRes = S_OK;
-		DWORD dwFlag = D3D10_CREATE_DEVICE_BGRA_SUPPORT;
+		UINT createFlag = D3D10_CREATE_DEVICE_BGRA_SUPPORT;
 #if defined(DEBUG) || defined(_DEBUG)
-		dwFlag |= D3D10_CREATE_DEVICE_DEBUG;
+		createFlag |= D3D10_CREATE_DEVICE_DEBUG;
 #endif
-		hRes = D3D10CreateDeviceAndSwapChain(pAdapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, dwFlag, D3D10_SDK_VERSION, &swapDesc, &m_swap, &m_d3d);
+		D3D10_FEATURE_LEVEL1 level = D3D10_FEATURE_LEVEL_9_3;
+		hRes = D3D10CreateDeviceAndSwapChain1(pAdapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, createFlag, level, D3D10_1_SDK_VERSION, &swapDesc, &m_swap, &m_d3d);
 		if (hRes != S_OK)
 			return FALSE;
 		this->SetViewport(TinyPoint(0, 0), { cx,cy });
@@ -96,25 +97,37 @@ namespace DXFramework
 		m_d3d->RSSetState(m_rasterizerState);
 		D3D10_BLEND_DESC blenddesc;
 		ZeroMemory(&blenddesc, sizeof(blenddesc));
-		blenddesc.BlendEnable[0] = TRUE;
+		for (INT i = 0; i < 8; i++)
+		{
+			blenddesc.BlendEnable[i] = TRUE;
+			blenddesc.RenderTargetWriteMask[i] = D3D10_COLOR_WRITE_ENABLE_ALL;
+		}
 		blenddesc.SrcBlend = D3D10_BLEND_SRC_ALPHA;
 		blenddesc.DestBlend = D3D10_BLEND_INV_SRC_ALPHA;
 		blenddesc.BlendOp = D3D10_BLEND_OP_ADD;
 		blenddesc.SrcBlendAlpha = D3D10_BLEND_ONE;
-		blenddesc.DestBlendAlpha = D3D10_BLEND_ONE;
+		blenddesc.DestBlendAlpha = D3D10_BLEND_ZERO;
 		blenddesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
-		blenddesc.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
+		/*blenddesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
+		blenddesc.BlendOp = D3D10_BLEND_OP_ADD;
+		blenddesc.SrcBlendAlpha = D3D10_BLEND_ONE;
+		blenddesc.DestBlendAlpha = D3D10_BLEND_ZERO;
+		blenddesc.SrcBlend = D3D10_BLEND_ONE;
+		blenddesc.DestBlend = D3D10_BLEND_ZERO;*/
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_enableBlendState);
 		if (hRes != S_OK)
 			return FALSE;
-		blenddesc.BlendEnable[0] = FALSE;
+		for (INT i = 0; i < 8; i++)
+		{
+			blenddesc.BlendEnable[i] = FALSE;
+			blenddesc.RenderTargetWriteMask[i] = D3D10_COLOR_WRITE_ENABLE_ALL;
+		}
 		blenddesc.SrcBlend = D3D10_BLEND_SRC_ALPHA;
 		blenddesc.DestBlend = D3D10_BLEND_INV_SRC_ALPHA;
 		blenddesc.BlendOp = D3D10_BLEND_OP_ADD;
-		blenddesc.SrcBlendAlpha = D3D10_BLEND_ZERO;
-		blenddesc.DestBlendAlpha = D3D10_BLEND_ONE;
+		blenddesc.SrcBlendAlpha = D3D10_BLEND_ONE;
+		blenddesc.DestBlendAlpha = D3D10_BLEND_ZERO;
 		blenddesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
-		blenddesc.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_disableBlendState);
 		if (hRes != S_OK)
 			return FALSE;
@@ -186,7 +199,7 @@ namespace DXFramework
 	}
 	ID3D10Device* DX10::GetD3D() const
 	{
-		return m_d3d;
+		return static_cast<ID3D10Device*>(m_d3d);
 	}
 	IDXGISwapChain*	DX10::GetSwapChain() const
 	{
