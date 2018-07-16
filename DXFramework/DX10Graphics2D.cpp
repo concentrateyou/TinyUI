@@ -167,7 +167,7 @@ namespace DXFramework
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.BindFlags = D3D10_BIND_SHADER_RESOURCE | D3D10_BIND_RENDER_TARGET;
-		desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED | D3D10_RESOURCE_MISC_GDI_COMPATIBLE;
+		desc.MiscFlags = D3D10_RESOURCE_MISC_GDI_COMPATIBLE;
 		desc.Usage = D3D10_USAGE_DEFAULT;
 		HRESULT hRes = m_dx10.GetD3D()->CreateTexture2D(&desc, NULL, &m_render2D);
 		if (hRes != S_OK)
