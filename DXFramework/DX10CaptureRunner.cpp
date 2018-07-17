@@ -3,9 +3,9 @@
 
 namespace DXFramework
 {
-	DX10CaptureRunner::DX10CaptureRunner(DX10* pDX10, DX10Image2D& image)
+	DX10CaptureRunner::DX10CaptureRunner(DX10& dx10, DX10Image2D& image)
 		:m_bCapturing(FALSE),
-		m_pDX10(pDX10),
+		m_dx10(dx10),
 		m_image(image)
 	{
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
@@ -167,7 +167,6 @@ namespace DXFramework
 	}
 	BOOL DX10CaptureRunner::BeginCapture()
 	{
-		ASSERT(m_pDX10);
 		BOOL bRes = S_OK;
 		if (!CreateEvents())
 		{
@@ -198,7 +197,7 @@ namespace DXFramework
 				TinyAutoLock lock(m_lock);
 				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
 				m_image.Destory();
-				if (!m_image.Load(*m_pDX10, pTextureDATA->TextureHandle))
+				if (!m_image.Load(m_dx10, pTextureDATA->TextureHandle))
 				{
 					TRACE("BeginCapture m_image.Load-FAIL\n");
 					return FALSE;
@@ -211,7 +210,7 @@ namespace DXFramework
 				TinyAutoLock lock(m_lock);
 				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
 				m_image.Destory();
-				if (!m_image.Create(*m_pDX10, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
+				if (!m_image.Create(m_dx10, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
 				{
 					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;

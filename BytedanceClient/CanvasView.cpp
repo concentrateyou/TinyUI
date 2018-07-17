@@ -44,9 +44,6 @@ namespace Bytedance
 		m_graphics.Create();
 		m_graphics.InitializeShaders();
 
-		m_image2D.Load(m_graphics.GetDX10(), "D:\\timg.jpg");
-		m_rectangle2D.Create(m_dx11);
-
 		return TinyControl::OnCreate(uMsg, wParam, lParam, bHandled);
 	}
 
@@ -70,7 +67,7 @@ namespace Bytedance
 		EndPaint(m_hWND, &s);
 
 		m_graphics.BeginDraw();
-		m_graphics.EndDraw(); 
+		m_graphics.EndDraw();
 
 		m_dx11.Present();
 

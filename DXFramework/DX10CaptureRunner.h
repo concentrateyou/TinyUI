@@ -9,7 +9,7 @@ namespace DXFramework
 	class DX10CaptureRunner : public TinyThread
 	{
 	public:
-		DX10CaptureRunner(DX10* pDX10, DX10Image2D& image);
+		DX10CaptureRunner(DX10& dx10, DX10Image2D& image);
 		virtual ~DX10CaptureRunner();
 		void					SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 		BOOL					Submit();
@@ -31,7 +31,7 @@ namespace DXFramework
 	private:
 		TinySize				m_size;
 		BOOL					m_bCapturing;
-		DX10*					m_pDX10;
+		DX10&					m_dx10;
 		TinyLock				m_lock;
 		WNDINFO					m_targetWND;
 		TinyEvent				m_start;

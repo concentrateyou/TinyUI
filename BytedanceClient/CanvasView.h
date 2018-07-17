@@ -5,6 +5,7 @@
 #include "DX10Rectangle2D.h"
 #include "DX10Line2D.h"
 #include "DX10Graphics2D.h"
+#include "GameElement.h"
 
 using namespace TinyFramework;
 using namespace DXFramework;
@@ -27,9 +28,6 @@ namespace Bytedance
 	private:
 		DX10			m_dx11;
 		DX10Graphics2D	m_graphics;
-		DX10Image2D		m_image2D;
-
-		DX10Rectangle2D	m_rectangle2D;
 	};
 }
 

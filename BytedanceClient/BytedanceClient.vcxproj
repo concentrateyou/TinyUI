@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="BytedanceClient.h" />
     <ClInclude Include="CanvasView.h" />
+    <ClInclude Include="GameElement.h" />
     <ClInclude Include="MainView.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="BytedanceClient.cpp" />
     <ClCompile Include="CanvasView.cpp" />
+    <ClCompile Include="GameElement.cpp" />
     <ClCompile Include="MainView.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
