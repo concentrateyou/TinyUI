@@ -3,9 +3,9 @@
 #include "LAVVideoFilter.h"
 #include "LAVVideo.h"
 #include "LAVAudio.h"
-#include "DX9Canvas.h"
-#include "DX9Image2D.h"
-#include "DX9Canvas.h"
+#include "DX10.h"
+#include "DX10Graphics2D.h"
+#include "DX10Image2D.h"
 #include "Media/TinyXAudio.h"
 using namespace std;
 using namespace TinyFramework;
@@ -77,8 +77,9 @@ namespace LAV
 	private:
 		HWND										m_hWND;
 		LAVClock									m_clock;
-		DX9Graphics2D								m_graphics;
-		DX9Image2D									m_image;
+		DX10										m_dx10;
+		DX10Graphics2D								m_graphics;
+		DX10Image2D									m_image;
 		TinyXAudio									m_xaudio;
 		TinyPerformanceTimer						m_timer;
 		TinyScopedPtr<LAVAudio>						m_audio;

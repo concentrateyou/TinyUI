@@ -30,7 +30,8 @@ namespace LAV
 
 	//////////////////////////////////////////////////////////////////////////
 	LAVPlayer::LAVPlayer()
-		:m_hWND(NULL)
+		:m_hWND(NULL),
+		m_graphics(m_dx10)
 	{
 
 	}
@@ -138,11 +139,14 @@ namespace LAV
 				FreeMediaType(mediaType);
 				TinyRectangle s;
 				GetClientRect(hWND, &s);
-				if (!m_graphics.Initialize(hWND, s.Size()))
+				if (!m_dx10.Initialize(hWND, TO_CX(s), TO_CY(s)))
 					return FALSE;
-				m_graphics.SetRenderView(NULL);
+				if (!m_graphics.Create())
+					return FALSE;
+				if (!m_graphics.InitializeShaders())
+					return FALSE;
 				m_image.Destory();
-				if (!m_image.Create(m_graphics.GetDX9(), vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL))
+				if (!m_image.Create(m_graphics.GetDX10(), vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL, FALSE))
 					return FALSE;
 				m_image.SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(s)) / m_image.GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image.GetSize().y));
 			}
@@ -179,9 +183,9 @@ namespace LAV
 		{
 			if (SUCCEEDED(m_control->Run()))
 			{
-				m_graphics.GetRenderView()->BeginDraw();
-				m_graphics.GetRenderView()->EndDraw();
-				m_graphics.Present();
+				m_graphics.BeginDraw();
+				m_graphics.EndDraw();
+				m_dx10.Present();
 				return TRUE;
 			}
 		}
@@ -331,15 +335,15 @@ namespace LAV
 	{
 		INT cy = static_cast<INT>(m_image.GetSize().y);
 		INT linesize = size / cy;
-		if (!m_image.Copy(bits, linesize, cy))
+		if (!m_image.Copy(m_dx10, bits, size, linesize))
 			return FALSE;
-		if (!m_graphics.GetRenderView()->BeginDraw())
+		if (!m_graphics.BeginDraw())
 			return FALSE;
 		m_image.SetFlipH(FALSE);
 		m_image.SetFlipV(TRUE);
-		if (!m_graphics.DrawImage(&m_image))
+		if (!m_graphics.DrawImage(m_image))
 			return FALSE;
-		if (!m_graphics.GetRenderView()->EndDraw())
+		if (!m_graphics.EndDraw())
 			return FALSE;
 		return TRUE;
 	}
@@ -351,7 +355,7 @@ namespace LAV
 			INT delay = static_cast<INT>(time - m_clock.GetClock());
 			if (m_timer.Waiting(delay, 80))
 			{
-				m_graphics.Present();
+				m_dx10.Present();
 			}
 		}
 	}
