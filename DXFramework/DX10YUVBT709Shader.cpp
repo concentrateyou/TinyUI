@@ -21,14 +21,14 @@ namespace DXFramework
 		D3D10_INPUT_ELEMENT_DESC layout[3];
 		D3D10_BUFFER_DESC bufferDesc = { 0 };
 		D3D10_SAMPLER_DESC samplerDesc;
-		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "YUVBT709VertexShader", "vs_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "YUVBT709VertexShader", "vs_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
 			LOG(ERROR) << "DX10TextureShader Initialize - YUVBT709VertexShader: " << error;
 			return FALSE;
 		}
-		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "YUVBT709PixelShader", "ps_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "YUVBT709PixelShader", "ps_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();

@@ -1523,7 +1523,7 @@ namespace DXFramework
 		size_t maxsize)
 	{
 		return DX10CreateWICTextureFromMemoryEx(d3dDevice, wicData, wicDataSize, maxsize,
-			D3D10_USAGE_DEFAULT, D3D10_BIND_SHADER_RESOURCE, 0, 0, WIC_LOADER_DEFAULT,
+			D3D10_USAGE_DEFAULT, D3D10_BIND_SHADER_RESOURCE | D3D10_BIND_RENDER_TARGET, 0, 0, WIC_LOADER_DEFAULT,
 			texture, textureView);
 	}
 
@@ -1535,7 +1535,7 @@ namespace DXFramework
 		size_t maxsize)
 	{
 		return DX10CreateWICTextureFromFileEx(d3dDevice, fileName, maxsize,
-			D3D10_USAGE_DEFAULT, D3D10_BIND_SHADER_RESOURCE, 0, 0, WIC_LOADER_DEFAULT,
+			D3D10_USAGE_DEFAULT, D3D10_BIND_SHADER_RESOURCE | D3D10_BIND_RENDER_TARGET, 0, 0, WIC_LOADER_DEFAULT,
 			texture, textureView);
 	}
 
