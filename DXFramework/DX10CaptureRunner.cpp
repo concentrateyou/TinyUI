@@ -243,7 +243,7 @@ namespace DXFramework
 		m_image.Destory();
 		return TRUE;
 	}
-	BOOL DX10CaptureRunner::InjectCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	BOOL DX10CaptureRunner::Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
 	{
 		HANDLE hProcess = NULL;
 		StrCpy(m_targetWND.className, className.STR());
@@ -334,7 +334,7 @@ namespace DXFramework
 		}
 		if (!m_bCapturing)
 		{
-			InjectCapture(m_className, m_exeName, m_dllName);
+			Detour(m_className, m_exeName, m_dllName);
 		}
 		else
 		{

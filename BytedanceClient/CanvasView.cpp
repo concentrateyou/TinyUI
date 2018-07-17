@@ -41,10 +41,12 @@ namespace Bytedance
 		TinyRectangle s;
 		GetClientRect(&s);
 		m_dx11.Initialize(m_hWND, TO_CX(s), TO_CY(s));
-		m_image2D.Load(m_graphics.GetDX10(), "D:\\timg.jpg");
-		m_rectangle2D.Create(m_dx11);
 		m_graphics.Create();
 		m_graphics.InitializeShaders();
+
+		m_image2D.Load(m_graphics.GetDX10(), "D:\\timg.jpg");
+		m_rectangle2D.Create(m_dx11);
+
 		return TinyControl::OnCreate(uMsg, wParam, lParam, bHandled);
 	}
 
@@ -68,13 +70,6 @@ namespace Bytedance
 		EndPaint(m_hWND, &s);
 
 		m_graphics.BeginDraw();
-
-		/*XMFLOAT2 points[4];
-		points[0] = { 1.0F,1.0F };
-		points[1] = { 1.0F,301.0F };
-		points[2] = { 301.0F,301.0F };
-		points[3] = { 301.0F,1.0F };
-		m_graphics.DrawRectangle(m_rectangle2D, points, { 0.0f, 1.0f, 0.0f, 1.0f });*/
 		m_graphics.EndDraw(); 
 
 		m_dx11.Present();

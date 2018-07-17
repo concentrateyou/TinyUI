@@ -107,6 +107,19 @@ namespace Bytedance
 		m_native->SetPosition({ 8,27 + 8 });
 		m_native->SetSize({ size.cx - 16,500 });
 
+		m_game = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
+		ASSERT(m_game);
+		m_game->SetName("btnGame");
+		m_game->SetText("ÓÎÏ·×¢Èë");
+		m_game->SetSize(TinySize(69, 23));
+		m_game->SetTextColor(RGB(0, 0, 0));
+		m_game->SetTextAlian(DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		m_game->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
+		m_game->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
+		m_game->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
+		m_onGameClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnGameClick));
+		m_game->EVENT_CLICK += m_onGameClick;
+
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
@@ -128,6 +141,8 @@ namespace Bytedance
 
 			m_native->SetPosition({ 8,27 + 8 });
 			m_native->SetSize({ cx - 16,500 });
+
+			m_game->SetPosition({ 8,550 });
 		}
 	}
 
@@ -159,5 +174,9 @@ namespace Bytedance
 		m_restore->SetVisible(FALSE);
 		m_max->SetVisible(TRUE);
 		::SendMessage(m_hWND, WM_SYSCOMMAND, SC_RESTORE, NULL);
+	}
+	void MainView::OnGameClick(TinyVisual*, EventArgs& args)
+	{
+
 	}
 }

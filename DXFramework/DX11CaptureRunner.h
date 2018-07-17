@@ -23,7 +23,7 @@ namespace DXFramework
 		void					Tick();
 		BOOL					BeginCapture();
 		BOOL					EndCapture();
-		BOOL					InjectCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
+		BOOL					Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 		BOOL					CreateEvents();
 		BOOL					OpenEvents();
 		void					CloseEvents();
