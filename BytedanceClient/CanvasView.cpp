@@ -7,7 +7,8 @@ namespace Bytedance
 	IMPLEMENT_DYNAMIC(CanvasView, TinyControl);
 
 	CanvasView::CanvasView()
-		:m_graphics(m_dx11)
+		:m_graphics(m_dx11),
+		m_gameElement(m_m_dx11)
 	{
 	}
 

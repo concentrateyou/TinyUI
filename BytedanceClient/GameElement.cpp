@@ -90,8 +90,8 @@ namespace Bytedance
 							break;
 						}
 					} while (0);
+					return TRUE;
 				}
-				return TRUE;
 			}
 		}
 		return FALSE;
