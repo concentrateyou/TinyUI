@@ -184,6 +184,7 @@
   <ItemGroup>
     <ClInclude Include="DX10.h" />
     <ClInclude Include="DX10ColorShader.h" />
+    <ClInclude Include="DX10Duplicator.h" />
     <ClInclude Include="DX10Element2D.h" />
     <ClInclude Include="DX10Font2D.h" />
     <ClInclude Include="DX10Graphics2D.h" />
@@ -241,6 +242,7 @@
   <ItemGroup>
     <ClCompile Include="DX10.cpp" />
     <ClCompile Include="DX10ColorShader.cpp" />
+    <ClCompile Include="DX10Duplicator.cpp" />
     <ClCompile Include="DX10Element2D.cpp" />
     <ClCompile Include="DX10Font2D.cpp" />
     <ClCompile Include="DX10Graphics2D.cpp" />

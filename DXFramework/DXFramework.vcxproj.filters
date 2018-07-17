@@ -201,6 +201,9 @@
     <ClInclude Include="DX10YUVVideo.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
+    <ClInclude Include="DX10Duplicator.h">
+      <Filter>头文件\DX10</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -366,6 +369,9 @@
       <Filter>源文件\DX10</Filter>
     </ClCompile>
     <ClCompile Include="DX10YUVVideo.cpp">
+      <Filter>源文件\DX10</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10Duplicator.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
   </ItemGroup>
