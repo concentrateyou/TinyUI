@@ -1,16 +1,16 @@
 #pragma once
 #include "DXFramework.h"
-#include "DX11Texture2D.h"
-#include "DX11Image2D.h"
+#include "DX10Texture2D.h"
+#include "DX10Image2D.h"
 using namespace TinyFramework::IO;
 
 namespace DXFramework
 {
-	class DX11CaptureRunner : public TinyThread
+	class DX10CaptureRunner : public TinyThread
 	{
 	public:
-		DX11CaptureRunner(DX11* pDX11, DX11Image2D& image);
-		virtual ~DX11CaptureRunner();
+		DX10CaptureRunner(DX10* pDX10, DX10Image2D& image);
+		virtual ~DX10CaptureRunner();
 		void					SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 		BOOL					Submit();
 		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
@@ -31,7 +31,7 @@ namespace DXFramework
 	private:
 		TinySize				m_size;
 		BOOL					m_bCapturing;
-		DX11*					m_pDX11;
+		DX10*					m_pDX10;
 		TinyLock				m_lock;
 		WNDINFO					m_targetWND;
 		TinyEvent				m_start;
@@ -42,7 +42,7 @@ namespace DXFramework
 		TinyString				m_className;
 		TinyString				m_exeName;
 		TinyString				m_dllName;
-		DX11Image2D&			m_image;
+		DX10Image2D&			m_image;
 		TinySharedMemory		m_captureMemory;
 		TinySharedMemory		m_textureMemery;
 	};

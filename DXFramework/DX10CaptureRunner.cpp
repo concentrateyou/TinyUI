@@ -1,36 +1,36 @@
 #include "stdafx.h"
-#include "DX11CaptureRunner.h"
+#include "DX10CaptureRunner.h"
 
 namespace DXFramework
 {
-	DX11CaptureRunner::DX11CaptureRunner(DX11* pDX11, DX11Image2D& image)
+	DX10CaptureRunner::DX10CaptureRunner(DX10* pDX10, DX10Image2D& image)
 		:m_bCapturing(FALSE),
-		m_pDX11(pDX11),
+		m_pDX10(pDX10),
 		m_image(image)
 	{
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	}
-	DX11CaptureRunner::~DX11CaptureRunner()
+	DX10CaptureRunner::~DX10CaptureRunner()
 	{
 
 	}
-	void DX11CaptureRunner::SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	void DX10CaptureRunner::SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
 	{
 		m_className = std::move(className);
 		m_exeName = std::move(exeName);
 		m_dllName = std::move(dllName);
 	}
-	BOOL DX11CaptureRunner::Submit()
+	BOOL DX10CaptureRunner::Submit()
 	{
-		return TinyThread::Submit(BindCallback(&DX11CaptureRunner::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&DX10CaptureRunner::OnMessagePump, this));
 	}
-	BOOL DX11CaptureRunner::Close(DWORD dwMS)
+	BOOL DX10CaptureRunner::Close(DWORD dwMS)
 	{
 		m_close.SetEvent();
 		return TinyThread::Close(dwMS);
 	}
-	BOOL DX11CaptureRunner::OpenEvents()
+	BOOL DX10CaptureRunner::OpenEvents()
 	{
 		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID));
 		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
@@ -54,7 +54,7 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
-	BOOL DX11CaptureRunner::CreateEvents()
+	BOOL DX10CaptureRunner::CreateEvents()
 	{
 		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID));
 		if (!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
@@ -78,14 +78,14 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
-	void DX11CaptureRunner::CloseEvents()
+	void DX10CaptureRunner::CloseEvents()
 	{
 		m_start.Close();
 		m_stop.Close();
 		m_ready.Close();
 		m_exit.Close();
 	}
-	SharedCaptureDATA* DX11CaptureRunner::GetSharedCaptureDATA()
+	SharedCaptureDATA* DX10CaptureRunner::GetSharedCaptureDATA()
 	{
 		if (!m_captureMemory.Address())
 		{
@@ -97,7 +97,7 @@ namespace DXFramework
 		SharedCaptureDATA* pDATA = reinterpret_cast<SharedCaptureDATA*>(m_captureMemory.Address());
 		return pDATA;
 	}
-	SharedTextureDATA* DX11CaptureRunner::GetSharedTextureDATA(DWORD dwSize)
+	SharedTextureDATA* DX10CaptureRunner::GetSharedTextureDATA(DWORD dwSize)
 	{
 		if (m_textureMemery.GetSize() != dwSize)
 		{
@@ -113,7 +113,7 @@ namespace DXFramework
 		}
 		return reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
 	}
-	BYTE*	DX11CaptureRunner::GetSharedTexture(DWORD dwSize)
+	BYTE*	DX10CaptureRunner::GetSharedTexture(DWORD dwSize)
 	{
 		if (m_textureMemery.GetSize() != dwSize)
 		{
@@ -129,7 +129,7 @@ namespace DXFramework
 		}
 		return reinterpret_cast<LPBYTE>(m_textureMemery.Address());
 	}
-	BOOL CALLBACK DX11CaptureRunner::EnumWindow(HWND hwnd, LPARAM lParam)
+	BOOL CALLBACK DX10CaptureRunner::EnumWindow(HWND hwnd, LPARAM lParam)
 	{
 		LPWNDINFO ws = reinterpret_cast<LPWNDINFO>(lParam);
 		if (!IsWindowVisible(hwnd))
@@ -165,9 +165,9 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
-	BOOL DX11CaptureRunner::BeginCapture()
+	BOOL DX10CaptureRunner::BeginCapture()
 	{
-		ASSERT(m_pDX11);
+		ASSERT(m_pDX10);
 		BOOL bRes = S_OK;
 		if (!CreateEvents())
 		{
@@ -198,7 +198,7 @@ namespace DXFramework
 				TinyAutoLock lock(m_lock);
 				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
 				m_image.Destory();
-				if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
+				if (!m_image.Load(*m_pDX10, pTextureDATA->TextureHandle))
 				{
 					TRACE("BeginCapture m_image.Load-FAIL\n");
 					return FALSE;
@@ -211,7 +211,7 @@ namespace DXFramework
 				TinyAutoLock lock(m_lock);
 				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
 				m_image.Destory();
-				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
+				if (!m_image.Create(*m_pDX10, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
 				{
 					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;
@@ -222,7 +222,7 @@ namespace DXFramework
 		} while (0);
 		return TRUE;
 	}
-	BOOL DX11CaptureRunner::EndCapture()
+	BOOL DX10CaptureRunner::EndCapture()
 	{
 		TRACE("EndCapture\n");
 		m_start.Close();
@@ -243,12 +243,12 @@ namespace DXFramework
 		m_image.Destory();
 		return TRUE;
 	}
-	BOOL DX11CaptureRunner::InjectCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	BOOL DX10CaptureRunner::InjectCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
 	{
 		HANDLE hProcess = NULL;
 		StrCpy(m_targetWND.className, className.STR());
 		StrCpy(m_targetWND.exeName, exeName.STR());
-		EnumWindows(DX11CaptureRunner::EnumWindow, reinterpret_cast<LPARAM>(&m_targetWND));
+		EnumWindows(DX10CaptureRunner::EnumWindow, reinterpret_cast<LPARAM>(&m_targetWND));
 		if (m_targetWND.hWND)
 		{
 			TRACE("TryCapture hWND != NULL\n");
@@ -315,7 +315,7 @@ namespace DXFramework
 		}
 		return m_bCapturing;
 	}
-	void DX11CaptureRunner::Tick()
+	void DX10CaptureRunner::Tick()
 	{
 		if (m_exit && m_exit.Lock(0))
 		{
@@ -350,7 +350,7 @@ namespace DXFramework
 			}
 		}
 	}
-	void DX11CaptureRunner::OnMessagePump()
+	void DX10CaptureRunner::OnMessagePump()
 	{
 		for (;;)
 		{
@@ -366,7 +366,7 @@ namespace DXFramework
 			Tick();
 		}
 	}
-	WNDINFO	DX11CaptureRunner::GetWNDINFO()
+	WNDINFO	DX10CaptureRunner::GetWNDINFO()
 	{
 		return m_targetWND;
 	}

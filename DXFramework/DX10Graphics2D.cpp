@@ -376,11 +376,11 @@ namespace DXFramework
 		wstring ws = StringToWString(pzName);
 		if (m_render2D != NULL)
 		{
-			/*HRESULT hRes = SaveWICTextureToFile(m_dx11.GetImmediateContext(), m_render2D, GetWICCodec(format), ws.c_str());
+			HRESULT hRes = DX10SaveWICTextureToFile(m_dx10.GetD3D(), m_render2D, GetWICCodec(format), ws.c_str());
 			if (SUCCEEDED(hRes))
 			{
 				return TRUE;
-			}*/
+			}
 		}
 		else
 		{
@@ -388,11 +388,11 @@ namespace DXFramework
 			HRESULT hRes = m_dx10.GetSwapChain()->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*)&texture2D);
 			if (hRes != S_OK)
 				return FALSE;
-			/*hRes = SaveWICTextureToFile(m_dx11.GetImmediateContext(), texture2D, GetWICCodec(format), ws.c_str());
+			hRes = DX10SaveWICTextureToFile(m_dx10.GetD3D(), texture2D, GetWICCodec(format), ws.c_str());
 			if (SUCCEEDED(hRes))
 			{
 				return TRUE;
-			}*/
+			}
 		}
 		return FALSE;
 	}
