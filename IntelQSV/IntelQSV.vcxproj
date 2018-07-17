@@ -77,13 +77,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;DX9_D3D;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(INTELMEDIASDKROOT)include;..\TinyFramework;..\DShowCapture;..\ThirdParty\libyuv\include;..\ThirdParty\ffmpeg\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELMEDIASDKROOT)include;..\TinyFramework;..\DShowCapture;..\Dependency\x86\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(INTELMEDIASDKROOT)lib\$(Platform);..\TinyUI;..\Debug;..\ThirdParty\libyuv\lib;..\ThirdParty\ffmpeg\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(INTELMEDIASDKROOT)lib\$(Platform);..\Dependency\x86\lib;..\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>libmfx.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Lib>

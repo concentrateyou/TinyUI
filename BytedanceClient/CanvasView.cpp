@@ -7,8 +7,6 @@ namespace Bytedance
 	IMPLEMENT_DYNAMIC(CanvasView, TinyControl);
 
 	CanvasView::CanvasView()
-		:m_graphics(m_dx11),
-		m_gameElement(m_m_dx11)
 	{
 	}
 
@@ -39,12 +37,6 @@ namespace Bytedance
 	LRESULT CanvasView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		TinyRectangle s;
-		GetClientRect(&s);
-		m_dx11.Initialize(m_hWND, TO_CX(s), TO_CY(s));
-		m_graphics.Create();
-		m_graphics.InitializeShaders();
-
 		return TinyControl::OnCreate(uMsg, wParam, lParam, bHandled);
 	}
 
@@ -54,24 +46,12 @@ namespace Bytedance
 		TinySize size;
 		size.cx = LOWORD(lParam);
 		size.cy = HIWORD(lParam);
-		m_graphics.Destory();
-		m_dx11.Resize(size.cx, size.cy);
-		m_graphics.Create();
 		return TinyControl::OnSize(uMsg, wParam, lParam, bHandled);
 	}
 
 	LRESULT CanvasView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		PAINTSTRUCT s;
-		BeginPaint(m_hWND, &s);
-		EndPaint(m_hWND, &s);
-
-		m_graphics.BeginDraw();
-		m_graphics.EndDraw();
-
-		m_dx11.Present();
-
 		return TinyControl::OnPaint(uMsg, wParam, lParam, bHandled);
 	}
 }

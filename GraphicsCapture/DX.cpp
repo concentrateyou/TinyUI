@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "DX.h"
-#include "DX8Capture.h"
-#include "DX9Capture.h"
-#include "DXGICapture.h"
+#include "DX8GraphicsCapture.h"
+#include "DX9GraphicsCapture.h"
+#include "DXGIGraphicsCapture.h"
 
-namespace DXCapture
+namespace GraphicsCapture
 {
 	DXGI_FORMAT GetDX10PlusTextureFormat(DXGI_FORMAT s)
 	{

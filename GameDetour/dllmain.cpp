@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "GameDetour.h"
 
-GameDetour::GameCapture g_capture;
+GameDetour::GameDetour g_capture;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

@@ -3,15 +3,15 @@
 
 #include "stdafx.h"
 #include "GameDetour.h"
-#include "DXGICapture.h"
-#include "DX9Capture.h"
-#include "DX8Capture.h"
+#include "DXGIGraphicsCapture.h"
+#include "DX9GraphicsCapture.h"
+#include "DX8GraphicsCapture.h"
 #include "OpenGLCapture.h"
-using namespace DXCapture;
+using namespace GraphicsCapture;
 
 namespace GameDetour
 {
-	GameCapture::GameCapture()
+	GameDetour::GameDetour()
 		:m_hWNDD3D(NULL),
 		m_bDX8Detour(FALSE),
 		m_bDX9Detour(FALSE),
@@ -19,20 +19,20 @@ namespace GameDetour
 	{
 
 	}
-	GameCapture::~GameCapture()
+	GameDetour::~GameDetour()
 	{
 
 	}
-	BOOL GameCapture::Attach(HMODULE hModule)
+	BOOL GameDetour::Attach(HMODULE hModule)
 	{
 		m_hInstance = hModule;
 		CHAR szName[MAX_PATH];
 		memset(szName, 0, MAX_PATH);
 		GetModuleBaseName(GetCurrentProcess(), NULL, szName, MAX_PATH);
 		LOG(INFO) << szName << " GameCapture::Attach\n";
-		return m_task.Submit(BindCallback(&GameCapture::OnMessagePump, this));
+		return m_task.Submit(BindCallback(&GameDetour::OnMessagePump, this));
 	}
-	BOOL GameCapture::Detach(HMODULE hModule)
+	BOOL GameDetour::Detach(HMODULE hModule)
 	{
 		CHAR szName[MAX_PATH];
 		memset(szName, 0, MAX_PATH);
@@ -45,7 +45,7 @@ namespace GameDetour
 		}
 		return m_task.Close(1500);
 	}
-	void GameCapture::BeginCapture()
+	void GameDetour::BeginCapture()
 	{
 		if (g_dx.Initialize())
 		{
@@ -67,18 +67,18 @@ namespace GameDetour
 			}
 		}
 	}
-	void GameCapture::EndCapture()
+	void GameDetour::EndCapture()
 	{
 		g_dx.Uninitialize();
 		LOG(INFO) << "Uninitialize OK\n";
 	}
-	void GameCapture::OnMessagePump()
+	void GameDetour::OnMessagePump()
 	{
 		WNDCLASS wc;
 		ZeroMemory(&wc, sizeof(wc));
 		wc.style = CS_OWNDC;
 		wc.hInstance = m_hInstance;
-		wc.lpfnWndProc = (WNDPROC)GameCapture::WindowProc;
+		wc.lpfnWndProc = (WNDPROC)GameDetour::WindowProc;
 		wc.lpszClassName = D3D_WINDOWCLASS;
 		if (RegisterClass(&wc))
 		{
@@ -107,7 +107,7 @@ namespace GameDetour
 		}
 	}
 
-	LRESULT CALLBACK GameCapture::WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK GameDetour::WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		switch (message)
 		{

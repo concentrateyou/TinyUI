@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "DX8Capture.h"
+#include "DX8GraphicsCapture.h"
 #include "d3d8.h"
 
-namespace DXCapture
+namespace GraphicsCapture
 {
 	void ConvertPixelFormat(LPBYTE in, DWORD inPitch, D3DFORMAT inFormat, DWORD outWidth, DWORD outHeight, LPBYTE out)
 	{
@@ -255,7 +255,7 @@ namespace DXCapture
 		m_lock.Unlock();
 	}
 	//////////////////////////////////////////////////////////////////////////
-	DX8Capture::DX8Capture(DX& dx)
+	DX8GraphicsCapture::DX8GraphicsCapture(DX& dx)
 		:m_dx(dx),
 		m_currentPointer(NULL),
 		m_currentCapture(0)
@@ -268,14 +268,14 @@ namespace DXCapture
 			m_captures[i] = new DX8CaptureDATA();
 		}
 	}
-	DX8Capture::~DX8Capture()
+	DX8GraphicsCapture::~DX8GraphicsCapture()
 	{
 		for (INT i = 0;i < NUM_BUFFERS;i++)
 		{
 			SAFE_DELETE(m_captures[i]);
 		}
 	}
-	BOOL DX8Capture::Initialize(HWND hWND)
+	BOOL DX8GraphicsCapture::Initialize(HWND hWND)
 	{
 		HRESULT hRes = S_OK;
 		CHAR szPath[MAX_PATH];
@@ -320,7 +320,7 @@ namespace DXCapture
 		}
 		return TRUE;
 	}
-	BOOL DX8Capture::Render(LPVOID pThis)
+	BOOL DX8GraphicsCapture::Render(LPVOID pThis)
 	{
 		IDirect3DDevice8 *d3d = reinterpret_cast<IDirect3DDevice8*>(pThis);
 		ASSERT(pThis);
@@ -381,7 +381,7 @@ namespace DXCapture
 		}
 		return TRUE;
 	}
-	void DX8Capture::Reset()
+	void DX8GraphicsCapture::Reset()
 	{
 		m_bTextures = FALSE;
 		m_copy.SetEvent();
@@ -395,7 +395,7 @@ namespace DXCapture
 		m_dx.m_textureMemery.Unmap();
 		m_dx.m_textureMemery.Close();
 	}
-	BOOL DX8Capture::Setup(LPVOID pThis)
+	BOOL DX8GraphicsCapture::Setup(LPVOID pThis)
 	{
 		IDirect3DDevice8 *d3d = reinterpret_cast<IDirect3DDevice8*>(pThis);
 		ASSERT(d3d);
@@ -445,7 +445,7 @@ namespace DXCapture
 		}
 		return FALSE;
 	}
-	BOOL DX8Capture::DX8CPUHook(LPVOID pThis)
+	BOOL DX8GraphicsCapture::DX8CPUHook(LPVOID pThis)
 	{
 		IDirect3DDevice8 *d3d = reinterpret_cast<IDirect3DDevice8*>(pThis);
 		ASSERT(d3d);
@@ -472,11 +472,11 @@ namespace DXCapture
 		BYTE* ps = m_dx.GetSharedTexture(m_captureDATA.MapSize);
 		m_textures[0] = ps + sharedTexture->Texture1Offset;
 		m_textures[1] = ps + sharedTexture->Texture2Offset;
-		m_captureTask.Submit(BindCallback(&DX8Capture::OnMessagePump, this));
+		m_captureTask.Submit(BindCallback(&DX8GraphicsCapture::OnMessagePump, this));
 		m_dx.m_ready.SetEvent();
 		return TRUE;
 	}
-	void DX8Capture::OnMessagePump()
+	void DX8GraphicsCapture::OnMessagePump()
 	{
 		HRESULT hRes = S_OK;
 		HANDLE events[] = { m_copy,m_close };

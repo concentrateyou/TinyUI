@@ -1,17 +1,18 @@
 #pragma once
 #include "DX.h"
 
-namespace DXCapture
+namespace GraphicsCapture
 {
 #define NUM_BUFFERS 3
 	/// <summary>
 	/// XX8纹理数据捕获
 	/// </summary>
-	class DX8Capture
+	class DX8GraphicsCapture
 	{
+		DISALLOW_COPY_AND_ASSIGN(DX8GraphicsCapture)
 	public:
-		DX8Capture(DX& dx);
-		~DX8Capture();
+		DX8GraphicsCapture(DX& dx);
+		~DX8GraphicsCapture();
 		BOOL Initialize(HWND hWND);
 		BOOL Render(LPVOID pThis);
 		BOOL Setup(LPVOID pThis);
@@ -39,6 +40,6 @@ namespace DXCapture
 		HMODULE							m_hD3D8;
 		DX&								m_dx;
 	};
-	SELECTANY extern DX8Capture g_dx8(g_dx);
+	SELECTANY extern DX8GraphicsCapture g_dx8(g_dx);
 }
 

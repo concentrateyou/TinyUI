@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "DXGICapture.h"
+#include "DXGIGraphicsCapture.h"
 
-namespace DXCapture
+namespace GraphicsCapture
 {
 	HRESULT STDMETHODCALLTYPE DX_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
 	{
@@ -92,7 +92,7 @@ namespace DXCapture
 		return hRes;
 	}
 
-	DXGICapture::DXGICapture(DX10Capture& dx10, DX101Capture& dx101, DX11Capture& dx11)
+	DXGIGraphicsCapture::DXGIGraphicsCapture(DX10GraphicsCapture& dx10, DX101GraphicsCapture& dx101, DX11GraphicsCapture& dx11)
 		:m_bDX10(FALSE),
 		m_bDX101(FALSE),
 		m_bDX11(FALSE),
@@ -103,11 +103,11 @@ namespace DXCapture
 	{
 
 	}
-	DXGICapture::~DXGICapture()
+	DXGIGraphicsCapture::~DXGIGraphicsCapture()
 	{
 
 	}
-	BOOL DXGICapture::Initialize(HWND hWND)
+	BOOL DXGIGraphicsCapture::Initialize(HWND hWND)
 	{
 		TinyComPtr<IDXGISwapChain> swap;
 		if (m_dx10.Initialize(hWND, swap))
@@ -141,7 +141,7 @@ namespace DXCapture
 		}
 		return FALSE;
 	}
-	void DXGICapture::Release()
+	void DXGIGraphicsCapture::Release()
 	{
 		if (m_bDX10)
 		{

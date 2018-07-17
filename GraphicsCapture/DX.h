@@ -1,7 +1,7 @@
 #pragma once
 #include "DXCommon.h"
 
-namespace DXCapture
+namespace GraphicsCapture
 {
 	DXGI_FORMAT GetDX10PlusTextureFormat(DXGI_FORMAT s);
 	LRESULT CALLBACK DXCbtFilter(INT code, WPARAM wParam, LPARAM lParam);
@@ -11,6 +11,7 @@ namespace DXCapture
 
 	class DX
 	{
+		DISALLOW_COPY_AND_ASSIGN(DX)
 	public:
 		DX();
 		virtual ~DX();

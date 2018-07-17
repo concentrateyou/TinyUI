@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "DX9Capture.h"
+#include "DX9GraphicsCapture.h"
 
-namespace DXCapture
+namespace GraphicsCapture
 {
 	struct PatchInfo
 	{
@@ -188,7 +188,7 @@ namespace DXCapture
 		return hRes;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	DX9Capture::DX9Capture(DX& dx)
+	DX9GraphicsCapture::DX9GraphicsCapture(DX& dx)
 		:m_d3dFormat(D3DFMT_UNKNOWN),
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_hTextureHandle(NULL),
@@ -201,11 +201,11 @@ namespace DXCapture
 	{
 
 	}
-	DX9Capture::~DX9Capture()
+	DX9GraphicsCapture::~DX9GraphicsCapture()
 	{
 
 	}
-	BOOL DX9Capture::Initialize(HWND hWND)
+	BOOL DX9GraphicsCapture::Initialize(HWND hWND)
 	{
 		HRESULT hRes = S_OK;
 		CHAR szD3DPath[MAX_PATH];
@@ -272,7 +272,7 @@ namespace DXCapture
 		LOG(INFO) << "m_dX9EndScene.BeginDetour() FAIL\n";
 		return FALSE;
 	}
-	BOOL DX9Capture::Render(IDirect3DDevice9 *d3d)
+	BOOL DX9GraphicsCapture::Render(IDirect3DDevice9 *d3d)
 	{
 		ASSERT(d3d);
 		if (m_bCapturing && m_dx.m_stop.Lock(0))
@@ -326,7 +326,7 @@ namespace DXCapture
 		}
 		return TRUE;
 	}
-	void DX9Capture::Reset()
+	void DX9GraphicsCapture::Reset()
 	{
 		LOG(INFO) << "Reset\n";
 		m_bTextures = FALSE;
@@ -337,7 +337,7 @@ namespace DXCapture
 		m_dx.m_textureMemery.Unmap();
 		m_dx.m_textureMemery.Close();
 	}
-	BOOL DX9Capture::Setup(IDirect3DDevice9 *pThis)
+	BOOL DX9GraphicsCapture::Setup(IDirect3DDevice9 *pThis)
 	{
 		TinyComPtr<IDirect3DSwapChain9> swapChain;
 		if (SUCCEEDED(pThis->GetSwapChain(0, &swapChain)))
@@ -378,7 +378,7 @@ namespace DXCapture
 		}
 		return FALSE;
 	}
-	BOOL DX9Capture::DX9GPUHook(IDirect3DDevice9 *pThis)
+	BOOL DX9GraphicsCapture::DX9GPUHook(IDirect3DDevice9 *pThis)
 	{
 		ASSERT(m_hD3D9);
 		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)m_d3d10_1.GetFunctionPointer(TEXT("D3D10CreateDevice1"));

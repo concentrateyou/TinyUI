@@ -12,11 +12,12 @@ namespace GameDetour
 #define OPENGL_WINDOWCLASS		TEXT("OpenGLGraphicsCapture")
 #define IQIYI_WINDOW_CLASS      TEXT("GameWindowClass")
 
-	class GameCapture
+	class GameDetour
 	{
+		DISALLOW_COPY_AND_ASSIGN(GameDetour)
 	public:
-		GameCapture();
-		~GameCapture();
+		GameDetour();
+		~GameDetour();
 	public:
 		BOOL Attach(HMODULE hModule);
 		BOOL Detach(HMODULE hModule);
@@ -28,11 +29,11 @@ namespace GameDetour
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
 		IO::TinyThread	m_task;
-		HINSTANCE			m_hInstance;
-		HWND				m_hWNDD3D;
-		BOOL				m_bDX8Detour;
-		BOOL				m_bDX9Detour;
-		BOOL				m_bDXGIDetour;
+		HINSTANCE		m_hInstance;
+		HWND			m_hWNDD3D;
+		BOOL			m_bDX8Detour;
+		BOOL			m_bDX9Detour;
+		BOOL			m_bDXGIDetour;
 	};
 }
 
