@@ -31,39 +31,39 @@ namespace DXFramework
 		str.resize(MAX_PATH);
 		GetModuleFileName(NULL, &str[0], MAX_PATH);
 		str = str.substr(0, str.find_last_of("\\", string::npos, 1));
-		string vs = str + "\\Shader\\DX11\\texture.vs";
+		string vs = str + "\\shader\\texture.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		string ps = str + "\\Shader\\DX11\\texture.ps";
+		string ps = str + "\\shader\\texture.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_textureShader.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\Shader\\DX11\\color.vs";
+		vs = str + "\\shader\\color.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\Shader\\DX11\\color.ps";
+		ps = str + "\\shader\\color.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_colorSharder.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\Shader\\DX11\\NV12BT601.vs";
+		vs = str + "\\shader\\NV12BT601.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\Shader\\DX11\\NV12BT601.ps";
+		ps = str + "\\shader\\NV12BT601.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_shaderNV12BT601.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\Shader\\DX11\\NV12BT709.vs";
+		vs = str + "\\shader\\NV12BT709.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\Shader\\DX11\\NV12BT709.ps";
+		ps = str + "\\shader\\NV12BT709.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_shaderNV12BT709.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\Shader\\DX11\\YUVBT601.vs";
+		vs = str + "\\shader\\YUVBT601.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\Shader\\DX11\\YUVBT601.ps";
+		ps = str + "\\shader\\YUVBT601.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_shaderYUVBT601.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
-		vs = str + "\\Shader\\DX11\\YUVBT709.vs";
+		vs = str + "\\shader\\YUVBT709.vs";
 		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\Shader\\DX11\\YUVBT709.ps";
+		ps = str + "\\shader\\YUVBT709.ps";
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_shaderYUVBT709.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
