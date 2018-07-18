@@ -1,11 +1,14 @@
 #include "stdafx.h"
 #include "MainView.h"
 
+#include "CameraVisual.h"
+
 namespace Bytedance
 {
 	IMPLEMENT_DYNAMIC(MainView, TinyVisualWindowless);
 
 	MainView::MainView()
+		:m_canvasController(m_canvasView)
 	{
 	}
 
@@ -165,6 +168,7 @@ namespace Bytedance
 	}
 	void MainView::OnSettingClick(TinyVisual* spvis, EventArgs& args)
 	{
+
 		//TinyPoint pos = m_document.GetScreenPos(spvis);
 		//pos.y += spvis->GetSize().cy;
 	}
@@ -177,6 +181,8 @@ namespace Bytedance
 	}
 	void MainView::OnGameClick(TinyVisual*, EventArgs& args)
 	{
+		vector<VideoCapture::Name> names;
+		VideoCapture::GetDevices(names);
 
 	}
 }

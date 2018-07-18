@@ -36,10 +36,16 @@
     <ClInclude Include="MainView.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GameElement.h">
+    <ClInclude Include="CanvasController.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RenderRunner.h">
+    <ClInclude Include="IVisual.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameVisual.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraVisual.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,10 +62,16 @@
     <ClCompile Include="MainView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GameElement.cpp">
+    <ClCompile Include="CanvasController.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="RenderRunner.cpp">
+    <ClCompile Include="IVisual.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameVisual.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraVisual.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

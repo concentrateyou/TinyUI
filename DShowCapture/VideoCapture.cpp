@@ -44,11 +44,12 @@ namespace DShow
 			if (m_size != size)
 			{
 				m_bits.Reset(new BYTE[size]);
-				m_queue.Initialize(3, size);
+				ASSERT(m_bits);
+				m_circularBuffer.Initialize(3, size);
 				m_size = size;
 			}
 			this->Lock();
-			m_queue.Write(bits, 1);
+			m_circularBuffer.Write(bits, 1);
 			this->Unlock();
 		}
 	}
@@ -268,7 +269,7 @@ namespace DShow
 	BYTE* VideoCapture::GetPointer()
 	{
 		this->Lock();
-		m_queue.Read((CHAR*)m_bits.Ptr(), 1);
+		m_circularBuffer.Read((CHAR*)m_bits.Ptr(), 1);
 		this->Unlock();
 		return m_bits;
 	}

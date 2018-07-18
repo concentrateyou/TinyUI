@@ -88,12 +88,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyFramework;..\DShowCapture;..\MFCapture;..\DXFramework;$(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyFramework;..\DShowCapture;..\MFCapture;..\DXFramework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)\lib\$(Platform);..\Dependency\x86\lib;..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(INTELMEDIASDKROOT)\lib\$(Platform);..\Dependency\x86\lib;..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>TinyFramework.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;jsoncpp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/WHOLEARCHIVE:TinyFramework.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -149,21 +149,25 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IVisual.h" />
     <ClInclude Include="BytedanceClient.h" />
+    <ClInclude Include="CameraVisual.h" />
     <ClInclude Include="CanvasView.h" />
-    <ClInclude Include="GameElement.h" />
+    <ClInclude Include="CanvasController.h" />
+    <ClInclude Include="GameVisual.h" />
     <ClInclude Include="MainView.h" />
-    <ClInclude Include="RenderRunner.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IVisual.cpp" />
     <ClCompile Include="BytedanceClient.cpp" />
+    <ClCompile Include="CameraVisual.cpp" />
     <ClCompile Include="CanvasView.cpp" />
-    <ClCompile Include="GameElement.cpp" />
+    <ClCompile Include="CanvasController.cpp" />
+    <ClCompile Include="GameVisual.cpp" />
     <ClCompile Include="MainView.cpp" />
-    <ClCompile Include="RenderRunner.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

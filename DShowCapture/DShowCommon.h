@@ -21,8 +21,8 @@ extern const REFERENCE_TIME SecondsToReferenceTime;
 extern GUID MediaSubTypeI420;
 extern GUID MediaSubTypeHDYC;
 
-#define FILTER_NAME  L"IQiyi Capture Filter"
-#define PIN_NAME     L"IQiyi Capture"
+#define FILTER_NAME  L"Tiny Capture Filter"
+#define PIN_NAME     L"Tiny Capture"
 
 typedef REGPINTYPES
 AMOVIESETUP_MEDIATYPE, *PAMOVIESETUP_MEDIATYPE, *FAR LPAMOVIESETUP_MEDIATYPE;

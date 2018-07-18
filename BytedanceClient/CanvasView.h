@@ -5,7 +5,7 @@
 #include "DX10Rectangle2D.h"
 #include "DX10Line2D.h"
 #include "DX10Graphics2D.h"
-#include "GameElement.h"
+#include "GameVisual.h"
 
 using namespace TinyFramework;
 using namespace DXFramework;

@@ -57,7 +57,7 @@ namespace DShow
 		void SetAntiFlickerInCaptureFilter();
 	private:
 		LONG										m_size;
-		IO::TinyRingBuffer							m_queue;
+		IO::TinyRingBuffer							m_circularBuffer;
 		TinyScopedPtr<BYTE>							m_bits;
 		TinyComPtr<IGraphBuilder>					m_builder;
 		TinyComPtr<IMediaControl>					m_control;
