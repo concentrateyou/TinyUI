@@ -75,12 +75,6 @@
     <ClInclude Include="MP4Writer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="FLV2TS.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TS2FLV.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="HLSReader.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -144,12 +138,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MP4Writer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FLV2TS.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TS2FLV.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="HLSReader.cpp">

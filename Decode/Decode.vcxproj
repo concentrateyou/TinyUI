@@ -158,7 +158,6 @@
     <ClInclude Include="AudioAnalyser.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="FFT.h" />
-    <ClInclude Include="FLV2TS.h" />
     <ClInclude Include="FLVReader.h" />
     <ClInclude Include="FLVWriter.h" />
     <ClInclude Include="H264BitReader.h" />
@@ -168,7 +167,6 @@
     <ClInclude Include="MP4Reader.h" />
     <ClInclude Include="MP4Writer.h" />
     <ClInclude Include="MPG123Decode.h" />
-    <ClInclude Include="TS2FLV.h" />
     <ClInclude Include="TSReader.h" />
     <ClInclude Include="TSWriter.h" />
     <ClInclude Include="x264Decoder.h" />
@@ -184,7 +182,6 @@
     <ClCompile Include="AudioAnalyser.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="FFT.cpp" />
-    <ClCompile Include="FLV2TS.cpp" />
     <ClCompile Include="FLVReader.cpp" />
     <ClCompile Include="FLVWriter.cpp" />
     <ClCompile Include="H264BitReader.cpp" />
@@ -194,7 +191,6 @@
     <ClCompile Include="MP4Reader.cpp" />
     <ClCompile Include="MP4Writer.cpp" />
     <ClCompile Include="MPG123Decode.cpp" />
-    <ClCompile Include="TS2FLV.cpp" />
     <ClCompile Include="TSReader.cpp" />
     <ClCompile Include="TSWriter.cpp" />
     <ClCompile Include="x264Decoder.cpp" />
