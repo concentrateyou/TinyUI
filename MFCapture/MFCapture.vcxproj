@@ -143,7 +143,6 @@
   <ItemGroup>
     <ClInclude Include="MFAudioCapture.h" />
     <ClInclude Include="MFAudioCaptureParam.h" />
-    <ClInclude Include="MFCaptureEngine.h" />
     <ClInclude Include="MFReaderCallback.h" />
     <ClInclude Include="MFCommon.h" />
     <ClInclude Include="MFObserver.h" />
@@ -155,7 +154,6 @@
   <ItemGroup>
     <ClCompile Include="MFAudioCapture.cpp" />
     <ClCompile Include="MFAudioCaptureParam.cpp" />
-    <ClCompile Include="MFCaptureEngine.cpp" />
     <ClCompile Include="MFReaderCallback.cpp" />
     <ClCompile Include="MFCommon.cpp" />
     <ClCompile Include="MFObserver.cpp" />
