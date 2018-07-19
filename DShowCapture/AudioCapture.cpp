@@ -34,7 +34,6 @@ namespace DShow
 	}
 
 	AudioCapture::AudioCapture()
-		:m_size(0)
 	{
 	}
 
@@ -49,18 +48,10 @@ namespace DShow
 		{
 			m_callback(bits, size, ts, lpParameter);
 		}
-		else
-		{
-			if (m_size != size)
-			{
-				m_bits.Reset(new BYTE[size]);
-				m_queue.Initialize(3, size);
-				m_size = size;
-			}
-			this->Lock();
-			m_queue.Write(bits, 1);
-			this->Unlock();
-		}
+	}
+	void AudioCapture::SetCallback(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
+	{
+		m_callback = std::move(callback);
 	}
 	BOOL AudioCapture::Initialize(const Name& name)
 	{
@@ -92,21 +83,14 @@ namespace DShow
 			return FALSE;
 		return TRUE;
 	}
-	BOOL AudioCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
-	{
-		if (Initialize(name))
-		{
-			m_callback = callback;
-			return TRUE;
-		}
-		return FALSE;
-	}
 	void AudioCapture::Uninitialize()
 	{
 		Deallocate();
-		if (m_control)
+		if (m_control != NULL)
+		{
 			m_control->Pause();
-		if (m_builder)
+		}
+		if (m_builder != NULL)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
 			m_builder->RemoveFilter(m_captureFilter);
@@ -152,17 +136,6 @@ namespace DShow
 		if (!m_control)
 			return FALSE;
 		return m_control->Pause() == S_OK;
-	}
-	BYTE* AudioCapture::GetPointer()
-	{
-		this->Lock();
-		m_queue.Read(m_bits, 1);
-		this->Unlock();
-		return m_bits;
-	}
-	LONG AudioCapture::GetSize()
-	{
-		return m_size;
 	}
 	BOOL AudioCapture::GetState(FILTER_STATE& state)
 	{
@@ -222,7 +195,7 @@ namespace DShow
 	}
 	void AudioCapture::Deallocate()
 	{
-		if (m_builder)
+		if (m_builder != NULL)
 		{
 			m_builder->Disconnect(m_captureO);
 			m_builder->Disconnect(m_sinkI);

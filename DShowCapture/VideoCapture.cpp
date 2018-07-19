@@ -39,28 +39,18 @@ namespace DShow
 		{
 			m_callback(bits, size, ts, lpParameter);
 		}
-		else
-		{
-			if (m_size != size)
-			{
-				m_bits.Reset(new BYTE[size]);
-				ASSERT(m_bits);
-				m_circularBuffer.Initialize(3, size);
-				m_size = size;
-			}
-			this->Lock();
-			m_circularBuffer.Write(bits, 1);
-			this->Unlock();
-		}
 	}
 	VideoCapture::VideoCapture()
-		:m_size(0)
 	{
 
 	}
 	VideoCapture::~VideoCapture()
 	{
 		Uninitialize();
+	}
+	void VideoCapture::SetCallback(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
+	{
+		m_callback = std::move(callback);
 	}
 	BOOL VideoCapture::Initialize(const Name& name)
 	{
@@ -89,23 +79,14 @@ namespace DShow
 			return FALSE;
 		return TRUE;
 	}
-	BOOL VideoCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
-	{
-		if (Initialize(name))
-		{
-			m_callback = std::move(callback);
-			return TRUE;
-		}
-		return FALSE;
-	}
 	void VideoCapture::Uninitialize()
 	{
 		Deallocate();
-		if (m_control)
+		if (m_control != NULL)
 		{
 			m_control->Pause();
 		}
-		if (m_builder)
+		if (m_builder != NULL)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
 			m_builder->RemoveFilter(m_mjpgFilter);
@@ -156,9 +137,9 @@ namespace DShow
 					if (hRes != S_OK)
 						return FALSE;
 					//1.尝试RGB32硬件是否支持
-					VideoCaptureParam ps = param;
-					ps.SetFormat(PIXEL_FORMAT_RGB32);
-					m_sinkFilter->SetCaptureParam(ps);
+					VideoCaptureParam cp = param;
+					cp.SetFormat(PIXEL_FORMAT_RGB32);
+					m_sinkFilter->SetCaptureParam(cp);
 					hRes = m_builder->Connect(m_captureO, m_sinkI);
 					if (hRes == S_OK)
 						return TRUE;
@@ -186,8 +167,8 @@ namespace DShow
 						ScopedMediaType type;
 						if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB32, type.Receive()))
 							return FALSE;
-						ps.SetFormat(PIXEL_FORMAT_RGB32);
-						m_sinkFilter->SetCaptureParam(ps);
+						cp.SetFormat(PIXEL_FORMAT_RGB32);
+						m_sinkFilter->SetCaptureParam(cp);
 						hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
 						if (hRes == S_OK)
 							return TRUE;
@@ -217,8 +198,8 @@ namespace DShow
 						ScopedMediaType type;
 						if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB32, type.Receive()))
 							return FALSE;
-						ps.SetFormat(PIXEL_FORMAT_RGB32);
-						m_sinkFilter->SetCaptureParam(ps);
+						cp.SetFormat(PIXEL_FORMAT_RGB32);
+						m_sinkFilter->SetCaptureParam(cp);
 						hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
 						if (hRes == S_OK)
 							return TRUE;
@@ -265,17 +246,6 @@ namespace DShow
 		if (!m_control)
 			return FALSE;
 		return m_control->GetState(0, (OAFilterState*)&state) == S_OK;
-	}
-	BYTE* VideoCapture::GetPointer()
-	{
-		this->Lock();
-		m_circularBuffer.Read((CHAR*)m_bits.Ptr(), 1);
-		this->Unlock();
-		return m_bits;
-	}
-	LONG VideoCapture::GetSize()
-	{
-		return m_size;
 	}
 	BOOL VideoCapture::ShowProperty(HWND hWND)
 	{
