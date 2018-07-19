@@ -24,7 +24,7 @@ namespace Bytedance
 		BOOL	Process() OVERRIDE;
 		BOOL	Close() OVERRIDE;
 	public:
-		void SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
+		void	SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 	private:
 		DX10&				m_dx10;
 		DX10CaptureRunner	m_captureRunner;

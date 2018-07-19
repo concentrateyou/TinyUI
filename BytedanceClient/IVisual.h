@@ -1,8 +1,8 @@
 #pragma once
 #include "Common/TinyModule.h"
-#include "DX10.h"
-#include "DX10CaptureRunner.h"
-#include "DX10Image2D.h"
+#include "DX11.h"
+#include "DX11CaptureRunner.h"
+#include "DX11Image2D.h"
 using namespace TinyFramework;
 using namespace DXFramework;
 
@@ -14,11 +14,11 @@ namespace Bytedance
 	public:
 		IVisual();
 		virtual ~IVisual();
-		virtual	LPCSTR			Name() = 0;
-		virtual BOOL			Open() = 0;
-		virtual BOOL			Process() = 0;
-		virtual BOOL			Close() = 0;
-		virtual DX10Image2D*	visual() = 0;
+		virtual	LPCSTR				Name() = 0;
+		virtual BOOL				Open() = 0;
+		virtual BOOL				Process() = 0;
+		virtual BOOL				Close() = 0;
+		virtual DX11ImageElement2D*	visual() = 0;
 	};
 }
 

@@ -5,8 +5,8 @@ namespace Bytedance
 {
 	CanvasController::CanvasController(CanvasView& view)
 		:m_view(view),
-		m_preview(m_dx10),
-		m_graphics(m_dx10),
+		m_displayGS(m_dx11),
+		m_videoGS(m_dx11),
 		m_bClose(FALSE)
 	{
 		m_videoEvent.CreateEvent();
@@ -15,19 +15,23 @@ namespace Bytedance
 	CanvasController::~CanvasController()
 	{
 	}
+	DX11& CanvasController::GetDX11()
+	{
+		return m_dx11;
+	}
 	BOOL CanvasController::Initialize(const TinySize& size)
 	{
 		TinyRectangle s;
 		GetClientRect(m_view.Handle(), &s);
-		if (!m_dx10.Initialize(m_view.Handle(), TO_CX(s), TO_CY(s)))
+		if (!m_dx11.Initialize(m_view.Handle(), TO_CX(s), TO_CY(s)))
 			return FALSE;
-		if (!m_preview.Create())
+		if (!m_displayGS.Create())
 			return FALSE;
-		if (!m_preview.InitializeShaders())
+		if (!m_displayGS.InitializeShaders())
 			return FALSE;
-		if (!m_graphics.Create(size.cx, size.cy))
+		if (!m_videoGS.Create(size.cx, size.cy))
 			return FALSE;
-		if (!m_graphics.InitializeShaders())
+		if (!m_videoGS.InitializeShaders())
 			return FALSE;
 		m_bClose = FALSE;
 		m_task.Submit(BindCallback(&CanvasController::OnMessagePump, this));
@@ -37,35 +41,40 @@ namespace Bytedance
 	{
 		m_bClose = TRUE;
 		m_task.Close(3000);
-		m_preview.Destory();
-		m_graphics.Destory();
+		m_displayGS.Destory();
+		m_videoGS.Destory();
 	}
 	void CanvasController::OnMessagePump()
 	{
 		for (;;)
 		{
-			if (m_videoEvent.Lock())
-			{
-				if (m_bClose)
-					break;
-				PreviewRender();
-				EncodeRender();
-			}
+			DisplayRender();
+			VideoRender();
 		}
 	}
-	void CanvasController::PreviewRender()
+	void CanvasController::DisplayRender()
 	{
 		TinyAutoLock lock(m_lock);
-		m_preview.BeginDraw();
+		m_displayGS.BeginDraw();
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
 			IVisual* visual = m_visuals[i];
-			visual->Process();
-			m_graphics.DrawImage(*visual->visual());
+			if (visual->Process())
+			{
+				if (visual->visual()->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+				{
+					m_videoGS.DrawImage(*static_cast<DX11Image2D*>(visual->visual()));
+				}
+				if (visual->visual()->IsKindOf(RUNTIME_CLASS(DX11YUVVideo)))
+				{
+					m_videoGS.DrawImageYUVBT601(*static_cast<DX11YUVVideo*>(visual->visual()));
+				}
+			}
 		}
-		m_preview.EndDraw();
+		m_displayGS.EndDraw();
+		m_dx11.Present();
 	}
-	void CanvasController::EncodeRender()
+	void CanvasController::VideoRender()
 	{
 
 	}

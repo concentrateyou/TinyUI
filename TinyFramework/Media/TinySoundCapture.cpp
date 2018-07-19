@@ -222,7 +222,21 @@ namespace TinyFramework
 			HRESULT hRes = DirectSoundFullDuplexCreate8(captureGUID, renderGUID, &dscbdesc, &dsbdesc, GetDesktopWindow(), DSSCL_PRIORITY, &m_dsduplex, &m_dscb8, &m_dsb8, NULL);
 			if (hRes != S_OK)
 				return FALSE;
-
+			TinyComPtr<IDirectSoundCaptureFXAec > echo;
+			hRes = m_dscb8->GetObjectInPath(GUID_DSCFX_CLASS_AEC,
+				0,
+				IID_IDirectSoundCaptureFXAec8,
+				(void **)&echo
+			);
+			if (hRes != S_OK)
+				return FALSE;
+			DSCFXAec params;
+			echo->GetAllParameters(&params);
+			params.fEnable = TRUE;
+			params.fNoiseFill = TRUE;
+			hRes = echo->SetAllParameters(&params);
+			if (hRes != S_OK)
+				return FALSE;
 			return TRUE;
 		}
 	}

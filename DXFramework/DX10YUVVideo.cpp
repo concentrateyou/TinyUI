@@ -37,7 +37,7 @@ namespace DXFramework
 			return FALSE;
 		desc.Width = (cx + 1) / 2;
 		desc.Height = (cy + 1) / 2;
-		desc.Format = DXGI_FORMAT_R8G8_UNORM;
+		desc.Format = DXGI_FORMAT_R8_UNORM;
 		if (!m_textureU.Create(dx10, desc))
 			return FALSE;
 		if (!m_textureV.Create(dx10, desc))

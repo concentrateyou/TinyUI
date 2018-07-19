@@ -24,6 +24,8 @@ namespace Bytedance
 		window->SetPosition(TinySize(100, 100));
 		m_canvasView.Create(m_hWND, 0, 0, 1, 1, FALSE);
 		BuildUI({ 800,600 });
+
+		m_canvasController.Initialize({ 1280,720 });
 	}
 
 	void MainView::OnUninitialize()
@@ -127,6 +129,7 @@ namespace Bytedance
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
 
+
 	}
 	void MainView::Resize(INT cx, INT cy)
 	{
@@ -183,6 +186,19 @@ namespace Bytedance
 	{
 		vector<VideoCapture::Name> names;
 		VideoCapture::GetDevices(names);
-
+		vector<VideoCaptureParam> params;
+		VideoCapture::GetDeviceParams(names[0], params);
+		TinySize size(640, 360);
+		for (INT i = 0; i < params.size(); i++)
+		{
+			if (params[i].GetSize() == size)
+			{
+				CameraVisual* visual = new CameraVisual(m_canvasController.GetDX11());
+				visual->Select(names[0], params[i]);
+				visual->Open();
+				m_canvasController.Add(visual);
+				break;
+			}
+		}
 	}
 }
