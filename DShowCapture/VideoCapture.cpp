@@ -108,12 +108,8 @@ namespace DShow
 	}
 	BOOL VideoCapture::Allocate(const VideoCaptureParam& cp)
 	{
-		if (!m_builder ||
-			!m_sinkFilter ||
-			!m_captureO ||
-			!m_control)
+		if (IsEmpty())
 			return FALSE;
-		Pause();
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
 		if (hRes != S_OK)

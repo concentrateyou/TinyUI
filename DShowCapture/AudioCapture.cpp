@@ -152,8 +152,8 @@ namespace DShow
 	}
 	BOOL AudioCapture::Allocate(const AudioCaptureParam& param)
 	{
-
-		Pause();
+		if (IsEmpty())
+			return FALSE;
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
 		if (hRes != S_OK)
@@ -189,10 +189,10 @@ namespace DShow
 						prop.cbAlign = 1;
 						hRes = neg->SuggestAllocatorProperties(&prop);
 					}
+					m_sinkFilter->SetRequestFormat(param.RequestFormat);
 					hRes = streamConfig->SetFormat(mediaType.Ptr());
 					if (hRes != S_OK)
 						return FALSE;
-					m_sinkFilter->SetRequestFormat(param.RequestFormat);
 					hRes = m_builder->Connect(m_captureO, m_sinkI);
 					if (hRes != S_OK)
 						return FALSE;

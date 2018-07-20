@@ -51,7 +51,7 @@ namespace Bytedance
 	BOOL CameraVisual::Close()
 	{
 		m_capture.Stop();
-		m_capture.Deallocate();
+		m_capture.DeAllocate();
 		return TRUE;
 	}
 
