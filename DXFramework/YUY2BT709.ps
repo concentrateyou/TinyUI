@@ -1,0 +1,30 @@
+Texture2D theTexture : register(t0);
+SamplerState theSampler : register(s0);
+
+struct PixelInputType
+{
+	float4 pos : SV_POSITION;
+    float2 tex : TEXCOORD0;
+    float4 color : COLOR0;
+};
+
+float4 YUY2BT709PixelShader(PixelInputType input) : SV_TARGET
+{
+	const float3 offset = {-0.0627451017, -0.501960814, -0.501960814};
+    const float3 Rcoeff = {1.1644,  0.0000,  1.7927};
+    const float3 Gcoeff = {1.1644, -0.2132, -0.5329};
+    const float3 Bcoeff = {1.1644,  2.1124,  0.0000};
+
+	float4 textureColor;
+	float3 yuv;
+	yuv.x = theTexture.Sample(theSampler, input.tex).r;
+	yuv.y = theTexture.Sample(theSampler, input.tex).g;
+	yuv.z = theTexture.Sample(theSampler, input.tex).a;
+	yuv += offset;
+	textureColor.r = dot(yuv, Rcoeff);
+	textureColor.g = dot(yuv, Gcoeff);
+	textureColor.b = dot(yuv, Bcoeff);
+	textureColor.a = 1.0f;
+
+    return textureColor * input.color;
+};

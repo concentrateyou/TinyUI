@@ -71,7 +71,7 @@ namespace Bytedance
 				}
 				if (visual->visual()->IsKindOf(RUNTIME_CLASS(DX11YUY2Video)))
 				{
-					m_videoGS.DrawImageYUY2BT601(*static_cast<DX11YUY2Video*>(visual->visual()));
+					m_videoGS.DrawImageYUY2BT709(*static_cast<DX11YUY2Video*>(visual->visual()));
 				}
 			}
 		}

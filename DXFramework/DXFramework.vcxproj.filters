@@ -213,6 +213,9 @@
     <ClInclude Include="DX11YUY2BT601Shader.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
+    <ClInclude Include="DX11YUY2BT709Shader.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -390,6 +393,9 @@
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX11YUY2BT601Shader.cpp">
+      <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11YUY2BT709Shader.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
   </ItemGroup>

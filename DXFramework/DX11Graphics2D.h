@@ -9,6 +9,7 @@
 #include "DX11YUVBT601Shader.h"
 #include "DX11YUVBT709Shader.h"
 #include "DX11YUY2BT601Shader.h"
+#include "DX11YUY2BT709Shader.h"
 #include "DX11YUVVideo.h"
 #include "DX11YUY2Video.h"
 
@@ -33,6 +34,7 @@ namespace DXFramework
 		BOOL					DrawImageYUVBT601(DX11YUVVideo& image);
 		BOOL					DrawImageYUVBT709(DX11YUVVideo& image);
 		BOOL					DrawImageYUY2BT601(DX11YUY2Video& image);
+		BOOL					DrawImageYUY2BT709(DX11YUY2Video& image);
 		BOOL					DrawImage(DX11Image2D& image);
 		BOOL					DrawLine(DX11Line2D& line, const XMFLOAT2* points, DWORD count, const XMFLOAT4& color);
 		BOOL					DrawRectangle(DX11Rectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
@@ -61,6 +63,7 @@ namespace DXFramework
 		DX11YUVBT601Shader					m_shaderYUVBT601;
 		DX11YUVBT709Shader					m_shaderYUVBT709;
 		DX11YUY2BT601Shader					m_shaderYUY2BT601;
+		DX11YUY2BT709Shader					m_shaderYUY2BT709;
 		TinyComPtr<ID3D11Texture2D>			m_render2D;
 		TinyComPtr<ID3D11Texture2D>			m_depth2D;
 		TinyComPtr<ID3D11DepthStencilView>	m_depthView;

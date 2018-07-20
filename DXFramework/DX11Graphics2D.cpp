@@ -75,6 +75,13 @@ namespace DXFramework
 		if (!m_shaderYUY2BT601.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
 
+		vs = str + "\\shader\\YUY2BT709.vs";
+		ASSERT(PathFileExists(vs.c_str()));
+		ps = str + "\\shader\\YUY2BT709.ps";
+		ASSERT(PathFileExists(ps.c_str()));
+		if (!m_shaderYUY2BT709.Initialize(m_dx11, vs.c_str(), ps.c_str()))
+			return FALSE;
+
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		m_camera.UpdateView();
 		return TRUE;
@@ -333,6 +340,19 @@ namespace DXFramework
 		m_shaderYUVBT601.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], s);
 		ms[1] = XMMatrixIdentity();
 		m_shaderYUVBT601.Render(m_dx11);
+		return TRUE;
+	}
+	BOOL DX11Graphics2D::DrawImageYUY2BT709(DX11YUY2Video& image)
+	{
+		if (image.IsEmpty())
+			return FALSE;
+		if (!image.DrawImage(m_dx11))
+			return FALSE;
+		XMMATRIX* ms = m_dx11.GetMatrixs();
+		DX11Texture2D* s[1] = { image.GetTexture() };
+		m_shaderYUY2BT709.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], s);
+		ms[1] = XMMatrixIdentity();
+		m_shaderYUY2BT709.Render(m_dx11);
 		return TRUE;
 	}
 	BOOL DX11Graphics2D::DrawImageYUY2BT601(DX11YUY2Video& image)
