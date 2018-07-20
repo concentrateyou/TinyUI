@@ -5,6 +5,9 @@ using namespace TinyFramework;
 
 namespace DXFramework
 {
+	/// <summary>
+	/// YV12,YUV420 IYUV (3 planes)
+	/// </summary>
 	class DX11YUVVideo : public DX11ImageElement2D
 	{
 		struct VERTEXTYPE

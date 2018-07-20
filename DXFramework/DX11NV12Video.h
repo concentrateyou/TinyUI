@@ -7,6 +7,9 @@ using namespace TinyFramework::IO;
 
 namespace DXFramework
 {
+	/// <summary>
+	/// NV12 (2 planes)
+	/// </summary>
 	class DX11NV12Video : public DX11ImageElement2D
 	{
 		struct VERTEXTYPE
