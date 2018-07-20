@@ -3,11 +3,11 @@
 
 namespace DShow
 {
-	class AudioCaptureParam
+	class AudioCaptureFormat
 	{
 	public:
-		AudioCaptureParam();
-		~AudioCaptureParam();
+		AudioCaptureFormat();
+		~AudioCaptureFormat();
 		WAVEFORMATEX GetFormat() const;
 		void SetFormat(const WAVEFORMATEX& wfx);
 		string ToString() const;
@@ -16,4 +16,12 @@ namespace DShow
 		WAVEFORMATEX	m_wft;
 	};
 
+	class AudioCaptureParam
+	{
+	public:
+		AudioCaptureParam();
+		~AudioCaptureParam();
+	public:
+		AudioCaptureFormat RequestFormat;
+	};
 }

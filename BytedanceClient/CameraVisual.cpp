@@ -18,21 +18,26 @@ namespace Bytedance
 		return TEXT("CameraVisual");
 	}
 
-	BOOL CameraVisual::Select(const VideoCapture::Name& name, const VideoCaptureParam& param)
+	BOOL CameraVisual::Select(const VideoCapture::Name& name, const VideoCaptureParam& requestParam)
 	{
 		m_capture.Uninitialize();
+		m_capture.SetCallback(BindCallback(&CameraVisual::OnCallback, this));
 		if (!m_capture.Initialize(name))
 			return FALSE;
-		TinySize size = param.GetSize();
-		if (!m_video.Create(m_dx11, size.cx, size.cy))
-			return FALSE;
-		m_param = param;
+		m_requestParam = requestParam;
 		return TRUE;
 	}
 	BOOL CameraVisual::Open()
 	{
-		if (!m_capture.Allocate(m_param))
+		this->Close();
+		if (!m_capture.Allocate(m_requestParam))
 			return FALSE;
+		m_currentFormat = m_capture.GetCurrentFormat();
+		if (!m_video.Create(m_dx11, m_currentFormat.GetSize().cx, m_currentFormat.GetSize().cy))
+		{
+			m_capture.DeAllocate();
+			return FALSE;
+		}
 		if (!m_capture.Start())
 			return FALSE;
 		return TRUE;
@@ -40,18 +45,6 @@ namespace Bytedance
 	BOOL CameraVisual::Process()
 	{
 		if (m_video.IsEmpty())
-			return FALSE;
-		TinySize sizeT = m_param.GetSize();
-		LONG size = m_capture.GetSize();
-		BYTE* bits = m_capture.GetPointer();
-		if (!bits)
-			return FALSE;
-		if (size <= 0)
-			return FALSE;
-		BYTE *pY = bits;
-		BYTE *pU = pY + 1;
-		BYTE *pV = pY + 3;
-		if (!m_video.Copy(m_dx11, pY, sizeT.cx * 2, pU, sizeT.cx * 2, pV, sizeT.cx * 2))
 			return FALSE;
 		return FALSE;
 	}
@@ -66,5 +59,8 @@ namespace Bytedance
 	{
 		return &m_video;
 	}
+	void CameraVisual::OnCallback(BYTE* bits, LONG size, FLOAT ts, void*)
+	{
 
+	}
 }

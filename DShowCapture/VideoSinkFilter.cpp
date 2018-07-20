@@ -24,10 +24,14 @@ namespace DShow
 	{
 		return index == 0 ? m_sinkInputPin : NULL;
 	}
-
-	void VideoSinkFilter::SetCaptureParam(const VideoCaptureParam& param)
+	const VideoCaptureFormat& VideoSinkFilter::GetResponseFormat()
 	{
 		ASSERT(m_sinkInputPin);
-		m_sinkInputPin->SetCaptureParam(param);
+		return m_sinkInputPin->GetResponseFormat();
+	}
+	void VideoSinkFilter::SetRequestFormat(const VideoCaptureFormat& request)
+	{
+		ASSERT(m_sinkInputPin);
+		m_sinkInputPin->SetRequestFormat(request);
 	}
 }

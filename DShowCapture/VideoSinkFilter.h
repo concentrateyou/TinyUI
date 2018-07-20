@@ -13,11 +13,11 @@ namespace DShow
 	public:
 		explicit VideoSinkFilter(FilterObserver* observer);
 		virtual ~VideoSinkFilter();
-		void SetCaptureParam(const VideoCaptureParam& param);
-		INT GetPinCount() OVERRIDE;
-		IPin* GetPin(INT index) OVERRIDE;
+		const VideoCaptureFormat& GetResponseFormat();
+		void	SetRequestFormat(const VideoCaptureFormat& request);
+		INT		GetPinCount() OVERRIDE;
+		IPin*	GetPin(INT index) OVERRIDE;
 	private:
 		TinyScopedReferencePtr<VideoSinkInputPin> m_sinkInputPin;
-		VideoCaptureParam	m_param;
 	};
 }

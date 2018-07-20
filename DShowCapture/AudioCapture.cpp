@@ -41,7 +41,13 @@ namespace DShow
 	{
 		Uninitialize();
 	}
-
+	BOOL	AudioCapture::IsEmpty() const
+	{
+		return  (m_builder == NULL ||
+			m_sinkFilter == NULL ||
+			m_captureO == NULL ||
+			m_control == NULL);
+	}
 	void AudioCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
 	{
 		if (!m_callback.IsNull())
@@ -85,11 +91,8 @@ namespace DShow
 	}
 	void AudioCapture::Uninitialize()
 	{
-		Deallocate();
-		if (m_control != NULL)
-		{
-			m_control->Pause();
-		}
+		Pause();
+		DeAllocate();
 		if (m_builder != NULL)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
@@ -105,37 +108,41 @@ namespace DShow
 	}
 	BOOL AudioCapture::SetVolume(LONG volume)
 	{
-		if (!m_mixer)
-			return FALSE;
-		DOUBLE dVolume = ((DOUBLE)volume / 100);
-		return m_mixer->put_MixLevel(dVolume) == S_OK;
+		if (m_mixer != NULL)
+		{
+			DOUBLE dVolume = ((DOUBLE)volume / 100);
+			return SUCCEEDED(m_mixer->put_MixLevel(dVolume));
+		}
+		return FALSE;
 	}
 	BOOL AudioCapture::GetVolume(LONG& volume)
 	{
-		if (!m_mixer)
-			return FALSE;
-		DOUBLE dVolume = 0.0;
-		HRESULT hRes = m_mixer->get_MixLevel(&dVolume);
-		volume = static_cast<LONG>((dVolume * 100));
-		return hRes == S_OK;
+		if (m_mixer != NULL)
+		{
+			DOUBLE dVolume = 0.0;
+			HRESULT hRes = m_mixer->get_MixLevel(&dVolume);
+			volume = static_cast<LONG>((dVolume * 100));
+			return SUCCEEDED(hRes);
+		}
+		return FALSE;
 	}
 	BOOL AudioCapture::Start()
 	{
-		if (!m_control)
-			return FALSE;
-		return m_control->Run() == S_OK;
+		if (m_control != NULL)
+			return SUCCEEDED(m_control->Run());
+		return FALSE;
 	}
 	BOOL AudioCapture::Stop()
 	{
-		if (!m_control)
-			return FALSE;
-		return m_control->Stop() == S_OK;
+		if (m_control != NULL)
+			return SUCCEEDED(m_control->Stop());
+		return FALSE;
 	}
 	BOOL AudioCapture::Pause()
 	{
-		if (!m_control)
-			return FALSE;
-		return m_control->Pause() == S_OK;
+		if (m_control != NULL)
+			return SUCCEEDED(m_control->Pause());
+		return FALSE;
 	}
 	BOOL AudioCapture::GetState(FILTER_STATE& state)
 	{
@@ -145,6 +152,8 @@ namespace DShow
 	}
 	BOOL AudioCapture::Allocate(const AudioCaptureParam& param)
 	{
+
+		Pause();
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
 		if (hRes != S_OK)
@@ -154,7 +163,7 @@ namespace DShow
 		hRes = streamConfig->GetNumberOfCapabilities(&count, &size);
 		if (hRes != S_OK)
 			return FALSE;
-		WAVEFORMATEX w = param.GetFormat();
+		WAVEFORMATEX w = param.RequestFormat.GetFormat();
 		for (INT i = 0; i < count; ++i)
 		{
 			ScopedMediaType mediaType;
@@ -183,7 +192,7 @@ namespace DShow
 					hRes = streamConfig->SetFormat(mediaType.Ptr());
 					if (hRes != S_OK)
 						return FALSE;
-					m_sinkFilter->SetCaptureParam(param);
+					m_sinkFilter->SetRequestFormat(param.RequestFormat);
 					hRes = m_builder->Connect(m_captureO, m_sinkI);
 					if (hRes != S_OK)
 						return FALSE;
@@ -193,7 +202,7 @@ namespace DShow
 		}
 		return FALSE;
 	}
-	void AudioCapture::Deallocate()
+	void AudioCapture::DeAllocate()
 	{
 		if (m_builder != NULL)
 		{
@@ -299,7 +308,7 @@ namespace DShow
 		}
 		return FALSE;
 	}
-	BOOL AudioCapture::GetDeviceParams(const AudioCapture::Name& device, vector<AudioCaptureParam>& params)
+	BOOL AudioCapture::GetDeviceFormats(const AudioCapture::Name& device, vector<AudioCaptureFormat>& formats)
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
@@ -335,9 +344,9 @@ namespace DShow
 			{
 				WAVEFORMATEX *pFormat = reinterpret_cast<WAVEFORMATEX*>(mediaType->pbFormat);
 				if (!pFormat) continue;
-				AudioCaptureParam param;
-				param.SetFormat(*pFormat);
-				params.push_back(param);
+				AudioCaptureFormat s;
+				s.SetFormat(*pFormat);
+				formats.push_back(s);
 			}
 		}
 		return TRUE;

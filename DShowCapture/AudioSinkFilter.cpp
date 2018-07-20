@@ -23,10 +23,14 @@ namespace DShow
 	{
 		return index == 0 ? m_sinkInputPin : NULL;
 	}
-
-	void AudioSinkFilter::SetCaptureParam(const AudioCaptureParam& param)
+	const AudioCaptureFormat& AudioSinkFilter::GetResponseFormat()
 	{
 		ASSERT(m_sinkInputPin);
-		m_sinkInputPin->SetCaptureParam(param);
+		return m_sinkInputPin->GetResponseFormat();
+	}
+	void AudioSinkFilter::SetRequestFormat(const AudioCaptureFormat& request)
+	{
+		ASSERT(m_sinkInputPin);
+		m_sinkInputPin->SetRequestFormat(request);
 	}
 }

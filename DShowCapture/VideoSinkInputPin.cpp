@@ -37,9 +37,16 @@ namespace DShow
 	VideoSinkInputPin::~VideoSinkInputPin()
 	{
 	}
-	void VideoSinkInputPin::SetCaptureParam(const VideoCaptureParam& param)
+	void VideoSinkInputPin::SetRequestFormat(const VideoCaptureFormat& request)
 	{
-		m_param = param;
+		m_request = request;
+		m_response.SetSize(0, 0);
+		m_response.SetRate(0.0F);
+		m_response.SetFormat(PIXEL_FORMAT_UNKNOWN);
+	}
+	const VideoCaptureFormat& VideoSinkInputPin::GetResponseFormat()
+	{
+		return m_response;
 	}
 	HRESULT VideoSinkInputPin::CheckMediaType(const AM_MEDIA_TYPE* pMediaType)
 	{
@@ -53,8 +60,35 @@ namespace DShow
 		VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
 		if (pvi == NULL)
 			return E_INVALIDARG;
-		if (m_param.GetFormat() == GetPixelFormat(subType))
+		m_response.SetSize(pvi->bmiHeader.biWidth, abs(pvi->bmiHeader.biHeight));
+		if (pvi->AvgTimePerFrame > 0)
+		{
+			m_response.SetRate(static_cast<FLOAT>(SecondsToReferenceTime / pvi->AvgTimePerFrame));
+		}
+		else
+		{
+			m_response.SetRate(m_request.GetRate());
+		}
+		if (subType == MediaSubTypeI420 &&	pvi->bmiHeader.biCompression == MAKEFOURCC('I', '4', '2', '0'))
+		{
+			m_response.SetFormat(PIXEL_FORMAT_I420);
 			return NOERROR;
+		}
+		if (subType == MEDIASUBTYPE_YUY2 &&	pvi->bmiHeader.biCompression == MAKEFOURCC('Y', 'U', 'Y', '2'))
+		{
+			m_response.SetFormat(PIXEL_FORMAT_YUY2);
+			return NOERROR;
+		}
+		if (subType == MEDIASUBTYPE_RGB32 &&pvi->bmiHeader.biCompression == BI_RGB)
+		{
+			m_response.SetFormat(PIXEL_FORMAT_RGB32);
+			return NOERROR;
+		}
+		if (subType == MEDIASUBTYPE_RGB24 &&pvi->bmiHeader.biCompression == BI_RGB)
+		{
+			m_response.SetFormat(PIXEL_FORMAT_RGB24);
+			return NOERROR;
+		}
 		return S_FALSE;
 	}
 	HRESULT VideoSinkInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType)
@@ -71,22 +105,22 @@ namespace DShow
 		pvi->bmiHeader.biPlanes = 1;
 		pvi->bmiHeader.biClrImportant = 0;
 		pvi->bmiHeader.biClrUsed = 0;
-		if (m_param.GetRate() > 0)
+		if (m_request.GetRate() > 0)
 		{
-			pvi->AvgTimePerFrame = static_cast<REFERENCE_TIME>(SecondsToReferenceTime / m_param.GetRate());
+			pvi->AvgTimePerFrame = static_cast<REFERENCE_TIME>(SecondsToReferenceTime / m_request.GetRate());
 		}
 		pMediaType->majortype = MEDIATYPE_Video;
 		pMediaType->formattype = FORMAT_VideoInfo;
 		pMediaType->bTemporalCompression = FALSE;
-		switch (m_param.GetFormat())
+		switch (m_request.GetFormat())
 		{
 		case PIXEL_FORMAT_I420:
 		{
 			pvi->bmiHeader.biCompression = MAKEFOURCC('I', '4', '2', '0');
 			pvi->bmiHeader.biBitCount = 12;
-			pvi->bmiHeader.biWidth = m_param.GetSize().cx;
-			pvi->bmiHeader.biHeight = m_param.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = m_param.GetSize().cx * m_param.GetSize().cy * 3 / 2;
+			pvi->bmiHeader.biWidth = m_request.GetSize().cx;
+			pvi->bmiHeader.biHeight = m_request.GetSize().cy;
+			pvi->bmiHeader.biSizeImage = m_request.GetSize().cx * m_request.GetSize().cy * 3 / 2;
 			pMediaType->subtype = MediaSubTypeI420;
 			break;
 		}
@@ -94,9 +128,9 @@ namespace DShow
 		{
 			pvi->bmiHeader.biCompression = MAKEFOURCC('Y', 'U', 'Y', '2');
 			pvi->bmiHeader.biBitCount = 16;
-			pvi->bmiHeader.biWidth = m_param.GetSize().cx;
-			pvi->bmiHeader.biHeight = m_param.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = m_param.GetSize().cx * m_param.GetSize().cy * 2;
+			pvi->bmiHeader.biWidth = m_request.GetSize().cx;
+			pvi->bmiHeader.biHeight = m_request.GetSize().cy;
+			pvi->bmiHeader.biSizeImage = m_request.GetSize().cx * m_request.GetSize().cy * 2;
 			pMediaType->subtype = MEDIASUBTYPE_YUY2;
 			break;
 		}
@@ -104,9 +138,9 @@ namespace DShow
 		{
 			pvi->bmiHeader.biCompression = BI_RGB;
 			pvi->bmiHeader.biBitCount = 24;
-			pvi->bmiHeader.biWidth = m_param.GetSize().cx;
-			pvi->bmiHeader.biHeight = m_param.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = ((((24 * m_param.GetSize().cx) + 31) / 32) * 4);
+			pvi->bmiHeader.biWidth = m_request.GetSize().cx;
+			pvi->bmiHeader.biHeight = m_request.GetSize().cy;
+			pvi->bmiHeader.biSizeImage = ((((24 * m_request.GetSize().cx) + 31) / 32) * 4);
 			pMediaType->subtype = MEDIASUBTYPE_RGB24;
 			break;
 		}
@@ -114,9 +148,9 @@ namespace DShow
 		{
 			pvi->bmiHeader.biCompression = BI_RGB;
 			pvi->bmiHeader.biBitCount = 32;
-			pvi->bmiHeader.biWidth = m_param.GetSize().cx;
-			pvi->bmiHeader.biHeight = m_param.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = m_param.GetSize().cx * m_param.GetSize().cy * 4;
+			pvi->bmiHeader.biWidth = m_request.GetSize().cx;
+			pvi->bmiHeader.biHeight = m_request.GetSize().cy;
+			pvi->bmiHeader.biSizeImage = m_request.GetSize().cx * m_request.GetSize().cy * 4;
 			pMediaType->subtype = MEDIASUBTYPE_RGB32;
 			break;
 		}

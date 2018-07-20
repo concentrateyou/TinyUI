@@ -11,11 +11,13 @@ namespace DShow
 	public:
 		VideoSinkInputPin(FilterBase* pFilter, FilterObserver* observer);
 		virtual ~VideoSinkInputPin();
-		void SetCaptureParam(const VideoCaptureParam& param);
+		const VideoCaptureFormat& GetResponseFormat();
+		void	SetRequestFormat(const VideoCaptureFormat& request);
 		HRESULT CheckMediaType(const AM_MEDIA_TYPE* pMediaType) OVERRIDE;
 		HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType) OVERRIDE;
 	private:
-		VideoCaptureParam	m_param;
+		VideoCaptureFormat	m_request;
+		VideoCaptureFormat	m_response;
 	};
 }
 

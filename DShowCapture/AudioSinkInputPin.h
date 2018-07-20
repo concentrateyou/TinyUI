@@ -11,11 +11,13 @@ namespace DShow
 	public:
 		AudioSinkInputPin(FilterBase* pFilter, FilterObserver* observer);
 		virtual ~AudioSinkInputPin();
-		void SetCaptureParam(const AudioCaptureParam& param);
+		const AudioCaptureFormat& GetResponseFormat();
+		void	SetRequestFormat(const AudioCaptureFormat& request);
 		HRESULT CheckMediaType(const AM_MEDIA_TYPE* pMediaType) OVERRIDE;
 		HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType) OVERRIDE;
 	private:
-		AudioCaptureParam	m_param;
+		AudioCaptureFormat	m_request;
+		AudioCaptureFormat	m_response;
 	};
 }
 

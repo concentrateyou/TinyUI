@@ -186,15 +186,17 @@ namespace Bytedance
 	{
 		vector<VideoCapture::Name> names;
 		VideoCapture::GetDevices(names);
-		vector<VideoCaptureParam> params;
-		VideoCapture::GetDeviceParams(names[0], params);
+		vector<VideoCaptureFormat> formats;
+		VideoCapture::GetDeviceFormats(names[0], formats);
 		TinySize size(640, 360);
-		for (INT i = 0; i < params.size(); i++)
+		for (INT i = 0; i < formats.size(); i++)
 		{
-			if (params[i].GetSize() == size)
+			if (formats[i].GetSize() == size)
 			{
 				CameraVisual* visual = new CameraVisual(m_canvasController.GetDX11());
-				visual->Select(names[0], params[i]);
+				VideoCaptureParam param;
+				param.RequestFormat = formats[i];
+				visual->Select(names[0], param);
 				visual->Open();
 				m_canvasController.Add(visual);
 				break;

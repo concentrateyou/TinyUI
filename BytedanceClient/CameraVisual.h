@@ -29,10 +29,13 @@ namespace Bytedance
 		BOOL				Close() OVERRIDE;
 		DX11ImageElement2D*	visual() OVERRIDE;
 	private:
+		void				OnCallback(BYTE* bits, LONG size, FLOAT ts, void*);
+	private:
 		DX11&				m_dx11;
 		DX11YUVVideo		m_video;
 		VideoCapture		m_capture;
-		VideoCaptureParam	m_param;
+		VideoCaptureParam	m_requestParam;
+		VideoCaptureFormat	m_currentFormat;
 	};
 }
 

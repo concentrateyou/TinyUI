@@ -4,19 +4,19 @@
 
 namespace DShow
 {
-	VideoCaptureParam::VideoCaptureParam()
+	VideoCaptureFormat::VideoCaptureFormat()
 		:m_rate(0.0F), m_vpf(PIXEL_FORMAT_UNKNOWN)
 	{
 
 	}
-	VideoCaptureParam::VideoCaptureParam(const TinySize& size, FLOAT rate, VideoPixelFormat vpf)
+	VideoCaptureFormat::VideoCaptureFormat(const TinySize& size, FLOAT rate, VideoPixelFormat vpf)
 		: m_size(size),
 		m_rate(rate),
 		m_vpf(vpf)
 	{
 
 	}
-	string VideoCaptureParam::PixelFormatToString(VideoPixelFormat vpf)
+	string VideoCaptureFormat::PixelFormatToString(VideoPixelFormat vpf)
 	{
 		switch (vpf)
 		{
@@ -39,7 +39,7 @@ namespace DShow
 		}
 		return "";
 	}
-	BOOL VideoCaptureParam::IsValid() const
+	BOOL VideoCaptureFormat::IsValid() const
 	{
 		return (m_size.cx < MaxDimension) &&
 			(m_size.cy < MaxDimension) &&
@@ -50,46 +50,55 @@ namespace DShow
 			(m_vpf >= PIXEL_FORMAT_UNKNOWN) &&
 			(m_vpf < PIXEL_FORMAT_MAX);
 	}
-	void VideoCaptureParam::SetFormat(VideoPixelFormat vpf)
+	void VideoCaptureFormat::SetFormat(VideoPixelFormat vpf)
 	{
 		m_vpf = vpf;
 	}
-	void VideoCaptureParam::SetSize(const TinySize& size)
+	void VideoCaptureFormat::SetSize(const TinySize& size)
 	{
 		m_size = size;
 	}
-	void VideoCaptureParam::SetSize(INT cx, INT cy)
+	void VideoCaptureFormat::SetSize(INT cx, INT cy)
 	{
 		m_size.cx = cx;
 		m_size.cy = cy;
 	}
-	void VideoCaptureParam::SetScale(INT cx, INT cy)
+	void VideoCaptureFormat::SetScale(INT cx, INT cy)
 	{
 		m_scale.cx = cx;
 		m_scale.cy = cy;
 	}
-	void VideoCaptureParam::SetRate(FLOAT rate)
+	void VideoCaptureFormat::SetRate(FLOAT rate)
 	{
 		m_rate = rate;
 	}
-	const TinySize& VideoCaptureParam::GetSize() const
+	const TinySize& VideoCaptureFormat::GetSize() const
 	{
 		return m_size;
 	}
-	const TinySize&	VideoCaptureParam::GetScale() const
+	const TinySize&	VideoCaptureFormat::GetScale() const
 	{
 		return m_scale;
 	}
-	FLOAT VideoCaptureParam::GetRate() const
+	const FLOAT VideoCaptureFormat::GetRate() const
 	{
 		return m_rate;
 	}
-	VideoPixelFormat VideoCaptureParam::GetFormat() const
+	const VideoPixelFormat VideoCaptureFormat::GetFormat() const
 	{
 		return m_vpf;
 	}
-	string VideoCaptureParam::ToString() const
+	const string VideoCaptureFormat::ToString() const
 	{
 		return StringPrintf("%s,%d*%d,%.3f", PixelFormatToString(m_vpf).c_str(), m_size.cx, m_size.cy, m_rate);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	VideoCaptureParam::VideoCaptureParam()
+	{
+
+	}
+	VideoCaptureParam::~VideoCaptureParam()
+	{
+
 	}
 }

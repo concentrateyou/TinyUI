@@ -48,6 +48,13 @@ namespace DShow
 	{
 		Uninitialize();
 	}
+	BOOL VideoCapture::IsEmpty() const
+	{
+		return (m_builder == NULL ||
+			m_sinkFilter == NULL ||
+			m_captureO == NULL ||
+			m_control == NULL);
+	}
 	void VideoCapture::SetCallback(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
 	{
 		m_callback = std::move(callback);
@@ -81,33 +88,32 @@ namespace DShow
 	}
 	void VideoCapture::Uninitialize()
 	{
-		Deallocate();
-		if (m_control != NULL)
-		{
-			m_control->Pause();
-		}
+		Pause();
+		DeAllocate();
 		if (m_builder != NULL)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
 			m_builder->RemoveFilter(m_mjpgFilter);
-			m_builder->RemoveFilter(m_avFilter);
 			m_builder->RemoveFilter(m_captureFilter);
 		}
 		m_captureO.Release();
-		m_mjpgO.Release();
-		m_mjpgI.Release();
-		m_avO.Release();
-		m_avI.Release();
 		m_sinkI.Release();
-		m_captureFilter.Release();
-		m_avFilter.Release();
+		m_mjpgI.Release();
+		m_mjpgO.Release();
 		m_mjpgFilter.Release();
+		m_captureFilter.Release();
 		m_control.Release();
 		m_builder.Release();
 		m_sinkFilter = NULL;
 	}
-	BOOL VideoCapture::Allocate(const VideoCaptureParam& param)
+	BOOL VideoCapture::Allocate(const VideoCaptureParam& cp)
 	{
+		if (!m_builder ||
+			!m_sinkFilter ||
+			!m_captureO ||
+			!m_control)
+			return FALSE;
+		Pause();
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
 		if (hRes != S_OK)
@@ -126,149 +132,121 @@ namespace DShow
 				return FALSE;
 			if (mediaType->majortype == MEDIATYPE_Video && mediaType->formattype == FORMAT_VideoInfo)
 			{
-				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-				if (param.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) &&
-					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
+				VIDEOINFOHEADER* vih = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+				if (cp.RequestFormat.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) &&
+					cp.RequestFormat.GetSize() == TinySize(vih->bmiHeader.biWidth, vih->bmiHeader.biHeight))
 				{
-					SetAntiFlickerInCaptureFilter();
-					if (h->AvgTimePerFrame > caps.MaxFrameInterval || h->AvgTimePerFrame < caps.MinFrameInterval)
-						return FALSE;
+					if (cp.RequestFormat.GetRate() > 0.0F)
+					{
+						vih->AvgTimePerFrame = SecondsToReferenceTime / cp.RequestFormat.GetRate();
+					}
+					m_sinkFilter->SetRequestFormat(cp.RequestFormat);
 					hRes = streamConfig->SetFormat(mediaType.Ptr());
 					if (hRes != S_OK)
 						return FALSE;
-					//1.尝试RGB32硬件是否支持
-					VideoCaptureParam cp = param;
-					cp.SetFormat(PIXEL_FORMAT_RGB32);
-					m_sinkFilter->SetCaptureParam(cp);
-					hRes = m_builder->Connect(m_captureO, m_sinkI);
-					if (hRes == S_OK)
-						return TRUE;
-					//1. 如果失败再尝试微软自带的Dec Filter
-					switch (param.GetFormat())
+					if (cp.RequestFormat.GetFormat() == PIXEL_FORMAT_MJPEG)
 					{
-					case PIXEL_FORMAT_MJPEG:
+						if (!m_mjpgFilter)
+						{
+							hRes = m_mjpgFilter.CoCreateInstance(CLSID_MjpegDec, NULL, CLSCTX_INPROC);
+							if (hRes != S_OK)
+								return FALSE;
+							m_mjpgO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
+							m_mjpgI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
+							hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
+							if (hRes != S_OK)
+							{
+								m_mjpgFilter.Release();
+								m_mjpgO.Release();
+								m_mjpgI.Release();
+								return FALSE;
+							}
+						}
+						SetAntiFlickerInCaptureFilter();
+						if (m_mjpgFilter != NULL)
+						{
+							hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
+							if (hRes != S_OK)
+								return FALSE;
+							hRes = m_builder->ConnectDirect(m_mjpgI, m_sinkI, NULL);
+							if (hRes != S_OK)
+								return FALSE;
+						}
+					}
+					else
 					{
-						hRes = m_mjpgFilter.CoCreateInstance(CLSID_MjpegDec, NULL, CLSCTX_INPROC);
+						hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, NULL);
 						if (hRes != S_OK)
 							return FALSE;
-						hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
-						if (hRes != S_OK)
-							return FALSE;
-						m_mjpgO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
-						if (!m_mjpgO)
-							return FALSE;
-						m_mjpgI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
-						if (!m_mjpgI)
-							return FALSE;
-						hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
-						if (hRes != S_OK)
-							return FALSE;
-						//1.判断MjpegDec输出是否支持RGB32
-						ScopedMediaType type;
-						if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB32, type.Receive()))
-							return FALSE;
-						cp.SetFormat(PIXEL_FORMAT_RGB32);
-						m_sinkFilter->SetCaptureParam(cp);
-						hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
-						if (hRes == S_OK)
-							return TRUE;
 					}
-					break;
-					case PIXEL_FORMAT_UYVY:
-					case PIXEL_FORMAT_YUY2:
-					case PIXEL_FORMAT_YV12:
-					case PIXEL_FORMAT_I420:
-					{
-						hRes = m_avFilter.CoCreateInstance(CLSID_AVIDec, NULL, CLSCTX_INPROC);
-						if (hRes != S_OK)
-							return FALSE;
-						hRes = m_builder->AddFilter(m_avFilter, NULL);
-						if (hRes != S_OK)
-							return FALSE;
-						m_avO = GetPin(m_avFilter, PINDIR_OUTPUT, GUID_NULL);
-						if (!m_avO)
-							return FALSE;
-						m_avI = GetPin(m_avFilter, PINDIR_INPUT, GUID_NULL);
-						if (!m_avI)
-							return FALSE;
-						hRes = m_builder->ConnectDirect(m_captureO, m_avI, mediaType.Ptr());
-						if (hRes != S_OK)
-							return FALSE;
-						//1.判断AVIDec输出是否支持RGB32
-						ScopedMediaType type;
-						if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB32, type.Receive()))
-							return FALSE;
-						cp.SetFormat(PIXEL_FORMAT_RGB32);
-						m_sinkFilter->SetCaptureParam(cp);
-						hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
-						if (hRes == S_OK)
-							return TRUE;
-					}
-					break;
-					}
+					m_currentFormat = m_sinkFilter->GetResponseFormat();
+					return TRUE;
 				}
 			}
 		}
 		return FALSE;
 	}
-	void VideoCapture::Deallocate()
+	void VideoCapture::DeAllocate()
 	{
-		if (m_builder)
+		if (m_builder != NULL)
 		{
 			m_builder->Disconnect(m_captureO);
-			m_builder->Disconnect(m_sinkI);
 			m_builder->Disconnect(m_mjpgI);
 			m_builder->Disconnect(m_mjpgO);
-			m_builder->Disconnect(m_avI);
-			m_builder->Disconnect(m_avO);
+			m_builder->Disconnect(m_sinkI);
 		}
 	}
 	BOOL VideoCapture::Start()
 	{
-		if (!m_control)
-			return FALSE;
-		return m_control->Run() == S_OK;
+		if (m_control != NULL)
+			return SUCCEEDED(m_control->Run());
+		return FALSE;
 	}
 	BOOL VideoCapture::Stop()
 	{
-		if (!m_control)
-			return FALSE;
-		return m_control->Stop() == S_OK;
+		if (m_control != NULL)
+			return SUCCEEDED(m_control->Stop());
+		return FALSE;
 	}
 	BOOL VideoCapture::Pause()
 	{
-		if (!m_control)
-			return FALSE;
-		return m_control->Pause() == S_OK;
+		if (m_control != NULL)
+			return SUCCEEDED(m_control->Pause());
+		return FALSE;
 	}
 	BOOL VideoCapture::GetState(FILTER_STATE& state)
 	{
-		if (!m_control)
-			return FALSE;
-		return m_control->GetState(0, (OAFilterState*)&state) == S_OK;
+		if (m_control != NULL)
+			return SUCCEEDED(m_control->GetState(0, (OAFilterState*)&state));
+		return FALSE;
+	}
+	const VideoCaptureFormat& VideoCapture::GetCurrentFormat()
+	{
+		return m_currentFormat;
 	}
 	BOOL VideoCapture::ShowProperty(HWND hWND)
 	{
-		if (!m_captureFilter)
-			return FALSE;
-		TinyComPtr<ISpecifyPropertyPages> pages;
-		if (FAILED(m_captureFilter->QueryInterface(__uuidof(ISpecifyPropertyPages), (void **)&pages)))
-			return FALSE;
-		CAUUID cauuid;
-		if (FAILED(pages->GetPages(&cauuid)))
-			return FALSE;
-		if (cauuid.cElems > 0)
+		if (m_captureFilter != NULL)
 		{
-			FILTER_INFO filterInfo;
-			TinyComPtr<IUnknown> unknow;
-			if (SUCCEEDED(m_captureFilter->QueryFilterInfo(&filterInfo)) &&
-				SUCCEEDED(m_captureFilter->QueryInterface(IID_IUnknown, (void **)&unknow)))
+			TinyComPtr<ISpecifyPropertyPages> pages;
+			if (FAILED(m_captureFilter->QueryInterface(__uuidof(ISpecifyPropertyPages), (void **)&pages)))
+				return FALSE;
+			CAUUID cauuid;
+			if (FAILED(pages->GetPages(&cauuid)))
+				return FALSE;
+			if (cauuid.cElems > 0)
 			{
-				OleCreatePropertyFrame(hWND, 0, 0, filterInfo.achName, 1, &unknow, cauuid.cElems, cauuid.pElems, 0, 0, NULL);
+				FILTER_INFO filterInfo;
+				TinyComPtr<IUnknown> unknow;
+				if (SUCCEEDED(m_captureFilter->QueryFilterInfo(&filterInfo)) &&
+					SUCCEEDED(m_captureFilter->QueryInterface(IID_IUnknown, (void **)&unknow)))
+				{
+					OleCreatePropertyFrame(hWND, 0, 0, filterInfo.achName, 1, &unknow, cauuid.cElems, cauuid.pElems, 0, 0, NULL);
+				}
+				CoTaskMemFree(cauuid.pElems);
+				filterInfo.pGraph->Release();
+				return TRUE;
 			}
-			CoTaskMemFree(cauuid.pElems);
-			filterInfo.pGraph->Release();
-			return TRUE;
 		}
 		return FALSE;
 	}
@@ -444,7 +422,7 @@ namespace DShow
 			hRes = ksPropset->Set(PROPSETID_VIDCAP_VIDEOPROCAMP, KSPROPERTY_VIDEOPROCAMP_POWERLINE_FREQUENCY, &data, sizeof(data), &data, sizeof(data));
 		}
 	}
-	BOOL VideoCapture::GetDeviceParams(const VideoCapture::Name& device, vector<VideoCaptureParam>& params)
+	BOOL VideoCapture::GetDeviceFormats(const VideoCapture::Name& device, vector<VideoCaptureFormat>& formats)
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
@@ -478,14 +456,14 @@ namespace DShow
 				return FALSE;
 			if (mediaType->majortype == MEDIATYPE_Video &&mediaType->formattype == FORMAT_VideoInfo)
 			{
-				VideoCaptureParam param;
-				param.SetFormat(TranslateMediaSubtypeToPixelFormat(mediaType->subtype));
-				if (param.GetFormat() == PIXEL_FORMAT_UNKNOWN)
+				VideoCaptureFormat vcf;
+				vcf.SetFormat(TranslateMediaSubtypeToPixelFormat(mediaType->subtype));
+				if (vcf.GetFormat() == PIXEL_FORMAT_UNKNOWN)
 					continue;
 				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-				param.SetSize(h->bmiHeader.biWidth, h->bmiHeader.biHeight);
-				param.SetRate((h->AvgTimePerFrame > 0) ? 10000000 / static_cast<FLOAT>(h->AvgTimePerFrame) : 0.0F);
-				params.push_back(param);
+				vcf.SetSize(h->bmiHeader.biWidth, h->bmiHeader.biHeight);
+				vcf.SetRate((h->AvgTimePerFrame > 0) ? 10000000 / static_cast<FLOAT>(h->AvgTimePerFrame) : 0.0F);
+				formats.push_back(vcf);
 			}
 		}
 		return TRUE;

@@ -28,6 +28,7 @@ namespace DShow
 	public:
 		AudioCapture();
 		virtual ~AudioCapture();
+		BOOL	IsEmpty() const;
 		void	SetCallback(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback);
 		BOOL	Initialize(const Name& name);
 		void	Uninitialize();
@@ -41,12 +42,13 @@ namespace DShow
 		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	public:
 		virtual BOOL Allocate(const AudioCaptureParam& param);
-		virtual void Deallocate();
+		virtual void DeAllocate();
 	public:
 		static BOOL GetDevices(vector<Name>& names);
-		static BOOL GetDeviceParams(const AudioCapture::Name& device, vector<AudioCaptureParam>& formats);
+		static BOOL GetDeviceFormats(const AudioCapture::Name& device, vector<AudioCaptureFormat>& formats);
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
 	private:
+		//
 		TinyComPtr<IBaseFilter>						m_captureFilter;
 		TinyComPtr<IGraphBuilder>					m_builder;
 		TinyComPtr<IMediaControl>					m_control;

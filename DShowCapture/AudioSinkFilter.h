@@ -13,12 +13,12 @@ namespace DShow
 	public:
 		explicit AudioSinkFilter(FilterObserver* observer);
 		virtual ~AudioSinkFilter();
-		void SetCaptureParam(const AudioCaptureParam& param);
-		INT GetPinCount() OVERRIDE;
-		IPin* GetPin(INT index) OVERRIDE;
+		const AudioCaptureFormat& GetResponseFormat();
+		void	SetRequestFormat(const AudioCaptureFormat& request);
+		INT		GetPinCount() OVERRIDE;
+		IPin*	GetPin(INT index) OVERRIDE;
 	private:
 		TinyScopedReferencePtr<AudioSinkInputPin> m_sinkInputPin;
-		AudioCaptureParam	m_param;
 	};
 }
 

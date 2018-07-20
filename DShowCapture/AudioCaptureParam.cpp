@@ -3,26 +3,27 @@
 
 namespace DShow
 {
-	AudioCaptureParam::AudioCaptureParam()
+	AudioCaptureFormat::AudioCaptureFormat()
 	{
-	}
 
-	AudioCaptureParam::~AudioCaptureParam()
-	{
 	}
-	WAVEFORMATEX AudioCaptureParam::GetFormat() const
+	AudioCaptureFormat::~AudioCaptureFormat()
+	{
+
+	}
+	WAVEFORMATEX AudioCaptureFormat::GetFormat() const
 	{
 		return m_wft;
 	}
-	void AudioCaptureParam::SetFormat(const WAVEFORMATEX& wfx)
+	void AudioCaptureFormat::SetFormat(const WAVEFORMATEX& wfx)
 	{
 		m_wft = wfx;
 	}
-	string AudioCaptureParam::ToString() const
+	string AudioCaptureFormat::ToString() const
 	{
 		return StringPrintf("%d,%d,%d,%d,%d", m_wft.nAvgBytesPerSec, m_wft.nBlockAlign, m_wft.nChannels, m_wft.nSamplesPerSec, m_wft.wBitsPerSample);
 	}
-	WAVEFORMATEX AudioCaptureParam::GetDefaultFormat()
+	WAVEFORMATEX AudioCaptureFormat::GetDefaultFormat()
 	{
 		WAVEFORMATEX w;
 		w.cbSize = 0;
@@ -33,5 +34,12 @@ namespace DShow
 		w.nAvgBytesPerSec = w.nSamplesPerSec * w.nBlockAlign;
 		w.wFormatTag = WAVE_FORMAT_PCM;
 		return w;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	AudioCaptureParam::AudioCaptureParam()
+	{
+	}
+	AudioCaptureParam::~AudioCaptureParam()
+	{
 	}
 }

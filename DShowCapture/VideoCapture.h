@@ -33,6 +33,7 @@ namespace DShow
 	public:
 		VideoCapture();
 		virtual ~VideoCapture();
+		BOOL	IsEmpty() const;
 		void	SetCallback(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback);
 		BOOL	Initialize(const Name& name);
 		void	Uninitialize();
@@ -41,20 +42,23 @@ namespace DShow
 		BOOL	Pause();
 		BOOL	GetState(FILTER_STATE& state);
 		BOOL	ShowProperty(HWND hWND);
+		const	VideoCaptureFormat& GetCurrentFormat();
 	public:
 		virtual BOOL Allocate(const VideoCaptureParam& param);
-		virtual void Deallocate();
+		virtual void DeAllocate();
 	public:
 		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, void*) OVERRIDE;
 	public:
 		static BOOL GetDevices(vector<Name>& names);
-		static BOOL GetDeviceParams(const VideoCapture::Name& device, vector<VideoCaptureParam>& formats);
+		static BOOL GetDeviceFormats(const VideoCapture::Name& device, vector<VideoCaptureFormat>& formats);
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
 		static BOOL GetMediaType(IPin* pPin, REFGUID subtype, AM_MEDIA_TYPE** ppType);
 	private:
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:
+		VideoCaptureFormat							m_currentFormat;
+		//
 		TinyComPtr<IGraphBuilder>					m_builder;
 		TinyComPtr<IMediaControl>					m_control;
 		TinyComPtr<IBaseFilter>						m_captureFilter;
@@ -63,10 +67,7 @@ namespace DShow
 		TinyComPtr<IBaseFilter>						m_mjpgFilter;
 		TinyComPtr<IPin>							m_mjpgO;//OUT
 		TinyComPtr<IPin>							m_mjpgI;//IN
-		//AV
-		TinyComPtr<IBaseFilter>						m_avFilter;
-		TinyComPtr<IPin>							m_avO;//OUT
-		TinyComPtr<IPin>							m_avI;//IN
+
 		TinyComPtr<IPin>							m_sinkI;
 		TinyScopedReferencePtr<VideoSinkFilter>		m_sinkFilter;
 		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_callback;
