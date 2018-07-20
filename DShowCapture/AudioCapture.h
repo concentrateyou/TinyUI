@@ -42,7 +42,7 @@ namespace DShow
 		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	public:
 		virtual BOOL Allocate(const AudioCaptureParam& param);
-		virtual void DeAllocate();
+		virtual void Deallocate();
 	public:
 		static BOOL GetDevices(vector<Name>& names);
 		static BOOL GetDeviceFormats(const AudioCapture::Name& device, vector<AudioCaptureFormat>& formats);

@@ -92,7 +92,7 @@ namespace DShow
 	void AudioCapture::Uninitialize()
 	{
 		Pause();
-		DeAllocate();
+		Deallocate();
 		if (m_builder != NULL)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
@@ -202,7 +202,7 @@ namespace DShow
 		}
 		return FALSE;
 	}
-	void AudioCapture::DeAllocate()
+	void AudioCapture::Deallocate()
 	{
 		if (m_builder != NULL)
 		{

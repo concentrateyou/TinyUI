@@ -89,7 +89,7 @@ namespace DShow
 	void VideoCapture::Uninitialize()
 	{
 		Pause();
-		DeAllocate();
+		Deallocate();
 		if (m_builder != NULL)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
@@ -182,7 +182,7 @@ namespace DShow
 		}
 		return FALSE;
 	}
-	void VideoCapture::DeAllocate()
+	void VideoCapture::Deallocate()
 	{
 		if (m_builder != NULL)
 		{

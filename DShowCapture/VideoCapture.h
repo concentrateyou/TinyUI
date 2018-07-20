@@ -45,7 +45,7 @@ namespace DShow
 		const	VideoCaptureFormat& GetCurrentFormat();
 	public:
 		virtual BOOL Allocate(const VideoCaptureParam& param);
-		virtual void DeAllocate();
+		virtual void Deallocate();
 	public:
 		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, void*) OVERRIDE;
 	public:

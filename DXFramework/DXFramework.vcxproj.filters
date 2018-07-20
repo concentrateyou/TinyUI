@@ -207,6 +207,12 @@
     <ClInclude Include="DX10CaptureRunner.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
+    <ClInclude Include="DX11YUY2Video.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11YUY2BT601Shader.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -379,6 +385,12 @@
     </ClCompile>
     <ClCompile Include="DX10CaptureRunner.cpp">
       <Filter>源文件\DX10</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11YUY2Video.cpp">
+      <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11YUY2BT601Shader.cpp">
+      <Filter>源文件\DX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

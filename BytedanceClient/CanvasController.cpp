@@ -69,6 +69,10 @@ namespace Bytedance
 				{
 					m_videoGS.DrawImageYUVBT601(*static_cast<DX11YUVVideo*>(visual->visual()));
 				}
+				if (visual->visual()->IsKindOf(RUNTIME_CLASS(DX11YUY2Video)))
+				{
+					m_videoGS.DrawImageYUY2BT601(*static_cast<DX11YUY2Video*>(visual->visual()));
+				}
 			}
 		}
 		m_displayGS.EndDraw();

@@ -218,6 +218,8 @@
     <ClInclude Include="DX11NV12BT601Shader.h" />
     <ClInclude Include="DX11Shader.h" />
     <ClInclude Include="DX11ColorShader.h" />
+    <ClInclude Include="DX11YUY2BT601Shader.h" />
+    <ClInclude Include="DX11YUY2Video.h" />
     <ClInclude Include="DX9Element2D.h" />
     <ClInclude Include="DX9Font2D.h" />
     <ClInclude Include="DX9Image2D.h" />
@@ -277,6 +279,8 @@
     <ClCompile Include="DX11NV12BT601Shader.cpp" />
     <ClCompile Include="DX11Shader.cpp" />
     <ClCompile Include="DX11ColorShader.cpp" />
+    <ClCompile Include="DX11YUY2BT601Shader.cpp" />
+    <ClCompile Include="DX11YUY2Video.cpp" />
     <ClCompile Include="DX9Element2D.cpp" />
     <ClCompile Include="DX9Font2D.cpp" />
     <ClCompile Include="DX9Image2D.cpp" />

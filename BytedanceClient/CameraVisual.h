@@ -4,10 +4,11 @@
 #include "DX11.h"
 #include "DX11CaptureRunner.h"
 #include "DX11Image2D.h"
-#include "DX11YUVVideo.h"
+#include "DX11YUY2Video.h"
 #include "DShowCommon.h"
 #include "VideoCapture.h"
 using namespace TinyFramework;
+using namespace TinyFramework::IO;
 using namespace DXFramework;
 using namespace DShow;
 
@@ -31,11 +32,15 @@ namespace Bytedance
 	private:
 		void				OnCallback(BYTE* bits, LONG size, FLOAT ts, void*);
 	private:
+		TinyLock			m_lock;
+		TinyBuffer<BYTE>	m_buffer;
+		UINT				m_linesize;
 		DX11&				m_dx11;
-		DX11YUVVideo		m_video;
+		DX11YUY2Video		m_video;
 		VideoCapture		m_capture;
 		VideoCaptureParam	m_requestParam;
 		VideoCaptureFormat	m_currentFormat;
+		TinyRingBuffer		m_ringBuffer;
 	};
 }
 
