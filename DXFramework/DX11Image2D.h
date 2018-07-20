@@ -32,8 +32,8 @@ namespace DXFramework
 		BOOL		DrawImage(DX11& dx11);
 	public:
 		BOOL		Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size);
-		BOOL		Copy(DX11& dx11, const BYTE* bits, LONG size, UINT stride);
-		BOOL		BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize);
+		BOOL		Copy(DX11& dx11, const BYTE* bits, UINT linesize);
+		BOOL		BitBlt(DX11& dx11, const BYTE* bits, UINT linesize);
 		BOOL		BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
 		BOOL		BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
 	private:

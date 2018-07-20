@@ -38,7 +38,7 @@ namespace Bytedance
 			m_capture.Deallocate();
 			return FALSE;
 		}
-		m_linesize = (m_current.GetSize().cx + 1) / 2 * 4;
+		m_linesize = m_current.GetSize().cx * 4;//(m_current.GetSize().cx + 1) / 2 * 4;
 		if (!m_capture.Start())
 			return FALSE;
 		return TRUE;

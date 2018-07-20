@@ -214,39 +214,40 @@ namespace DXFramework
 		m_index.Release();
 		DX11Texture2D::Destory();
 	}
-	BOOL DX11Image2D::BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize)
+	BOOL DX11Image2D::BitBlt(DX11& dx11, const BYTE* bits, UINT linesize)
 	{
-		TinySize sizeT(static_cast<LONG>(m_size.x), static_cast<LONG>(m_size.y));
-		if (!bits || DX11Texture2D::IsEmpty() || size != (sizeT.cx * sizeT.cy * 4))
+		UINT cx = static_cast<UINT>(m_size.x);
+		UINT cy = static_cast<UINT>(m_size.y);
+		if (!bits || DX11Texture2D::IsEmpty())
 			return FALSE;
 		HDC hDC = NULL;
 		if (!DX11Texture2D::GetDC(FALSE, hDC))
 			return FALSE;
-		LONG _linesize = sizeT.cx * 4;
+		UINT s = ((cx * 32 + 31) / 32) * 4;
 		BITMAPINFO bmi = { 0 };
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmi.bmiHeader.biWidth = sizeT.cx;
-		bmi.bmiHeader.biHeight = sizeT.cy;
+		bmi.bmiHeader.biWidth = cx;
+		bmi.bmiHeader.biHeight = cy;
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biBitCount = 32;
 		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biSizeImage = _linesize * sizeT.cy;
+		bmi.bmiHeader.biSizeImage = s *cy;
 		BYTE* pBits = NULL;
 		HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBits), NULL, 0);
-		INT rowcopy = (_linesize < linesize) ? _linesize : linesize;
-		if (linesize == rowcopy)
+		UINT rowsize = min(linesize, s);
+		if (linesize == rowsize)
 		{
-			memcpy(pBits, bits, rowcopy * sizeT.cy);
+			memcpy(pBits, bits, rowsize * cy);
 		}
 		else
 		{
-			for (INT y = 0; y < sizeT.cy; y++)
+			for (UINT y = 0; y < cy; y++)
 			{
-				memcpy(pBits + (UINT)y * _linesize, bits + (UINT)y * linesize, rowcopy);
+				memcpy(pBits + y * s, bits + y * linesize, rowsize);
 			}
 		}
 		TinyFramework::TinyMemDC mdc(hDC, hBitmap);
-		::BitBlt(hDC, 0, 0, sizeT.cx, sizeT.cy, mdc, 0, 0, SRCCOPY);
+		::BitBlt(hDC, 0, 0, cx, cy, mdc, 0, 0, SRCCOPY);
 		SAFE_DELETE_OBJECT(hBitmap);
 		return DX11Texture2D::ReleaseDC();
 	}
@@ -278,29 +279,26 @@ namespace DXFramework
 		TinySize sizeT(static_cast<LONG>(m_size.x), static_cast<LONG>(m_size.y));
 		return DX11Texture2D::Copy(dx11, ps, bits, size, sizeT.cx * 4, sizeT.cx * sizeT.cy * 4);
 	}
-	BOOL DX11Image2D::Copy(DX11& dx11, const BYTE* bits, LONG size, UINT stride)
+	BOOL DX11Image2D::Copy(DX11& dx11, const BYTE* bits, UINT linesize)
 	{
-		if (DX11Texture2D::IsEmpty() || !bits || size <= 0)
+		if (DX11Texture2D::IsEmpty() || !bits)
 			return FALSE;
-		TinySize sizeT(static_cast<LONG>(m_size.x), static_cast<LONG>(m_size.y));
-		BYTE* bitso = NULL;
-		UINT linesize = 0;
-		UINT rowcopy = (stride < linesize) ? stride : linesize;
+		UINT cx = static_cast<UINT>(m_size.x);
+		UINT cy = static_cast<UINT>(m_size.y);
 		D3D11_MAPPED_SUBRESOURCE ms;
 		if (DX11Texture2D::Map(dx11, ms))
 		{
-			bitso = static_cast<BYTE*>(ms.pData);
-			linesize = ms.RowPitch;
-			UINT rowcopy = (stride < linesize) ? stride : linesize;
-			if (linesize == rowcopy)
+			BYTE* dst = static_cast<BYTE*>(ms.pData);
+			UINT rowsize = min(linesize, ms.RowPitch);
+			if (ms.RowPitch == rowsize)
 			{
-				memcpy(bitso, bits, linesize * sizeT.cy);
+				memcpy(dst, bits, rowsize * cy);
 			}
 			else
 			{
-				for (INT y = 0; y < sizeT.cy; y++)
+				for (UINT y = 0; y < cy; y++)
 				{
-					memcpy(bitso + (UINT)y * linesize, bits + (UINT)y * stride, rowcopy);
+					memcpy(dst + y * ms.RowPitch, bits + y * linesize, rowsize);
 				}
 			}
 			DX11Texture2D::Unmap(dx11);
