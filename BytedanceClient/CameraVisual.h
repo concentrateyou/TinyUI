@@ -39,7 +39,7 @@ namespace Bytedance
 		DX11YUY2Video		m_video;
 		VideoCapture		m_capture;
 		VideoCaptureParam	m_requestParam;
-		VideoCaptureFormat	m_currentFormat;
+		VideoCaptureFormat	m_current;
 		TinyRingBuffer		m_ringBuffer;
 	};
 }

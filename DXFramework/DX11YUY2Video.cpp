@@ -23,7 +23,7 @@ namespace DXFramework
 		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		desc.Width = cx;
+		desc.Width = (cx + 1) / 2;
 		desc.Height = cy;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
