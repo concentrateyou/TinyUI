@@ -42,7 +42,7 @@ namespace DShow
 		BOOL	Pause();
 		BOOL	GetState(FILTER_STATE& state);
 		BOOL	ShowProperty(HWND hWND);
-		const	VideoCaptureFormat& GetCurrentFormat();
+		const	VideoCaptureFormat& GetFormat();
 	public:
 		virtual BOOL Allocate(const VideoCaptureParam& param);
 		virtual void Deallocate();

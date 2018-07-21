@@ -32,14 +32,14 @@ namespace Bytedance
 		this->Close();
 		if (!m_capture.Allocate(m_requestParam))
 			return FALSE;
-		m_current = m_capture.GetCurrentFormat();
+		m_current = m_capture.GetFormat();
 		TinySize size = m_current.GetSize();
 		if (!m_video.Create(m_dx11, size.cx, size.cy))
 		{
 			m_capture.Deallocate();
 			return FALSE;
 		}
-		m_linesize = ((size.cx * 32 + 31) / 32) * 4;
+		m_linesize = ((size.cx + 1) / 2) * 4;//((size.cx * 32 + 31) / 32) * 4;
 		if (!m_capture.Start())
 			return FALSE;
 		return TRUE;

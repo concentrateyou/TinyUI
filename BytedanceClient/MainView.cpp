@@ -191,7 +191,7 @@ namespace Bytedance
 		TinySize size(640, 360);
 		for (INT i = 0; i < formats.size(); i++)
 		{
-			if (formats[i].GetSize() == size && formats[i].GetFormat() == PIXEL_FORMAT_RGB24)
+			if (formats[i].GetSize() == size && formats[i].GetFormat() == PIXEL_FORMAT_YUY2)
 			{
 				CameraVisual* visual = new CameraVisual(m_canvasController.GetDX11());
 				VideoCaptureParam param;

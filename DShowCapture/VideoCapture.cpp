@@ -216,7 +216,7 @@ namespace DShow
 			return SUCCEEDED(m_control->GetState(0, (OAFilterState*)&state));
 		return FALSE;
 	}
-	const VideoCaptureFormat& VideoCapture::GetCurrentFormat()
+	const VideoCaptureFormat& VideoCapture::GetFormat()
 	{
 		return m_currentFormat;
 	}

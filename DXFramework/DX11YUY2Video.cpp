@@ -53,18 +53,18 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
-	BOOL DX11YUY2Video::Copy(DX11& dx11, const BYTE* bits, UINT stride)
+	BOOL DX11YUY2Video::Copy(DX11& dx11, const BYTE* bits, UINT linesize)
 	{
 		D3D11_MAPPED_SUBRESOURCE ms;
 		ZeroMemory(&ms, sizeof(ms));
 		if (!m_texture.Map(dx11, ms))
 			return FALSE;
-		INT		cy = static_cast<INT>(m_size.y);
 		BYTE*	dst = static_cast<BYTE*>(ms.pData);
-		UINT	linesize = ms.RowPitch;
+		INT		cy = static_cast<INT>(m_size.y);
+		UINT	rowsize = min(ms.RowPitch, linesize);
 		for (INT i = 0; i < cy; i++)
 		{
-			memcpy(dst + i * linesize, bits + i * stride, stride);
+			memcpy(dst + i * rowsize, bits + i * linesize, rowsize);
 		}
 		m_texture.Unmap(dx11);
 		return TRUE;
