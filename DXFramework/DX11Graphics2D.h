@@ -3,13 +3,10 @@
 #include "DXCamera.h"
 #include "DX11Line2D.h"
 #include "DX11Rectangle2D.h"
-#include "DX11NV12BT601Shader.h"
-#include "DX11NV12BT709Shader.h"
+#include "DX11NV12Shader.h"
 #include "DX11NV12Video.h"
-#include "DX11YUVBT601Shader.h"
-#include "DX11YUVBT709Shader.h"
-#include "DX11YUY2BT601Shader.h"
-#include "DX11YUY2BT709Shader.h"
+#include "DX11YUVShader.h"
+#include "DX11YUY2Shader.h"
 #include "DX11YUVVideo.h"
 #include "DX11YUY2Video.h"
 
@@ -42,7 +39,7 @@ namespace DXFramework
 		BOOL					EndDraw();
 		BOOL					Map(D3D11_MAPPED_SUBRESOURCE& map);
 		BOOL					Unmap();
-		HANDLE					GetHandle();//»ñµÃ¹²Ïí¾ä±ú
+		HANDLE					GetHandle();
 	public:
 		BOOL					IsEmpty() const;
 		TinySize				GetSize() const;
@@ -58,12 +55,12 @@ namespace DXFramework
 		DXCamera							m_camera;
 		DX11ColorShader						m_colorSharder;
 		DX11TextureShader					m_textureShader;
-		DX11NV12BT601Shader					m_shaderNV12BT601;
-		DX11NV12BT709Shader					m_shaderNV12BT709;
-		DX11YUVBT601Shader					m_shaderYUVBT601;
-		DX11YUVBT709Shader					m_shaderYUVBT709;
-		DX11YUY2BT601Shader					m_shaderYUY2BT601;
-		DX11YUY2BT709Shader					m_shaderYUY2BT709;
+		DX11NV12Shader						m_shaderNV12BT601;
+		DX11NV12Shader						m_shaderNV12BT709;
+		DX11YUVShader						m_shaderYUVBT601;
+		DX11YUVShader						m_shaderYUVBT709;
+		DX11YUY2Shader						m_shaderYUY2BT601;
+		DX11YUY2Shader						m_shaderYUY2BT709;
 		TinyComPtr<ID3D11Texture2D>			m_render2D;
 		TinyComPtr<ID3D11Texture2D>			m_depth2D;
 		TinyComPtr<ID3D11DepthStencilView>	m_depthView;

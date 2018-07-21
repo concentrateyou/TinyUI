@@ -3,12 +3,12 @@
 
 namespace DXFramework
 {
-	class DX10YUVBT601Shader : public DX10Shader
+	class DX10YUVShader : public DX10Shader
 	{
-		DISALLOW_COPY_AND_ASSIGN(DX10YUVBT601Shader)
+		DISALLOW_COPY_AND_ASSIGN(DX10YUVShader)
 	public:
-		DX10YUVBT601Shader();
-		virtual ~DX10YUVBT601Shader();
+		DX10YUVShader();
+		virtual ~DX10YUVShader();
 	public:
 		BOOL	Initialize(DX10& dx10, const CHAR* vsFile, const CHAR* psFile) OVERRIDE;
 		void	Render(DX10& dx10) OVERRIDE;

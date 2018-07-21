@@ -29,7 +29,7 @@ namespace DXFramework
 		BOOL		Load(DX11& dx11, HANDLE hResource) OVERRIDE;
 		BOOL		Load(DX11& dx11, const CHAR* pzFile) OVERRIDE;
 		void		Destory() OVERRIDE;
-		BOOL		DrawImage(DX11& dx11);
+		BOOL		DrawImage(DX11& dx11) OVERRIDE;
 	public:
 		BOOL		Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size);
 		BOOL		Copy(DX11& dx11, const BYTE* bits, UINT linesize);

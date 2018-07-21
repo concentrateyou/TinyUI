@@ -3,11 +3,9 @@
 #include "DX10Image2D.h"
 #include "DX10Line2D.h"
 #include "DX10Rectangle2D.h"
-#include "DX10NV12BT601Shader.h"
-#include "DX10NV12BT709Shader.h"
+#include "DX10NV12Shader.h"
 #include "DX10NV12Video.h"
-#include "DX10YUVBT601Shader.h"
-#include "DX10YUVBT709Shader.h"
+#include "DX10YUVShader.h"
 #include "DX10YUVVideo.h"
 
 namespace DXFramework
@@ -53,10 +51,10 @@ namespace DXFramework
 		DXCamera							m_camera;
 		DX10ColorShader						m_colorSharder;
 		DX10TextureShader					m_textureShader;
-		DX10NV12BT601Shader					m_shaderNV12BT601;
-		DX10NV12BT709Shader					m_shaderNV12BT709;
-		DX10YUVBT601Shader					m_shaderYUVBT601;
-		DX10YUVBT709Shader					m_shaderYUVBT709;
+		DX10NV12Shader						m_shaderNV12BT601;
+		DX10NV12Shader						m_shaderNV12BT709;
+		DX10YUVShader						m_shaderYUVBT601;
+		DX10YUVShader						m_shaderYUVBT709;
 		TinyComPtr<ID3D10Texture2D>			m_render2D;
 		TinyComPtr<ID3D10Texture2D>			m_depth2D;
 		TinyComPtr<ID3D10DepthStencilView>	m_depthView;

@@ -57,6 +57,8 @@ namespace DXFramework
 
 	REFGUID GetWICCodec(IMAGE_FILE_FORMAT format);
 
+
+
 	typedef struct tagWNDINFO
 	{
 		CHAR	className[MAX_PATH];

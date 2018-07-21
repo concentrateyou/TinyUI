@@ -26,10 +26,11 @@ namespace DXFramework
 		BOOL			IsEmpty() const;
 		BOOL			Create(DX11& dx11, INT cx, INT cy);
 		void			Destory();
-		BOOL			DrawImage(DX11& dx11);
 		BOOL			Copy(DX11& dx11, const BYTE* pY, UINT strideY, const BYTE* pUV, UINT strideUV);
 		DX11Texture2D*	GetTextureY();
 		DX11Texture2D*	GetTextureNV();
+	public:
+		BOOL			DrawImage(DX11& dx11) OVERRIDE;
 	private:
 		BOOL			Initialize(DX11& dx11);
 		BOOL			Calculate(DX11& dx11);

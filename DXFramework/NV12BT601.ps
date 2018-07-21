@@ -9,7 +9,7 @@ struct PixelInputType
     float4 color : COLOR0;
 };
 
-float4 NV12BT601PixelShader(PixelInputType input) : SV_TARGET
+float4 PS_MAIN(PixelInputType input) : SV_TARGET
 {
 	const float3 offset = {-0.0627451017, -0.501960814, -0.501960814};
     const float3 Rcoeff = {1.1644,  0.0000,  1.5960};

@@ -1,18 +1,18 @@
 #include "stdafx.h"
-#include "DX11YUY2BT709Shader.h"
+#include "DX11NV12Shader.h"
 
 namespace DXFramework
 {
-	DX11YUY2BT709Shader::DX11YUY2BT709Shader()
+	DX11NV12Shader::DX11NV12Shader()
 	{
 	}
 
 
-	DX11YUY2BT709Shader::~DX11YUY2BT709Shader()
+	DX11NV12Shader::~DX11NV12Shader()
 	{
 	}
 
-	BOOL DX11YUY2BT709Shader::Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile)
+	BOOL DX11NV12Shader::Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile)
 	{
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Blob> errorMsg;
@@ -21,18 +21,18 @@ namespace DXFramework
 		D3D11_INPUT_ELEMENT_DESC layout[3];
 		D3D11_BUFFER_DESC bufferDesc = { 0 };
 		D3D11_SAMPLER_DESC samplerDesc;
-		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "YUY2BT709VertexShader", "vs_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "VS_MAIN", "vs_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
-			LOG(ERROR) << "DX11TextureShader Initialize - YUY2BT601VertexShader: " << error;
+			LOG(ERROR) << "DX11TextureShader Initialize - NV12BT709VertexShader: " << error;
 			return FALSE;
 		}
-		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "YUY2BT709PixelShader", "ps_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "PS_MAIN", "ps_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
-			LOG(ERROR) << "DX11TextureShader Initialize - YUY2BT601PixelShader: " << error;
+			LOG(ERROR) << "DX11TextureShader Initialize - NV12BT709PixelShader: " << error;
 			return FALSE;
 		}
 		hRes = dx11.GetD3D()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
@@ -97,7 +97,7 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	void DX11YUY2BT709Shader::Render(DX11& dx11)
+	void DX11NV12Shader::Render(DX11& dx11)
 	{
 		dx11.GetImmediateContext()->IASetInputLayout(m_layout);
 		dx11.GetImmediateContext()->VSSetShader(m_vertexShader, NULL, 0);
@@ -106,7 +106,7 @@ namespace DXFramework
 		dx11.GetImmediateContext()->DrawIndexed(6, 0, 0);
 	}
 
-	void DX11YUY2BT709Shader::SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* textures[1])
+	void DX11NV12Shader::SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* textures[2])
 	{
 		XMMATRIX worldMatrix1 = XMMatrixTranspose(worldMatrix);
 		XMMATRIX viewMatrix1 = XMMatrixTranspose(viewMatrix);
@@ -121,8 +121,11 @@ namespace DXFramework
 			dx11.GetImmediateContext()->Unmap(m_buffer, 0);
 		}
 		dx11.GetImmediateContext()->VSSetConstantBuffers(0, 1, &m_buffer);
-		ID3D11ShaderResourceView* spv = textures[0]->GetSRView();
-		ASSERT(spv);
-		dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &spv);
+		ID3D11ShaderResourceView* spv1 = textures[0]->GetSRView();
+		ASSERT(spv1);
+		ID3D11ShaderResourceView* spv2 = textures[1]->GetSRView();
+		ASSERT(spv2);
+		dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &spv1);
+		dx11.GetImmediateContext()->PSSetShaderResources(1, 1, &spv2);
 	}
 }

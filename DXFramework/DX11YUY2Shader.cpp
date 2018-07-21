@@ -1,18 +1,18 @@
 #include "stdafx.h"
-#include "DX11YUY2BT601Shader.h"
+#include "DX11YUY2Shader.h"
 
 namespace DXFramework
 {
-	DX11YUY2BT601Shader::DX11YUY2BT601Shader()
+	DX11YUY2Shader::DX11YUY2Shader()
 	{
 	}
 
 
-	DX11YUY2BT601Shader::~DX11YUY2BT601Shader()
+	DX11YUY2Shader::~DX11YUY2Shader()
 	{
 	}
 
-	BOOL DX11YUY2BT601Shader::Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile)
+	BOOL DX11YUY2Shader::Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile)
 	{
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Blob> errorMsg;
@@ -21,14 +21,14 @@ namespace DXFramework
 		D3D11_INPUT_ELEMENT_DESC layout[3];
 		D3D11_BUFFER_DESC bufferDesc = { 0 };
 		D3D11_SAMPLER_DESC samplerDesc;
-		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "YUY2BT601VertexShader", "vs_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "VS_MAIN", "vs_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
 			LOG(ERROR) << "DX11TextureShader Initialize - YUY2BT601VertexShader: " << error;
 			return FALSE;
 		}
-		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "YUY2BT601PixelShader", "ps_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "PS_MAIN", "ps_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
@@ -97,7 +97,7 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	void DX11YUY2BT601Shader::Render(DX11& dx11)
+	void DX11YUY2Shader::Render(DX11& dx11)
 	{
 		dx11.GetImmediateContext()->IASetInputLayout(m_layout);
 		dx11.GetImmediateContext()->VSSetShader(m_vertexShader, NULL, 0);
@@ -106,7 +106,7 @@ namespace DXFramework
 		dx11.GetImmediateContext()->DrawIndexed(6, 0, 0);
 	}
 
-	void DX11YUY2BT601Shader::SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* textures[1])
+	void DX11YUY2Shader::SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* textures[1])
 	{
 		XMMATRIX worldMatrix1 = XMMatrixTranspose(worldMatrix);
 		XMMATRIX viewMatrix1 = XMMatrixTranspose(viewMatrix);

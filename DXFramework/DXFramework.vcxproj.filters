@@ -114,9 +114,6 @@
     <ClInclude Include="DX11Line2D.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX11NV12BT601Shader.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
     <ClInclude Include="DX11ImageElement2D.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
@@ -124,15 +121,6 @@
       <Filter>头文件\DX11</Filter>
     </ClInclude>
     <ClInclude Include="DX11YUVVideo.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11NV12BT709Shader.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11YUVBT601Shader.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11YUVBT709Shader.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
     <ClInclude Include="DX11CaptureRunner.h">
@@ -171,12 +159,6 @@
     <ClInclude Include="DX10Line2D.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
-    <ClInclude Include="DX10NV12BT601Shader.h">
-      <Filter>头文件\DX10</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10NV12BT709Shader.h">
-      <Filter>头文件\DX10</Filter>
-    </ClInclude>
     <ClInclude Include="DX10NV12Video.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
@@ -192,12 +174,6 @@
     <ClInclude Include="DX10TextureShader.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
-    <ClInclude Include="DX10YUVBT601Shader.h">
-      <Filter>头文件\DX10</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10YUVBT709Shader.h">
-      <Filter>头文件\DX10</Filter>
-    </ClInclude>
     <ClInclude Include="DX10YUVVideo.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
@@ -210,11 +186,20 @@
     <ClInclude Include="DX11YUY2Video.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX11YUY2BT601Shader.h">
+    <ClInclude Include="DX11YUY2Shader.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX11YUY2BT709Shader.h">
+    <ClInclude Include="DX11YUVShader.h">
       <Filter>头文件\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11NV12Shader.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10YUVShader.h">
+      <Filter>头文件\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10NV12Shader.h">
+      <Filter>头文件\DX10</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -296,9 +281,6 @@
     <ClCompile Include="DX11Line2D.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
-    <ClCompile Include="DX11NV12BT601Shader.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
     <ClCompile Include="DX11ImageElement2D.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
@@ -306,15 +288,6 @@
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX11YUVVideo.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11NV12BT709Shader.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11YUVBT601Shader.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11YUVBT709Shader.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX11CaptureRunner.cpp">
@@ -353,12 +326,6 @@
     <ClCompile Include="DX10Line2D.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
-    <ClCompile Include="DX10NV12BT601Shader.cpp">
-      <Filter>源文件\DX10</Filter>
-    </ClCompile>
-    <ClCompile Include="DX10NV12BT709Shader.cpp">
-      <Filter>源文件\DX10</Filter>
-    </ClCompile>
     <ClCompile Include="DX10NV12Video.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
@@ -374,12 +341,6 @@
     <ClCompile Include="DX10TextureShader.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
-    <ClCompile Include="DX10YUVBT601Shader.cpp">
-      <Filter>源文件\DX10</Filter>
-    </ClCompile>
-    <ClCompile Include="DX10YUVBT709Shader.cpp">
-      <Filter>源文件\DX10</Filter>
-    </ClCompile>
     <ClCompile Include="DX10YUVVideo.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
@@ -392,11 +353,20 @@
     <ClCompile Include="DX11YUY2Video.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
-    <ClCompile Include="DX11YUY2BT601Shader.cpp">
+    <ClCompile Include="DX11YUY2Shader.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
-    <ClCompile Include="DX11YUY2BT709Shader.cpp">
+    <ClCompile Include="DX11YUVShader.cpp">
       <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11NV12Shader.cpp">
+      <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10YUVShader.cpp">
+      <Filter>源文件\DX10</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10NV12Shader.cpp">
+      <Filter>源文件\DX10</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -434,6 +404,18 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="YUVBT709.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="YUY2BT601.ps">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="YUY2BT601.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="YUY2BT709.ps">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="YUY2BT709.vs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

@@ -3,12 +3,12 @@
 
 namespace DXFramework
 {
-	class DX11NV12BT601Shader : public DX11Shader
+	class DX11NV12Shader : public DX11Shader
 	{
-		DISALLOW_COPY_AND_ASSIGN(DX11NV12BT601Shader)
+		DISALLOW_COPY_AND_ASSIGN(DX11NV12Shader)
 	public:
-		DX11NV12BT601Shader();
-		virtual ~DX11NV12BT601Shader();
+		DX11NV12Shader();
+		virtual ~DX11NV12Shader();
 	public:
 		BOOL	Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile) OVERRIDE;
 		void	Render(DX11& dx11) OVERRIDE;

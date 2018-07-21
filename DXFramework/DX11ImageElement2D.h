@@ -11,18 +11,20 @@ namespace DXFramework
 		DX11ImageElement2D();
 		virtual ~DX11ImageElement2D();
 	public:
-		FLOAT		GetRotate() const;
-		XMFLOAT2	GetSize() const;
-		XMFLOAT2	GetScale() const;
-		XMFLOAT2	GetTranslate() const;
-		BOOL		IsFlipH() const;
-		BOOL		IsFlipV() const;
-		void		SetSize(const XMFLOAT2& size);
-		void		SetRotate(FLOAT angle);
-		void		SetScale(const XMFLOAT2& scale);
-		void		SetTranslate(const XMFLOAT2& pos);
-		void		SetFlipH(BOOL bFlag);
-		void		SetFlipV(BOOL bFlag);
+		FLOAT			GetRotate() const;
+		XMFLOAT2		GetSize() const;
+		XMFLOAT2		GetScale() const;
+		XMFLOAT2		GetTranslate() const;
+		BOOL			IsFlipH() const;
+		BOOL			IsFlipV() const;
+		void			SetSize(const XMFLOAT2& size);
+		void			SetRotate(FLOAT angle);
+		void			SetScale(const XMFLOAT2& scale);
+		void			SetTranslate(const XMFLOAT2& pos);
+		void			SetFlipH(BOOL bFlag);
+		void			SetFlipV(BOOL bFlag);
+	public:
+		virtual BOOL	DrawImage(DX11& dx11) = 0;
 	protected:
 		BOOL		m_bFlipH;
 		BOOL		m_bFlipV;

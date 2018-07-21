@@ -81,7 +81,7 @@ namespace TinyFramework
 					bi.bmiHeader.biPlanes = 1;
 					bi.bmiHeader.biBitCount = 32;
 					bi.bmiHeader.biCompression = BI_RGB;
-					bi.bmiHeader.biSizeImage = ((m_size.cx * 32 + 31) / 32) * m_size.cy * 4;
+					bi.bmiHeader.biSizeImage = LINESIZE(32, m_size.cx) * m_size.cy;
 					m_bits = NULL;
 					m_hBitmap = CreateDIBSection(m_hDC, &bi, DIB_RGB_COLORS, (void **)&m_bits, NULL, NULL);
 					if (m_hBitmap != NULL)

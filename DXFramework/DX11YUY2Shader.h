@@ -3,17 +3,17 @@
 
 namespace DXFramework
 {
-	class DX11NV12BT709Shader : public DX11Shader
+	class DX11YUY2Shader : public DX11Shader
 	{
-		DISALLOW_COPY_AND_ASSIGN(DX11NV12BT709Shader)
+		DISALLOW_COPY_AND_ASSIGN(DX11YUY2Shader)
 	public:
-		DX11NV12BT709Shader();
-		virtual ~DX11NV12BT709Shader();
+		DX11YUY2Shader();
+		virtual ~DX11YUY2Shader();
 	public:
 		BOOL	Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile) OVERRIDE;
 		void	Render(DX11& dx11) OVERRIDE;
 	public:
-		void	SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* textures[2]);
+		void	SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* textures[1]);
 	protected:
 		TinyComPtr<ID3D11Buffer>		m_buffer;
 		TinyComPtr<ID3D11VertexShader>	m_vertexShader;

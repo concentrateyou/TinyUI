@@ -1,18 +1,18 @@
 #include "stdafx.h"
-#include "DX10NV12BT709Shader.h"
+#include "DX10NV12Shader.h"
 
 namespace DXFramework
 {
-	DX10NV12BT709Shader::DX10NV12BT709Shader()
+	DX10NV12Shader::DX10NV12Shader()
 	{
 	}
 
 
-	DX10NV12BT709Shader::~DX10NV12BT709Shader()
+	DX10NV12Shader::~DX10NV12Shader()
 	{
 	}
 
-	BOOL DX10NV12BT709Shader::Initialize(DX10& dx10, const CHAR* vsFile, const CHAR* psFile)
+	BOOL DX10NV12Shader::Initialize(DX10& dx10, const CHAR* vsFile, const CHAR* psFile)
 	{
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Blob> errorMsg;
@@ -21,14 +21,14 @@ namespace DXFramework
 		D3D10_INPUT_ELEMENT_DESC layout[3];
 		D3D10_BUFFER_DESC bufferDesc = { 0 };
 		D3D10_SAMPLER_DESC samplerDesc;
-		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "NV12BT709VertexShader", "vs_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "VS_MAIN", "vs_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
 			LOG(ERROR) << "DX10TextureShader Initialize - NV12BT709VertexShader: " << error;
 			return FALSE;
 		}
-		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "NV12BT709PixelShader", "ps_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "PS_MAIN", "ps_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
@@ -96,7 +96,7 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	void DX10NV12BT709Shader::Render(DX10& dx10)
+	void DX10NV12Shader::Render(DX10& dx10)
 	{
 		dx10.GetD3D()->IASetInputLayout(m_layout);
 		dx10.GetD3D()->VSSetShader(m_vertexShader);
@@ -105,7 +105,7 @@ namespace DXFramework
 		dx10.GetD3D()->DrawIndexed(6, 0, 0);
 	}
 
-	void DX10NV12BT709Shader::SetShaderParameters(DX10& dx10, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX10Texture2D* textures[2])
+	void DX10NV12Shader::SetShaderParameters(DX10& dx10, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX10Texture2D* textures[2])
 	{
 		XMMATRIX worldMatrix1 = XMMatrixTranspose(worldMatrix);
 		XMMATRIX viewMatrix1 = XMMatrixTranspose(viewMatrix);

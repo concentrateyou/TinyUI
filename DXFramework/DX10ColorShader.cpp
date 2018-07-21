@@ -21,14 +21,14 @@ namespace DXFramework
 		TinyComPtr<ID3D10Blob> pixelShaderBuffer;
 		D3D10_INPUT_ELEMENT_DESC layout[2];
 		D3D10_BUFFER_DESC bufferDesc = { 0 };
-		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "ColorVertexPixelShader", "vs_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "VS_MAIN", "vs_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
 			LOG(ERROR) << "DX11TextureShader Initialize - ColorVertexPixelShader: " << error;
 			return FALSE;
 		}
-		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "ColorPixelShader", "ps_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
+		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "PS_MAIN", "ps_4_0_level_9_3", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
