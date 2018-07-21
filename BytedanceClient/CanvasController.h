@@ -5,8 +5,8 @@
 #include "DX11Graphics2D.h"
 #include "DX11Image2D.h"
 #include "CanvasView.h"
-#include "GameVisual.h"
-#include "CameraVisual.h"
+#include "GameElement.h"
+#include "CameraElement.h"
 using namespace DXFramework;
 using namespace TinyFramework;
 
@@ -22,8 +22,8 @@ namespace Bytedance
 		BOOL Initialize(const TinySize& output);
 		void Uninitialize();
 	public:
-		void Add(IVisual* ps);
-		void Remove(IVisual* ps);
+		void Add(IElement* ps);
+		void Remove(IElement* ps);
 	private:
 		void OnMessagePump();
 		void DisplayRender();
@@ -31,12 +31,12 @@ namespace Bytedance
 	private:
 		BOOL					m_bClose;
 		TinyLock				m_lock;
-		TinyEvent				m_videoEvent;
 		DX11					m_dx11;
 		DX11Graphics2D			m_displayGS;//‘§¿¿
 		DX11Graphics2D			m_videoGS;//±‡¬Î
-		TinyArray<IVisual*>		m_visuals;
-		TinyThread				m_task;
+		TinyArray<IElement*>		m_visuals;
+		TinyWin32Threadpool		m_tasks;
+		TinyScopedPtr<TinyWin32Worker>	m_woker;
 		TinyPerformanceTime		m_time;
 		TinyPerformanceTimer	m_timer;
 		CanvasView&				m_view;

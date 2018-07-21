@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "GameVisual.h"
+#include "GameElement.h"
 
 namespace Bytedance
 {
-	IMPLEMENT_DYNAMIC(GameVisual, DX10Image2D);
+	IMPLEMENT_DYNAMIC(GameElement, DX10Image2D);
 
-	GameVisual::GameVisual(DX10& dx10)
+	GameElement::GameElement(DX10& dx10)
 		:m_dx10(dx10),
 		m_captureRunner(dx10, *this)
 	{
@@ -13,27 +13,27 @@ namespace Bytedance
 		m_mutes[1].Create(FALSE, TEXTURE_MUTEX2, NULL);
 	}
 
-	GameVisual::~GameVisual()
+	GameElement::~GameElement()
 	{
 	}
-	void GameVisual::SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	void GameElement::SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
 	{
 		m_captureRunner.SetConfig(className, exeName, dllName);
 	}
-	PCSTR GameVisual::Name()
+	PCSTR GameElement::name()
 	{
 		return TEXT("GameVisual");
 	}
-	BOOL GameVisual::Open()
+	BOOL GameElement::Open()
 	{
 		return m_captureRunner.Submit();
 	}
-	BOOL GameVisual::Close()
+	BOOL GameElement::Close()
 	{
 		return m_captureRunner.Close();
 	}
 
-	BOOL GameVisual::Process()
+	BOOL GameElement::Process()
 	{
 		SharedCaptureDATA* pCaptureDATA = m_captureRunner.GetSharedCaptureDATA();
 		if (pCaptureDATA != NULL && pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)

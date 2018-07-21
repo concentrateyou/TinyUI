@@ -1,33 +1,33 @@
 #include "stdafx.h"
-#include "CameraVisual.h"
+#include "CameraElement.h"
 
 namespace Bytedance
 {
-	CameraVisual::CameraVisual(DX11& dx11)
+	CameraElement::CameraElement(DX11& dx11)
 		:m_dx11(dx11)
 	{
 		m_linesize = 0;
 	}
-	CameraVisual::~CameraVisual()
+	CameraElement::~CameraElement()
 	{
 
 	}
 
-	LPCSTR	CameraVisual::Name()
+	LPCSTR	CameraElement::name()
 	{
 		return TEXT("CameraVisual");
 	}
 
-	BOOL CameraVisual::Select(const VideoCapture::Name& name, const VideoCaptureParam& requestParam)
+	BOOL CameraElement::Select(const VideoCapture::Name& name, const VideoCaptureParam& requestParam)
 	{
 		m_capture.Uninitialize();
-		m_capture.SetCallback(BindCallback(&CameraVisual::OnCallback, this));
+		m_capture.SetCallback(BindCallback(&CameraElement::OnCallback, this));
 		if (!m_capture.Initialize(name))
 			return FALSE;
 		m_requestParam = requestParam;
 		return TRUE;
 	}
-	BOOL CameraVisual::Open()
+	BOOL CameraElement::Open()
 	{
 		this->Close();
 		if (!m_capture.Allocate(m_requestParam))
@@ -52,7 +52,7 @@ namespace Bytedance
 			return FALSE;
 		return TRUE;
 	}
-	BOOL CameraVisual::Process()
+	BOOL CameraElement::Process()
 	{
 		/*if (m_videoYUY2.IsEmpty())
 			return FALSE;
@@ -75,18 +75,18 @@ namespace Bytedance
 		}
 		return FALSE;
 	}
-	BOOL CameraVisual::Close()
+	BOOL CameraElement::Close()
 	{
 		m_capture.Stop();
 		m_capture.Deallocate();
 		return TRUE;
 	}
 
-	DX11ImageElement2D* CameraVisual::visual()
+	DX11ImageElement2D* CameraElement::visual()
 	{
 		return &m_videoRGB32;
 	}
-	void CameraVisual::OnCallback(BYTE* bits, LONG size, FLOAT ts, void*)
+	void CameraElement::OnCallback(BYTE* bits, LONG size, FLOAT ts, void*)
 	{
 		if (m_ringBuffer.IsEmpty())
 		{

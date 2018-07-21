@@ -13,7 +13,7 @@ namespace DXFramework
 		DISALLOW_COPY_AND_ASSIGN(DX10Texture2D)
 	public:
 		DX10Texture2D();
-		DX10Texture2D(ID3D11Texture2D* texture2D);
+		DX10Texture2D(ID3D10Texture2D* texture2D);
 		virtual ~DX10Texture2D();
 	public:
 		virtual BOOL Create(DX10& dx10, D3D10_TEXTURE2D_DESC& desc);

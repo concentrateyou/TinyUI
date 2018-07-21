@@ -8,16 +8,16 @@ using namespace DXFramework;
 
 namespace Bytedance
 {
-	class IVisual
+	class IElement
 	{
-		DISALLOW_COPY_AND_ASSIGN(IVisual)
+		DISALLOW_COPY_AND_ASSIGN(IElement)
 	public:
-		IVisual();
-		virtual ~IVisual();
-		virtual	LPCSTR				Name() = 0;
+		IElement();
+		virtual ~IElement();
 		virtual BOOL				Open() = 0;
 		virtual BOOL				Process() = 0;
 		virtual BOOL				Close() = 0;
+		virtual	LPCSTR				name() = 0;
 		virtual DX11ImageElement2D*	visual() = 0;
 	};
 }

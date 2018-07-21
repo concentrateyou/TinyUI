@@ -1,6 +1,6 @@
 #pragma once
 #include "Common/TinyModule.h"
-#include "IVisual.h"
+#include "IElement.h"
 #include "DX11.h"
 #include "DX11CaptureRunner.h"
 #include "DX11Image2D.h"
@@ -17,14 +17,14 @@ namespace Bytedance
 	/// <summary>
 	/// 摄像头可视化
 	/// </summary>
-	class CameraVisual : public IVisual
+	class CameraElement : public IElement
 	{
-		DISALLOW_COPY_AND_ASSIGN(CameraVisual)
+		DISALLOW_COPY_AND_ASSIGN(CameraElement)
 	public:
-		CameraVisual(DX11& dx11);
-		virtual ~CameraVisual();
+		CameraElement(DX11& dx11);
+		virtual ~CameraElement();
 		BOOL				Select(const VideoCapture::Name& name, const VideoCaptureParam& param);
-		LPCSTR				Name() OVERRIDE;
+		LPCSTR				name() OVERRIDE;
 		BOOL				Open() OVERRIDE;
 		BOOL				Process() OVERRIDE;
 		BOOL				Close() OVERRIDE;

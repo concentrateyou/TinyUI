@@ -201,6 +201,12 @@
     <ClInclude Include="DX10NV12Shader.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
+    <ClInclude Include="DX10YUY2Video.h">
+      <Filter>头文件\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10YUY2Shader.h">
+      <Filter>头文件\DX10</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -366,6 +372,12 @@
       <Filter>源文件\DX10</Filter>
     </ClCompile>
     <ClCompile Include="DX10NV12Shader.cpp">
+      <Filter>源文件\DX10</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10YUY2Video.cpp">
+      <Filter>源文件\DX10</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10YUY2Shader.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
   </ItemGroup>

@@ -149,31 +149,35 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IVisual.h" />
+    <ClInclude Include="IElement.h" />
     <ClInclude Include="BytedanceClient.h" />
-    <ClInclude Include="CameraVisual.h" />
+    <ClInclude Include="CameraElement.h" />
     <ClInclude Include="CanvasView.h" />
     <ClInclude Include="CanvasController.h" />
-    <ClInclude Include="GameVisual.h" />
+    <ClInclude Include="GameElement.h" />
     <ClInclude Include="MainView.h" />
+    <ClInclude Include="MonitorElement.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="WindowElement.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="IVisual.cpp" />
+    <ClCompile Include="IElement.cpp" />
     <ClCompile Include="BytedanceClient.cpp" />
-    <ClCompile Include="CameraVisual.cpp" />
+    <ClCompile Include="CameraElement.cpp" />
     <ClCompile Include="CanvasView.cpp" />
     <ClCompile Include="CanvasController.cpp" />
-    <ClCompile Include="GameVisual.cpp" />
+    <ClCompile Include="GameElement.cpp" />
     <ClCompile Include="MainView.cpp" />
+    <ClCompile Include="MonitorElement.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="WindowElement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BytedanceClient.rc" />

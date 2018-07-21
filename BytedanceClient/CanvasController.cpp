@@ -9,7 +9,7 @@ namespace Bytedance
 		m_videoGS(m_dx11),
 		m_bClose(FALSE)
 	{
-		m_videoEvent.CreateEvent();
+
 	}
 
 	CanvasController::~CanvasController()
@@ -34,13 +34,19 @@ namespace Bytedance
 		if (!m_videoGS.InitializeShaders())
 			return FALSE;
 		m_bClose = FALSE;
-		m_task.Submit(BindCallback(&CanvasController::OnMessagePump, this));
+		m_tasks.Initialize(1, 5);
+		m_woker.Reset(new TinyWin32Worker(&m_tasks));
+		ASSERT(m_woker);
+		m_woker->Submit(BindCallback(&CanvasController::OnMessagePump, this));
 		return TRUE;
 	}
 	void CanvasController::Uninitialize()
 	{
 		m_bClose = TRUE;
-		m_task.Close(3000);
+		m_woker->Wait(TRUE);
+		m_woker->Close();
+		m_tasks.Cancel();
+		m_tasks.Close();
 		m_displayGS.Destory();
 		m_videoGS.Destory();
 	}
@@ -48,6 +54,8 @@ namespace Bytedance
 	{
 		for (;;)
 		{
+			if (m_bClose)
+				break;
 			DisplayRender();
 			VideoRender();
 			Sleep(30);
@@ -59,7 +67,7 @@ namespace Bytedance
 		m_displayGS.BeginDraw();
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
-			IVisual* visual = m_visuals[i];
+			IElement* visual = m_visuals[i];
 			if (visual->Process())
 			{
 				if (visual->visual()->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
@@ -83,13 +91,13 @@ namespace Bytedance
 	{
 
 	}
-	void CanvasController::Add(IVisual* ps)
+	void CanvasController::Add(IElement* ps)
 	{
 		TinyAutoLock lock(m_lock);
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
-			IVisual* visual = m_visuals[i];
-			if (strcasecmp(visual->Name(), ps->Name()) == 0)
+			IElement* visual = m_visuals[i];
+			if (strcasecmp(visual->name(), ps->name()) == 0)
 			{
 				m_visuals.Remove(visual);
 				SAFE_DELETE(visual);
@@ -98,7 +106,7 @@ namespace Bytedance
 		}
 		m_visuals.Add(ps);
 	}
-	void CanvasController::Remove(IVisual* ps)
+	void CanvasController::Remove(IElement* ps)
 	{
 		TinyAutoLock lock(m_lock);
 		m_visuals.Remove(ps);

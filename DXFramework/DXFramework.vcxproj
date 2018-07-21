@@ -200,6 +200,8 @@
     <ClInclude Include="DX10TextureShader.h" />
     <ClInclude Include="DX10YUVShader.h" />
     <ClInclude Include="DX10YUVVideo.h" />
+    <ClInclude Include="DX10YUY2Shader.h" />
+    <ClInclude Include="DX10YUY2Video.h" />
     <ClInclude Include="DX11.h" />
     <ClInclude Include="DX11CaptureRunner.h" />
     <ClInclude Include="DX11Duplicator.h" />
@@ -257,6 +259,8 @@
     <ClCompile Include="DX10TextureShader.cpp" />
     <ClCompile Include="DX10YUVShader.cpp" />
     <ClCompile Include="DX10YUVVideo.cpp" />
+    <ClCompile Include="DX10YUY2Shader.cpp" />
+    <ClCompile Include="DX10YUY2Video.cpp" />
     <ClCompile Include="DX11.cpp" />
     <ClCompile Include="DX11Duplicator.cpp" />
     <ClCompile Include="DX11DuplicatorRunner.cpp" />

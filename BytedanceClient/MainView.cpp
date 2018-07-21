@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MainView.h"
 
-#include "CameraVisual.h"
+#include "CameraElement.h"
 
 namespace Bytedance
 {
@@ -30,6 +30,7 @@ namespace Bytedance
 
 	void MainView::OnUninitialize()
 	{
+		m_canvasController.Uninitialize();
 		m_canvasView.DestroyWindow();
 		m_max->EVENT_CLICK -= m_onMaxClick;
 		m_min->EVENT_CLICK -= m_onMaxClick;
@@ -188,12 +189,12 @@ namespace Bytedance
 		VideoCapture::GetDevices(names);
 		vector<VideoCaptureFormat> formats;
 		VideoCapture::GetDeviceFormats(names[0], formats);
-		TinySize size(640, 360);
+		TinySize size(640, 480);
 		for (INT i = 0; i < formats.size(); i++)
 		{
-			if (formats[i].GetSize() == size && formats[i].GetFormat() == PIXEL_FORMAT_MJPEG)
+			if (formats[i].GetSize() == size && formats[i].GetFormat() == PIXEL_FORMAT_RGB24)
 			{
-				CameraVisual* visual = new CameraVisual(m_canvasController.GetDX11());
+				CameraElement* visual = new CameraElement(m_canvasController.GetDX11());
 				VideoCaptureParam param;
 				param.RequestFormat = formats[i];
 				visual->Select(names[0], param);
