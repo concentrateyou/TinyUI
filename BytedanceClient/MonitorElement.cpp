@@ -16,4 +16,25 @@ namespace Bytedance
 	{
 		return TEXT("MonitorElement");
 	}
+
+	BOOL MonitorElement::Open()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BOOL MonitorElement::Process()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BOOL MonitorElement::Close()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	DXFramework::DX11ImageElement2D* MonitorElement::visual()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
 }

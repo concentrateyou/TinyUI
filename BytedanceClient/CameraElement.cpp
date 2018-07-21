@@ -70,7 +70,10 @@ namespace Bytedance
 		{
 			TinyAutoLock lock(m_lock);
 			DWORD dwSize = m_ringBuffer.Read(m_buffer, 1);
-			m_videoRGB32.Copy(m_dx11, m_buffer, m_linesize);
+			if (dwSize > 0)
+			{
+				m_videoRGB32.Copy(m_dx11, m_buffer, m_linesize);
+			}
 			return TRUE;
 		}
 		return FALSE;

@@ -17,4 +17,25 @@ namespace Bytedance
 	{
 		return TEXT("WindowElement");
 	}
+
+	BOOL WindowElement::Open()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BOOL WindowElement::Process()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BOOL WindowElement::Close()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	DXFramework::DX11ImageElement2D* WindowElement::visual()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
 }

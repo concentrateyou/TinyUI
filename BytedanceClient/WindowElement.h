@@ -23,7 +23,7 @@ namespace Bytedance
 	public:
 		WindowElement(DX11& dx11);
 		virtual ~WindowElement();
-		
+
 		BOOL				Open() OVERRIDE;
 		BOOL				Process() OVERRIDE;
 		BOOL				Close() OVERRIDE;
