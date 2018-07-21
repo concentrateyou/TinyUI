@@ -11,7 +11,7 @@ struct PixelInputType
 
 float4 PS_MAIN(PixelInputType input) : SV_TARGET
 {
-	const float3 offset = {-0.0627451017, -0.501960814, -0.501960814};
+	const float3 offset = {-0.0627450980392157, -0.5019607843137255, -0.5019607843137255};
 	const float3 Rcoeff = {1.1644,  0.0000,  1.7927};
 	const float3 Gcoeff = {1.1644, -0.2132, -0.5329};
 	const float3 Bcoeff = {1.1644,  2.1124,  0.0000};
@@ -26,5 +26,5 @@ float4 PS_MAIN(PixelInputType input) : SV_TARGET
 	textureColor.b = dot(yuv, Bcoeff);
 	textureColor.a = 1.0f;
 
-    return textureColor * input.color;
+    return saturate(textureColor) * input.color;
 };

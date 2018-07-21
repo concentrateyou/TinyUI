@@ -148,14 +148,6 @@ namespace DShow
 						return FALSE;
 					switch (request.GetFormat())
 					{
-					case PIXEL_FORMAT_RGB24:
-					case PIXEL_FORMAT_RGB32:
-					{
-						hRes = m_builder->Connect(m_captureO, m_sinkI);
-						if (hRes != S_OK)
-							return FALSE;
-					}
-					break;
 					case PIXEL_FORMAT_MJPEG:
 					{
 						if (!m_mjpgFilter)
@@ -191,6 +183,9 @@ namespace DShow
 					}
 					break;
 					default:
+						hRes = m_builder->Connect(m_captureO, m_sinkI);
+						if (hRes != S_OK)
+							return FALSE;
 						break;
 					}
 					m_currentFormat = m_sinkFilter->GetResponseFormat();
