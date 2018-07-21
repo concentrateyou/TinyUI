@@ -84,11 +84,6 @@ namespace DShow
 			m_response.SetFormat(PIXEL_FORMAT_RGB32);
 			return NOERROR;
 		}
-		if (subType == MEDIASUBTYPE_RGB24 &&pvi->bmiHeader.biCompression == BI_RGB)
-		{
-			m_response.SetFormat(PIXEL_FORMAT_RGB24);
-			return NOERROR;
-		}
 		return S_FALSE;
 	}
 	HRESULT VideoSinkInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType)

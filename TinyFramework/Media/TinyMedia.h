@@ -223,5 +223,18 @@ namespace TinyFramework
 			INT		cx;
 			INT		cy;
 		}SampleTag;
+
+		typedef struct tagAVPakcet
+		{
+			INT64	pts;
+			INT64	dts;
+			INT64	timestamp;
+			BYTE*	bits[8];
+			LONG	linesize[8];
+			UINT	x;
+			UINT	y;
+			UINT	cx;
+			UINT	cy;
+		}AVPakcet;
 	};
 }

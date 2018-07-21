@@ -36,7 +36,8 @@ namespace Bytedance
 		TinyBuffer<BYTE>	m_buffer;
 		UINT				m_linesize;
 		DX11&				m_dx11;
-		DX11YUY2Video		m_video;
+		DX11YUY2Video		m_videoYUY2;
+		DX11Image2D			m_videoRGB32;
 		VideoCapture		m_capture;
 		VideoCaptureParam	m_requestParam;
 		VideoCaptureFormat	m_current;

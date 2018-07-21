@@ -71,10 +71,10 @@ namespace DXFramework
 			return FALSE;
 		INT		cy = static_cast<INT>(m_size.y);
 		BYTE*	dst = static_cast<BYTE*>(ms.pData);
-		UINT	linesize = ms.RowPitch;
+		UINT	linesize = min(ms.RowPitch, strideY);
 		for (INT i = 0; i < cy; i++)
 		{
-			memcpy(dst + i * linesize, pY + i * strideY, strideY);
+			memcpy(dst + i * ms.RowPitch, pY + i * strideY, linesize);
 		}
 		m_textureY.Unmap(dx11);
 		//U
@@ -83,10 +83,10 @@ namespace DXFramework
 			return FALSE;
 		cy = static_cast<INT>((m_size.y + 1) / 2);
 		dst = static_cast<BYTE*>(ms.pData);
-		linesize = ms.RowPitch;
+		linesize = min(ms.RowPitch, strideU);
 		for (INT i = 0; i < cy; i++)
 		{
-			memcpy(dst + i * linesize, pU + i * strideU, strideU);
+			memcpy(dst + i * ms.RowPitch, pU + i * strideU, linesize);
 		}
 		m_textureU.Unmap(dx11);
 		//V
@@ -95,10 +95,10 @@ namespace DXFramework
 			return FALSE;
 		cy = static_cast<INT>((m_size.y + 1) / 2);
 		dst = static_cast<BYTE*>(ms.pData);
-		linesize = ms.RowPitch;
+		linesize = min(ms.RowPitch, strideV);
 		for (INT i = 0; i < cy; i++)
 		{
-			memcpy(dst + i * linesize, pV + i * strideV, strideV);
+			memcpy(dst + i * ms.RowPitch, pV + i * strideV, linesize);
 		}
 		m_textureV.Unmap(dx11);
 		return TRUE;

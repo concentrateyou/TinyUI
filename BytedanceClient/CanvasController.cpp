@@ -50,6 +50,7 @@ namespace Bytedance
 		{
 			DisplayRender();
 			VideoRender();
+			Sleep(30);
 		}
 	}
 	void CanvasController::DisplayRender()

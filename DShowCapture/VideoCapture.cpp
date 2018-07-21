@@ -128,19 +128,35 @@ namespace DShow
 				return FALSE;
 			if (mediaType->majortype == MEDIATYPE_Video && mediaType->formattype == FORMAT_VideoInfo)
 			{
+				VideoCaptureFormat request = cp.RequestFormat;
 				VIDEOINFOHEADER* vih = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-				if (cp.RequestFormat.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) &&
-					cp.RequestFormat.GetSize() == TinySize(vih->bmiHeader.biWidth, vih->bmiHeader.biHeight))
+				if (request.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) &&
+					request.GetSize() == TinySize(vih->bmiHeader.biWidth, vih->bmiHeader.biHeight))
 				{
-					if (cp.RequestFormat.GetRate() > 0.0F)
+					SetAntiFlickerInCaptureFilter();
+					if (request.GetRate() > 0.0F)
 					{
-						vih->AvgTimePerFrame = SecondsToReferenceTime / cp.RequestFormat.GetRate();
+						vih->AvgTimePerFrame = SecondsToReferenceTime / request.GetRate();
 					}
-					m_sinkFilter->SetRequestFormat(cp.RequestFormat);
+					if (request.GetFormat() == PIXEL_FORMAT_RGB24)
+					{
+						request.SetFormat(PIXEL_FORMAT_RGB32);
+					}
+					m_sinkFilter->SetRequestFormat(request);
 					hRes = streamConfig->SetFormat(mediaType.Ptr());
 					if (hRes != S_OK)
 						return FALSE;
-					if (cp.RequestFormat.GetFormat() == PIXEL_FORMAT_MJPEG)
+					switch (request.GetFormat())
+					{
+					case PIXEL_FORMAT_RGB24:
+					case PIXEL_FORMAT_RGB32:
+					{
+						hRes = m_builder->Connect(m_captureO, m_sinkI);
+						if (hRes != S_OK)
+							return FALSE;
+					}
+					break;
+					case PIXEL_FORMAT_MJPEG:
 					{
 						if (!m_mjpgFilter)
 						{
@@ -158,22 +174,24 @@ namespace DShow
 								return FALSE;
 							}
 						}
-						SetAntiFlickerInCaptureFilter();
 						if (m_mjpgFilter != NULL)
 						{
 							hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
 							if (hRes != S_OK)
 								return FALSE;
-							hRes = m_builder->ConnectDirect(m_mjpgI, m_sinkI, NULL);
-							if (hRes != S_OK)
+							ScopedMediaType type;
+							if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB32, type.Receive()))
 								return FALSE;
+							request.SetFormat(PIXEL_FORMAT_RGB32);
+							m_sinkFilter->SetRequestFormat(request);
+							hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
+							if (hRes == S_OK)
+								return TRUE;
 						}
 					}
-					else
-					{
-						hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, NULL);
-						if (hRes != S_OK)
-							return FALSE;
+					break;
+					default:
+						break;
 					}
 					m_currentFormat = m_sinkFilter->GetResponseFormat();
 					return TRUE;
