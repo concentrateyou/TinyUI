@@ -72,6 +72,13 @@ namespace DShow
 	{
 		m_rate = rate;
 	}
+	void VideoCaptureFormat::Reset()
+	{
+		m_rate = 0.0F;
+		m_scale.Empty();
+		m_size.Empty();
+		m_vpf = PIXEL_FORMAT_UNKNOWN;
+	}
 	const TinySize& VideoCaptureFormat::GetSize() const
 	{
 		return m_size;

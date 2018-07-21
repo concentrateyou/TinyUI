@@ -54,6 +54,7 @@ namespace DShow
 		void SetSize(INT cx, INT cy);
 		void SetScale(INT cx, INT cy);
 		void SetRate(FLOAT rate);
+		void Reset();
 		const TinySize& GetSize() const;
 		const TinySize&	GetScale() const;
 		const FLOAT	GetRate() const;

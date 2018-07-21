@@ -84,32 +84,40 @@ namespace DShow
 		hRes = m_builder->AddFilter(m_sinkFilter, FILTER_NAME);
 		if (hRes != S_OK)
 			return FALSE;
+		m_currentFormat.Reset();
 		return TRUE;
 	}
 	void VideoCapture::Uninitialize()
 	{
+		m_currentFormat.Reset();
 		Pause();
 		Deallocate();
 		if (m_builder != NULL)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
 			m_builder->RemoveFilter(m_mjpgFilter);
+			m_builder->RemoveFilter(m_avFilter);
 			m_builder->RemoveFilter(m_captureFilter);
 		}
 		m_captureO.Release();
 		m_sinkI.Release();
 		m_mjpgI.Release();
 		m_mjpgO.Release();
+		m_avO.Release();
+		m_avI.Release();
 		m_mjpgFilter.Release();
+		m_avFilter.Release();
 		m_captureFilter.Release();
 		m_control.Release();
 		m_builder.Release();
 		m_sinkFilter = NULL;
+
 	}
 	BOOL VideoCapture::Allocate(const VideoCaptureParam& cp)
 	{
 		if (IsEmpty())
 			return FALSE;
+		m_currentFormat.Reset();
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
 		if (hRes != S_OK)
@@ -138,55 +146,89 @@ namespace DShow
 					{
 						vih->AvgTimePerFrame = SecondsToReferenceTime / request.GetRate();
 					}
-					if (request.GetFormat() == PIXEL_FORMAT_RGB24)
-					{
-						request.SetFormat(PIXEL_FORMAT_RGB32);
-					}
+					//Ê×ÏÈ³¢ÊÔRGB32
+					request.SetFormat(PIXEL_FORMAT_RGB32);
 					m_sinkFilter->SetRequestFormat(request);
 					hRes = streamConfig->SetFormat(mediaType.Ptr());
 					if (hRes != S_OK)
 						return FALSE;
-					switch (request.GetFormat())
+					hRes = m_builder->Connect(m_captureO, m_sinkI);
+					if (hRes != S_OK)
 					{
-					case PIXEL_FORMAT_MJPEG:
-					{
-						if (!m_mjpgFilter)
+						switch (request.GetFormat())
 						{
-							hRes = m_mjpgFilter.CoCreateInstance(CLSID_MjpegDec, NULL, CLSCTX_INPROC);
-							if (hRes != S_OK)
-								return FALSE;
-							m_mjpgO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
-							m_mjpgI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
-							hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
-							if (hRes != S_OK)
+						case PIXEL_FORMAT_MJPEG:
+						{
+							if (!m_mjpgFilter)
 							{
-								m_mjpgFilter.Release();
-								m_mjpgO.Release();
-								m_mjpgI.Release();
-								return FALSE;
+								hRes = m_mjpgFilter.CoCreateInstance(CLSID_MjpegDec, NULL, CLSCTX_INPROC);
+								if (hRes != S_OK)
+									return FALSE;
+								m_mjpgO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
+								m_mjpgI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
+								hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
+								if (hRes != S_OK)
+								{
+									m_mjpgFilter.Release();
+									m_mjpgO.Release();
+									m_mjpgI.Release();
+									return FALSE;
+								}
+							}
+							if (m_mjpgFilter != NULL)
+							{
+								hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
+								if (hRes != S_OK)
+									return FALSE;
+								ScopedMediaType type;
+								if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB32, type.Receive()))
+									return FALSE;
+								request.SetFormat(PIXEL_FORMAT_RGB32);
+								m_sinkFilter->SetRequestFormat(request);
+								hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
+								if (hRes != S_OK)
+									return FALSE;
 							}
 						}
-						if (m_mjpgFilter != NULL)
-						{
-							hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
-							if (hRes != S_OK)
-								return FALSE;
-							ScopedMediaType type;
-							if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB32, type.Receive()))
-								return FALSE;
-							request.SetFormat(PIXEL_FORMAT_RGB32);
-							m_sinkFilter->SetRequestFormat(request);
-							hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
-							if (hRes == S_OK)
-								return TRUE;
-						}
-					}
-					break;
-					default:
-						hRes = m_builder->Connect(m_captureO, m_sinkI);
-						if (hRes != S_OK)
-							return FALSE;
 						break;
+						case PIXEL_FORMAT_UYVY:
+						case PIXEL_FORMAT_YUY2:
+						case PIXEL_FORMAT_YV12:
+						case PIXEL_FORMAT_I420:
+						{
+							if (!m_avFilter)
+							{
+								hRes = m_avFilter.CoCreateInstance(CLSID_AVIDec, NULL, CLSCTX_INPROC);
+								if (hRes != S_OK)
+									return FALSE;
+								m_avO = GetPin(m_avFilter, PINDIR_OUTPUT, GUID_NULL);
+								m_avI = GetPin(m_avFilter, PINDIR_INPUT, GUID_NULL);
+								hRes = m_builder->AddFilter(m_avFilter, NULL);
+								if (hRes != S_OK)
+								{
+									m_avFilter.Release();
+									m_avO.Release();
+									m_avI.Release();
+									return FALSE;
+								}
+							}
+							if (m_avFilter != NULL)
+							{
+								hRes = m_builder->ConnectDirect(m_captureO, m_avI, mediaType.Ptr());
+								if (hRes != S_OK)
+									return FALSE;
+								ScopedMediaType type;
+								if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB32, type.Receive()))
+									return FALSE;
+								request.SetFormat(PIXEL_FORMAT_RGB32);
+								m_sinkFilter->SetRequestFormat(request);
+								hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
+								if (hRes != S_OK)
+									return FALSE;
+							}
+						}
+						break;
+						}
 					}
 					m_currentFormat = m_sinkFilter->GetResponseFormat();
 					return TRUE;
@@ -202,6 +244,8 @@ namespace DShow
 			m_builder->Disconnect(m_captureO);
 			m_builder->Disconnect(m_mjpgI);
 			m_builder->Disconnect(m_mjpgO);
+			m_builder->Disconnect(m_avI);
+			m_builder->Disconnect(m_avO);
 			m_builder->Disconnect(m_sinkI);
 		}
 	}
