@@ -80,12 +80,14 @@ namespace TinyFramework
 			TinyWin32Waiter(TinyWin32Threadpool* pTaskPool = NULL);
 			virtual ~TinyWin32Waiter();
 			BOOL Submit(HANDLE handle, DWORD msDelay, Closure&& callback);
+			BOOL Wait(BOOL fCancelPendingCallbacks);
 			void Close();
 		private:
 			static void NTAPI WaitCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WAIT Wait, TP_WAIT_RESULT WaitResult);
 		protected:
 			PTP_WAIT				m_wait;
 			PTP_CALLBACK_ENVIRON	m_cbe;
+			HANDLE					m_event;
 			Closure					m_callback;
 		};
 	}

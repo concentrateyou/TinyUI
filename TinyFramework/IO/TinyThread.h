@@ -38,7 +38,8 @@ namespace TinyFramework
 			HANDLE	Handle() const;
 			DWORD	GetID() const;
 			BOOL	IsActive() const;
-			BOOL	SetPriority(DWORD dwPriority);
+			INT		GetPriority() const;
+			BOOL	SetPriority(INT priority);
 			DWORD	Suspend();
 			DWORD   Resume();
 			BOOL	Terminate(DWORD dwExit);

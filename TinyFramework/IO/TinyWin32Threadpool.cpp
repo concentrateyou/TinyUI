@@ -179,7 +179,8 @@ namespace TinyFramework
 		//////////////////////////////////////////////////////////////////////////
 		TinyWin32Waiter::TinyWin32Waiter(TinyWin32Threadpool* pTaskPool)
 			:m_wait(NULL),
-			m_cbe(NULL)
+			m_cbe(NULL),
+			m_event()
 		{
 			m_cbe = (pTaskPool != NULL) ? &pTaskPool->m_cbe : NULL;
 		}
@@ -208,6 +209,15 @@ namespace TinyFramework
 					SetThreadpoolWait(m_wait, handle, &ftime);
 				}
 				return m_wait != NULL;
+			}
+			return FALSE;
+		}
+		BOOL TinyWin32Waiter::Wait(BOOL fCancelPendingCallbacks)
+		{
+			if (m_wait != NULL)
+			{
+				WaitForThreadpoolWaitCallbacks(m_wait, fCancelPendingCallbacks);
+				return TRUE;
 			}
 			return FALSE;
 		}

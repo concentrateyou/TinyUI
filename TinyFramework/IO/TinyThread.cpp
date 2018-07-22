@@ -31,11 +31,13 @@ namespace TinyFramework
 		{
 			return m_dwID;
 		}
-		BOOL TinyThread::SetPriority(DWORD dwPriority)
+		INT TinyThread::GetPriority() const
 		{
-			if (!m_handle)
-				return FALSE;
-			return SetThreadPriority(m_handle, dwPriority);
+			return ::GetThreadPriority(m_handle);
+		}
+		BOOL TinyThread::SetPriority(INT priority)
+		{
+			return ::SetThreadPriority(m_handle, priority);
 		}
 		BOOL TinyThread::Submit(Closure&& callback)
 		{
@@ -53,19 +55,8 @@ namespace TinyFramework
 			BOOL bRes = FALSE;
 			if (m_handle != NULL)
 			{
-				HRESULT hRes = WaitForSingleObject(m_handle, dwMS);
-				if (hRes == WAIT_TIMEOUT)
-				{
-					bRes = FALSE;
-					goto _ERROR;
-				}
-				if (hRes == WAIT_OBJECT_0)
-				{
-					bRes = TRUE;
-					goto _ERROR;
-				}
+				bRes == (WaitForSingleObject(m_handle, dwMS) == WAIT_OBJECT_0);
 			}
-		_ERROR:
 			if (m_handle != NULL)
 			{
 				CloseHandle(m_handle);
@@ -79,35 +70,36 @@ namespace TinyFramework
 			if (!m_handle)
 				return FALSE;
 			DWORD code = 0;
-			GetExitCodeThread(m_handle, &code);
+			::GetExitCodeThread(m_handle, &code);
 			return code == STILL_ACTIVE;
 		}
 		DWORD TinyThread::Suspend()
 		{
 			if (!m_handle)
 				return FALSE;
-			return SuspendThread(m_handle);
+			return ::SuspendThread(m_handle);
 		}
 		DWORD TinyThread::Resume()
 		{
 			if (!m_handle)
 				return FALSE;
-			return ResumeThread(m_handle);
+			return ::ResumeThread(m_handle);
 		}
 		BOOL TinyThread::Terminate(DWORD dwExit)
 		{
 			if (!m_handle)
 				return FALSE;
-			return TerminateThread(m_handle, dwExit);
+			return ::TerminateThread(m_handle, dwExit);
 		}
 		DWORD WINAPI TinyThread::Callback(LPVOID ps)
 		{
 			TinyThread* pTask = reinterpret_cast<TinyThread*>(ps);
 			if (pTask != NULL)
 			{
+				pTask->SetPriority(THREAD_PRIORITY_NORMAL);
 				pTask->m_callback();
 			}
-			return 0;
+			return 1;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyTLS::TinyTLS()
