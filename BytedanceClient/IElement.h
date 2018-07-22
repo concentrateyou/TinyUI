@@ -17,8 +17,8 @@ namespace Bytedance
 		virtual BOOL				Open() = 0;
 		virtual BOOL				Process() = 0;
 		virtual BOOL				Close() = 0;
-		virtual	LPCSTR				name() = 0;
-		virtual DX11ImageElement2D*	visual() = 0;
+		virtual	LPCSTR				GetName() = 0;
+		virtual DX11ImageElement2D*	GetVisual() = 0;
 	};
 }
 

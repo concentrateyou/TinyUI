@@ -24,11 +24,11 @@ namespace Bytedance
 		CameraElement(DX11& dx11);
 		virtual ~CameraElement();
 		BOOL				Select(const VideoCapture::Name& name, const VideoCaptureParam& param);
-		LPCSTR				name() OVERRIDE;
 		BOOL				Open() OVERRIDE;
 		BOOL				Process() OVERRIDE;
 		BOOL				Close() OVERRIDE;
-		DX11ImageElement2D*	visual() OVERRIDE;
+		LPCSTR				GetName() OVERRIDE;
+		DX11ImageElement2D*	GetVisual() OVERRIDE;
 	private:
 		void				OnCallback(BYTE* bits, LONG size, FLOAT ts, void*);
 	private:
@@ -36,12 +36,11 @@ namespace Bytedance
 		TinyBuffer<BYTE>	m_buffer;
 		UINT				m_linesize;
 		DX11&				m_dx11;
-		DX11YUY2Video		m_videoYUY2;
 		DX11Image2D			m_videoRGB32;
+		TinyRingBuffer		m_ringBuffer;
 		VideoCapture		m_capture;
 		VideoCaptureParam	m_requestParam;
 		VideoCaptureFormat	m_current;
-		TinyRingBuffer		m_ringBuffer;
 	};
 }
 

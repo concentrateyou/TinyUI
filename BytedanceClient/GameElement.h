@@ -19,12 +19,13 @@ namespace Bytedance
 	public:
 		GameElement(DX10& dx10);
 		virtual ~GameElement();
-		LPCSTR	name() OVERRIDE;
-		BOOL	Open() OVERRIDE;
-		BOOL	Process() OVERRIDE;
-		BOOL	Close() OVERRIDE;
+		void				Select(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 	public:
-		void	SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
+		BOOL				Open() OVERRIDE;
+		BOOL				Process() OVERRIDE;
+		BOOL				Close() OVERRIDE;
+		LPCSTR				GetName() OVERRIDE;
+		DX11ImageElement2D* GetVisual() OVERRIDE;
 	private:
 		DX10&				m_dx10;
 		DX10CaptureRunner	m_captureRunner;

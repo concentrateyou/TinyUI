@@ -12,7 +12,7 @@ namespace Bytedance
 
 	}
 
-	LPCSTR	MonitorElement::name()
+	LPCSTR	MonitorElement::GetName()
 	{
 		return TEXT("MonitorElement");
 	}
@@ -32,7 +32,7 @@ namespace Bytedance
 		throw std::logic_error("The method or operation is not implemented.");
 	}
 
-	DXFramework::DX11ImageElement2D* MonitorElement::visual()
+	DX11ImageElement2D* MonitorElement::GetVisual()
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}

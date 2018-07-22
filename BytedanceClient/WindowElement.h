@@ -27,8 +27,8 @@ namespace Bytedance
 		BOOL				Open() OVERRIDE;
 		BOOL				Process() OVERRIDE;
 		BOOL				Close() OVERRIDE;
-		LPCSTR				name() OVERRIDE;
-		DX11ImageElement2D*	visual() OVERRIDE;
+		LPCSTR				GetName() OVERRIDE;
+		DX11ImageElement2D*	GetVisual() OVERRIDE;
 	private:
 		DX11&	m_dx11;
 	};

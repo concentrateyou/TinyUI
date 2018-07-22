@@ -16,13 +16,17 @@ namespace Bytedance
 	GameElement::~GameElement()
 	{
 	}
-	void GameElement::SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	void GameElement::Select(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
 	{
 		m_captureRunner.SetConfig(className, exeName, dllName);
 	}
-	PCSTR GameElement::name()
+	PCSTR GameElement::GetName()
 	{
-		return TEXT("GameVisual");
+		return TEXT("GameElement");
+	}
+	DX11ImageElement2D* GameElement::GetVisual()
+	{
+		return NULL;
 	}
 	BOOL GameElement::Open()
 	{

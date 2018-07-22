@@ -70,17 +70,17 @@ namespace Bytedance
 			IElement* visual = m_visuals[i];
 			if (visual->Process())
 			{
-				if (visual->visual()->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+				if (visual->GetVisual()->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 				{
-					m_videoGS.DrawImage(*static_cast<DX11Image2D*>(visual->visual()));
+					m_videoGS.DrawImage(*static_cast<DX11Image2D*>(visual->GetVisual()));
 				}
-				if (visual->visual()->IsKindOf(RUNTIME_CLASS(DX11YUVVideo)))
+				if (visual->GetVisual()->IsKindOf(RUNTIME_CLASS(DX11YUVVideo)))
 				{
-					m_videoGS.DrawImageYUVBT601(*static_cast<DX11YUVVideo*>(visual->visual()));
+					m_videoGS.DrawImageYUVBT601(*static_cast<DX11YUVVideo*>(visual->GetVisual()));
 				}
-				if (visual->visual()->IsKindOf(RUNTIME_CLASS(DX11YUY2Video)))
+				if (visual->GetVisual()->IsKindOf(RUNTIME_CLASS(DX11YUY2Video)))
 				{
-					m_videoGS.DrawImageYUY2BT601(*static_cast<DX11YUY2Video*>(visual->visual()));
+					m_videoGS.DrawImageYUY2BT601(*static_cast<DX11YUY2Video*>(visual->GetVisual()));
 				}
 			}
 		}
@@ -97,7 +97,7 @@ namespace Bytedance
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
 			IElement* visual = m_visuals[i];
-			if (strcasecmp(visual->name(), ps->name()) == 0)
+			if (strcasecmp(visual->GetName(), ps->GetName()) == 0)
 			{
 				m_visuals.Remove(visual);
 				SAFE_DELETE(visual);

@@ -13,7 +13,7 @@ namespace Bytedance
 
 	}
 
-	LPCSTR	WindowElement::name()
+	LPCSTR	WindowElement::GetName()
 	{
 		return TEXT("WindowElement");
 	}
@@ -33,7 +33,7 @@ namespace Bytedance
 		throw std::logic_error("The method or operation is not implemented.");
 	}
 
-	DXFramework::DX11ImageElement2D* WindowElement::visual()
+	DX11ImageElement2D* WindowElement::GetVisual()
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}
