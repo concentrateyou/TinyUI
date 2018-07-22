@@ -20,7 +20,7 @@ namespace Bytedance
 
 	BOOL WindowElement::Open()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		
 	}
 
 	BOOL WindowElement::Process()

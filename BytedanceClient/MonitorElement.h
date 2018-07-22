@@ -23,6 +23,8 @@ namespace Bytedance
 	public:
 		MonitorElement(DX11& dx11);
 		virtual ~MonitorElement();
+		BOOL				Select();
+	public:
 		BOOL				Open() OVERRIDE;
 		BOOL				Process() OVERRIDE;
 		BOOL				Close() OVERRIDE;

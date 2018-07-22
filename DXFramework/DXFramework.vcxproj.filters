@@ -114,9 +114,6 @@
     <ClInclude Include="DX11Line2D.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX11ImageElement2D.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
     <ClInclude Include="DX11NV12Video.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
@@ -141,9 +138,6 @@
     <ClInclude Include="DX10ColorShader.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
-    <ClInclude Include="DX10Element2D.h">
-      <Filter>头文件\DX10</Filter>
-    </ClInclude>
     <ClInclude Include="DX10Font2D.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
@@ -151,9 +145,6 @@
       <Filter>头文件\DX10</Filter>
     </ClInclude>
     <ClInclude Include="DX10Image2D.h">
-      <Filter>头文件\DX10</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10ImageElement2D.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
     <ClInclude Include="DX10Line2D.h">
@@ -206,6 +197,15 @@
     </ClInclude>
     <ClInclude Include="DX10YUY2Shader.h">
       <Filter>头文件\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10Element.h">
+      <Filter>头文件\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10Texture2DElement.h">
+      <Filter>头文件\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Texture2DElement.h">
+      <Filter>头文件\DX11</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -287,9 +287,6 @@
     <ClCompile Include="DX11Line2D.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
-    <ClCompile Include="DX11ImageElement2D.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
     <ClCompile Include="DX11NV12Video.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
@@ -314,9 +311,6 @@
     <ClCompile Include="DX10ColorShader.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
-    <ClCompile Include="DX10Element2D.cpp">
-      <Filter>源文件\DX10</Filter>
-    </ClCompile>
     <ClCompile Include="DX10Font2D.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
@@ -324,9 +318,6 @@
       <Filter>源文件\DX10</Filter>
     </ClCompile>
     <ClCompile Include="DX10Image2D.cpp">
-      <Filter>源文件\DX10</Filter>
-    </ClCompile>
-    <ClCompile Include="DX10ImageElement2D.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
     <ClCompile Include="DX10Line2D.cpp">
@@ -379,6 +370,15 @@
     </ClCompile>
     <ClCompile Include="DX10YUY2Shader.cpp">
       <Filter>源文件\DX10</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10Element.cpp">
+      <Filter>源文件\DX10</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10Texture2DElement.cpp">
+      <Filter>源文件\DX10</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Texture2DElement.cpp">
+      <Filter>源文件\DX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

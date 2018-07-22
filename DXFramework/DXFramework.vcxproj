@@ -186,11 +186,11 @@
     <ClInclude Include="DX10CaptureRunner.h" />
     <ClInclude Include="DX10ColorShader.h" />
     <ClInclude Include="DX10Duplicator.h" />
-    <ClInclude Include="DX10Element2D.h" />
+    <ClInclude Include="DX10Element.h" />
     <ClInclude Include="DX10Font2D.h" />
     <ClInclude Include="DX10Graphics2D.h" />
     <ClInclude Include="DX10Image2D.h" />
-    <ClInclude Include="DX10ImageElement2D.h" />
+    <ClInclude Include="DX10Texture2DElement.h" />
     <ClInclude Include="DX10Line2D.h" />
     <ClInclude Include="DX10NV12Shader.h" />
     <ClInclude Include="DX10NV12Video.h" />
@@ -208,7 +208,7 @@
     <ClInclude Include="DX11DuplicatorRunner.h" />
     <ClInclude Include="DX11Font2D.h" />
     <ClInclude Include="DX11Image2D.h" />
-    <ClInclude Include="DX11ImageElement2D.h" />
+    <ClInclude Include="DX11Texture2DElement.h" />
     <ClInclude Include="DX11NV12Shader.h" />
     <ClInclude Include="DX11NV12Video.h" />
     <ClInclude Include="DX11YUVShader.h" />
@@ -245,11 +245,11 @@
     <ClCompile Include="DX10CaptureRunner.cpp" />
     <ClCompile Include="DX10ColorShader.cpp" />
     <ClCompile Include="DX10Duplicator.cpp" />
-    <ClCompile Include="DX10Element2D.cpp" />
+    <ClCompile Include="DX10Element.cpp" />
     <ClCompile Include="DX10Font2D.cpp" />
     <ClCompile Include="DX10Graphics2D.cpp" />
     <ClCompile Include="DX10Image2D.cpp" />
-    <ClCompile Include="DX10ImageElement2D.cpp" />
+    <ClCompile Include="DX10Texture2DElement.cpp" />
     <ClCompile Include="DX10Line2D.cpp" />
     <ClCompile Include="DX10NV12Shader.cpp" />
     <ClCompile Include="DX10NV12Video.cpp" />
@@ -267,7 +267,7 @@
     <ClCompile Include="DX11Font2D.cpp" />
     <ClCompile Include="DX11Image2D.cpp" />
     <ClCompile Include="DX11CaptureRunner.cpp" />
-    <ClCompile Include="DX11ImageElement2D.cpp" />
+    <ClCompile Include="DX11Texture2DElement.cpp" />
     <ClCompile Include="DX11NV12Shader.cpp" />
     <ClCompile Include="DX11NV12Video.cpp" />
     <ClCompile Include="DX11YUVShader.cpp" />

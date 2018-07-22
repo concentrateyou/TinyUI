@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\Element">
+      <UniqueIdentifier>{38e46111-d535-4044-8ab4-9679614ea3a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Element">
+      <UniqueIdentifier>{954ba60a-373d-4a2c-b58a-717b2fd26bc7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,20 +45,20 @@
     <ClInclude Include="CanvasController.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="IElement.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="CameraElement.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Element</Filter>
     </ClInclude>
     <ClInclude Include="GameElement.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Element</Filter>
     </ClInclude>
     <ClInclude Include="MonitorElement.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Element</Filter>
     </ClInclude>
     <ClInclude Include="WindowElement.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="IElement.h">
+      <Filter>头文件\Element</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,20 +77,20 @@
     <ClCompile Include="CanvasController.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="IElement.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="CameraElement.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Element</Filter>
     </ClCompile>
     <ClCompile Include="GameElement.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="IElement.cpp">
+      <Filter>源文件\Element</Filter>
     </ClCompile>
     <ClCompile Include="MonitorElement.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Element</Filter>
     </ClCompile>
     <ClCompile Include="WindowElement.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Element</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

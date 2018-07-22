@@ -1,5 +1,5 @@
 #pragma once
-#include "DX11ImageElement2D.h"
+#include "DX11Texture2DElement.h"
 #include "Render/TinyGDI.h"
 using namespace TinyFramework;
 
@@ -8,7 +8,7 @@ namespace DXFramework
 	/// <summary>
 	/// YUY2 (packet)
 	/// </summary>
-	class DX11YUY2Video : public DX11ImageElement2D
+	class DX11YUY2Video : public DX11Texture2DElement
 	{
 		struct VERTEXTYPE
 		{

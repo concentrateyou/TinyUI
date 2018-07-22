@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX10Line2D, DX10Element2D);
+	IMPLEMENT_DYNAMIC(DX10Line2D, DX10Element);
 
 	DX10Line2D::DX10Line2D()
 	{

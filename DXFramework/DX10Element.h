@@ -10,12 +10,12 @@ namespace DXFramework
 	/// <summary>
 	/// DX10ÔªËØ
 	/// </summary>
-	class DX10Element2D : public TinyObject
+	class DX10Element : public TinyObject
 	{
-		DECLARE_DYNAMIC(DX10Element2D)
+		DECLARE_DYNAMIC(DX10Element)
 	public:
-		DX10Element2D();
-		virtual ~DX10Element2D();
+		DX10Element();
+		virtual ~DX10Element();
 	public:
 		TinyString		GetElementName() const;
 		void			SetElementName(const TinyString& name);

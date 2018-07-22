@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX10Rectangle2D, DX10Element2D);
+	IMPLEMENT_DYNAMIC(DX10Rectangle2D, DX10Element);
 
 	DX10Rectangle2D::DX10Rectangle2D()
 		:m_index(0)

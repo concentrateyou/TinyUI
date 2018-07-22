@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX10NV12Video, DX10ImageElement2D);
+	IMPLEMENT_DYNAMIC(DX10NV12Video, DX10Texture2DElement);
 
 	DX10NV12Video::DX10NV12Video()
 	{

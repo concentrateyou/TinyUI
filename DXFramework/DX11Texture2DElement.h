@@ -1,15 +1,15 @@
 #pragma once
-#include "DX10Element2D.h"
+#include "DX11Element2D.h"
 
 namespace DXFramework
 {
-	class DX10ImageElement2D : public DX10Element2D
+	class DX11Texture2DElement : public DX11Element2D
 	{
-		DECLARE_DYNAMIC(DX10ImageElement2D)
-		DISALLOW_COPY_AND_ASSIGN(DX10ImageElement2D)
+		DECLARE_DYNAMIC(DX11Texture2DElement)
+		DISALLOW_COPY_AND_ASSIGN(DX11Texture2DElement)
 	public:
-		DX10ImageElement2D();
-		virtual ~DX10ImageElement2D();
+		DX11Texture2DElement();
+		virtual ~DX11Texture2DElement();
 	public:
 		FLOAT			GetRotate() const;
 		XMFLOAT2		GetSize() const;
@@ -24,7 +24,7 @@ namespace DXFramework
 		void			SetFlipH(BOOL bFlag);
 		void			SetFlipV(BOOL bFlag);
 	public:
-		virtual BOOL	DrawImage(DX10& dx10) = 0;
+		virtual BOOL	DrawImage(DX11& dx11) = 0;
 	protected:
 		BOOL		m_bFlipH;
 		BOOL		m_bFlipV;
