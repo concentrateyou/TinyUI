@@ -68,6 +68,7 @@ namespace Bytedance
 	{
 		m_capture.Stop();
 		m_capture.Deallocate();
+		m_videoRGB32.Destory();
 		return TRUE;
 	}
 

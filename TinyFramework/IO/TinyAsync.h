@@ -3,16 +3,16 @@
 #include "../Common/TinyCore.h"
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyEvent.h"
-#include "../IO/TinyWin32Threadpool.h"
+using namespace TinyFramework;
 
 namespace TinyFramework
 {
 	namespace IO
 	{
-		template <class T>
-		class TinyFuture;
-		template<class T>
-		class TinyPromise;
+		class IAsyncOp
+		{
+
+		};
 	};
 }
 

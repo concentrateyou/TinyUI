@@ -5,8 +5,8 @@ namespace Bytedance
 {
 	CanvasController::CanvasController(CanvasView& view)
 		:m_view(view),
-		m_displayGS(m_dx11),
-		m_videoGS(m_dx11),
+		m_displayCanvas(m_dx11),
+		m_videoCanvas(m_dx11),
 		m_bClose(FALSE)
 	{
 
@@ -25,13 +25,13 @@ namespace Bytedance
 		GetClientRect(m_view.Handle(), &s);
 		if (!m_dx11.Initialize(m_view.Handle(), TO_CX(s), TO_CY(s)))
 			return FALSE;
-		if (!m_displayGS.Create())
+		if (!m_displayCanvas.Create())
 			return FALSE;
-		if (!m_displayGS.InitializeShaders())
+		if (!m_displayCanvas.InitializeShaders())
 			return FALSE;
-		if (!m_videoGS.Create(size.cx, size.cy))
+		if (!m_videoCanvas.Create(size.cx, size.cy))
 			return FALSE;
-		if (!m_videoGS.InitializeShaders())
+		if (!m_videoCanvas.InitializeShaders())
 			return FALSE;
 		m_bClose = FALSE;
 		m_tasks.Initialize(1, 5);
@@ -47,8 +47,8 @@ namespace Bytedance
 		m_woker->Close();
 		m_tasks.Cancel();
 		m_tasks.Close();
-		m_displayGS.Destory();
-		m_videoGS.Destory();
+		m_displayCanvas.Destory();
+		m_videoCanvas.Destory();
 	}
 	void CanvasController::OnMessagePump()
 	{
@@ -64,7 +64,7 @@ namespace Bytedance
 	void CanvasController::DisplayRender()
 	{
 		TinyAutoLock lock(m_lock);
-		m_displayGS.BeginDraw();
+		m_displayCanvas.BeginDraw();
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
 			IVisual* visual = m_visuals[i];
@@ -72,19 +72,19 @@ namespace Bytedance
 			{
 				if (visual->GetVisual()->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 				{
-					m_videoGS.DrawImage(*static_cast<DX11Image2D*>(visual->GetVisual()));
+					m_videoCanvas.DrawImage(*static_cast<DX11Image2D*>(visual->GetVisual()));
 				}
 				if (visual->GetVisual()->IsKindOf(RUNTIME_CLASS(DX11YUVVideo)))
 				{
-					m_videoGS.DrawImageYUVBT601(*static_cast<DX11YUVVideo*>(visual->GetVisual()));
+					m_videoCanvas.DrawImageYUVBT601(*static_cast<DX11YUVVideo*>(visual->GetVisual()));
 				}
 				if (visual->GetVisual()->IsKindOf(RUNTIME_CLASS(DX11YUY2Video)))
 				{
-					m_videoGS.DrawImageYUY2BT601(*static_cast<DX11YUY2Video*>(visual->GetVisual()));
+					m_videoCanvas.DrawImageYUY2BT601(*static_cast<DX11YUY2Video*>(visual->GetVisual()));
 				}
 			}
 		}
-		m_displayGS.EndDraw();
+		m_displayCanvas.EndDraw();
 		m_dx11.Present();
 	}
 	void CanvasController::VideoRender()

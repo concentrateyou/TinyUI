@@ -461,6 +461,28 @@ private:\
 	{
 		enum { Result = 1 };
 	};
+	template<class T>
+	struct RemoveReference
+	{
+		typedef T Type;
+	};
+
+	template<class T>
+	struct RemoveReference<T&>
+	{
+		typedef T Type;
+	};
+
+	template<class T>
+	struct RemoveReference<T&&>
+	{
+		typedef T Type;
+	};
+	template<class T>
+	inline typename RemoveReference<T>::Type&& Move(T&& arg) throw()
+	{
+		return ((typename RemoveReference<T>::Type&&)arg);
+	}
 	/// <summary>
 	/// 类型列表
 	/// </summary>
@@ -1346,14 +1368,42 @@ private:\
 	/// </summary>
 	class ScopedVariant
 	{
-		DISALLOW_COPY_AND_ASSIGN(ScopedVariant)
 	public:
 		ScopedVariant();
 		~ScopedVariant();
+		ScopedVariant(const WCHAR* str, UINT size);
+		explicit ScopedVariant(const WCHAR* str);
+		explicit ScopedVariant(INT value, VARTYPE vt = VT_I4);
+		explicit ScopedVariant(DOUBLE value, VARTYPE vt = VT_R8);
+		explicit ScopedVariant(IDispatch* dispatch);
+		explicit ScopedVariant(IUnknown* unknown);
+		explicit ScopedVariant(SAFEARRAY* safearray);
+		explicit ScopedVariant(const VARIANT& var);
+		void Set(const WCHAR* str);
+		void Set(CHAR i8);
+		void Set(BYTE ui8);
+		void Set(INT16 i16);
+		void Set(UINT16 ui16);
+		void Set(INT32 i32);
+		void Set(UINT32 ui32);
+		void Set(INT64 i64);
+		void Set(UINT64 ui64);
+		void Set(FLOAT r32);
+		void Set(DOUBLE r64);
+		void Set(bool b);
+		void Set(const VARIANT& var);
+		void Set(IDispatch* disp);
+		void Set(IUnknown* unk);
+		void Set(SAFEARRAY* array);
+		void SetDate(DATE date);
 		void Reset();
+		void Reset(const VARIANT& var = EmptyVariant);
+		ScopedVariant& operator=(const VARIANT& var);
 		operator const VARIANT&() const throw();
 		VARIANT* operator->();
 		VARIANT* operator&() throw();
+	public:
+		static const VARIANT EmptyVariant;
 	protected:
 		VARIANT m_var;
 	};

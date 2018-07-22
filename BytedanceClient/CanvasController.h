@@ -32,8 +32,8 @@ namespace Bytedance
 		BOOL					m_bClose;
 		TinyLock				m_lock;
 		DX11					m_dx11;
-		DX11Graphics2D			m_displayGS;//‘§¿¿
-		DX11Graphics2D			m_videoGS;//±‡¬Î
+		DX11Graphics2D			m_displayCanvas;//‘§¿¿
+		DX11Graphics2D			m_videoCanvas;//±‡¬Î
 		TinyArray<IVisual*>		m_visuals;
 		TinyWin32Threadpool		m_tasks;
 		TinyScopedPtr<TinyWin32Worker>	m_woker;
