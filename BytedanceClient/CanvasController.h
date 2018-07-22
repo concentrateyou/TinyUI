@@ -24,6 +24,7 @@ namespace Bytedance
 	public:
 		void Add(IVisual* ps);
 		void Remove(IVisual* ps);
+		void RemoveAll();
 	private:
 		void OnMessagePump();
 		void DisplayRender();

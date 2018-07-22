@@ -49,6 +49,7 @@ namespace Bytedance
 		m_tasks.Close();
 		m_displayCanvas.Destory();
 		m_videoCanvas.Destory();
+		RemoveAll();
 	}
 	void CanvasController::OnMessagePump()
 	{
@@ -109,6 +110,20 @@ namespace Bytedance
 	void CanvasController::Remove(IVisual* ps)
 	{
 		TinyAutoLock lock(m_lock);
+		if (ps != NULL)
+		{
+			ps->Close();
+		}
 		m_visuals.Remove(ps);
+	}
+	void CanvasController::RemoveAll()
+	{
+		TinyAutoLock lock(m_lock);
+		for (INT i = 0; i < m_visuals.GetSize(); i++)
+		{
+			m_visuals[i]->Close();
+			SAFE_DELETE(m_visuals[i]);
+		}
+		m_visuals.RemoveAll();
 	}
 }

@@ -10,7 +10,7 @@ namespace Bytedance
 	}
 	CameraElement::~CameraElement()
 	{
-
+		Close();
 	}
 
 	LPCSTR	CameraElement::GetName()
