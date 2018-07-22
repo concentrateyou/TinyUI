@@ -317,7 +317,7 @@ namespace DXFramework
 	}
 	void DX11CaptureRunner::Tick()
 	{
-		if (m_exit && m_exit.Lock(0))
+		if (m_exit && m_exit.WaitEvent(0))
 		{
 			TRACE("Tick - EndCapture\n");
 			EndCapture();
@@ -327,7 +327,7 @@ namespace DXFramework
 			TRACE("Tick - CreateEvents\n");
 			CreateEvents();
 		}
-		if (m_ready && m_ready.Lock(0))
+		if (m_ready && m_ready.WaitEvent(0))
 		{
 			TRACE("Tick - BeginCapture\n");
 			BeginCapture();
@@ -354,7 +354,7 @@ namespace DXFramework
 	{
 		for (;;)
 		{
-			if (m_close.Lock(5))
+			if (m_close.WaitEvent(5))
 			{
 				if (m_stop)
 				{

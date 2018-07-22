@@ -76,7 +76,7 @@ namespace TinyFramework
 		ASSERT(m_hEvent != NULL);
 		return ::ResetEvent(m_hEvent);
 	}
-	BOOL TinyEvent::Lock(DWORD dwTimeout)
+	BOOL TinyEvent::WaitEvent(DWORD dwTimeout)
 	{
 		ASSERT(m_hEvent != NULL);
 		DWORD dwRet = ::WaitForSingleObject(m_hEvent, dwTimeout);
@@ -84,10 +84,6 @@ namespace TinyFramework
 			return TRUE;
 		else
 			return FALSE;
-	}
-	BOOL TinyEvent::Unlock()
-	{
-		return TRUE;
 	}
 	void TinyEvent::Close()
 	{

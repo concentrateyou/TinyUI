@@ -324,14 +324,14 @@ namespace GraphicsCapture
 	{
 		IDirect3DDevice8 *d3d = reinterpret_cast<IDirect3DDevice8*>(pThis);
 		ASSERT(pThis);
-		if (m_bCapturing && m_dx.m_stop.Lock(0))
+		if (m_bCapturing && m_dx.m_stop.WaitEvent(0))
 		{
 			LOG(INFO) << "DX8Capture m_stop\n";
 			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;
 		}
-		if (!m_bCapturing && m_dx.m_start.Lock(0))
+		if (!m_bCapturing && m_dx.m_start.WaitEvent(0))
 		{
 			LOG(INFO) << "DX8Capture m_start\n";
 			m_bCapturing = TRUE;

@@ -14,8 +14,9 @@ namespace TinyFramework
 		public:
 			TinyMsgQueue();
 			~TinyMsgQueue();
-			BOOL SetCallback(Callback<void(UINT, WPARAM, LPARAM)>&& callback);
+			void SetCallback(Callback<void(UINT, WPARAM, LPARAM)>&& callback);
 			BOOL PostMsg(MSG& msg);
+			BOOL Open();
 			BOOL Close();
 		private:
 			void OnMessagePump();

@@ -481,7 +481,7 @@ namespace TinyFramework
 			DWORD dwStatus = 0;
 			if (m_bIsAsync)
 			{
-				if (!m_events[0].Lock(INFINITE))
+				if (!m_events[0].WaitEvent(INFINITE))
 					return FALSE;
 				if (!CreateInputSample(tag.bits, tag.size))
 					return FALSE;

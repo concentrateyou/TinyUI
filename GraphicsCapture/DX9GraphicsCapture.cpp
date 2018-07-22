@@ -275,14 +275,14 @@ namespace GraphicsCapture
 	BOOL DX9GraphicsCapture::Render(IDirect3DDevice9 *d3d)
 	{
 		ASSERT(d3d);
-		if (m_bCapturing && m_dx.m_stop.Lock(0))
+		if (m_bCapturing && m_dx.m_stop.WaitEvent(0))
 		{
 			LOG(INFO) << "DX9Capture m_stop\n";
 			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;
 		}
-		if (!m_bCapturing && m_dx.m_start.Lock(0))
+		if (!m_bCapturing && m_dx.m_start.WaitEvent(0))
 		{
 			LOG(INFO) << "DX9Capture m_start\n";
 			m_bCapturing = TRUE;

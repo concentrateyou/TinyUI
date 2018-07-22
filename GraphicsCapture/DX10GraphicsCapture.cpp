@@ -100,14 +100,14 @@ namespace GraphicsCapture
 	BOOL DX10GraphicsCapture::Render(IDXGISwapChain *swap, UINT flags)
 	{
 		HRESULT hRes = S_OK;
-		if (m_bCapturing && m_dx.m_stop.Lock(0))
+		if (m_bCapturing && m_dx.m_stop.WaitEvent(0))
 		{
 			LOG(INFO) << "DX10Capture::Render m_stop OK\n";
 			m_bCapturing = FALSE;
 			Release();
 			return FALSE;
 		}
-		if (!m_bCapturing && m_dx.m_start.Lock(0))
+		if (!m_bCapturing && m_dx.m_start.WaitEvent(0))
 		{
 			m_bCapturing = TRUE;
 		}

@@ -13,9 +13,12 @@ namespace TinyFramework
 		{
 
 		}
-		BOOL TinyMsgQueue::SetCallback(Callback<void(UINT, WPARAM, LPARAM)>&& callback)
+		void TinyMsgQueue::SetCallback(Callback<void(UINT, WPARAM, LPARAM)>&& callback)
 		{
 			m_callback = std::move(callback);
+		}
+		BOOL TinyMsgQueue::Open()
+		{
 			return m_runner.Submit(BindCallback(&TinyMsgQueue::OnMessagePump, this));
 		}
 		BOOL TinyMsgQueue::Close()

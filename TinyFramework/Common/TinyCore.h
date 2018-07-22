@@ -40,8 +40,7 @@ namespace TinyFramework
 		BOOL SetEvent();
 		BOOL PulseEvent();
 		BOOL ResetEvent();
-		BOOL Lock(DWORD dwTimeout = INFINITE);
-		BOOL Unlock();
+		BOOL WaitEvent(DWORD dwTimeout = INFINITE);
 		void Close();
 	private:
 		HANDLE		m_hEvent;

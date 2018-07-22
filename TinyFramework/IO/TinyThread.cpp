@@ -12,6 +12,7 @@ namespace TinyFramework
 		TinyThread::TinyThread()
 			:m_handle(NULL)
 		{
+
 		}
 
 		TinyThread::~TinyThread()
@@ -106,7 +107,7 @@ namespace TinyFramework
 			{
 				pTask->m_callback();
 			}
-			return FALSE;
+			return 0;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyTLS::TinyTLS()
