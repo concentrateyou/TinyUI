@@ -1,6 +1,6 @@
 #pragma once
 #include "Common/TinyModule.h"
-#include "IElement.h"
+#include "IVisual.h"
 #include "DX11.h"
 #include "DX11CaptureRunner.h"
 #include "DX11Image2D.h"
@@ -17,7 +17,7 @@ namespace Bytedance
 	/// <summary>
 	/// ´°¿ÚÔªËØ
 	/// </summary>
-	class WindowElement : public IElement
+	class WindowElement : public IVisual
 	{
 		DISALLOW_COPY_AND_ASSIGN(WindowElement)
 	public:
@@ -27,7 +27,7 @@ namespace Bytedance
 		BOOL				Process() OVERRIDE;
 		BOOL				Close() OVERRIDE;
 		LPCSTR				GetName() OVERRIDE;
-		DX11ImageElement2D*	GetVisual() OVERRIDE;
+		DX11Element*		GetVisual() OVERRIDE;
 	private:
 		DX11&	m_dx11;
 	};

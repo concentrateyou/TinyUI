@@ -71,7 +71,7 @@ namespace Bytedance
 		return TRUE;
 	}
 
-	DX11ImageElement2D* CameraElement::GetVisual()
+	DX11Element* CameraElement::GetVisual()
 	{
 		return &m_videoRGB32;
 	}

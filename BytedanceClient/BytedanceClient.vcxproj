@@ -149,7 +149,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IElement.h" />
+    <ClInclude Include="IVisual.h" />
     <ClInclude Include="BytedanceClient.h" />
     <ClInclude Include="CameraElement.h" />
     <ClInclude Include="CanvasView.h" />
@@ -163,7 +163,7 @@
     <ClInclude Include="WindowElement.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="IElement.cpp" />
+    <ClCompile Include="IVisual.cpp" />
     <ClCompile Include="BytedanceClient.cpp" />
     <ClCompile Include="CameraElement.cpp" />
     <ClCompile Include="CanvasView.cpp" />

@@ -24,7 +24,7 @@ namespace Bytedance
 	{
 		return TEXT("GameElement");
 	}
-	DX11ImageElement2D* GameElement::GetVisual()
+	DX11Element* GameElement::GetVisual()
 	{
 		return NULL;
 	}

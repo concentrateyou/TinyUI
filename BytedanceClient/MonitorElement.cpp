@@ -32,7 +32,7 @@ namespace Bytedance
 		throw std::logic_error("The method or operation is not implemented.");
 	}
 
-	DX11ImageElement2D* MonitorElement::GetVisual()
+	DX11Element* MonitorElement::GetVisual()
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}

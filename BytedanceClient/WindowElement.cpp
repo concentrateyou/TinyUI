@@ -20,7 +20,7 @@ namespace Bytedance
 
 	BOOL WindowElement::Open()
 	{
-		
+		return TRUE;
 	}
 
 	BOOL WindowElement::Process()
@@ -33,7 +33,7 @@ namespace Bytedance
 		throw std::logic_error("The method or operation is not implemented.");
 	}
 
-	DX11ImageElement2D* WindowElement::GetVisual()
+	DX11Element* WindowElement::GetVisual()
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}

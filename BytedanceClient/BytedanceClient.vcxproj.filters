@@ -57,7 +57,7 @@
     <ClInclude Include="WindowElement.h">
       <Filter>头文件\Element</Filter>
     </ClInclude>
-    <ClInclude Include="IElement.h">
+    <ClInclude Include="IVisual.h">
       <Filter>头文件\Element</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,13 +83,13 @@
     <ClCompile Include="GameElement.cpp">
       <Filter>源文件\Element</Filter>
     </ClCompile>
-    <ClCompile Include="IElement.cpp">
-      <Filter>源文件\Element</Filter>
-    </ClCompile>
     <ClCompile Include="MonitorElement.cpp">
       <Filter>源文件\Element</Filter>
     </ClCompile>
     <ClCompile Include="WindowElement.cpp">
+      <Filter>源文件\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="IVisual.cpp">
       <Filter>源文件\Element</Filter>
     </ClCompile>
   </ItemGroup>

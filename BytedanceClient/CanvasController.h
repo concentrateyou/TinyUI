@@ -22,8 +22,8 @@ namespace Bytedance
 		BOOL Initialize(const TinySize& output);
 		void Uninitialize();
 	public:
-		void Add(IElement* ps);
-		void Remove(IElement* ps);
+		void Add(IVisual* ps);
+		void Remove(IVisual* ps);
 	private:
 		void OnMessagePump();
 		void DisplayRender();
@@ -34,7 +34,7 @@ namespace Bytedance
 		DX11					m_dx11;
 		DX11Graphics2D			m_displayGS;//‘§¿¿
 		DX11Graphics2D			m_videoGS;//±‡¬Î
-		TinyArray<IElement*>		m_visuals;
+		TinyArray<IVisual*>		m_visuals;
 		TinyWin32Threadpool		m_tasks;
 		TinyScopedPtr<TinyWin32Worker>	m_woker;
 		TinyPerformanceTime		m_time;

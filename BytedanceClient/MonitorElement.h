@@ -1,6 +1,6 @@
 #pragma once
 #include "Common/TinyModule.h"
-#include "IElement.h"
+#include "IVisual.h"
 #include "DX11.h"
 #include "DX11CaptureRunner.h"
 #include "DX11Image2D.h"
@@ -17,19 +17,19 @@ namespace Bytedance
 	/// <summary>
 	/// ÏÔÊ¾Æ÷²¶»ñ
 	/// </summary>
-	class MonitorElement : public IElement
+	class MonitorElement : public IVisual
 	{
 		DISALLOW_COPY_AND_ASSIGN(MonitorElement)
 	public:
 		MonitorElement(DX11& dx11);
 		virtual ~MonitorElement();
-		BOOL				Select();
+		BOOL			Select();
 	public:
-		BOOL				Open() OVERRIDE;
-		BOOL				Process() OVERRIDE;
-		BOOL				Close() OVERRIDE;
-		LPCSTR				GetName() OVERRIDE;
-		DX11ImageElement2D*	GetVisual() OVERRIDE;
+		BOOL			Open() OVERRIDE;
+		BOOL			Process() OVERRIDE;
+		BOOL			Close() OVERRIDE;
+		LPCSTR			GetName() OVERRIDE;
+		DX11Element*	GetVisual() OVERRIDE;
 	private:
 		DX11&	m_dx11;
 	};

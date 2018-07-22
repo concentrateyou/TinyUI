@@ -67,7 +67,7 @@ namespace Bytedance
 		m_displayGS.BeginDraw();
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
-			IElement* visual = m_visuals[i];
+			IVisual* visual = m_visuals[i];
 			if (visual->Process())
 			{
 				if (visual->GetVisual()->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
@@ -91,12 +91,12 @@ namespace Bytedance
 	{
 
 	}
-	void CanvasController::Add(IElement* ps)
+	void CanvasController::Add(IVisual* ps)
 	{
 		TinyAutoLock lock(m_lock);
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
-			IElement* visual = m_visuals[i];
+			IVisual* visual = m_visuals[i];
 			if (strcasecmp(visual->GetName(), ps->GetName()) == 0)
 			{
 				m_visuals.Remove(visual);
@@ -106,7 +106,7 @@ namespace Bytedance
 		}
 		m_visuals.Add(ps);
 	}
-	void CanvasController::Remove(IElement* ps)
+	void CanvasController::Remove(IVisual* ps)
 	{
 		TinyAutoLock lock(m_lock);
 		m_visuals.Remove(ps);

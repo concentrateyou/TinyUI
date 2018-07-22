@@ -3,11 +3,11 @@
 
 namespace Bytedance
 {
-	IElement::IElement()
+	IVisual::IVisual()
 	{
 
 	}
-	IElement::~IElement()
+	IVisual::~IVisual()
 	{
 
 	}
