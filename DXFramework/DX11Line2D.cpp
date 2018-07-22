@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX11Line2D, DX11Element2D);
+	IMPLEMENT_DYNAMIC(DX11Line2D, DX11Element);
 
 	DX11Line2D::DX11Line2D()
 	{

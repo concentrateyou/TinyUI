@@ -84,9 +84,6 @@
     <ClInclude Include="DX11Duplicator.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Element2D.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
     <ClInclude Include="DX11Font2D.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
@@ -207,6 +204,9 @@
     <ClInclude Include="DX11Texture2DElement.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
+    <ClInclude Include="DX11Element.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -255,9 +255,6 @@
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX11Duplicator.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Element2D.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX11Font2D.cpp">
@@ -378,6 +375,9 @@
       <Filter>源文件\DX10</Filter>
     </ClCompile>
     <ClCompile Include="DX11Texture2DElement.cpp">
+      <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Element.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
   </ItemGroup>

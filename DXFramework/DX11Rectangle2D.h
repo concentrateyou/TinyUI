@@ -1,11 +1,11 @@
 #pragma once
-#include "DX11Element2D.h"
+#include "DX11Element.h"
 #include "DX11ColorShader.h"
 using namespace TinyFramework;
 
 namespace DXFramework
 {
-	class DX11Rectangle2D : public DX11Element2D
+	class DX11Rectangle2D : public DX11Element
 	{
 		struct VERTEXTYPE
 		{

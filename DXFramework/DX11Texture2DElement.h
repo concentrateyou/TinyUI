@@ -1,9 +1,9 @@
 #pragma once
-#include "DX11Element2D.h"
+#include "DX11Element.h"
 
 namespace DXFramework
 {
-	class DX11Texture2DElement : public DX11Element2D
+	class DX11Texture2DElement : public DX11Element
 	{
 		DECLARE_DYNAMIC(DX11Texture2DElement)
 		DISALLOW_COPY_AND_ASSIGN(DX11Texture2DElement)

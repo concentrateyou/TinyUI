@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX11Texture2DElement, DX11Element2D);
+	IMPLEMENT_DYNAMIC(DX11Texture2DElement, DX11Element);
 
 	DX11Texture2DElement::DX11Texture2DElement()
 		:m_bFlipH(FALSE),

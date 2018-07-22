@@ -221,7 +221,7 @@
     <ClInclude Include="DX9Element2D.h" />
     <ClInclude Include="DX9Font2D.h" />
     <ClInclude Include="DX9Image2D.h" />
-    <ClInclude Include="DX11Element2D.h" />
+    <ClInclude Include="DX11Element.h" />
     <ClInclude Include="DX11PerformanceCounter.h" />
     <ClInclude Include="DX11Rectangle2D.h" />
     <ClInclude Include="DX11Graphics2D.h" />
@@ -280,7 +280,7 @@
     <ClCompile Include="DX9Element2D.cpp" />
     <ClCompile Include="DX9Font2D.cpp" />
     <ClCompile Include="DX9Image2D.cpp" />
-    <ClCompile Include="DX11Element2D.cpp" />
+    <ClCompile Include="DX11Element.cpp" />
     <ClCompile Include="DX11PerformanceCounter.cpp" />
     <ClCompile Include="DX11Rectangle2D.cpp" />
     <ClCompile Include="DX11Graphics2D.cpp" />
