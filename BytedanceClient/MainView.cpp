@@ -1,14 +1,11 @@
 #include "stdafx.h"
 #include "MainView.h"
-#include "MonitorElement.h"
-#include "CameraElement.h"
 
 namespace Bytedance
 {
 	IMPLEMENT_DYNAMIC(MainView, TinyVisualWindowless);
 
 	MainView::MainView()
-		:m_canvasController(m_canvasView)
 	{
 	}
 
@@ -24,13 +21,10 @@ namespace Bytedance
 		window->SetPosition(TinySize(100, 100));
 		m_canvasView.Create(m_hWND, 0, 0, 1, 1, FALSE);
 		BuildUI({ 800,600 });
-
-		m_canvasController.Initialize({ 1280,720 });
 	}
 
 	void MainView::OnUninitialize()
 	{
-		m_canvasController.Uninitialize();
 		m_canvasView.DestroyWindow();
 		m_max->EVENT_CLICK -= m_onMaxClick;
 		m_min->EVENT_CLICK -= m_onMaxClick;
@@ -202,34 +196,10 @@ namespace Bytedance
 	}
 	void MainView::OnGameClick(TinyVisual*, EventArgs& args)
 	{
-		vector<VideoCapture::Name> names;
-		VideoCapture::GetDevices(names);
-		vector<VideoCaptureFormat> formats;
-		VideoCapture::GetDeviceFormats(names[0], formats);
-		TinySize size(640, 480);
-		for (INT i = 0; i < formats.size(); i++)
-		{
-			if (formats[i].GetSize() == size && formats[i].GetFormat() == PIXEL_FORMAT_RGB24)
-			{
-				CameraElement* visual = new CameraElement(m_canvasController.GetDX11());
-				VideoCaptureParam param;
-				param.RequestFormat = formats[i];
-				visual->Select(names[0], param);
-				visual->Open();
-				m_canvasController.Add(visual);
-				break;
-			}
-		}
+
 	}
 	void MainView::OnMonitorClick(TinyVisual*, EventArgs& args)
 	{
-		MonitorElement* visual = new MonitorElement(m_canvasController.GetDX11());
-		UINT count = visual->GetMonitors();
-		if (count > 0)
-		{
-			visual->Select(0);
-			visual->Open();
-			m_canvasController.Add(visual);
-		}
+
 	}
 }

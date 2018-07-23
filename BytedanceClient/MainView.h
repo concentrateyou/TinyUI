@@ -59,7 +59,6 @@ namespace Bytedance
 		TinyVisualButton*		m_monitor;//ÏÔÊ¾Æ÷
 
 		CanvasView				m_canvasView;
-		CanvasController		m_canvasController;
 		//ÊÂ¼þ
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;

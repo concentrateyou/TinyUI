@@ -1,54 +1,53 @@
 #include "stdafx.h"
-#include "CameraElement.h"
+#include "CameraVisual2D.h"
 
-namespace Bytedance
+namespace MediaSDK
 {
-	CameraElement::CameraElement(DX11& dx11)
-		:m_dx11(dx11)
+	CameraVisual2D::CameraVisual2D(DX11& dx11)
+		:m_dx11(dx11),
+		m_linesize(0)
 	{
 		m_linesize = 0;
 	}
-	CameraElement::~CameraElement()
+	CameraVisual2D::~CameraVisual2D()
 	{
 		Close();
 	}
 
-	LPCSTR	CameraElement::GetName()
+	LPCSTR	CameraVisual2D::GetName()
 	{
-		return TEXT("CameraElement");
+		return TEXT("CameraVisual2D");
 	}
 
-	BOOL CameraElement::Select(const VideoCapture::Name& name, const VideoCaptureParam& requestParam)
+	BOOL CameraVisual2D::Select(const VideoCapture::Name& name, const VideoCaptureParam& requestParam)
 	{
 		m_capture.Uninitialize();
-		m_capture.SetCallback(BindCallback(&CameraElement::OnCallback, this));
+		m_capture.SetCallback(BindCallback(&CameraVisual2D::OnCallback, this));
 		if (!m_capture.Initialize(name))
 			return FALSE;
 		m_requestParam = requestParam;
 		return TRUE;
 	}
-	BOOL CameraElement::Open()
+	BOOL CameraVisual2D::Open()
 	{
 		this->Close();
 		if (!m_capture.Allocate(m_requestParam))
 			return FALSE;
 		m_current = m_capture.GetFormat();
 		TinySize size = m_current.GetSize();
-		if (!m_videoRGB32.Create(m_dx11, size.cx, size.cy, NULL, FALSE))
+		if (!m_visual2D.Create(m_dx11, size.cx, size.cy, NULL, FALSE))
 		{
 			m_capture.Deallocate();
 			return FALSE;
 		}
-		m_videoRGB32.SetScale({ 0.5F,0.5F });
-		m_videoRGB32.SetFlipV(TRUE);
 		m_linesize = LINESIZE(32, size.cx);
 		if (!m_capture.Start())
 			return FALSE;
 		return TRUE;
 	}
-	BOOL CameraElement::Process()
+	BOOL CameraVisual2D::Process()
 	{
-		if (m_videoRGB32.IsEmpty())
+		if (m_visual2D.IsEmpty())
 			return FALSE;
 		if (m_buffer.IsEmpty())
 			return FALSE;
@@ -60,23 +59,23 @@ namespace Bytedance
 		DWORD dwSize = m_ringBuffer.Read(m_buffer, 1);
 		if (dwSize > 0)
 		{
-			m_videoRGB32.Copy(m_dx11, m_buffer, m_linesize);
+			m_visual2D.Copy(m_dx11, m_buffer, m_linesize);
 		}
 		return TRUE;
 	}
-	BOOL CameraElement::Close()
+	BOOL CameraVisual2D::Close()
 	{
 		m_capture.Stop();
 		m_capture.Deallocate();
-		m_videoRGB32.Destory();
+		m_visual2D.Destory();
 		return TRUE;
 	}
 
-	DX11Element* CameraElement::GetVisual()
+	DX11Image2D* CameraVisual2D::GetVisual2D()
 	{
-		return static_cast<DX11Element*>(&m_videoRGB32);
+		return &m_visual2D;
 	}
-	void CameraElement::OnCallback(BYTE* bits, LONG size, FLOAT ts, void*)
+	void CameraVisual2D::OnCallback(BYTE* bits, LONG size, FLOAT ts, void*)
 	{
 		if (m_ringBuffer.IsEmpty())
 		{

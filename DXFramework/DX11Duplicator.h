@@ -10,7 +10,8 @@ namespace DXFramework
 	public:
 		DX11Duplicator();
 		~DX11Duplicator();
-		UINT	GetOutputs(DX11& dx11) const;
+		UINT	GetOutputCount(DX11& dx11) const;
+		BOOL	Initialize(DX11& dx11, IDXGIOutput* output);
 		BOOL	Initialize(DX11& dx11, UINT index);
 		void	Uninitialize();
 		BOOL	AcquireNextFrame(DX11& dx11, UINT timeout);

@@ -24,19 +24,19 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
+    <ClInclude Include="MediaSDK.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BytedanceClient.h">
+    <ClInclude Include="IVisual2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CanvasView.h">
+    <ClInclude Include="MonitorVisual2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MainView.h">
+    <ClInclude Include="CameraVisual2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CanvasController.h">
+    <ClInclude Include="GameVisual2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,30 +44,20 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BytedanceClient.cpp">
+    <ClCompile Include="MediaSDK.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CanvasView.cpp">
+    <ClCompile Include="IVisual2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MainView.cpp">
+    <ClCompile Include="MonitorVisual2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CanvasController.cpp">
+    <ClCompile Include="CameraVisual2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="BytedanceClient.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="BytedanceClient.ico">
-      <Filter>资源文件</Filter>
-    </Image>
+    <ClCompile Include="GameVisual2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

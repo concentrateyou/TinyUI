@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BytedanceClient", "Bytedanc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsCapture", "GraphicsCapture\GraphicsCapture.vcxproj", "{42A23F40-AE16-40DE-BD95-A42F4791EA82}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MediaSDK", "MediaSDK\MediaSDK.vcxproj", "{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -303,6 +305,26 @@ Global
 		{42A23F40-AE16-40DE-BD95-A42F4791EA82}.Release|Win32.Build.0 = Release|Win32
 		{42A23F40-AE16-40DE-BD95-A42F4791EA82}.Release|x64.ActiveCfg = Release|x64
 		{42A23F40-AE16-40DE-BD95-A42F4791EA82}.Release|x64.Build.0 = Release|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Debug|Win32.Build.0 = Debug|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Debug|x64.ActiveCfg = Debug|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Debug|x64.Build.0 = Debug|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release_MBCS|x64.Build.0 = Release|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release_MT|Win32.Build.0 = Release|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release_MT|x64.ActiveCfg = Release|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release_MT|x64.Build.0 = Release|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release|Win32.ActiveCfg = Release|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release|Win32.Build.0 = Release|Win32
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release|x64.ActiveCfg = Release|x64
+		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

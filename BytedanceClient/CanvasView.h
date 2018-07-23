@@ -1,14 +1,7 @@
 #pragma once
 #include "Control/TinyControl.h"
 
-#include "DX10Image2D.h"
-#include "DX10Rectangle2D.h"
-#include "DX10Line2D.h"
-#include "DX10Graphics2D.h"
-#include "GameElement.h"
-
 using namespace TinyFramework;
-using namespace DXFramework;
 
 namespace Bytedance
 {
