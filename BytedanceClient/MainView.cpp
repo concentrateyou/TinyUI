@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MainView.h"
-
+#include "MonitorElement.h"
 #include "CameraElement.h"
 
 namespace Bytedance
@@ -37,6 +37,8 @@ namespace Bytedance
 		m_close->EVENT_CLICK += m_onCloseClick;
 		m_restore->EVENT_CLICK -= m_onRestoreClick;
 		m_setting->EVENT_CLICK -= m_onSettingClick;
+		m_game->EVENT_CLICK -= m_onGameClick;
+		m_monitor->EVENT_CLICK -= m_onMonitorClick;
 	}
 
 	LRESULT MainView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -126,6 +128,19 @@ namespace Bytedance
 		m_onGameClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnGameClick));
 		m_game->EVENT_CLICK += m_onGameClick;
 
+		m_monitor = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
+		ASSERT(m_monitor);
+		m_monitor->SetName("btnMmonitor");
+		m_monitor->SetText("ÏÔÊ¾Æ÷²¶»ñ");
+		m_monitor->SetSize(TinySize(69, 23));
+		m_monitor->SetTextColor(RGB(0, 0, 0));
+		m_monitor->SetTextAlian(DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		m_monitor->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
+		m_monitor->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
+		m_monitor->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
+		m_onMonitorClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMonitorClick));
+		m_monitor->EVENT_CLICK += m_onMonitorClick;
+
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
@@ -150,6 +165,8 @@ namespace Bytedance
 			m_native->SetSize({ cx - 16,500 });
 
 			m_game->SetPosition({ 8,550 });
+
+			m_monitor->SetPosition({ 88,550 });
 		}
 	}
 
@@ -202,6 +219,17 @@ namespace Bytedance
 				m_canvasController.Add(visual);
 				break;
 			}
+		}
+	}
+	void MainView::OnMonitorClick(TinyVisual*, EventArgs& args)
+	{
+		MonitorElement* visual = new MonitorElement(m_canvasController.GetDX11());
+		UINT count = visual->GetMonitors();
+		if (count > 0)
+		{
+			visual->Select(0);
+			visual->Open();
+			m_canvasController.Add(visual);
 		}
 	}
 }

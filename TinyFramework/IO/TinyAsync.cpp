@@ -8,8 +8,8 @@ namespace TinyFramework
 		TinyWorkerPoolTaskRunner::TinyTask::TinyTask()
 			:m_worker(NULL),
 			m_waiter(NULL),
-			m_delay(0),
-			m_event(NULL)
+			m_event(NULL),
+			m_delay(0)
 		{
 
 		}

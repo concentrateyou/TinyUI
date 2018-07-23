@@ -81,6 +81,11 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
+	void DX11Duplicator::Uninitialize()
+	{
+		m_resource.Release();
+		m_duplication.Release();
+	}
 	BOOL DX11Duplicator::AcquireNextFrame(DX11& dx11, UINT timeout)
 	{
 		if (!m_duplication)
@@ -88,18 +93,21 @@ namespace DXFramework
 		DXGI_OUTDUPL_FRAME_INFO s;
 		TinyComPtr<IDXGIResource> resource;
 		HRESULT hRes = m_duplication->AcquireNextFrame(timeout, &s, &resource);
-		if (hRes != S_OK)
+		if (hRes == DXGI_ERROR_ACCESS_LOST)
 			return FALSE;
-		if (s.LastPresentTime.QuadPart <= 0)
-			return FALSE;
+		if (hRes == DXGI_ERROR_WAIT_TIMEOUT)
+			return TRUE;
+		if (FAILED(hRes))
+			return TRUE;
 		TinyComPtr<ID3D11Texture2D> texture2D;
 		hRes = resource->QueryInterface(&texture2D);
-		if (hRes != S_OK)
-			return FALSE;
+		if (FAILED(hRes))
+		{
+			m_duplication->ReleaseFrame();
+			return TRUE;
+		}
 		dx11.GetImmediateContext()->CopyResource(m_resource, texture2D.Ptr());
-		hRes = m_duplication->ReleaseFrame();
-		if (hRes != S_OK)
-			return FALSE;
+		m_duplication->ReleaseFrame();
 		return TRUE;
 	}
 	HANDLE	DX11Duplicator::GetSharedHandle() const

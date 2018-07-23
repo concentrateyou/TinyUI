@@ -43,6 +43,7 @@ namespace Bytedance
 		void OnRestoreClick(TinyVisual*, EventArgs& args);
 		void OnSettingClick(TinyVisual*, EventArgs& args);
 		void OnGameClick(TinyVisual*, EventArgs& args);
+		void OnMonitorClick(TinyVisual*, EventArgs& args);
 	private:
 		//UI元素
 		//标题栏
@@ -55,6 +56,7 @@ namespace Bytedance
 		TinyVisualNative*		m_native;
 		//按钮
 		TinyVisualButton*		m_game;//游戏注入
+		TinyVisualButton*		m_monitor;//显示器
 
 		CanvasView				m_canvasView;
 		CanvasController		m_canvasController;
@@ -66,5 +68,6 @@ namespace Bytedance
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
 
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onGameClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMonitorClick;
 	};
 }

@@ -205,7 +205,6 @@
     <ClInclude Include="DX11.h" />
     <ClInclude Include="DX11CaptureRunner.h" />
     <ClInclude Include="DX11Duplicator.h" />
-    <ClInclude Include="DX11DuplicatorRunner.h" />
     <ClInclude Include="DX11Font2D.h" />
     <ClInclude Include="DX11Image2D.h" />
     <ClInclude Include="DX11Texture2DElement.h" />
@@ -263,7 +262,6 @@
     <ClCompile Include="DX10YUY2Video.cpp" />
     <ClCompile Include="DX11.cpp" />
     <ClCompile Include="DX11Duplicator.cpp" />
-    <ClCompile Include="DX11DuplicatorRunner.cpp" />
     <ClCompile Include="DX11Font2D.cpp" />
     <ClCompile Include="DX11Image2D.cpp" />
     <ClCompile Include="DX11CaptureRunner.cpp" />

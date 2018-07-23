@@ -120,9 +120,6 @@
     <ClInclude Include="DX11CaptureRunner.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX11DuplicatorRunner.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
     <ClInclude Include="DX9Graphics2D.h">
       <Filter>头文件\DX9</Filter>
     </ClInclude>
@@ -291,9 +288,6 @@
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX11CaptureRunner.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11DuplicatorRunner.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX9Graphics2D.cpp">

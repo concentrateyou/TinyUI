@@ -74,7 +74,7 @@ namespace Bytedance
 
 	DX11Element* CameraElement::GetVisual()
 	{
-		return &m_videoRGB32;
+		return static_cast<DX11Element*>(&m_videoRGB32);
 	}
 	void CameraElement::OnCallback(BYTE* bits, LONG size, FLOAT ts, void*)
 	{

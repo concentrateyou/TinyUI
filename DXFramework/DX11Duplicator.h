@@ -10,10 +10,11 @@ namespace DXFramework
 	public:
 		DX11Duplicator();
 		~DX11Duplicator();
-		UINT GetOutputs(DX11& dx11) const;
-		BOOL Initialize(DX11& dx11, UINT index);
-		BOOL AcquireNextFrame(DX11& dx11, UINT timeout);
-		HANDLE GetSharedHandle() const;
+		UINT	GetOutputs(DX11& dx11) const;
+		BOOL	Initialize(DX11& dx11, UINT index);
+		void	Uninitialize();
+		BOOL	AcquireNextFrame(DX11& dx11, UINT timeout);
+		HANDLE	GetSharedHandle() const;
 	private:
 		HANDLE								m_handle;
 		TinyComPtr<ID3D11Resource>			m_resource;
