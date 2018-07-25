@@ -30,9 +30,9 @@ namespace MediaSDK
 	{
 		return m_captureRunner.Submit();
 	}
-	BOOL GameVisual2D::Close()
+	void GameVisual2D::Close()
 	{
-		return m_captureRunner.Close();
+		m_captureRunner.Close();
 	}
 	BOOL GameVisual2D::Process()
 	{

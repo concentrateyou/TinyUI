@@ -345,6 +345,9 @@ namespace Decode
 		}
 		return TRUE;
 	}
+
+	INT64 g_time = -1;
+
 	BOOL FLVParser::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 		ASSERT(size >= 2);
@@ -371,6 +374,10 @@ namespace Decode
 			packet.codeID = FLV_CODECID_AAC;
 			packet.packetType = FLV_AACRaw;
 			EVENT_AUDIO(bits, size, &packet);
+
+			TRACE("AAC DTS:%lld, DIFF:%lld\n", m_timestamp, m_timestamp - g_time);
+
+			g_time = m_timestamp;
 		}
 		return TRUE;
 	}

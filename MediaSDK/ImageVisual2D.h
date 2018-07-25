@@ -4,15 +4,14 @@
 
 namespace MediaSDK
 {
-	class MonitorVisual2D : public IVisual2D
+	class ImageVisual2D : public IVisual2D
 	{
-		DISALLOW_COPY_AND_ASSIGN(MonitorVisual2D)
+		DISALLOW_COPY_AND_ASSIGN(ImageVisual2D)
 	public:
-		MonitorVisual2D(DX11& dx11);
-		virtual	~MonitorVisual2D();
+		ImageVisual2D(DX11& dx11);
+		virtual ~ImageVisual2D();
 	public:
-		UINT			GetOutputCount() const;
-		BOOL			SetOutput(UINT index);
+		void			SetFile(const TinyString& szFile);
 	public:
 		BOOL			Open() OVERRIDE;
 		BOOL			Process() OVERRIDE;
@@ -20,11 +19,9 @@ namespace MediaSDK
 		LPCSTR			GetName() OVERRIDE;
 		DX11Image2D*	GetVisual2D() OVERRIDE;
 	private:
+		TinyString		m_szFile;
 		DX11&			m_dx11;
 		DX11Image2D		m_visual2D;
-		DX11Duplicator	m_duplicator;
 	};
 }
-
-
 

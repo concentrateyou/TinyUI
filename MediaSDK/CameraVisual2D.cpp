@@ -21,7 +21,7 @@ namespace MediaSDK
 
 	BOOL CameraVisual2D::Select(const VideoCapture::Name& name, const VideoCaptureParam& requestParam)
 	{
-		m_capture.Uninitialize();
+		this->Close();
 		m_capture.SetCallback(BindCallback(&CameraVisual2D::OnCallback, this));
 		if (!m_capture.Initialize(name))
 			return FALSE;
@@ -63,12 +63,11 @@ namespace MediaSDK
 		}
 		return TRUE;
 	}
-	BOOL CameraVisual2D::Close()
+	void CameraVisual2D::Close()
 	{
 		m_capture.Stop();
 		m_capture.Deallocate();
 		m_visual2D.Destory();
-		return TRUE;
 	}
 
 	DX11Image2D* CameraVisual2D::GetVisual2D()

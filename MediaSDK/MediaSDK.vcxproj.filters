@@ -39,6 +39,21 @@
     <ClInclude Include="GameVisual2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="AudioInputStream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioOutputStream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioConverter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageVisual2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamVisual2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,6 +72,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GameVisual2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioInputStream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioOutputStream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioConverter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageVisual2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamVisual2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

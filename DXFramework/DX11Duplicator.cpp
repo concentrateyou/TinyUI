@@ -34,7 +34,7 @@ namespace DXFramework
 		return count;
 
 	}
-	BOOL DX11Duplicator::Initialize(DX11& dx11, IDXGIOutput* output)
+	BOOL DX11Duplicator::Open(DX11& dx11, IDXGIOutput* output)
 	{
 		TinyComPtr<IDXGIOutput1> output1;
 		HRESULT hRes = output->QueryInterface(__uuidof(IDXGIOutput1), (void**)&output1);
@@ -68,7 +68,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Duplicator::Initialize(DX11& dx11, UINT index)
+	BOOL DX11Duplicator::Open(DX11& dx11, UINT index)
 	{
 		HRESULT hRes = S_OK;
 		TinyComPtr<IDXGIDevice> dxgi;
@@ -115,7 +115,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	void DX11Duplicator::Uninitialize()
+	void DX11Duplicator::Close()
 	{
 		m_resource.Release();
 		m_duplication.Release();

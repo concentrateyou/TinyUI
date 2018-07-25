@@ -19,8 +19,8 @@ namespace MediaSDK
 	}
 	BOOL MonitorVisual2D::SetOutput(UINT index)
 	{
-		m_duplicator.Uninitialize();
-		return m_duplicator.Initialize(m_dx11, index);
+		m_duplicator.Close();
+		return m_duplicator.Open(m_dx11, index);
 	}
 	BOOL MonitorVisual2D::Open()
 	{
@@ -35,10 +35,9 @@ namespace MediaSDK
 	{
 		return m_duplicator.AcquireNextFrame(m_dx11, 0);
 	}
-	BOOL MonitorVisual2D::Close()
+	void MonitorVisual2D::Close()
 	{
-		m_duplicator.Uninitialize();
-		return TRUE;
+		m_duplicator.Close();
 	}
 	LPCSTR	MonitorVisual2D::GetName()
 	{

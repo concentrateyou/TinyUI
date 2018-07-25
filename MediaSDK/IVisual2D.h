@@ -12,7 +12,7 @@ namespace MediaSDK
 	public:
 		virtual BOOL			Open() = 0;
 		virtual BOOL			Process() = 0;
-		virtual BOOL			Close() = 0;
+		virtual void			Close() = 0;
 		virtual	LPCSTR			GetName() = 0;
 		virtual DX11Image2D*	GetVisual2D() = 0;
 	};

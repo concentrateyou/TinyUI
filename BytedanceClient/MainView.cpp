@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "MainView.h"
 
+#include "FLVParser.h"
+
 namespace Bytedance
 {
 	IMPLEMENT_DYNAMIC(MainView, TinyVisualWindowless);
@@ -200,6 +202,9 @@ namespace Bytedance
 	}
 	void MainView::OnMonitorClick(TinyVisual*, EventArgs& args)
 	{
-
+	/*	Decode::FLVParser parser;
+		parser.Open("D:\\no_stall.flv");
+		parser.Parse();
+		parser.Close();*/
 	}
 }

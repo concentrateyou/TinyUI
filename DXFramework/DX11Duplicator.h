@@ -11,9 +11,9 @@ namespace DXFramework
 		DX11Duplicator();
 		~DX11Duplicator();
 		UINT	GetOutputCount(DX11& dx11) const;
-		BOOL	Initialize(DX11& dx11, IDXGIOutput* output);
-		BOOL	Initialize(DX11& dx11, UINT index);
-		void	Uninitialize();
+		BOOL	Open(DX11& dx11, IDXGIOutput* output);
+		BOOL	Open(DX11& dx11, UINT index);
+		void	Close();
 		BOOL	AcquireNextFrame(DX11& dx11, UINT timeout);
 		HANDLE	GetSharedHandle() const;
 	private:

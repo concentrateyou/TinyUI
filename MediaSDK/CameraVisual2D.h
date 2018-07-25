@@ -15,7 +15,7 @@ namespace MediaSDK
 	public:
 		BOOL			Open() OVERRIDE;
 		BOOL			Process() OVERRIDE;
-		BOOL			Close() OVERRIDE;
+		void			Close() OVERRIDE;
 		LPCSTR			GetName() OVERRIDE;
 		DX11Image2D*	GetVisual2D() OVERRIDE;
 	private:

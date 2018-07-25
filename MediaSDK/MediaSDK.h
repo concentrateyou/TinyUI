@@ -14,4 +14,9 @@ using namespace DXFramework;
 using namespace TinyFramework;
 using namespace TinyFramework::IO;
 
+namespace MediaSDK
+{
+
+}
+
 
