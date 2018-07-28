@@ -66,6 +66,12 @@
     <ClInclude Include="StreamVisual2D.h">
       <Filter>头文件\Video</Filter>
     </ClInclude>
+    <ClInclude Include="WaveAudioInputStream.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveAudioOutputStream.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -100,6 +106,12 @@
     </ClCompile>
     <ClCompile Include="StreamVisual2D.cpp">
       <Filter>源文件\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveAudioInputStream.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveAudioOutputStream.cpp">
+      <Filter>源文件\Audio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
