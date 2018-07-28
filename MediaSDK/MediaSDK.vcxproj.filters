@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\Audio">
+      <UniqueIdentifier>{6c075f24-667b-4112-a864-3891faab571f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Video">
+      <UniqueIdentifier>{8f01ac82-3a66-45ad-9c75-268fd57fcfe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Audio">
+      <UniqueIdentifier>{5370315f-7bcf-48f2-b329-f356c418796d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Video">
+      <UniqueIdentifier>{384a53ac-344e-4b47-8398-6873e071552a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -27,32 +39,32 @@
     <ClInclude Include="MediaSDK.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="IVisual2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MonitorVisual2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraVisual2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GameVisual2D.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="AudioConverter.h">
+      <Filter>头文件\Audio</Filter>
     </ClInclude>
     <ClInclude Include="AudioInputStream.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Audio</Filter>
     </ClInclude>
     <ClInclude Include="AudioOutputStream.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="AudioConverter.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="CameraVisual2D.h">
+      <Filter>头文件\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="GameVisual2D.h">
+      <Filter>头文件\Video</Filter>
     </ClInclude>
     <ClInclude Include="ImageVisual2D.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="IVisual2D.h">
+      <Filter>头文件\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorVisual2D.h">
+      <Filter>头文件\Video</Filter>
     </ClInclude>
     <ClInclude Include="StreamVisual2D.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -62,32 +74,32 @@
     <ClCompile Include="MediaSDK.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="IVisual2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MonitorVisual2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraVisual2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GameVisual2D.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="AudioConverter.cpp">
+      <Filter>源文件\Audio</Filter>
     </ClCompile>
     <ClCompile Include="AudioInputStream.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Audio</Filter>
     </ClCompile>
     <ClCompile Include="AudioOutputStream.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="AudioConverter.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="CameraVisual2D.cpp">
+      <Filter>源文件\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="GameVisual2D.cpp">
+      <Filter>源文件\Video</Filter>
     </ClCompile>
     <ClCompile Include="ImageVisual2D.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="IVisual2D.cpp">
+      <Filter>源文件\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorVisual2D.cpp">
+      <Filter>源文件\Video</Filter>
     </ClCompile>
     <ClCompile Include="StreamVisual2D.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Video</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
