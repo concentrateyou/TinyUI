@@ -72,6 +72,12 @@
     <ClInclude Include="WaveAudioOutputStream.h">
       <Filter>头文件\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="CanvasController.h">
+      <Filter>头文件\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="CanvasView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -112,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="WaveAudioOutputStream.cpp">
       <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="CanvasController.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CanvasView.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

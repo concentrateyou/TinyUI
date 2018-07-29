@@ -15,12 +15,12 @@ namespace MediaSDK
 
 	BOOL StreamVisual2D::Open()
 	{
-
+		return TRUE;
 	}
 
 	BOOL StreamVisual2D::Process()
 	{
-
+		return TRUE;
 	}
 
 	void StreamVisual2D::Close()
@@ -30,7 +30,7 @@ namespace MediaSDK
 
 	LPCSTR StreamVisual2D::GetName()
 	{
-
+		return TEXT("StreamVisual2D");
 	}
 
 	DX11Image2D* StreamVisual2D::GetVisual2D()
