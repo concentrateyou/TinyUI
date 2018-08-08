@@ -730,6 +730,15 @@ private:\
 			delete _Ptr;
 		}
 	};
+	template<class T>
+	struct DefaultArrayDeleter
+	{
+		void operator()(T *_Ptr) const _NOEXCEPT
+		{
+			static_assert(0 < sizeof(T), "can't delete an incomplete type");
+			delete[] _Ptr;
+		}
+	};
 	struct FreeDeleter
 	{
 		void operator()(void* _Ptr) const _NOEXCEPT
@@ -746,6 +755,7 @@ private:\
 		DISALLOW_COPY_AND_ASSIGN(TinyScopedPtr)
 	public:
 		explicit TinyScopedPtr(T* ps = 0);
+		TinyScopedPtr(TinyScopedPtr&& ptr);
 		~TinyScopedPtr();
 		BOOL IsEmpty() const throw();
 		void Reset(T* ps = 0) throw();
@@ -764,6 +774,12 @@ private:\
 		: m_myP(ps)
 	{
 
+	}
+	template<class T, class Deleter>
+	TinyScopedPtr<T, Deleter>::TinyScopedPtr(TinyScopedPtr&& ptr)
+		: m_myP(ptr.m_myP)
+	{
+		ptr.m_myP = NULL;
 	}
 	template<class T, class Deleter>
 	TinyScopedPtr<T, Deleter>::~TinyScopedPtr()

@@ -52,6 +52,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
+	HMODULE bRes = LoadLibrary("D:\\Bytedance\\xigua_live_assistant_pc\\node_modules\\obs-studio-node\\libobs\\bin\\32bit\\v265.dll");
+
 	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_BYTEDANCECLIENT));

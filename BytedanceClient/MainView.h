@@ -10,14 +10,10 @@
 #include "Windowless/TinyVisualScrollBar.h"
 #include "Windowless/TinyVisualTextBox.h"
 #include "Windowless/TinyVisualNative.h"
-#include "CanvasView.h"
-#include "CanvasController.h"
 
 
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
-using namespace DXFramework;
-
 namespace Bytedance
 {
 	/// <summary>
@@ -58,7 +54,7 @@ namespace Bytedance
 		TinyVisualButton*		m_game;//游戏注入
 		TinyVisualButton*		m_monitor;//显示器
 
-		CanvasView				m_canvasView;
+		//CanvasView				m_canvasView;
 		//事件
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;

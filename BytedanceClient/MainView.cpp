@@ -21,13 +21,13 @@ namespace Bytedance
 		window->SetMinimumSize(TinySize(800, 600));
 		window->SetSize(TinySize(800, 600));
 		window->SetPosition(TinySize(100, 100));
-		m_canvasView.Create(m_hWND, 0, 0, 1, 1, FALSE);
+		//m_canvasView.Create(m_hWND, 0, 0, 1, 1, FALSE);
 		BuildUI({ 800,600 });
 	}
 
 	void MainView::OnUninitialize()
 	{
-		m_canvasView.DestroyWindow();
+		//m_canvasView.DestroyWindow();
 		m_max->EVENT_CLICK -= m_onMaxClick;
 		m_min->EVENT_CLICK -= m_onMaxClick;
 		m_close->EVENT_CLICK += m_onCloseClick;
@@ -104,12 +104,12 @@ namespace Bytedance
 		m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnSettingClick));
 		m_setting->EVENT_CLICK += m_onSettingClick;
 
-		m_native = static_cast<TinyVisualNative*>(m_document.Create(TinyVisualTag::NATIVE, window));
+		/*m_native = static_cast<TinyVisualNative*>(m_document.Create(TinyVisualTag::NATIVE, window));
 		m_native->SetName("CanvasWindow");
 		m_native->SetView(&m_canvasView);
 		ASSERT(m_native);
 		m_native->SetPosition({ 8,27 + 8 });
-		m_native->SetSize({ size.cx - 16,500 });
+		m_native->SetSize({ size.cx - 16,500 });*/
 
 		m_game = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_game);

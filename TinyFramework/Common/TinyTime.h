@@ -332,7 +332,7 @@ namespace TinyFramework
 	};
 	typedef signed long  SLONG;
 	/// <summary>
-	/// 高精度计数器
+	/// 高精度时钟
 	/// </summary>
 	class TinyPerformanceTime
 	{
@@ -340,10 +340,12 @@ namespace TinyFramework
 	public:
 		TinyPerformanceTime();
 		~TinyPerformanceTime();
-		LONGLONG GetMillisconds();
-		LONGLONG GetMicroseconds();
-		void BeginTime();
-		void EndTime();
+		LONGLONG	GetMillisconds();
+		LONGLONG	GetMicroseconds();
+		void		BeginTime();
+		void		EndTime();
+	public:
+		static LONGLONG Now();
 	private:
 		BOOL			m_bRunning;
 		DWORD			m_dwTimerMask;

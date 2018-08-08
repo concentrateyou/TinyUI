@@ -4,7 +4,6 @@
 #include "DX11.h"
 #include "DX11Graphics2D.h"
 #include "DX11Image2D.h"
-#include "CanvasView.h"
 using namespace DXFramework;
 using namespace TinyFramework;
 

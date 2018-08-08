@@ -12,4 +12,8 @@ namespace MediaSDK
 	{
 	}
 
+	AudioOutputStream::AudioOutputCallback::~AudioOutputCallback()
+	{
+
+	}
 }

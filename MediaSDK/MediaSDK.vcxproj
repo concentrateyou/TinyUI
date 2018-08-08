@@ -134,9 +134,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioBus.h" />
     <ClInclude Include="AudioConverter.h" />
     <ClInclude Include="AudioInputStream.h" />
     <ClInclude Include="AudioOutputStream.h" />
+    <ClInclude Include="AudioParameters.h" />
     <ClInclude Include="CameraVisual2D.h" />
     <ClInclude Include="CanvasView.h" />
     <ClInclude Include="GameVisual2D.h" />
@@ -152,9 +154,11 @@
     <ClInclude Include="WaveAudioOutputStream.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioBus.cpp" />
     <ClCompile Include="AudioConverter.cpp" />
     <ClCompile Include="AudioInputStream.cpp" />
     <ClCompile Include="AudioOutputStream.cpp" />
+    <ClCompile Include="AudioParameters.cpp" />
     <ClCompile Include="CameraVisual2D.cpp" />
     <ClCompile Include="CanvasView.cpp" />
     <ClCompile Include="GameVisual2D.cpp" />
