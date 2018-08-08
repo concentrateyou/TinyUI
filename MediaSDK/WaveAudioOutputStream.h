@@ -19,7 +19,7 @@ namespace MediaSDK
 		virtual ~WaveAudioOutputStream();
 	public:
 		BOOL Open() OVERRIDE;
-		BOOL Start(AudioOutputCallback* callback) OVERRIDE;
+		BOOL Start(AudioInputCallback* callback) OVERRIDE;
 		BOOL Stop() OVERRIDE;
 		BOOL GetVolume(DOUBLE* volume) OVERRIDE;
 		BOOL SetVolume(DOUBLE volume) OVERRIDE;
@@ -44,6 +44,6 @@ namespace MediaSDK
 		HWAVEOUT				m_waveO;
 		WAVEFORMATPCMEX			m_waveFMT;
 		AudioParameters			m_params;
-		AudioOutputCallback*	m_callback;
+		AudioInputCallback*	m_callback;
 	};
 }

@@ -53,6 +53,20 @@ namespace TinyFramework
 	class TinyTime
 	{
 	public:
+		static constexpr INT64 QPCOverflowThreshold = INT64_C(0x8637BD05AF7);
+		static const INT64 HoursPerDay = 24;
+		static const INT64 MillisecondsPerSecond = 1000;
+		static const INT64 MillisecondsPerDay = MillisecondsPerSecond * 60 * 60 * HoursPerDay;
+		static const INT64 MicrosecondsPerMillisecond = 1000;
+		static const INT64 MicrosecondsPerSecond = MicrosecondsPerMillisecond * MillisecondsPerSecond;
+		static const INT64 MicrosecondsPerMinute = MicrosecondsPerSecond * 60;
+		static const INT64 MicrosecondsPerHour = MicrosecondsPerMinute * 60;
+		static const INT64 MicrosecondsPerDay = MicrosecondsPerHour * HoursPerDay;
+		static const INT64 MicrosecondsPerWeek = MicrosecondsPerDay * 7;
+		static const INT64 NanosecondsPerMicrosecond = 1000;
+		static const INT64 NanosecondsPerSecond = NanosecondsPerMicrosecond * MicrosecondsPerSecond;
+
+	public:
 		static TinyTime WINAPI GetCurrentTime() throw();
 		static BOOL WINAPI IsValidFILETIME(const FILETIME& ft) throw();
 

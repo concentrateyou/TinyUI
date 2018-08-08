@@ -7,10 +7,10 @@ namespace MediaSDK
 	{
 		DISALLOW_COPY_AND_ASSIGN(AudioOutputStream)
 	public:
-		class  AudioOutputCallback
+		class  AudioInputCallback
 		{
 		public:
-			virtual ~AudioOutputCallback();
+			virtual ~AudioInputCallback();
 			virtual INT		OnInput(INT64 delay, INT64 timestamp) = 0;
 			virtual void	OnError() = 0;
 		};
@@ -18,7 +18,7 @@ namespace MediaSDK
 		AudioOutputStream();
 		virtual ~AudioOutputStream();
 		virtual BOOL Open() = 0;
-		virtual BOOL Start(AudioOutputCallback* callback) = 0;
+		virtual BOOL Start(AudioInputCallback* callback) = 0;
 		virtual BOOL Stop() = 0;
 		virtual BOOL GetVolume(DOUBLE* volume) = 0;
 		virtual BOOL SetVolume(DOUBLE volume) = 0;

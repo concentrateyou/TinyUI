@@ -22,7 +22,6 @@ namespace TinyFramework
 
 		return ok;
 	}
-	LONGLONG g_qpc_ticks_per_second = 0;
 	/************************************************************************/
 	/* TinyTimeSpan                                                         */
 	/************************************************************************/
@@ -1391,14 +1390,21 @@ namespace TinyFramework
 		LONGLONG ticks = (1000 * m_lastTime / m_lFrequency.QuadPart);
 		return ticks;
 	}
+
 	LONGLONG TinyPerformanceTime::Now()
 	{
 		LARGE_INTEGER lFrequency = {};
 		if (!QueryPerformanceFrequency(&lFrequency))
 			lFrequency.QuadPart = 0;
-		g_qpc_ticks_per_second = lFrequency.QuadPart;
 		LARGE_INTEGER currentPerformanceCount = {};
 		::QueryPerformanceCounter(&currentPerformanceCount);
-		return currentPerformanceCount.QuadPart;
+		LONGLONG qpc = currentPerformanceCount.QuadPart;
+		if (qpc < TinyTime::QPCOverflowThreshold)
+		{
+			return (qpc * TinyTime::MicrosecondsPerSecond / lFrequency.QuadPart);
+		}
+		INT64 seconds = qpc / lFrequency.QuadPart;
+		INT64 ticks = qpc - (seconds * lFrequency.QuadPart);
+		return (seconds * TinyTime::MicrosecondsPerSecond) + ((ticks * TinyTime::MicrosecondsPerSecond) / lFrequency.QuadPart);
 	}
 }

@@ -54,11 +54,9 @@ namespace MediaSDK
 	}
 	void WaveAudioOutputStream::QueueNextPacket(WAVEHDR *s)
 	{
-		UINT32 delayBytes = m_pending;
-		INT32 frames_filled = m_callback->OnInput(audio_bus_.get(), total_delay_bytes, 0);
-		/*const INT64 delay = (m_pending * 1000 * 1000) / m_waveFMT.Format.nAvgBytesPerSec;
-		INT32 size = m_callback->OnInput(delay, base::TimeTicks::Now(), 0, audio_bus_.get());
-		UINT32 used = size * m_waveFMT.Format.nChannels * (m_waveFMT.Format.wBitsPerSample / 8);
+		const INT64 delay = (m_pending * 1000 * 1000) / m_waveFMT.Format.nAvgBytesPerSec;
+		INT32 size = m_callback->OnInput(delay, TinyPerformanceTime::Now(), 0, audio_bus_.get());
+		UINT32 used = size * m_waveFMT.Format.nBlockAlign;
 		if (used <= buffer_size_)
 		{
 			audio_bus_->Scale(volume_);
@@ -69,7 +67,7 @@ namespace MediaSDK
 		else
 		{
 			OutputError(0);
-		}*/
+		}
 	}
 	BOOL WaveAudioOutputStream::Initialize(const AudioParameters& params, UINT count, UINT dID)
 	{
@@ -154,7 +152,7 @@ namespace MediaSDK
 		return TRUE;
 	}
 
-	BOOL WaveAudioOutputStream::Start(AudioOutputCallback* callback)
+	BOOL WaveAudioOutputStream::Start(AudioInputCallback* callback)
 	{
 		m_callback = callback;
 		if (!m_event.ResetEvent())
