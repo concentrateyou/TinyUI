@@ -11,6 +11,7 @@
 #include "DX11Image2D.h"
 #include "DX11Graphics2D.h"
 #include "DX11CaptureRunner.h"
+
 using namespace DShow;
 using namespace DXFramework;
 using namespace TinyFramework;
@@ -18,7 +19,6 @@ using namespace TinyFramework::IO;
 
 namespace MediaSDK
 {
-
 }
 
 

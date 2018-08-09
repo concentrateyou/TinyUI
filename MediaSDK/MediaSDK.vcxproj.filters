@@ -81,7 +81,7 @@
     <ClInclude Include="AudioParameters.h">
       <Filter>头文件\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="AudioBus.h">
+    <ClInclude Include="AudioPacket.h">
       <Filter>头文件\Audio</Filter>
     </ClInclude>
   </ItemGroup>
@@ -134,7 +134,7 @@
     <ClCompile Include="AudioParameters.cpp">
       <Filter>源文件\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="AudioBus.cpp">
+    <ClCompile Include="AudioPacket.cpp">
       <Filter>源文件\Audio</Filter>
     </ClCompile>
   </ItemGroup>

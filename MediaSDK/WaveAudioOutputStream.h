@@ -32,18 +32,19 @@ namespace MediaSDK
 		inline WAVEHDR* GetWAVEHDR(INT n) const;
 		static void NTAPI OnCallback(PVOID lpParameter, BOOLEAN timerFired);
 	private:
-		UINT					m_dID;
-		UINT 					m_count;
-		UINT					m_size;
-		UINT					m_pending;
-		HANDLE					m_handle;
-		volatile State			m_state;
-		TinyLock				m_lock;
-		TinyEvent				m_event;
-		TinyBuffer<CHAR>		m_buffer;
-		HWAVEOUT				m_waveO;
-		WAVEFORMATPCMEX			m_waveFMT;
-		AudioParameters			m_params;
-		AudioInputCallback*	m_callback;
+		UINT						m_dID;
+		UINT 						m_count;
+		UINT						m_size;
+		UINT						m_pending;
+		HANDLE						m_handle;
+		volatile State				m_state;
+		TinyLock					m_lock;
+		TinyEvent					m_event;
+		TinyBuffer<CHAR>			m_buffer;
+		TinyScopedPtr<AudioPacket>	m_packet;
+		HWAVEOUT					m_waveO;
+		WAVEFORMATPCMEX				m_waveFMT;
+		AudioParameters				m_params;
+		AudioInputCallback*			m_callback;
 	};
 }

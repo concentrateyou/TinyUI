@@ -746,6 +746,13 @@ private:\
 			free(_Ptr);
 		}
 	};
+	struct AlignedFreeDeleter
+	{
+		void operator()(void* _Ptr) const _NOEXCEPT
+		{
+			_aligned_free(_Ptr);
+		}
+	};
 	/// <summary>
 	/// 智能指针但不能转让所有权
 	/// </summary>

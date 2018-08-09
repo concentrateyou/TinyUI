@@ -52,22 +52,21 @@ namespace MediaSDK
 			m_callback->OnError();
 		}
 	}
-	void WaveAudioOutputStream::QueueNextPacket(WAVEHDR *s)
+	void WaveAudioOutputStream::QueueNextPacket(WAVEHDR *buffer)
 	{
 		const INT64 delay = (m_pending * 1000 * 1000) / m_waveFMT.Format.nAvgBytesPerSec;
-		INT32 size = m_callback->OnInput(delay, TinyPerformanceTime::Now(), 0, audio_bus_.get());
-		UINT32 used = size * m_waveFMT.Format.nBlockAlign;
-		if (used <= buffer_size_)
+		INT32 count = m_callback->OnInput(delay, TinyPerformanceTime::Now(), 0, m_packet);
+		UINT32 size = count * m_waveFMT.Format.nBlockAlign;//输入字节数
+		UINT32 buffersize = m_waveFMT.Format.nBlockAlign * m_params.GetFrames();
+		if (size <= buffersize)
 		{
-			audio_bus_->Scale(volume_);
-			audio_bus_->ToInterleaved(size, format_.Format.wBitsPerSample / 8, buffer->lpData);
-			buffer->dwBufferLength = used * format_.Format.nChannels / channels_;
-			buffer->dwFlags = WHDR_PREPARED;
+			buffer->dwBufferLength = size;
 		}
 		else
 		{
 			OutputError(0);
 		}
+		buffer->dwFlags = WHDR_PREPARED;
 	}
 	BOOL WaveAudioOutputStream::Initialize(const AudioParameters& params, UINT count, UINT dID)
 	{
@@ -87,6 +86,7 @@ namespace MediaSDK
 		m_waveFMT.Samples.wValidBitsPerSample = m_waveFMT.Format.wBitsPerSample;
 		//内存对齐
 		m_size = (sizeof(WAVEHDR) + m_waveFMT.Format.nBlockAlign * m_params.GetFrames() + 15u) & static_cast<size_t>(~15);
+		return TRUE;
 	}
 	inline WAVEHDR* WaveAudioOutputStream::GetWAVEHDR(INT index) const
 	{
