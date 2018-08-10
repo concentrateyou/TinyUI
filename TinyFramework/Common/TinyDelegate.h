@@ -217,7 +217,6 @@ namespace TinyFramework
 		{
 
 		}
-
 		DelegateBase& operator=(const DelegateBase& other)
 		{
 			if (&other != this)

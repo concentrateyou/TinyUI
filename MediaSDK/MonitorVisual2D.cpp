@@ -31,7 +31,7 @@ namespace MediaSDK
 		}
 		return FALSE;
 	}
-	BOOL MonitorVisual2D::Process()
+	BOOL MonitorVisual2D::Tick()
 	{
 		return m_duplicator.AcquireNextFrame(m_dx11, 0);
 	}

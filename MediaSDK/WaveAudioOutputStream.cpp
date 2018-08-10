@@ -33,15 +33,26 @@ namespace MediaSDK
 		m_dID(0),
 		m_count(0),
 		m_pending(0),
+		m_alignsize(0),
 		m_size(0),
 		m_state(PCM_NONE)
 	{
-		m_event.CreateEvent();
+
 	}
 
 
 	WaveAudioOutputStream::~WaveAudioOutputStream()
 	{
+	}
+
+	void WaveAudioOutputStream::OnOpen()
+	{
+
+	}
+
+	void WaveAudioOutputStream::OnClose()
+	{
+
 	}
 
 	void WaveAudioOutputStream::OutputError(MMRESULT hRes)
@@ -52,101 +63,119 @@ namespace MediaSDK
 			m_callback->OnError();
 		}
 	}
-	void WaveAudioOutputStream::QueueNextPacket(WAVEHDR *buffer)
-	{
-		const INT64 delay = (m_pending * 1000 * 1000) / m_waveFMT.Format.nAvgBytesPerSec;
-		INT32 count = m_callback->OnInput(delay, TinyPerformanceTime::Now(), 0, m_packet);
-		UINT32 size = count * m_waveFMT.Format.nBlockAlign;//输入字节数
-		UINT32 buffersize = m_waveFMT.Format.nBlockAlign * m_params.GetFrames();
-		if (size <= buffersize)
-		{
-			buffer->dwBufferLength = size;
-		}
-		else
-		{
-			OutputError(0);
-		}
-		buffer->dwFlags = WHDR_PREPARED;
-	}
 	BOOL WaveAudioOutputStream::Initialize(const AudioParameters& params, UINT count, UINT dID)
 	{
 		m_dID = dID;
 		m_count = count;
 		m_params = params;
-		const WAVEFORMATEX* waveFMT = m_params.GetFormat();
+		const WAVEFORMATEX* pFMT = m_params.GetFormat();
 		m_waveFMT.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
-		m_waveFMT.Format.nChannels = waveFMT->nChannels;
-		m_waveFMT.Format.nSamplesPerSec = waveFMT->nSamplesPerSec;
-		m_waveFMT.Format.wBitsPerSample = waveFMT->wBitsPerSample;
-		m_waveFMT.Format.cbSize = sizeof(waveFMT) - sizeof(WAVEFORMATEX);
-		m_waveFMT.Format.nBlockAlign = (m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8;
+		m_waveFMT.Format.nChannels = pFMT->nChannels;
+		m_waveFMT.Format.nSamplesPerSec = pFMT->nSamplesPerSec;
+		m_waveFMT.Format.wBitsPerSample = pFMT->wBitsPerSample;
+		m_waveFMT.Format.cbSize = sizeof(pFMT) - sizeof(WAVEFORMATEX);
+		m_waveFMT.Format.nBlockAlign = (m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8;//每个采样字节数(多声道)
 		m_waveFMT.Format.nAvgBytesPerSec = m_waveFMT.Format.nBlockAlign * m_waveFMT.Format.nSamplesPerSec;
 		m_waveFMT.dwChannelMask = ChannelsToMask[m_waveFMT.Format.nChannels > MaxChannelsToMask ? MaxChannelsToMask : m_waveFMT.Format.nChannels];
 		m_waveFMT.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
 		m_waveFMT.Samples.wValidBitsPerSample = m_waveFMT.Format.wBitsPerSample;
-		//内存对齐
-		m_size = (sizeof(WAVEHDR) + m_waveFMT.Format.nBlockAlign * m_params.GetFrames() + 15u) & static_cast<size_t>(~15);
+		MMRESULT hRes = ::waveOutOpen(NULL, WAVE_MAPPER, (LPWAVEFORMATEX)&m_waveFMT, NULL, 0, WAVE_FORMAT_QUERY);
+		if (hRes != MMSYSERR_NOERROR)
+		{
+			OutputError(hRes);
+			return FALSE;
+		}
+		m_state = PCM_NONE;
+		m_size = ((m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8) * m_params.GetFrames();
+		m_alignsize = (sizeof(WAVEHDR) + m_size + 15u) & static_cast<size_t>(~15);//16字节对齐
 		return TRUE;
 	}
 	inline WAVEHDR* WaveAudioOutputStream::GetWAVEHDR(INT index) const
 	{
-		return reinterpret_cast<WAVEHDR*>(&m_buffer[index * m_size]);
+		return reinterpret_cast<WAVEHDR*>(&m_bits[index * m_alignsize]);
 	}
-	void NTAPI WaveAudioOutputStream::OnCallback(PVOID lpParameter, BOOLEAN timerFired)
+	void CALLBACK WaveAudioOutputStream::waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
 	{
-		WaveAudioOutputStream* stream = reinterpret_cast<WaveAudioOutputStream*>(lpParameter);
-		TinyAutoLock lock(stream->m_lock);
-		if (stream->m_state == PCM_PLAYING)
+		WaveAudioOutputStream* stream = reinterpret_cast<WaveAudioOutputStream*>(dwInstance);
+		switch (uMsg)
 		{
-			for (UINT i = 0; i <= stream->m_count; ++i)
-			{
-				WAVEHDR* buffer = stream->GetWAVEHDR(i);
-				if (buffer->dwFlags & WHDR_DONE)
-				{
-					stream->m_pending -= buffer->dwBufferLength;
-					stream->QueueNextPacket(buffer);
-					if (stream->m_state == PCM_PLAYING)
-					{
-						MMRESULT hRes = ::waveOutWrite(stream->m_waveO, buffer, sizeof(WAVEHDR));
-						if (hRes != MMSYSERR_NOERROR)
-							stream->OutputError(hRes);
-						stream->m_pending += buffer->dwBufferLength;
-					}
-				}
-			}
+		case MM_WOM_OPEN:
+			stream->OnOpen();
+			break;
+		case MM_WOM_CLOSE:
+			stream->OnClose();
+			break;
+		case MM_WOM_DONE:
+			stream->OnDone((LPWAVEHDR)dwParam1, dwInstance);
+			break;
 		}
+	}
+	BOOL WaveAudioOutputStream::OnDone(LPWAVEHDR pwh, DWORD_PTR dwInstance)
+	{
+		TinyAutoLock autolock(m_lock);
+		MMRESULT hRes = MMSYSERR_NOERROR;
+		if (m_state != PCM_PLAYING)
+			return FALSE;
+		m_pending -= pwh->dwBufferLength;
+		FillPacket(pwh);//读取外部数据
+		if (m_state != PCM_PLAYING)
+			return FALSE;
+		hRes = ::waveOutWrite(m_waveO, pwh, sizeof(WAVEHDR));
+		if (hRes != MMSYSERR_NOERROR)
+		{
+			OutputError(hRes);
+		}
+		m_pending += pwh->dwBufferLength;
+	}
+
+	void WaveAudioOutputStream::FillPacket(WAVEHDR *pwh)
+	{
+		ASSERT(pwh);
+		const INT64 delay = (m_pending * 1000 * 1000) / m_waveFMT.Format.nAvgBytesPerSec;
+		INT32 count = m_callback->OnInput(delay, TinyPerformanceTime::Now(), 0, m_packet);
+		UINT32 size = ((m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8) * count;//读到的字节数
+		do
+		{
+			if (size > m_size)//大于分配的字节数
+			{
+				OutputError(MMSYSERR_NOERROR);
+				break;
+			}
+			memcpy_s(pwh->lpData, size, m_packet->data(), size);
+			pwh->dwBufferLength = size;
+			pwh->dwFlags = WHDR_PREPARED;
+		} while (0);
 	}
 
 	BOOL WaveAudioOutputStream::Open()
 	{
 		if (m_state != PCM_NONE)
 			return FALSE;
-		if (m_size * m_count > MaxOpenBufferSize)
+		if (m_alignsize * m_count > MaxOpenBufferSize)
 			return FALSE;
 		if (m_count < 2 || m_count > 5)
 			return FALSE;
 		::GetLastError();
-		MMRESULT hRes = ::waveOutOpen(&m_waveO, m_dID, reinterpret_cast<LPCWAVEFORMATEX>(&m_waveFMT), reinterpret_cast<DWORD_PTR>(m_event.Handle()), NULL, CALLBACK_EVENT);
+		MMRESULT hRes = ::waveOutOpen(&m_waveO, m_dID, reinterpret_cast<LPCWAVEFORMATEX>(&m_waveFMT), (DWORD_PTR)WaveAudioOutputStream::waveOutProc, (DWORD_PTR)this, CALLBACK_FUNCTION);
 		if (hRes != MMSYSERR_NOERROR)
 		{
 			OutputError(hRes);
 			return FALSE;
 		}
-		m_buffer.Reset(m_size * m_count);
-		ASSERT(m_buffer);
-		for (UINT i = 0; i <= m_count; ++i)
+		m_bits.Reset(new CHAR[m_alignsize * m_count]);
+		ASSERT(m_bits);
+		for (UINT32 i = 0; i <= m_count; ++i)
 		{
-			WAVEHDR* buffer = GetWAVEHDR(i);
-			buffer->lpData = reinterpret_cast<char*>(buffer) + sizeof(WAVEHDR);
-			buffer->dwBufferLength = m_waveFMT.Format.nBlockAlign * m_params.GetFrames();
-			buffer->dwBytesRecorded = 0;
-			buffer->dwFlags = WHDR_DONE;
-			buffer->dwLoops = 0;
-			hRes = ::waveOutPrepareHeader(m_waveO, buffer, sizeof(WAVEHDR));
+			WAVEHDR* pwh = GetWAVEHDR(i);
+			CHAR* ps = reinterpret_cast<CHAR*>(pwh);
+			pwh->lpData = ps + sizeof(WAVEHDR);
+			pwh->dwBufferLength = m_size;
+			pwh->dwBytesRecorded = 0;
+			pwh->dwFlags = WHDR_DONE;
+			pwh->dwLoops = 0;
+			hRes = ::waveOutPrepareHeader(m_waveO, pwh, sizeof(WAVEHDR));
 			if (hRes != MMSYSERR_NOERROR)
-			{
 				OutputError(hRes);
-			}
 		}
 		m_state = PCM_READY;
 		return TRUE;
@@ -154,24 +183,18 @@ namespace MediaSDK
 
 	BOOL WaveAudioOutputStream::Start(AudioInputCallback* callback)
 	{
+		if (m_state != PCM_READY)
+			return FALSE;
 		m_callback = callback;
-		if (!m_event.ResetEvent())
-		{
-			OutputError(MMSYSERR_ERROR);
-			return FALSE;
-		}
-		if (!::RegisterWaitForSingleObject(&m_handle, m_event, &OnCallback, this, INFINITE, WT_EXECUTEDEFAULT))
-		{
-			OutputError(MMSYSERR_ERROR);
-			return FALSE;
-		}
 		m_state = PCM_PLAYING;
 		m_pending = 0;
-		for (UINT i = 0; i <= m_count; ++i)
+		//读取外部数据
+		for (UINT32 i = 0; i <= m_count; ++i)
 		{
-			WAVEHDR* buffer = GetWAVEHDR(i);
-			QueueNextPacket(buffer);
-			m_pending += buffer->dwBufferLength;
+			WAVEHDR* pwh = GetWAVEHDR(i);
+			ASSERT(pwh);
+			FillPacket(pwh);
+			m_pending += pwh->dwBufferLength;
 		}
 		::MemoryBarrier();
 		MMRESULT hRes = ::waveOutPause(m_waveO);
@@ -180,14 +203,13 @@ namespace MediaSDK
 			OutputError(hRes);
 			return FALSE;
 		}
-		for (UINT i = 0; i <= m_count; ++i)
+		for (UINT32 i = 0; i <= m_count; ++i)
 		{
-			WAVEHDR* buffer = GetWAVEHDR(i);
-			hRes = ::waveOutWrite(m_waveO, buffer, sizeof(WAVEHDR));
+			WAVEHDR* pwh = GetWAVEHDR(i);
+			ASSERT(pwh);
+			hRes = ::waveOutWrite(m_waveO, pwh, sizeof(WAVEHDR));
 			if (hRes != MMSYSERR_NOERROR)
-			{
 				OutputError(hRes);
-			}
 		}
 		hRes = ::waveOutRestart(m_waveO);
 		if (hRes != MMSYSERR_NOERROR)
@@ -204,29 +226,18 @@ namespace MediaSDK
 			return FALSE;
 		m_state = PCM_STOPPING;
 		::MemoryBarrier();
-		if (m_handle != NULL)
-		{
-			if (!::UnregisterWaitEx(m_handle, INVALID_HANDLE_VALUE))
-			{
-				OutputError(::GetLastError());
-			}
-			m_handle = NULL;
-		}
 		MMRESULT hRes = ::waveOutReset(m_waveO);
 		if (hRes != MMSYSERR_NOERROR)
-		{
 			OutputError(hRes);
-		}
-		TinyAutoLock lock(m_lock);
-		for (UINT i = 0; i <= m_count; ++i)
+		TinyAutoLock autolock(m_lock);
+		for (UINT32 i = 0; i <= m_count; ++i)
 		{
-			WAVEHDR* buffer = GetWAVEHDR(i);
-			buffer->dwFlags = WHDR_PREPARED;
-			MMRESULT hRes = ::waveOutUnprepareHeader(m_waveO, buffer, sizeof(WAVEHDR));
+			WAVEHDR* pwh = GetWAVEHDR(i);
+			ASSERT(pwh);
+			pwh->dwFlags = WHDR_PREPARED;
+			MMRESULT hRes = ::waveOutUnprepareHeader(m_waveO, pwh, sizeof(WAVEHDR));
 			if (hRes != MMSYSERR_NOERROR)
-			{
 				OutputError(hRes);
-			}
 		}
 		m_callback = NULL;
 		m_state = PCM_READY;
@@ -241,7 +252,7 @@ namespace MediaSDK
 			DWORD dwVolume = 0;
 			hRes = waveOutGetVolume(m_waveO, &dwVolume);
 			*volume = dwVolume;
-			return hRes == MMSYSERR_NOERROR;
+			return (hRes == MMSYSERR_NOERROR);
 		}
 		return FALSE;
 	}
@@ -253,25 +264,26 @@ namespace MediaSDK
 		{
 			hRes = waveOutSetVolume(m_waveO, static_cast<DWORD>(volume));
 			if (hRes != MMSYSERR_NOERROR)
-			{
 				OutputError(hRes);
-			}
-			return hRes == MMSYSERR_NOERROR;
+			return (hRes == MMSYSERR_NOERROR);
 		}
 		return FALSE;
 	}
-
 	void WaveAudioOutputStream::Close()
 	{
+		MMRESULT hRes = MMSYSERR_NOERROR;
 		Stop();
 		if (m_waveO != NULL)
 		{
-			for (UINT i = 0; i <= m_count; ++i)
+			for (UINT32 i = 0; i <= m_count; ++i)
 			{
-				WAVEHDR* s = GetWAVEHDR(i);
-				::waveOutUnprepareHeader(m_waveO, s, sizeof(WAVEHDR));
+				WAVEHDR* pwh = GetWAVEHDR(i);
+				ASSERT(pwh);
+				hRes = ::waveOutUnprepareHeader(m_waveO, pwh, sizeof(WAVEHDR));
+				if (hRes != MMSYSERR_NOERROR)
+					OutputError(hRes);
 			}
-			m_buffer.Release();
+			m_bits.Reset(NULL);
 			MMRESULT hRes = ::waveOutReset(m_waveO);
 			if (hRes != MMSYSERR_NOERROR)
 				OutputError(hRes);

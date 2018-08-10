@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "AudioConverter.h"
 
-
-AudioConverter::AudioConverter()
+namespace MediaSDK
 {
-}
+	AudioConverter::AudioConverter()
+	{
+	}
 
-
-AudioConverter::~AudioConverter()
-{
+	AudioConverter::~AudioConverter()
+	{
+	}
 }

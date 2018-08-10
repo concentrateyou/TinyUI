@@ -9,14 +9,11 @@ namespace MediaSDK
 	class AudioPacket
 	{
 	public:
-		AudioPacket(UINT32 channels, UINT32 count);
+		AudioPacket(UINT32 size);
 		~AudioPacket();
-	public:
-		void Scale(FLOAT volume);
-		void Copy(UINT32 channels, FLOAT* data);
+		CHAR*	data();
 	private:
-		UINT32										m_count;//Ö¡Êý
-		vector<FLOAT*>								m_channels;
-		TinyScopedPtr<FLOAT, AlignedFreeDeleter>	m_bits;
+		UINT32					m_size;
+		TinyScopedPtr<CHAR>		m_bits;
 	};
 }

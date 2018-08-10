@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "WaveAudioInputStream.h"
 
-
-WaveAudioInputStream::WaveAudioInputStream()
+namespace MediaSDK
 {
-}
+	WaveAudioInputStream::WaveAudioInputStream()
+	{
+	}
 
-
-WaveAudioInputStream::~WaveAudioInputStream()
-{
+	WaveAudioInputStream::~WaveAudioInputStream()
+	{
+	}
 }

@@ -45,7 +45,7 @@ namespace MediaSDK
 			return FALSE;
 		return TRUE;
 	}
-	BOOL CameraVisual2D::Process()
+	BOOL CameraVisual2D::Tick()
 	{
 		if (m_visual2D.IsEmpty())
 			return FALSE;

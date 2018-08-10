@@ -13,12 +13,20 @@ namespace MediaSDK
 	{
 	}
 
+	void StreamVisual2D::SetFile(const TinyString& szFile)
+	{
+		if (PathFileExists(szFile.CSTR()))
+		{
+
+		}
+	}
+
 	BOOL StreamVisual2D::Open()
 	{
 		return TRUE;
 	}
 
-	BOOL StreamVisual2D::Process()
+	BOOL StreamVisual2D::Tick()
 	{
 		return TRUE;
 	}

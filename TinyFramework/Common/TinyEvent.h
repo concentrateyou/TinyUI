@@ -13,16 +13,31 @@ namespace TinyFramework
 	public:
 		Event() = default;
 	public:
-		void operator+= (DelegateType* ps)
+		void operator+= (const DelegateType& dType)
 		{
-			if (m_array.Lookup(ps) < 0)
+			if (m_array.Lookup(dType) < 0)
 			{
-				m_array.Add(ps);
+				m_array.Add(dType);
 			}
 		}
-		void operator-= (DelegateType* ps)
+		void operator+= (DelegateType&& dType)
 		{
-			INT index = m_array.Lookup(ps);
+			if (m_array.Lookup(dType) < 0)
+			{
+				m_array.Add(std::move(dType));
+			}
+		}
+		void operator-= (const DelegateType& dType)
+		{
+			INT index = m_array.Lookup(dType);
+			if (index >= 0)
+			{
+				m_array.RemoveAt(index);
+			}
+		};
+		void operator-= (DelegateType&& dType)
+		{
+			INT index = m_array.Lookup(dType);
 			if (index >= 0)
 			{
 				m_array.RemoveAt(index);
@@ -33,11 +48,11 @@ namespace TinyFramework
 			INT size = m_array.GetSize();
 			for (INT i = 0; i < size; i++)
 			{
-				DelegateType* fType = static_cast<DelegateType*>(m_array[i]);
-				if (fType)
+				DelegateType&& fType = m_array[i];
+				if (!fType.IsEmpty())
 				{
-					(*fType)(std::forward<Args>(args)...);
-				};
+					fType(std::forward<Args>(args)...);
+				}
 			};
 		};
 		BOOL IsEmpty() const
@@ -53,7 +68,7 @@ namespace TinyFramework
 			m_array.RemoveAll();
 		}
 	private:
-		TinyArray<DelegateType*> m_array;
+		TinyArray<DelegateType> m_array;
 	};
 };
 

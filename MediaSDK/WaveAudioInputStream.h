@@ -1,8 +1,16 @@
 #pragma once
-class WaveAudioInputStream
+#include "AudioInputStream.h"
+#include "AudioParameters.h"
+
+namespace MediaSDK
 {
-public:
-	WaveAudioInputStream();
-	~WaveAudioInputStream();
-};
+	class WaveAudioInputStream : public AudioInputStream
+	{
+		DISALLOW_COPY_AND_ASSIGN(WaveAudioInputStream)
+	public:
+		WaveAudioInputStream();
+		virtual	~WaveAudioInputStream();
+	};
+}
+
 

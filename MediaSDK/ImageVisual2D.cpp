@@ -25,7 +25,7 @@ namespace MediaSDK
 		return m_visual2D.Load(m_dx11, m_szFile.CSTR());
 	}
 
-	BOOL ImageVisual2D::Process()
+	BOOL ImageVisual2D::Tick()
 	{
 		return TRUE;
 	}

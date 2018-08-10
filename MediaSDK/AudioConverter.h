@@ -1,8 +1,15 @@
 #pragma once
-class AudioConverter
+#include "AudioPacket.h"
+
+namespace MediaSDK
 {
-public:
-	AudioConverter();
-	~AudioConverter();
-};
+	class AudioConverter
+	{
+	public:
+		AudioConverter();
+		~AudioConverter();
+	};
+
+}
+
 
