@@ -27,8 +27,7 @@ namespace MediaSDK
 	};
 
 	WaveAudioOutputStream::WaveAudioOutputStream()
-		:m_handle(NULL),
-		m_waveO(NULL),
+		:m_waveO(NULL),
 		m_callback(NULL),
 		m_dID(0),
 		m_count(0),
