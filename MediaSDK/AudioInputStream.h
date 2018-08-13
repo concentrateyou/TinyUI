@@ -1,5 +1,6 @@
 #pragma once
 #include "MediaSDK.h"
+#include "AudioPacket.h"
 
 namespace MediaSDK
 {
@@ -11,7 +12,7 @@ namespace MediaSDK
 		{
 		public:
 			virtual ~AudioOutputCallback();
-			virtual INT		OnOutput(INT64 timestamp, AudioPacket* packet) = 0;
+			virtual LONG	OnOutput(INT64 timestamp, AudioPacket* packet) = 0;
 			virtual void	OnError() = 0;
 		};
 	public:

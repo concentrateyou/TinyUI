@@ -32,6 +32,7 @@ namespace MediaSDK
 		m_count = count;
 		m_params = params;
 		m_size = ((m_waveFMT.nChannels * m_waveFMT.wBitsPerSample) / 8) * m_params.GetFrames();
+		return TRUE;
 	}
 
 	inline WAVEHDR* WaveAudioInputStream::GetWAVEHDR(INT index) const
@@ -79,6 +80,7 @@ namespace MediaSDK
 		{
 			m_stop.SetEvent();
 		}
+		return TRUE;
 	}
 
 	BOOL WaveAudioInputStream::Open()

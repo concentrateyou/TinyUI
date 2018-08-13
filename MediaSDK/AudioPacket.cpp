@@ -13,6 +13,10 @@ namespace MediaSDK
 	AudioPacket::~AudioPacket()
 	{
 	}
+	UINT32	AudioPacket::size() const
+	{
+		return m_size;
+	}
 	CHAR*	AudioPacket::data()
 	{
 		return m_bits;

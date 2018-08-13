@@ -15,9 +15,13 @@
 #include "Media/TinyWASAPIAudioRender.h"
 #include "Media/TinyWave.h"
 
+#include "WaveAudioOutputStream.h"
+#include "WaveAudioInputStream.h"
+
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
 using namespace TinyFramework::Media;
+using namespace MediaSDK;
 
 namespace Bytedance
 {
@@ -65,7 +69,8 @@ namespace Bytedance
 
 	private:
 		//TinyWASAPIAudioCapture	m_capture;
-		TinyWASAPIAudioRender	m_render;
+		//TinyWASAPIAudioRender		m_render;
+		WaveAudioOutputStream	m_stream;
 		TinyWaveFile			m_waveFile;
 	};
 }

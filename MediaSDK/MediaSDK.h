@@ -2,6 +2,7 @@
 #include "Common/TinyCommon.h"
 #include "Common/TinyCallback.h"
 #include "Control/TinyControl.h"
+#include "Media/TinyWave.h"
 #include "DShowCommon.h"
 #include "VideoCapture.h"
 #include "VideoCaptureParam.h"
@@ -16,6 +17,7 @@ using namespace DShow;
 using namespace DXFramework;
 using namespace TinyFramework;
 using namespace TinyFramework::IO;
+using namespace TinyFramework::Media;
 
 namespace MediaSDK
 {

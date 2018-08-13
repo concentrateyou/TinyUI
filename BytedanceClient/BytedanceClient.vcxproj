@@ -88,7 +88,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyFramework;..\DShowCapture;..\MFCapture;..\DXFramework;..\Decode;..\Dependency\x86\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyFramework;..\DShowCapture;..\MFCapture;..\DXFramework;..\Decode;..\MediaSDK;..\Dependency\x86\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -177,6 +177,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Decode\Decode.vcxproj">
       <Project>{2b7dbc16-dc0d-49c6-a0b8-9f26c31aa758}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\MediaSDK\MediaSDK.vcxproj">
+      <Project>{7ff2453d-9225-4c3c-9eac-bf50e2479fe3}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

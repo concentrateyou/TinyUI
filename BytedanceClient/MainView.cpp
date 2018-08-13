@@ -24,18 +24,30 @@ namespace Bytedance
 		//m_canvasView.Create(m_hWND, 0, 0, 1, 1, FALSE);
 		BuildUI({ 800,600 });
 
+		WAVEFORMATEX w;
+		w.cbSize = 0;
+		w.nChannels = 2;
+		w.nSamplesPerSec = 44100;
+		w.wBitsPerSample = 16;
+		w.nBlockAlign = (w.wBitsPerSample * w.nChannels) / 8;
+		w.nAvgBytesPerSec = w.nSamplesPerSec * w.nBlockAlign;
+		w.wFormatTag = WAVE_FORMAT_PCM;
+		AudioParameters ap;
+		ap.SetFormat(&w);
+		m_stream.Initialize(ap, 10, WAVE_MAPPER);
+		m_stream.Open();
 		/*m_capture.Initialize(BindCallback(&MainView::OnCallback1, this));
 		std::vector<TinyWASAPIAudio::Name> names;
 		m_capture.GetDevices(eAll, names);
 		m_capture.Open(names[0], NULL);
 		m_waveFile.Create("D:\\test.wav", m_capture.GetFormat());
 		m_capture.Start();*/
-		m_waveFile.Open("D:\\test1.wav");
+		/*m_waveFile.Open("D:\\test1.wav");
 		m_render.Initialize(BindCallback(&MainView::OnCallback2, this));
 		std::vector<TinyWASAPIAudio::Name> names;
 		m_render.GetDevices(eAll, names);
 		m_render.Open(names[0], m_waveFile.GetFormat());
-		m_render.Start();
+		m_render.Start();*/
 	}
 
 	void MainView::OnUninitialize()

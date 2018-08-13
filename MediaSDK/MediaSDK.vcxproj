@@ -141,6 +141,8 @@
     <ClInclude Include="AudioParameters.h" />
     <ClInclude Include="CameraVisual2D.h" />
     <ClInclude Include="CanvasView.h" />
+    <ClInclude Include="AudioFileSink.h" />
+    <ClInclude Include="AudioFileSource.h" />
     <ClInclude Include="GameVisual2D.h" />
     <ClInclude Include="ImageVisual2D.h" />
     <ClInclude Include="IVisual2D.h" />
@@ -162,6 +164,8 @@
     <ClCompile Include="AudioParameters.cpp" />
     <ClCompile Include="CameraVisual2D.cpp" />
     <ClCompile Include="CanvasView.cpp" />
+    <ClCompile Include="AudioFileSink.cpp" />
+    <ClCompile Include="AudioFileSource.cpp" />
     <ClCompile Include="GameVisual2D.cpp" />
     <ClCompile Include="ImageVisual2D.cpp" />
     <ClCompile Include="IVisual2D.cpp" />

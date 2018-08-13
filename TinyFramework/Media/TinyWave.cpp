@@ -622,13 +622,13 @@ namespace TinyFramework
 			m_hmmio = NULL;
 			return FALSE;
 		}
-		BOOL TinyWaveFile::Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead)
+		LONG TinyWaveFile::Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead)
 		{
 			if (!m_hmmio)
 				return FALSE;
-			MMRESULT  mmRes = MMSYSERR_NOERROR;
-			mmRes = mmioWrite(m_hmmio, (const char*)lpBuffer, nNumberOfBytesToRead);
-			return mmRes != MMSYSERR_NOERROR;
+			LONG  lRes = 0;
+			lRes = mmioWrite(m_hmmio, (const char*)lpBuffer, nNumberOfBytesToRead);
+			return lRes;
 		}
 		BOOL TinyWaveFile::Open(LPTSTR pzFile)
 		{

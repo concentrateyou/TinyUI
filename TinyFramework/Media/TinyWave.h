@@ -37,7 +37,7 @@ namespace TinyFramework
 			BOOL Open(LPTSTR pzFile);
 			BOOL Open(LPVOID pStream, LONG bufferSize);
 			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead);
-			BOOL Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead);
+			LONG Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead);
 			BOOL Seek(LONG lOffset, INT iOrigin);
 			BOOL ResetFile();
 			void Close();

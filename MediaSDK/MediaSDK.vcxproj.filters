@@ -87,6 +87,12 @@
     <ClInclude Include="TaskManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="AudioFileSink.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioFileSource.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -142,6 +148,12 @@
     </ClCompile>
     <ClCompile Include="TaskManager.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioFileSink.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioFileSource.cpp">
+      <Filter>源文件\Audio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
