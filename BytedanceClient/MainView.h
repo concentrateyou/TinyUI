@@ -53,16 +53,5 @@ namespace Bytedance
 		//按钮
 		TinyVisualButton*		m_game;//游戏注入
 		TinyVisualButton*		m_monitor;//显示器
-
-		//CanvasView				m_canvasView;
-		//事件
-		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
-		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;
-		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onRestoreClick;
-		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCloseClick;
-		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
-
-		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onGameClick;
-		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMonitorClick;
 	};
 }

@@ -27,14 +27,7 @@ namespace Bytedance
 
 	void MainView::OnUninitialize()
 	{
-		//m_canvasView.DestroyWindow();
-		m_max->EVENT_CLICK -= m_onMaxClick;
-		m_min->EVENT_CLICK -= m_onMaxClick;
-		m_close->EVENT_CLICK += m_onCloseClick;
-		m_restore->EVENT_CLICK -= m_onRestoreClick;
-		m_setting->EVENT_CLICK -= m_onSettingClick;
-		m_game->EVENT_CLICK -= m_onGameClick;
-		m_monitor->EVENT_CLICK -= m_onMonitorClick;
+	
 	}
 
 	LRESULT MainView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -60,8 +53,6 @@ namespace Bytedance
 		m_max->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_max_normal"]);
 		m_max->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_max_hover"]);
 		m_max->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_max_down"]);
-		m_onMaxClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMaxClick));
-		m_max->EVENT_CLICK += m_onMaxClick;
 
 		m_min = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_min);
@@ -70,8 +61,6 @@ namespace Bytedance
 		m_min->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_min_normal"]);
 		m_min->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_min_hover"]);
 		m_min->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_min_down"]);
-		m_onMinClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMinClick));
-		m_min->EVENT_CLICK += m_onMinClick;
 
 		m_close = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_close);
@@ -80,8 +69,6 @@ namespace Bytedance
 		m_close->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_close_normal"]);
 		m_close->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_close_hover"]);
 		m_close->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_close_down"]);
-		m_onCloseClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnCloseClick));
-		m_close->EVENT_CLICK += m_onCloseClick;
 
 		m_restore = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_restore);
@@ -91,8 +78,6 @@ namespace Bytedance
 		m_restore->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_restore_normal"]);
 		m_restore->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_restore_hover"]);
 		m_restore->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_restore_down"]);
-		m_onRestoreClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnRestoreClick));
-		m_restore->EVENT_CLICK += m_onRestoreClick;
 
 		m_setting = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_setting);
@@ -101,15 +86,6 @@ namespace Bytedance
 		m_setting->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["setting_normal"]);
 		m_setting->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["setting_hover"]);
 		m_setting->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["setting_down"]);
-		m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnSettingClick));
-		m_setting->EVENT_CLICK += m_onSettingClick;
-
-		/*m_native = static_cast<TinyVisualNative*>(m_document.Create(TinyVisualTag::NATIVE, window));
-		m_native->SetName("CanvasWindow");
-		m_native->SetView(&m_canvasView);
-		ASSERT(m_native);
-		m_native->SetPosition({ 8,27 + 8 });
-		m_native->SetSize({ size.cx - 16,500 });*/
 
 		m_game = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_game);
@@ -121,8 +97,6 @@ namespace Bytedance
 		m_game->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
 		m_game->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
 		m_game->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
-		m_onGameClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnGameClick));
-		m_game->EVENT_CLICK += m_onGameClick;
 
 		m_monitor = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_monitor);
@@ -134,9 +108,6 @@ namespace Bytedance
 		m_monitor->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
 		m_monitor->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
 		m_monitor->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
-		m_onMonitorClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMonitorClick));
-		m_monitor->EVENT_CLICK += m_onMonitorClick;
-
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());

@@ -31,7 +31,7 @@ namespace MediaSDK
 		BOOL Initialize(const AudioParameters& params, UINT count, UINT dID);
 	private:
 		BOOL OnDone(LPWAVEHDR pwh, DWORD_PTR dwInstance);
-		void OutputError(MMRESULT hRes);
+		void HandleError(MMRESULT hRes);
 		void FillPacket(WAVEHDR *s);
 		inline WAVEHDR* GetWAVEHDR(INT index) const;
 		static void CALLBACK waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);

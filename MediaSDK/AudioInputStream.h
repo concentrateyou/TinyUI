@@ -11,7 +11,7 @@ namespace MediaSDK
 		{
 		public:
 			virtual ~AudioOutputCallback();
-			virtual INT		Onoutput(INT64 delay, INT64 timestamp, UINT32 skips, AudioPacket* packet) = 0;
+			virtual INT		OnOutput(INT64 timestamp, AudioPacket* packet) = 0;
 			virtual void	OnError() = 0;
 		};
 	public:

@@ -48,7 +48,7 @@ namespace TinyFramework
 			INT size = m_array.GetSize();
 			for (INT i = 0; i < size; i++)
 			{
-				DelegateType&& fType = m_array[i];
+				DelegateType& fType = m_array[i];
 				if (!fType.IsEmpty())
 				{
 					fType(std::forward<Args>(args)...);

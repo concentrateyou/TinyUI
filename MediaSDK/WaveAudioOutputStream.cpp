@@ -54,7 +54,7 @@ namespace MediaSDK
 
 	}
 
-	void WaveAudioOutputStream::OutputError(MMRESULT hRes)
+	void WaveAudioOutputStream::HandleError(MMRESULT hRes)
 	{
 		LOG(ERROR) << "WaveAudioOutputStream error " << hRes;
 		if (m_callback != NULL)
@@ -81,7 +81,7 @@ namespace MediaSDK
 		MMRESULT hRes = ::waveOutOpen(NULL, WAVE_MAPPER, (LPWAVEFORMATEX)&m_waveFMT, NULL, 0, WAVE_FORMAT_QUERY);
 		if (hRes != MMSYSERR_NOERROR)
 		{
-			OutputError(hRes);
+			HandleError(hRes);
 			return FALSE;
 		}
 		m_state = PCM_NONE;
@@ -122,7 +122,7 @@ namespace MediaSDK
 		hRes = ::waveOutWrite(m_waveO, pwh, sizeof(WAVEHDR));
 		if (hRes != MMSYSERR_NOERROR)
 		{
-			OutputError(hRes);
+			HandleError(hRes);
 		}
 		m_pending += pwh->dwBufferLength;
 	}
@@ -137,7 +137,7 @@ namespace MediaSDK
 		{
 			if (size > m_size)//大于分配的字节数
 			{
-				OutputError(MMSYSERR_NOERROR);
+				HandleError(MMSYSERR_NOERROR);
 				break;
 			}
 			memcpy_s(pwh->lpData, size, m_packet->data(), size);
@@ -158,7 +158,7 @@ namespace MediaSDK
 		MMRESULT hRes = ::waveOutOpen(&m_waveO, m_dID, reinterpret_cast<LPCWAVEFORMATEX>(&m_waveFMT), (DWORD_PTR)WaveAudioOutputStream::waveOutProc, (DWORD_PTR)this, CALLBACK_FUNCTION);
 		if (hRes != MMSYSERR_NOERROR)
 		{
-			OutputError(hRes);
+			HandleError(hRes);
 			return FALSE;
 		}
 		m_bits.Reset(new CHAR[m_alignsize * m_count]);
@@ -174,7 +174,7 @@ namespace MediaSDK
 			pwh->dwLoops = 0;
 			hRes = ::waveOutPrepareHeader(m_waveO, pwh, sizeof(WAVEHDR));
 			if (hRes != MMSYSERR_NOERROR)
-				OutputError(hRes);
+				HandleError(hRes);
 		}
 		m_state = PCM_READY;
 		return TRUE;
@@ -199,7 +199,9 @@ namespace MediaSDK
 		MMRESULT hRes = ::waveOutPause(m_waveO);
 		if (hRes != MMSYSERR_NOERROR)
 		{
-			OutputError(hRes);
+			HandleError(hRes);
+			m_state = PCM_READY;
+			m_callback = NULL;
 			return FALSE;
 		}
 		for (UINT32 i = 0; i <= m_count; ++i)
@@ -208,12 +210,15 @@ namespace MediaSDK
 			ASSERT(pwh);
 			hRes = ::waveOutWrite(m_waveO, pwh, sizeof(WAVEHDR));
 			if (hRes != MMSYSERR_NOERROR)
-				OutputError(hRes);
+			{
+				HandleError(hRes);
+				return FALSE;
+			}
 		}
 		hRes = ::waveOutRestart(m_waveO);
 		if (hRes != MMSYSERR_NOERROR)
 		{
-			OutputError(hRes);
+			HandleError(hRes);
 			return FALSE;
 		}
 		return TRUE;
@@ -227,16 +232,26 @@ namespace MediaSDK
 		::MemoryBarrier();
 		MMRESULT hRes = ::waveOutReset(m_waveO);
 		if (hRes != MMSYSERR_NOERROR)
-			OutputError(hRes);
+		{
+			HandleError(hRes);
+			m_callback = NULL;
+			m_state = PCM_READY;
+			return FALSE;
+		}
 		TinyAutoLock autolock(m_lock);
 		for (UINT32 i = 0; i <= m_count; ++i)
 		{
 			WAVEHDR* pwh = GetWAVEHDR(i);
 			ASSERT(pwh);
 			pwh->dwFlags = WHDR_PREPARED;
-			MMRESULT hRes = ::waveOutUnprepareHeader(m_waveO, pwh, sizeof(WAVEHDR));
+			hRes = ::waveOutUnprepareHeader(m_waveO, pwh, sizeof(WAVEHDR));
 			if (hRes != MMSYSERR_NOERROR)
-				OutputError(hRes);
+			{
+				HandleError(hRes);
+				m_callback = NULL;
+				m_state = PCM_READY;
+				return FALSE;
+			}
 		}
 		m_callback = NULL;
 		m_state = PCM_READY;
@@ -263,7 +278,9 @@ namespace MediaSDK
 		{
 			hRes = waveOutSetVolume(m_waveO, static_cast<DWORD>(volume));
 			if (hRes != MMSYSERR_NOERROR)
-				OutputError(hRes);
+			{
+				HandleError(hRes);
+			}
 			return (hRes == MMSYSERR_NOERROR);
 		}
 		return FALSE;
@@ -280,15 +297,21 @@ namespace MediaSDK
 				ASSERT(pwh);
 				hRes = ::waveOutUnprepareHeader(m_waveO, pwh, sizeof(WAVEHDR));
 				if (hRes != MMSYSERR_NOERROR)
-					OutputError(hRes);
+				{
+					HandleError(hRes);
+				}
 			}
 			m_bits.Reset(NULL);
 			MMRESULT hRes = ::waveOutReset(m_waveO);
 			if (hRes != MMSYSERR_NOERROR)
-				OutputError(hRes);
+			{
+				HandleError(hRes);
+			}
 			hRes = ::waveOutClose(m_waveO);
 			if (hRes != MMSYSERR_NOERROR)
-				OutputError(hRes);
+			{
+				HandleError(hRes);
+			}
 			m_state = PCM_CLOSED;
 			m_waveO = NULL;
 		}

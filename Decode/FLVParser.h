@@ -23,9 +23,9 @@ namespace Decode
 		BOOL Parse();
 		BOOL Close();
 	public:
-		Event<void(BYTE*, LONG, FLV_PACKET*)> EVENT_AUDIO;
-		Event<void(BYTE*, LONG, FLV_PACKET*)> EVENT_VIDEO;
-		Event<void(FLV_SCRIPTDATA*)> EVENT_SCRIPT;
+		Event<void(FLV_SCRIPTDATA*)>			EVENT_SCRIPT;
+		Event<void(BYTE*, LONG, FLV_PACKET*)>	EVENT_AUDIO;
+		Event<void(BYTE*, LONG, FLV_PACKET*)>	EVENT_VIDEO;
 	private:
 		BOOL ParseVideo(BYTE* data, INT size);
 		BOOL ParseAudio(BYTE* data, INT size);
