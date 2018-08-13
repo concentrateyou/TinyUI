@@ -32,6 +32,17 @@ namespace TinyFramework
 			TinyComPtr<IMMDeviceEnumerator> enumerator;
 			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
 			if (hRes != S_OK)
+			{
+				if (hRes == CO_E_NOTINITIALIZED && !enumerator)
+				{
+					hRes = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+					if (SUCCEEDED(hRes))
+					{
+						hRes = ::CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&enumerator));
+					}
+				}
+			}
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMMDevice> mmDevice;
 			wstring ws = StringToWString(name.id());
@@ -110,7 +121,7 @@ namespace TinyFramework
 				goto MMERROR;
 			return TRUE;
 		MMERROR:
-			if (pFMT && bFlag)
+			if (pFMT != NULL && bFlag)
 			{
 				CoTaskMemFree(pFMT);
 				pFMT = NULL;

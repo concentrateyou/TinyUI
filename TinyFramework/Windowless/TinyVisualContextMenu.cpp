@@ -17,12 +17,12 @@ namespace TinyFramework
 			m_offsetY(6),
 			m_owner(NULL)
 		{
-			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualContextMenu::OnItemClick));
+
 		}
 
 		TinyVisualContextMenu::~TinyVisualContextMenu()
 		{
-			m_onItemClick.Reset(NULL);
+
 		}
 		LPCSTR TinyVisualContextMenu::RetrieveClassName()
 		{
@@ -77,7 +77,7 @@ namespace TinyFramework
 				TinyVisualResource::GetInstance()["menu_highlight"],
 				TinyVisualResource::GetInstance()["menu_check"],
 				TinyVisualResource::GetInstance()["menu_arrow"]);
-			item->EVENT_CLICK += m_onItemClick;
+			item->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualContextMenu::OnItemClick);
 			m_offsetY += 26;
 			return item;
 		}
@@ -87,7 +87,7 @@ namespace TinyFramework
 			TinyVisualMenuItem* item = static_cast<TinyVisualMenuItem*>(m_document.GetVisualByName(name));
 			if (item != NULL)
 			{
-				item->EVENT_CLICK -= m_onItemClick;
+				item->EVENT_CLICK -= Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualContextMenu::OnItemClick);
 				item->RemoveAll();
 				m_document.Destory(item);
 			}
@@ -99,7 +99,7 @@ namespace TinyFramework
 			while (spvis != NULL)
 			{
 				TinyVisualMenuItem* item = static_cast<TinyVisualMenuItem*>(spvis);
-				item->EVENT_CLICK -= m_onItemClick;
+				item->EVENT_CLICK -= Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualContextMenu::OnItemClick);
 				item->RemoveAll();
 				spvis = m_document.GetVisual(spvis, CMD_NEXT);
 			}

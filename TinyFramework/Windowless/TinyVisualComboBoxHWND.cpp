@@ -16,13 +16,12 @@ namespace TinyFramework
 			m_current(NULL),
 			m_itemsize(125, 26)
 		{
-			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualComboBoxHWND::OnPosChange));
-			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualComboBoxHWND::OnItemClick));
+
 		}
 
 		TinyVisualComboBoxHWND::~TinyVisualComboBoxHWND()
 		{
-			m_onItemClick.Reset(NULL);
+
 		}
 		LPCSTR TinyVisualComboBoxHWND::RetrieveClassName()
 		{
@@ -60,14 +59,14 @@ namespace TinyFramework
 			m_scrollbar->SetImage(SCROLLBARGROOVE, TinyVisualResource::GetInstance()["vscrollbar_groove"]);
 			m_scrollbar->SetImage(SCROLLBARNORMAL, TinyVisualResource::GetInstance()["vscrollbar_normal"]);
 			m_scrollbar->SetImage(SCROLLBARHIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_hover"]);
-			m_scrollbar->EVENT_POSCHANGE += m_onPosChange;
+			m_scrollbar->EVENT_POSCHANGE += Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualComboBoxHWND::OnPosChange);
 			Unpopup();
 		}
 
 		void TinyVisualComboBoxHWND::OnUninitialize()
 		{
 			if (m_scrollbar != NULL)
-				m_scrollbar->EVENT_POSCHANGE -= m_onPosChange;
+				m_scrollbar->EVENT_POSCHANGE -= Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualComboBoxHWND::OnPosChange);
 			m_current = NULL;
 		}
 
@@ -122,7 +121,7 @@ namespace TinyFramework
 			item->SetPosition(TinyPoint(0, m_count * m_itemsize.cy));
 			item->SetImage(TinyVisualResource::GetInstance()["ComboBoxList_highlight"]);
 			m_count += 1;
-			item->EVENT_CLICK += m_onItemClick;
+			item->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualComboBoxHWND::OnItemClick);
 			return item;
 		}
 		void TinyVisualComboBoxHWND::Remove(const TinyString& name)
@@ -130,7 +129,7 @@ namespace TinyFramework
 			TinyVisualComboBoxItem* item = static_cast<TinyVisualComboBoxItem*>(m_document.GetVisualByName(name));
 			if (item != NULL)
 			{
-				item->EVENT_CLICK -= m_onItemClick;
+				item->EVENT_CLICK -= Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualComboBoxHWND::OnItemClick);
 				m_document.Destory(item);
 				m_count -= 1;
 			}

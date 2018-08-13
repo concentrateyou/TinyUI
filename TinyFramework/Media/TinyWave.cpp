@@ -325,14 +325,13 @@ namespace TinyFramework
 		//////////////////////////////////////////////////////////////////////////
 		TinyWavePlayer::TinyWavePlayer()
 		{
-			m_wavePlayDone.Reset(new Delegate<void(LPWAVEHDR, DWORD_PTR)>(this, &TinyWavePlayer::PlayDone));
-			m_waveOut.WaveDone += m_wavePlayDone;
+			m_waveOut.WaveDone += Delegate<void(LPWAVEHDR, DWORD_PTR)>(this, &TinyWavePlayer::PlayDone);
 			m_dwBlocks = m_dwBlockNext = m_dwBlockOut = 0;
 			m_bPlaying = FALSE;
 		}
 		TinyWavePlayer::~TinyWavePlayer()
 		{
-			m_waveOut.WaveDone -= m_wavePlayDone;
+			m_waveOut.WaveDone -= Delegate<void(LPWAVEHDR, DWORD_PTR)>(this, &TinyWavePlayer::PlayDone);;
 			while (m_dwBlocks > 0)
 			{
 				--m_dwBlocks;

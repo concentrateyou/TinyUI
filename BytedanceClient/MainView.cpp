@@ -23,11 +23,26 @@ namespace Bytedance
 		window->SetPosition(TinySize(100, 100));
 		//m_canvasView.Create(m_hWND, 0, 0, 1, 1, FALSE);
 		BuildUI({ 800,600 });
+
+		/*m_capture.Initialize(BindCallback(&MainView::OnCallback1, this));
+		std::vector<TinyWASAPIAudio::Name> names;
+		m_capture.GetDevices(eAll, names);
+		m_capture.Open(names[0], NULL);
+		m_waveFile.Create("D:\\test.wav", m_capture.GetFormat());
+		m_capture.Start();*/
+		m_waveFile.Open("D:\\test1.wav");
+		m_render.Initialize(BindCallback(&MainView::OnCallback2, this));
+		std::vector<TinyWASAPIAudio::Name> names;
+		m_render.GetDevices(eAll, names);
+		m_render.Open(names[0], m_waveFile.GetFormat());
+		m_render.Start();
 	}
 
 	void MainView::OnUninitialize()
 	{
-	
+		m_waveFile.Close();
+		//m_capture.Stop();
+		//m_capture.Close();
 	}
 
 	LRESULT MainView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -128,9 +143,6 @@ namespace Bytedance
 			offset += m_setting->GetSize().cx;
 			m_setting->SetPosition(TinyPoint(cx - offset, 0));
 
-			m_native->SetPosition({ 8,27 + 8 });
-			m_native->SetSize({ cx - 16,500 });
-
 			m_game->SetPosition({ 8,550 });
 
 			m_monitor->SetPosition({ 88,550 });
@@ -173,9 +185,28 @@ namespace Bytedance
 	}
 	void MainView::OnMonitorClick(TinyVisual*, EventArgs& args)
 	{
-	/*	Decode::FLVParser parser;
-		parser.Open("D:\\no_stall.flv");
-		parser.Parse();
-		parser.Close();*/
+		/*	Decode::FLVParser parser;
+			parser.Open("D:\\no_stall.flv");
+			parser.Parse();
+			parser.Close();*/
+	}
+	void MainView::OnCallback1(BYTE* bits, LONG count, LPVOID)
+	{
+		/*WAVEFORMATEX* pFMT = m_capture.GetFormat();
+		if (bits != 0)
+		{
+			m_waveFile.Write(bits, count * pFMT->nBlockAlign);
+		}
+		else
+		{
+			TinyScopedArray<BYTE> data(new BYTE[count * pFMT->nBlockAlign]);
+			ZeroMemory(data, count * pFMT->nBlockAlign);
+			m_waveFile.Write(data, count * pFMT->nBlockAlign);
+		}*/
+	}
+	void MainView::OnCallback2(BYTE* bits, LONG size, LPVOID)
+	{
+		LONG numberOfBytesRead = 0;
+		m_waveFile.Read(bits, size, &numberOfBytesRead);
 	}
 }

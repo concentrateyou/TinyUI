@@ -3,6 +3,7 @@
 #include "../Common/TinyEvent.h"
 #include "../Common/TinyString.h"
 #include "../Common/TinyCallback.h"
+#include "../Common/TinyTime.h"
 #include "../IO/TinyThread.h"
 #include "TinyWASAPIAudio.h"
 
@@ -35,7 +36,7 @@ namespace TinyFramework
 			virtual BOOL	GetVolume(FLOAT* volume);
 			virtual BOOL	SetMute(BOOL bMute);
 			virtual BOOL	GetMute(BOOL* bMute);
-			WAVEFORMATEX*	GetInputFormat() const;
+			WAVEFORMATEX*	GetFormat() const;
 			BOOL			GetStreamLatency(REFERENCE_TIME& latency);
 			BOOL			IsPlaying() const;
 		private:
@@ -47,12 +48,14 @@ namespace TinyFramework
 			DWORD									m_dwStreamFlag;
 			DWORD									m_dwChannelMask;
 			UINT32									m_count;
+			UINT64									m_lFrequency;
 			REFERENCE_TIME							m_hnsPeriod;
 			AUDCLNT_SHAREMODE						m_shareMode;
 			TinyEvent								m_sampleReady;
 			TinyEvent								m_audioStop;
-			IO::TinyThread						m_task;
+			IO::TinyThread							m_task;
 			TinyScopedArray<BYTE>					m_waveFMT;
+			TinyComPtr<IAudioClock>					m_audioClock;
 			TinyComPtr<IAudioClient>				m_audioClient;
 			TinyComPtr<IAudioRenderClient>			m_audioRender;
 			TinyComPtr<ISimpleAudioVolume>			m_audioVolume;

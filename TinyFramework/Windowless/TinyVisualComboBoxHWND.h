@@ -57,8 +57,6 @@ namespace TinyFramework
 			TinyVisualComboBox*		m_owner;
 			TinyVisual*				m_current;
 			TinyVisualVScrollBar*	m_scrollbar;
-			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>>		m_onPosChange;
-			TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>	m_onItemClick;
 		};
 	}
 }

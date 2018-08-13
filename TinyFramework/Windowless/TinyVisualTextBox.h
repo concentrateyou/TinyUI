@@ -91,7 +91,6 @@ namespace TinyFramework
 			TinyTextHost			m_texthost;
 			TinyVisualHScrollBar*	m_hscroll;
 			TinyVisualVScrollBar*	m_vscroll;
-			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;
 		};
 	}
 }

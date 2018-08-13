@@ -16,7 +16,7 @@ namespace TinyFramework
 			:m_hscroll(NULL),
 			m_vscroll(NULL)
 		{
-			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualTextBox::OnPosChange));
+
 		}
 		TinyVisualTextBox::TinyVisualTextBox(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			: TinyVisual(spvisParent, vtree),
@@ -593,7 +593,7 @@ namespace TinyFramework
 			m_hscroll->SetImage(SCROLLBARNORMAL, TinyVisualResource::GetInstance()["hscrollbar_normal"]);
 			m_hscroll->SetImage(SCROLLBARHIGHLIGHT, TinyVisualResource::GetInstance()["hscrollbar_hover"]);
 			ASSERT(m_hscroll);
-			m_hscroll->EVENT_POSCHANGE += m_onPosChange;
+			m_hscroll->EVENT_POSCHANGE += Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualTextBox::OnPosChange);
 			m_hscroll->SetVisible(FALSE);
 
 			m_vscroll = static_cast<TinyVisualVScrollBar*>(m_document->Create(size.cx - 12, 0, 12, size.cy, TinyVisualTag::VSCROLLBAR, this));
@@ -607,7 +607,7 @@ namespace TinyFramework
 			m_vscroll->SetImage(SCROLLBARNORMAL, TinyVisualResource::GetInstance()["vscrollbar_normal"]);
 			m_vscroll->SetImage(SCROLLBARHIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_hover"]);
 			ASSERT(m_vscroll);
-			m_vscroll->EVENT_POSCHANGE += m_onPosChange;
+			m_vscroll->EVENT_POSCHANGE += Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualTextBox::OnPosChange);
 			m_vscroll->SetVisible(FALSE);
 			m_texthost.SetRectangle(GetWindowRect());
 			m_texthost.SetFont(m_hFONT, m_textColor);
@@ -623,9 +623,9 @@ namespace TinyFramework
 		{
 			ASSERT(m_document);
 			if (m_hscroll != NULL)
-				m_hscroll->EVENT_POSCHANGE -= m_onPosChange;
+				m_hscroll->EVENT_POSCHANGE -= Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualTextBox::OnPosChange);;
 			if (m_vscroll != NULL)
-				m_vscroll->EVENT_POSCHANGE -= m_onPosChange;
+				m_vscroll->EVENT_POSCHANGE -= Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualTextBox::OnPosChange);;
 			m_document->GetVisualHWND().RemoveFilter(this);
 			return FALSE;
 		}

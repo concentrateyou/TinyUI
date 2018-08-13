@@ -149,7 +149,6 @@ namespace TinyFramework
 			DWORD			m_dwBlockNext;
 			DWORD			m_dwSizeL;//²¥·ÅÊý¾Ý
 			BOOL			m_bPlaying;
-			TinyScopedPtr<Delegate<void(LPWAVEHDR, DWORD_PTR)>> m_wavePlayDone;
 			void PlayData();
 		};
 		/// <summary>

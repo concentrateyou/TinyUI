@@ -40,7 +40,6 @@ namespace TinyFramework
 			UINT								m_offsetY;
 			TinyVisualContextMenu*				m_owner;
 			TinyArray<TinyVisualContextMenu*>	m_contexts;
-			TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onItemClick;
 		};
 	}
 }

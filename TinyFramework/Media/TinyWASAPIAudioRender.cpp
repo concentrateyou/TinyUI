@@ -10,7 +10,9 @@ namespace TinyFramework
 			:m_dwStreamFlag(DEFAULT_RENDER_AUDCLNT_STREAMFLAGS),
 			m_shareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
 			m_hnsPeriod(0),
-			m_bPlaying(FALSE)
+			m_bPlaying(FALSE),
+			m_lFrequency(0),
+			m_count(0)
 		{
 			m_sampleReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -42,6 +44,17 @@ namespace TinyFramework
 		{
 			TinyComPtr<IMMDeviceEnumerator> enumerator;
 			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+			{
+				if (hRes == CO_E_NOTINITIALIZED && !enumerator)
+				{
+					hRes = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+					if (SUCCEEDED(hRes))
+					{
+						hRes = ::CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&enumerator));
+					}
+				}
+			}
 			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMMDevice> mmDevice;
@@ -132,6 +145,9 @@ namespace TinyFramework
 				if (hRes != S_OK)
 					goto MMERROR;
 			}
+			hRes = m_audioClient->GetService(IID_PPV_ARGS(&m_audioClock));
+			if (hRes != S_OK)
+				return FALSE;
 			hRes = m_audioClient->GetService(__uuidof(IAudioRenderClient), (void**)&m_audioRender);
 			if (hRes != S_OK)
 				goto MMERROR;
@@ -140,7 +156,7 @@ namespace TinyFramework
 				goto MMERROR;
 			return TRUE;
 		MMERROR:
-			if (pFMT && bFlag)
+			if (pFMT != NULL && bFlag)
 			{
 				CoTaskMemFree(pFMT);
 				pFMT = NULL;
@@ -253,9 +269,9 @@ namespace TinyFramework
 			return m_bPlaying;
 		}
 
-		WAVEFORMATEX* TinyWASAPIAudioRender::GetInputFormat() const
+		WAVEFORMATEX* TinyWASAPIAudioRender::GetFormat() const
 		{
-			if (m_waveFMT)
+			if (m_waveFMT != NULL)
 			{
 				return reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
 			}
@@ -293,6 +309,20 @@ namespace TinyFramework
 					hRes = m_audioRender->GetBuffer(available, &data);
 					if (hRes != S_OK)
 						return FALSE;
+					INT64  delayTimestamp = 0;
+					UINT64 position = 0;
+					UINT64 qpc = 0;
+					hRes = m_audioClock->GetPosition(&position, &qpc);
+					if (SUCCEEDED(hRes))
+					{
+						const UINT64 plays = pFMT->nSamplesPerSec * position / m_lFrequency;//ÒÑ²¥·Å
+						const UINT64 delays = m_count - plays;
+						delayTimestamp = delays * TinyTime::MicrosecondsPerSecond / pFMT->nSamplesPerSec;
+					}
+					else
+					{
+						delayTimestamp = TinyPerformanceTime::Now();
+					}
 					OnDataAvailable(data, available * pFMT->nBlockAlign, this);
 					hRes = m_audioRender->ReleaseBuffer(m_count, 0);
 					if (hRes != S_OK)
@@ -341,15 +371,21 @@ namespace TinyFramework
 
 		void TinyWASAPIAudioRender::OnMessagePump()
 		{
-			WAVEFORMATEX* pFMT = GetInputFormat();
+			WAVEFORMATEX* pFMT = GetFormat();
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
 			HRESULT hRes = S_OK;
-			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
 			BOOL bRendering = TRUE;
+			hRes = m_audioClock->GetFrequency(&m_lFrequency);
+			if (hRes != S_OK)
+			{
+				bRendering = FALSE;
+				return;
+			}
+			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
 			while (bRendering)
 			{
-				DWORD dwMS = m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK ? INFINITE : static_cast<DWORD>(m_hnsPeriod / MFTIMES_PER_MS / 2);
+				DWORD dwMS = (m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK) ? INFINITE : static_cast<DWORD>(m_hnsPeriod / MFTIMES_PER_MS / 2);
 				DWORD dwRes = WaitForMultipleObjects(2, waits, FALSE, dwMS);
 				switch (dwRes)
 				{
