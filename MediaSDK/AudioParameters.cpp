@@ -17,6 +17,7 @@ namespace MediaSDK
 	}
 	AudioParameters::AudioParameters(const AudioParameters& params)
 	{
+		m_wFrames = params.m_wFrames;
 		INT size = sizeof(WAVEFORMATEX) + (params.m_waveFMT != NULL ? params.m_waveFMT->cbSize : 0);
 		BYTE* bits = new BYTE[size];
 		ASSERT(bits);
@@ -28,14 +29,17 @@ namespace MediaSDK
 		}
 	}
 	AudioParameters::AudioParameters(AudioParameters&& params)
-		:m_waveFMT(std::move(params.m_waveFMT))
+		:m_waveFMT(std::move(params.m_waveFMT)),
+		m_wFrames(params.m_wFrames)
 	{
+		params.m_wFrames = 0;
 		params.m_waveFMT.Release();
 	}
 	AudioParameters& AudioParameters::operator=(const AudioParameters& params)
 	{
 		if (&params != this)
 		{
+			m_wFrames = params.m_wFrames;
 			INT size = sizeof(WAVEFORMATEX) + (params.m_waveFMT != NULL ? params.m_waveFMT->cbSize : 0);
 			BYTE* bits = new BYTE[size];
 			ASSERT(bits);

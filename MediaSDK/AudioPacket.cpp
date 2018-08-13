@@ -8,6 +8,7 @@ namespace MediaSDK
 	{
 		m_bits.Reset(new CHAR[m_size]);
 		ASSERT(m_bits);
+		ZeroMemory(m_bits, m_size);
 	}
 
 	AudioPacket::~AudioPacket()

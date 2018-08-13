@@ -15,8 +15,9 @@ namespace MediaSDK
 		LONG OnInput(INT64 delay, INT64 timestamp, UINT32 skips, AudioPacket* packet) OVERRIDE;
 		void OnError() OVERRIDE;
 	public:
-		void Open(const AudioParameters& params, LPTSTR pzFile);
+		BOOL			Open(LPTSTR pzFile);
+		WAVEFORMATEX*	GetFormat() const;
 	private:
-		AudioParameters	m_params;
+		TinyWaveFile	m_waveFile;
 	};
 }

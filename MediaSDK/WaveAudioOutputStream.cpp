@@ -72,7 +72,7 @@ namespace MediaSDK
 		m_waveFMT.Format.nChannels = pFMT->nChannels;
 		m_waveFMT.Format.nSamplesPerSec = pFMT->nSamplesPerSec;
 		m_waveFMT.Format.wBitsPerSample = pFMT->wBitsPerSample;
-		m_waveFMT.Format.cbSize = sizeof(pFMT) - sizeof(WAVEFORMATEX);
+		m_waveFMT.Format.cbSize = sizeof(m_waveFMT) - sizeof(WAVEFORMATEX);
 		m_waveFMT.Format.nBlockAlign = (m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8;//每个采样字节数(多声道)
 		m_waveFMT.Format.nAvgBytesPerSec = m_waveFMT.Format.nBlockAlign * m_waveFMT.Format.nSamplesPerSec;
 		m_waveFMT.dwChannelMask = ChannelsToMask[m_waveFMT.Format.nChannels > MaxChannelsToMask ? MaxChannelsToMask : m_waveFMT.Format.nChannels];
@@ -87,6 +87,8 @@ namespace MediaSDK
 		m_state = PCM_NONE;
 		m_size = ((m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8) * m_params.GetFrames();
 		m_alignsize = (sizeof(WAVEHDR) + m_size + 15u) & static_cast<size_t>(~15);//16字节对齐
+		m_packet.Reset(new AudioPacket(m_size));
+		ASSERT(m_packet);
 		return TRUE;
 	}
 	inline WAVEHDR* WaveAudioOutputStream::GetWAVEHDR(INT index) const
@@ -125,6 +127,7 @@ namespace MediaSDK
 			HandleError(hRes);
 		}
 		m_pending += pwh->dwBufferLength;
+		return TRUE;
 	}
 
 	void WaveAudioOutputStream::FillPacket(WAVEHDR *pwh)
@@ -163,7 +166,8 @@ namespace MediaSDK
 		}
 		m_bits.Reset(new CHAR[m_alignsize * m_count]);
 		ASSERT(m_bits);
-		for (UINT32 i = 0; i <= m_count; ++i)
+		ZeroMemory(m_bits, m_alignsize * m_count);
+		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			WAVEHDR* pwh = GetWAVEHDR(i);
 			CHAR* ps = reinterpret_cast<CHAR*>(pwh);
@@ -188,7 +192,7 @@ namespace MediaSDK
 		m_state = PCM_PLAYING;
 		m_pending = 0;
 		//读取外部数据
-		for (UINT32 i = 0; i <= m_count; ++i)
+		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			WAVEHDR* pwh = GetWAVEHDR(i);
 			ASSERT(pwh);
@@ -204,7 +208,7 @@ namespace MediaSDK
 			m_callback = NULL;
 			return FALSE;
 		}
-		for (UINT32 i = 0; i <= m_count; ++i)
+		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			WAVEHDR* pwh = GetWAVEHDR(i);
 			ASSERT(pwh);
@@ -239,7 +243,7 @@ namespace MediaSDK
 			return FALSE;
 		}
 		TinyAutoLock autolock(m_lock);
-		for (UINT32 i = 0; i <= m_count; ++i)
+		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			WAVEHDR* pwh = GetWAVEHDR(i);
 			ASSERT(pwh);
@@ -291,7 +295,7 @@ namespace MediaSDK
 		Stop();
 		if (m_waveO != NULL)
 		{
-			for (UINT32 i = 0; i <= m_count; ++i)
+			for (UINT32 i = 0; i < m_count; ++i)
 			{
 				WAVEHDR* pwh = GetWAVEHDR(i);
 				ASSERT(pwh);

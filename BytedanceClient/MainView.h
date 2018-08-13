@@ -15,6 +15,8 @@
 #include "Media/TinyWASAPIAudioRender.h"
 #include "Media/TinyWave.h"
 
+#include "AudioFileSource.h"
+#include "AudioFileSink.h"
 #include "WaveAudioOutputStream.h"
 #include "WaveAudioInputStream.h"
 
@@ -70,6 +72,7 @@ namespace Bytedance
 	private:
 		//TinyWASAPIAudioCapture	m_capture;
 		//TinyWASAPIAudioRender		m_render;
+		AudioFileSource			m_source;
 		WaveAudioOutputStream	m_stream;
 		TinyWaveFile			m_waveFile;
 	};
