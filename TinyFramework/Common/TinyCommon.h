@@ -1430,7 +1430,7 @@ private:\
 		void Set(SAFEARRAY* array);
 		void SetDate(DATE date);
 		void Reset();
-		void Reset(const VARIANT& var = EmptyVariant);
+		void Reset(const VARIANT& var);
 		ScopedVariant& operator=(const VARIANT& var);
 		operator const VARIANT&() const throw();
 		VARIANT* operator->();
