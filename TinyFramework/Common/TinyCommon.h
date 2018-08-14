@@ -855,6 +855,7 @@ private:\
 		DISALLOW_COPY_AND_ASSIGN(TinyScopedArray)
 	public:
 		explicit TinyScopedArray(T* ps = 0);
+		TinyScopedArray(TinyScopedArray&& ptr);
 		~TinyScopedArray();
 		BOOL IsEmpty() const;
 		void Reset(T* ps = 0) throw();
@@ -871,6 +872,12 @@ private:\
 		: m_myP(ps)
 	{
 
+	}
+	template<class T>
+	TinyScopedArray<T>::TinyScopedArray(TinyScopedArray&& ptr)
+		: m_myP(ptr.m_myP)
+	{
+		ptr.m_myP = NULL;
 	}
 	template<class T>
 	TinyScopedArray<T>::~TinyScopedArray()

@@ -6,9 +6,9 @@ namespace MediaSDK
 {
 	AudioParameters::AudioParameters()
 	{
-		m_waveFMT.Reset(new WAVEFORMATEX());
+		m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX)]);
 		ASSERT(m_waveFMT);
-		ZeroMemory(&m_waveFMT, sizeof(WAVEFORMATEX));
+		ZeroMemory(m_waveFMT, sizeof(WAVEFORMATEX));
 	}
 
 
@@ -18,13 +18,14 @@ namespace MediaSDK
 	AudioParameters::AudioParameters(const AudioParameters& params)
 	{
 		m_wFrames = params.m_wFrames;
-		INT size = sizeof(WAVEFORMATEX) + (params.m_waveFMT != NULL ? params.m_waveFMT->cbSize : 0);
-		BYTE* bits = new BYTE[size];
-		ASSERT(bits);
-		m_waveFMT.Reset(reinterpret_cast<WAVEFORMATEX*>(bits));
-		ZeroMemory(m_waveFMT, sizeof(WAVEFORMATEX));
+		const WAVEFORMATEX* pFMT = params.GetFormat();
+		ASSERT(pFMT);
+		INT size = sizeof(WAVEFORMATEX) + (pFMT != NULL ? pFMT->cbSize : 0);
 		if (params.m_waveFMT != NULL)
 		{
+			m_waveFMT.Reset(new BYTE[size]);
+			ASSERT(m_waveFMT);
+			ZeroMemory(m_waveFMT, size);
 			memcpy_s(m_waveFMT, size, params.m_waveFMT, size);
 		}
 	}
@@ -33,17 +34,17 @@ namespace MediaSDK
 		m_wFrames(params.m_wFrames)
 	{
 		params.m_wFrames = 0;
-		params.m_waveFMT.Release();
 	}
 	AudioParameters& AudioParameters::operator=(const AudioParameters& params)
 	{
 		if (&params != this)
 		{
 			m_wFrames = params.m_wFrames;
-			INT size = sizeof(WAVEFORMATEX) + (params.m_waveFMT != NULL ? params.m_waveFMT->cbSize : 0);
-			BYTE* bits = new BYTE[size];
-			ASSERT(bits);
-			m_waveFMT.Reset(reinterpret_cast<WAVEFORMATEX*>(bits));
+			const WAVEFORMATEX* pFMT = params.GetFormat();
+			ASSERT(pFMT);
+			INT size = sizeof(WAVEFORMATEX) + (pFMT != NULL ? pFMT->cbSize : 0);
+			m_waveFMT.Reset(new BYTE[size]);
+			ASSERT(m_waveFMT);
 			ZeroMemory(m_waveFMT, sizeof(WAVEFORMATEX));
 			if (params.m_waveFMT != NULL)
 			{
@@ -62,16 +63,15 @@ namespace MediaSDK
 	}
 	const WAVEFORMATEX* AudioParameters::GetFormat() const
 	{
-		return m_waveFMT;
+		return reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
 	}
-	void AudioParameters::SetFormat(WAVEFORMATEX* pFMT)
+	void AudioParameters::SetFormat(const WAVEFORMATEX* pFMT)
 	{
-		if (pFMT != NULL && m_waveFMT != pFMT)
+		if (pFMT != NULL)
 		{
 			INT size = sizeof(WAVEFORMATEX) + pFMT->cbSize;
-			BYTE* bits = new BYTE[size];
-			ASSERT(bits);
-			m_waveFMT.Reset(reinterpret_cast<WAVEFORMATEX*>(bits));
+			m_waveFMT.Reset(new BYTE[size]);
+			ASSERT(m_waveFMT);
 			ZeroMemory(m_waveFMT, sizeof(WAVEFORMATEX));
 			memcpy_s(m_waveFMT, size, pFMT, size);
 		}

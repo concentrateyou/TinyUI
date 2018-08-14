@@ -32,7 +32,7 @@ namespace MediaSDK
 		m_dID(0),
 		m_count(0),
 		m_pending(0),
-		m_alignsize(0),
+		m_packetsize(0),
 		m_size(0),
 		m_state(PCM_NONE)
 	{
@@ -86,14 +86,14 @@ namespace MediaSDK
 		}
 		m_state = PCM_NONE;
 		m_size = ((m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8) * m_params.GetFrames();
-		m_alignsize = (sizeof(WAVEHDR) + m_size + 15u) & static_cast<size_t>(~15);//16×Ö½Ú¶ÔÆë
-		m_packet.Reset(new AudioPacket(m_size));
+		m_packetsize = sizeof(WAVEHDR) + m_size;
+		m_packet.Reset(new AudioPacket(params));
 		ASSERT(m_packet);
 		return TRUE;
 	}
 	inline WAVEHDR* WaveAudioOutputStream::GetWAVEHDR(INT index) const
 	{
-		return reinterpret_cast<WAVEHDR*>(&m_bits[index * m_alignsize]);
+		return reinterpret_cast<WAVEHDR*>(&m_bits[index * m_packetsize]);
 	}
 	void CALLBACK WaveAudioOutputStream::waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
 	{
@@ -153,7 +153,7 @@ namespace MediaSDK
 	{
 		if (m_state != PCM_NONE)
 			return FALSE;
-		if (m_alignsize * m_count > MaxOpenBufferSize)
+		if (m_packetsize * m_count > MaxOpenBufferSize)
 			return FALSE;
 		if (m_count < 2 || m_count > 5)
 			return FALSE;
@@ -164,9 +164,9 @@ namespace MediaSDK
 			HandleError(hRes);
 			return FALSE;
 		}
-		m_bits.Reset(new CHAR[m_alignsize * m_count]);
+		m_bits.Reset(new CHAR[m_packetsize * m_count]);
 		ASSERT(m_bits);
-		ZeroMemory(m_bits, m_alignsize * m_count);
+		ZeroMemory(m_bits, m_packetsize * m_count);
 		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			WAVEHDR* pwh = GetWAVEHDR(i);
@@ -306,6 +306,7 @@ namespace MediaSDK
 				}
 			}
 			m_bits.Reset(NULL);
+			ASSERT(m_bits);
 			MMRESULT hRes = ::waveOutReset(m_waveO);
 			if (hRes != MMSYSERR_NOERROR)
 			{

@@ -27,7 +27,8 @@ namespace MediaSDK
 	{
 		LONG numberOfBytesRead = 0;
 		m_waveFile.Read(reinterpret_cast<BYTE*>(packet->data()), packet->size(), &numberOfBytesRead);
-		return numberOfBytesRead;
+		INT count = numberOfBytesRead / ((packet->BitsPerSample() * packet->Channels()) / 8);
+		return min(count, packet->count());
 	}
 
 	void AudioFileSource::OnError()

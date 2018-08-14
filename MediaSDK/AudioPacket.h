@@ -1,5 +1,6 @@
 #pragma once
 #include "MediaSDK.h"
+#include "AudioParameters.h"
 
 namespace MediaSDK
 {
@@ -9,11 +10,17 @@ namespace MediaSDK
 	class AudioPacket
 	{
 	public:
-		AudioPacket(UINT32 size);
+		AudioPacket(const AudioParameters& params);
 		~AudioPacket();
 		CHAR*	data();
+		WORD	count() const;
 		UINT32	size() const;
+		WORD	Channels() const;
+		WORD	BitsPerSample() const;
 	private:
+		WORD					m_wChannels;
+		WORD					m_wBitsPerSample;
+		WORD					m_wCount;
 		UINT32					m_size;
 		TinyScopedPtr<CHAR>		m_bits;
 	};

@@ -13,10 +13,10 @@ namespace MediaSDK
 		~AudioParameters();
 		void SetFrames(WORD wFrames);
 		WORD GetFrames() const;
-		void SetFormat(WAVEFORMATEX* pFMT);
+		void SetFormat(const WAVEFORMATEX* pFMT);
 		const WAVEFORMATEX* GetFormat() const;
 	private:
-		WORD						m_wFrames;
-		TinyScopedPtr<WAVEFORMATEX>	m_waveFMT;
+		WORD					m_wFrames;
+		TinyScopedArray<BYTE>	m_waveFMT;
 	};
 }
