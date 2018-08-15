@@ -24,27 +24,36 @@ namespace Bytedance
 		//m_canvasView.Create(m_hWND, 0, 0, 1, 1, FALSE);
 		BuildUI({ 800,600 });
 
-		m_source.Open("D:\\test2.wav");
+		/*	m_source.Open("D:\\test2.wav");
+			AudioParameters ap;
+			ap.SetFrames(1024);
+			ap.SetFormat(m_source.GetFormat());
+			std::vector<PLAYDEVICE> devices;
+			TinySoundPlayer::Enumerate(devices);
+			m_stream.Initialize(ap, 3, GetDesktopWindow(), devices[0].Guid);
+			m_stream.Open();
+			m_stream.Start(&m_source);*/
+			/*m_capture.Initialize(BindCallback(&MainView::OnCallback1, this));
+			std::vector<TinyWASAPIAudio::Name> names;
+			m_capture.GetDevices(eAll, names);
+			m_capture.Open(names[0], NULL);
+			m_waveFile.Create("D:\\test.wav", m_capture.GetFormat());
+			m_capture.Start();*/
+			/*m_waveFile.Open("D:\\test1.wav");
+			m_render.Initialize(BindCallback(&MainView::OnCallback2, this));
+			std::vector<TinyWASAPIAudio::Name> names;
+			m_render.GetDevices(eAll, names);
+			m_render.Open(names[0], m_waveFile.GetFormat());
+			m_render.Start();*/
+
 		AudioParameters ap;
 		ap.SetFrames(1024);
-		ap.SetFormat(m_source.GetFormat());
-		std::vector<PLAYDEVICE> devices;
-		TinySoundPlayer::Enumerate(devices);
+		m_sink.Create(ap, "D:\\test3.wav");
+		std::vector<CAPTUREDEVICE> devices;
+		TinySoundCapture::Enumerate(devices);
 		m_stream.Initialize(ap, 3, GetDesktopWindow(), devices[0].Guid);
 		m_stream.Open();
-		m_stream.Start(&m_source);
-		/*m_capture.Initialize(BindCallback(&MainView::OnCallback1, this));
-		std::vector<TinyWASAPIAudio::Name> names;
-		m_capture.GetDevices(eAll, names);
-		m_capture.Open(names[0], NULL);
-		m_waveFile.Create("D:\\test.wav", m_capture.GetFormat());
-		m_capture.Start();*/
-		/*m_waveFile.Open("D:\\test1.wav");
-		m_render.Initialize(BindCallback(&MainView::OnCallback2, this));
-		std::vector<TinyWASAPIAudio::Name> names;
-		m_render.GetDevices(eAll, names);
-		m_render.Open(names[0], m_waveFile.GetFormat());
-		m_render.Start();*/
+		m_stream.Start(&m_sink);
 	}
 
 	void MainView::OnUninitialize()

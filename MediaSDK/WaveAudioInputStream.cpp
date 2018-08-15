@@ -93,7 +93,7 @@ namespace MediaSDK
 			return FALSE;
 		m_bits.Reset(new CHAR[m_size * m_count]);
 		ASSERT(m_bits);
-		for (UINT32 i = 0; i <= m_count; ++i)
+		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			WAVEHDR* pwh = GetWAVEHDR(i);
 			CHAR* ps = reinterpret_cast<CHAR*>(pwh);
@@ -120,7 +120,7 @@ namespace MediaSDK
 		m_callback = callback;
 		m_state = PCM_RECORDING;
 		MMRESULT hRes = MMSYSERR_NOERROR;
-		for (UINT32 i = 0; i <= m_count; ++i)
+		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			WAVEHDR* pwh = GetWAVEHDR(i);
 			hRes = ::waveInAddBuffer(m_waveI, pwh, sizeof(WAVEHDR));
@@ -170,7 +170,7 @@ namespace MediaSDK
 		Stop();
 		if (m_waveI != NULL)
 		{
-			for (UINT32 i = 0; i <= m_count; ++i)
+			for (UINT32 i = 0; i < m_count; ++i)
 			{
 				WAVEHDR* pwh = GetWAVEHDR(i);
 				hRes = ::waveInUnprepareHeader(m_waveI, pwh, sizeof(WAVEHDR));

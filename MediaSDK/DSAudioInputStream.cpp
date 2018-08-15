@@ -6,7 +6,7 @@ namespace MediaSDK
 	DSAudioInputStream::DSAudioInputStream()
 		:m_count(0),
 		m_size(0),
-		m_offset(0),
+		m_dwOffset(0),
 		m_state(PCM_NONE),
 		m_callback(NULL)
 	{
@@ -49,7 +49,60 @@ namespace MediaSDK
 
 	void DSAudioInputStream::OnCallback(BOOLEAN timerFired)
 	{
-
+		HRESULT hRes = S_OK;
+		if (m_state != PCM_RECORDING)
+			return;
+		if (m_dscb8 != NULL)
+		{
+			LPVOID	ppvAudioPtr = NULL;
+			DWORD	dwAudioBytes = 0;
+			DWORD	dwReadPos = 0;
+			DWORD	dwStatus = 0;
+			hRes = m_dscb8->GetStatus(&dwStatus);
+			if (FAILED(hRes))
+			{
+				HandleError(hRes);
+				goto _ERROR;
+			}
+			if (!(dwStatus & DSCBSTATUS_CAPTURING))
+			{
+				goto _ERROR;
+			}
+			hRes = m_dscb8->GetCurrentPosition(NULL, &dwReadPos);
+			if (FAILED(hRes))
+			{
+				HandleError(hRes);
+				goto _ERROR;
+			}
+			LONG blocksize = static_cast<LONG>(dwReadPos - m_dwOffset);
+			if (blocksize < 0)
+			{
+				blocksize += static_cast<LONG>(m_size * m_count);
+			}
+			if (blocksize == 0)
+				goto _ERROR;
+			hRes = m_dscb8->Lock(m_dwOffset, static_cast<DWORD>(blocksize), &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
+			if (FAILED(hRes))
+			{
+				HandleError(hRes);
+				goto _ERROR;
+			}
+			if (m_callback != NULL)
+			{
+				memcpy_s(m_packet->data(), dwAudioBytes, reinterpret_cast<CHAR*>(ppvAudioPtr), dwAudioBytes);
+				m_callback->OnOutput(TinyPerformanceTime::Now(), m_packet);
+			}
+			hRes = m_dscb8->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
+			if (FAILED(hRes))
+			{
+				HandleError(hRes);
+				goto _ERROR;
+			}
+			m_dwOffset += dwAudioBytes;
+			m_dwOffset %= (m_size * m_count);
+		}
+	_ERROR:
+		return;
 	}
 
 	BOOL DSAudioInputStream::Open()
@@ -68,7 +121,8 @@ namespace MediaSDK
 		dsceds[1].dwFlags = DSCFX_LOCSOFTWARE;
 		dsceds[1].guidDSCFXClass = GUID_DSCFX_CLASS_NS;
 		dsceds[1].guidDSCFXInstance = GUID_DSCFX_MS_NS;
-		DSCBUFFERDESC dscbdesc = { 0 };
+		DSCBUFFERDESC dscbdesc;
+		ZeroMemory(&dscbdesc, sizeof(DSCBUFFERDESC));
 		dscbdesc.dwSize = sizeof(DSCBUFFERDESC);
 		dscbdesc.dwFlags = DSCBCAPS_CTRLFX;
 		dscbdesc.dwBufferBytes = m_size * m_count;
@@ -105,27 +159,21 @@ namespace MediaSDK
 			HandleError(hRes);
 			goto _ERROR;
 		}
-
-		WAVEFORMATEX waveFMT;
-		m_dscb8->GetFormat(&waveFMT, sizeof(WAVEFORMATEX), NULL);
-		DSCBCAPS caps1;
-		caps1.dwSize = sizeof(DSCBCAPS);
-		m_dscb8->GetCaps(&caps1);
-
 		m_bits.Reset(new CHAR[m_size * m_count]);
 		ASSERT(m_bits);
-		hRes = m_dsc8->QueryInterface(IID_IDirectSoundNotify, (void**)&notify);
+		hRes = m_dscb8->QueryInterface(IID_IDirectSoundNotify, (void**)&notify);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		for (UINT32 i = 0; i <= m_count; ++i)
+		for (UINT32 i = 0; i < m_count; ++i)
 		{
-			notifys[i].dwOffset = (i + 1) * m_size;
+			notifys[i].dwOffset = (i + 1) * m_size - 1;
 			notifys[i].hEventNotify = m_event;
 		}
-		if (FAILED(notify->SetNotificationPositions(m_count, notifys)))
+		hRes = notify->SetNotificationPositions(m_count, notifys);
+		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
@@ -173,7 +221,6 @@ namespace MediaSDK
 		{
 			m_dscb8->Stop();
 		}
-		m_event.WaitEvent(INFINITE);
 		m_callback = NULL;
 		m_state = PCM_READY;
 		return TRUE;
@@ -183,6 +230,8 @@ namespace MediaSDK
 	{
 		HRESULT hRes = S_OK;
 		Stop();
+		m_event.SetEvent();
+		m_waiter.Unregister();
 		m_dsc8.Release();
 		m_dscb8.Release();
 		m_state = PCM_CLOSED;

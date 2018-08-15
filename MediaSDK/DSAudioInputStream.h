@@ -36,12 +36,12 @@ namespace MediaSDK
 		GUID									m_dID;
 		UINT32 									m_count;//缓冲个数
 		UINT32									m_size;//缓冲大小
-		UINT32									m_offset;//偏移量
+		DWORD									m_dwOffset;//偏移量
 		WAVEFORMATEX							m_waveFMT;
 		TinyEvent								m_event;
 		TinyWaiter								m_waiter;
 		volatile State							m_state;
-		AudioParameters							m_params; 
+		AudioParameters							m_params;
 		TinyComPtr<IDirectSoundCapture8>		m_dsc8;
 		TinyComPtr<IDirectSoundCaptureBuffer>	m_dscb;
 		TinyComPtr<IDirectSoundCaptureBuffer8>	m_dscb8;
