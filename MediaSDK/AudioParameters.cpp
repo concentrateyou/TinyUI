@@ -9,8 +9,14 @@ namespace MediaSDK
 		m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX)]);
 		ASSERT(m_waveFMT);
 		ZeroMemory(m_waveFMT, sizeof(WAVEFORMATEX));
+		WAVEFORMATEX* pFMT = reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
+		pFMT->nChannels = 2;
+		pFMT->nSamplesPerSec = 44100;
+		pFMT->wBitsPerSample = 16;
+		pFMT->nBlockAlign = (pFMT->wBitsPerSample * pFMT->nChannels) / 8;
+		pFMT->nAvgBytesPerSec = pFMT->nSamplesPerSec * pFMT->nBlockAlign;
+		pFMT->wFormatTag = WAVE_FORMAT_PCM;
 	}
-
 
 	AudioParameters::~AudioParameters()
 	{

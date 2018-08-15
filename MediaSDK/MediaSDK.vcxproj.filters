@@ -93,6 +93,9 @@
     <ClInclude Include="AudioFileSource.h">
       <Filter>头文件\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="DSAudioOutputStream.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -153,6 +156,9 @@
       <Filter>源文件\Audio</Filter>
     </ClCompile>
     <ClCompile Include="AudioFileSource.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="DSAudioOutputStream.cpp">
       <Filter>源文件\Audio</Filter>
     </ClCompile>
   </ItemGroup>

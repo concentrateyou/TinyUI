@@ -28,7 +28,9 @@ namespace Bytedance
 		AudioParameters ap;
 		ap.SetFrames(1024);
 		ap.SetFormat(m_source.GetFormat());
-		m_stream.Initialize(ap, 3, WAVE_MAPPER);
+		std::vector<PLAYDEVICE> devices;
+		TinySoundPlayer::Enumerate(devices);
+		m_stream.Initialize(ap, 3, GetDesktopWindow(), devices[0].Guid);
 		m_stream.Open();
 		m_stream.Start(&m_source);
 		/*m_capture.Initialize(BindCallback(&MainView::OnCallback1, this));

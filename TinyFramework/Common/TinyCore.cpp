@@ -340,7 +340,8 @@ namespace TinyFramework
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyWaiter::TinyWaiter()
-		:m_hWaitHandle(NULL)
+		:m_hWaitHandle(NULL),
+		m_handle(NULL)
 	{
 
 	}
@@ -362,20 +363,21 @@ namespace TinyFramework
 	}
 	BOOL TinyWaiter::Register(HANDLE handle, DWORD dwMS, DWORD dwFlag, Callback<void(BOOLEAN)>&& callback)
 	{
-		if (IsEmpty())
+		Unregister();
+		if (!RegisterWaitForSingleObject(&m_hWaitHandle, handle, &TinyWaiter::WaitOrTimerCallback, this, dwMS, dwFlag))
 			return FALSE;
-		if (RegisterWaitForSingleObject(&m_hWaitHandle, handle, &TinyWaiter::WaitOrTimerCallback, this, dwMS, dwFlag))
-		{
-			m_callback = std::move(callback);
-			m_handle = handle;
-			return TRUE;
-		}
-		return FALSE;
+		m_callback = std::move(callback);
+		m_handle = handle;
+		return TRUE;
 	}
 	BOOL TinyWaiter::Unregister()
 	{
-		BOOL bRes = UnregisterWait(m_hWaitHandle);
-		m_hWaitHandle = NULL;
+		BOOL bRes = FALSE;
+		if (m_hWaitHandle != NULL)
+		{
+			bRes = UnregisterWait(m_hWaitHandle);
+			m_hWaitHandle = NULL;
+		}
 		return bRes;
 	}
 	void CALLBACK TinyWaiter::WaitOrTimerCallback(PVOID pThis, BOOLEAN b)

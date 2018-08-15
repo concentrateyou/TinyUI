@@ -19,6 +19,9 @@
 #include "AudioFileSink.h"
 #include "WaveAudioOutputStream.h"
 #include "WaveAudioInputStream.h"
+#include "DSAudioOutputStream.h"
+
+#include "Media/TinySoundPlayer.h"
 
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
@@ -73,7 +76,7 @@ namespace Bytedance
 		//TinyWASAPIAudioCapture	m_capture;
 		//TinyWASAPIAudioRender		m_render;
 		AudioFileSource			m_source;
-		WaveAudioOutputStream	m_stream;
+		DSAudioOutputStream		m_stream;
 		TinyWaveFile			m_waveFile;
 	};
 }

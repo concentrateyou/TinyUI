@@ -177,15 +177,14 @@ namespace TinyFramework
 	public:
 		BOOL IsEmpty() const;
 		BOOL RegisterOnce(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback);
+		BOOL Register(HANDLE handle, DWORD dwMS, DWORD dwFlag, Callback<void(BOOLEAN)>&& callback);
 		BOOL Register(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback);
 		BOOL Unregister();
 	private:
-		BOOL Register(HANDLE handle, DWORD dwMS, DWORD dwFlag, Callback<void(BOOLEAN)>&& callback);
-	private:
 		static void CALLBACK WaitOrTimerCallback(PVOID ps, BOOLEAN b);
 	private:
-		HANDLE		m_hWaitHandle;
-		HANDLE		m_handle;
+		HANDLE					m_hWaitHandle;
+		HANDLE					m_handle;
 		Callback<void(BOOLEAN)> m_callback;
 	};
 
