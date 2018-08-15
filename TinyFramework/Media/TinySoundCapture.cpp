@@ -118,7 +118,7 @@ namespace TinyFramework
 			m_dwSize = dwSize;
 			m_bits.Reset(new BYTE[m_dwSize]);
 			if (!m_bits)
-				return FALSE;
+				return FALSE; 
 			m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
 			memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			DSCEFFECTDESC dsceds[2];

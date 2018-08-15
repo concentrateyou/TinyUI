@@ -32,6 +32,7 @@ namespace MediaSDK
 		m_count = count;
 		m_params = params;
 		m_size = ((m_waveFMT.nChannels * m_waveFMT.wBitsPerSample) / 8) * m_params.GetFrames();
+		m_state = PCM_NONE;
 		return TRUE;
 	}
 

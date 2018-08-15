@@ -39,19 +39,20 @@ namespace MediaSDK
 		BOOL Initialize(const AudioParameters& params, UINT count, HWND hWND, const GUID& guid);
 	private:
 		void OnCallback(BOOLEAN timerFired);
-		void FillPacket(CHAR* bits, UINT32 size);
-		BOOL PlayPacket(UINT32 offset, CHAR* bits, UINT32 size);
+		void QueuePacket(CHAR* bits, UINT32 size);
+		BOOL FillPacket(UINT32 offset, CHAR* bits, UINT32 size);
 		void HandleError(HRESULT hRes);
 	private:
 		GUID								m_dID;
+		HWND								m_hWND;
 		UINT32 								m_count;//缓冲个数
 		UINT32								m_size;//缓冲大小
 		UINT32								m_packetsize;//包大小
 		UINT32								m_pending;//硬件缓冲还没播放的数据
 		UINT32								m_offset;//当前播放偏移量
 		volatile State						m_state;
-		TinyScopedPtr<AudioPacket>			m_packet;
 		TinyScopedArray<CHAR>				m_bits;
+		TinyScopedPtr<AudioPacket>			m_packet;
 		TinyComPtr<IDirectSound8>			m_ds;
 		TinyComPtr<IDirectSoundBuffer>		m_primaryDSB;
 		TinyComPtr<IDirectSoundBuffer8>		m_secondaryDSB;

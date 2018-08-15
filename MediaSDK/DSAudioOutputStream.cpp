@@ -32,6 +32,7 @@ namespace MediaSDK
 		m_pending(0),
 		m_offset(0),
 		m_size(0),
+		m_hWND(NULL),
 		m_state(PCM_NONE)
 	{
 		m_event.CreateEvent();
@@ -66,6 +67,7 @@ namespace MediaSDK
 		m_dID = dID;
 		m_count = count;
 		m_params = params;
+		m_hWND = hWND;
 		const WAVEFORMATEX* pFMT = m_params.GetFormat();
 		m_waveFMT.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
 		m_waveFMT.Format.nChannels = pFMT->nChannels;
@@ -77,19 +79,6 @@ namespace MediaSDK
 		m_waveFMT.dwChannelMask = ChannelsToMask[m_waveFMT.Format.nChannels > MaxChannelsToMask ? MaxChannelsToMask : m_waveFMT.Format.nChannels];
 		m_waveFMT.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
 		m_waveFMT.Samples.wValidBitsPerSample = m_waveFMT.Format.wBitsPerSample;
-		HRESULT hRes = DirectSoundCreate8(&m_dID, &m_ds, NULL);
-		if (hRes != S_OK)
-		{
-			HandleError(hRes);
-			return FALSE;
-		}
-		hRes = m_ds->SetCooperativeLevel(hWND, DSSCL_PRIORITY);
-		if (hRes != S_OK)
-		{
-			m_ds.Release();
-			HandleError(hRes);
-			return FALSE;
-		}
 		m_state = PCM_NONE;
 		m_size = ((m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8) * m_params.GetFrames();//»º³åÇø´óÐ¡
 		m_packetsize = m_size;
@@ -106,11 +95,12 @@ namespace MediaSDK
 			return FALSE;
 		if (m_count < 2 || m_count > 5)
 			return FALSE;
+		m_offset = 0;
 		::GetLastError();
 		m_bits.Reset(new CHAR[m_packetsize * m_count]);
 		ASSERT(m_bits);
 		ZeroMemory(m_bits, m_packetsize * m_count);
-		HRESULT hRes = S_OK;
+
 		TinyScopedArray<DSBPOSITIONNOTIFY> notifys(new DSBPOSITIONNOTIFY[m_count]);
 		ASSERT(notifys);
 		ZeroMemory(notifys, sizeof(DSBPOSITIONNOTIFY) * m_count);
@@ -122,6 +112,19 @@ namespace MediaSDK
 		ZeroMemory(&dbdesc, sizeof(dbdesc));
 		dbdesc.dwSize = sizeof(dbdesc);
 		dbdesc.dwFlags = DSBCAPS_PRIMARYBUFFER;
+		HRESULT hRes = S_OK;
+		hRes = DirectSoundCreate8(&m_dID, &m_ds, NULL);
+		if (FAILED(hRes))
+		{
+			HandleError(hRes);
+			goto _ERROR;
+		}
+		hRes = m_ds->SetCooperativeLevel(m_hWND, DSSCL_PRIORITY);
+		if (FAILED(hRes))
+		{
+			HandleError(hRes);
+			goto _ERROR;
+		}
 		hRes = m_ds->CreateSoundBuffer(&dbdesc, &m_primaryDSB, NULL);
 		if (FAILED(hRes))
 		{
@@ -173,10 +176,14 @@ namespace MediaSDK
 			HandleError(hRes);
 			goto _ERROR;
 		}
+		m_state = PCM_READY;
+		return TRUE;
 	_ERROR:
-		m_offset = 0;
-		m_state = SUCCEEDED(hRes) ? PCM_READY : PCM_NONE;
-		return SUCCEEDED(hRes);
+		m_state = PCM_NONE;
+		m_ds.Release();
+		m_primaryDSB.Release();
+		m_secondaryDSB.Release();
+		return FALSE;
 	}
 	void DSAudioOutputStream::OnCallback(BOOLEAN timerFired)
 	{
@@ -186,13 +193,13 @@ namespace MediaSDK
 		m_offset += 1;
 		m_offset %= m_count;
 		CHAR* pval = &m_bits[m_offset * m_size];
-		FillPacket(pval, m_size);
+		QueuePacket(pval, m_size);
 		if (m_state != PCM_PLAYING)
 			return;
-		PlayPacket(m_offset * m_size, pval, m_size);
+		FillPacket(m_offset * m_size, pval, m_size);
 		m_pending += m_size;
 	}
-	BOOL DSAudioOutputStream::PlayPacket(UINT32 offset, CHAR* bits, UINT32 size)
+	BOOL DSAudioOutputStream::FillPacket(UINT32 offset, CHAR* bits, UINT32 size)
 	{
 		LPVOID	ppvAudioPtr = NULL;
 		DWORD	dwAudioBytes = 0;
@@ -226,7 +233,7 @@ namespace MediaSDK
 		}
 		return TRUE;
 	}
-	void DSAudioOutputStream::FillPacket(CHAR* bits, UINT32 size)
+	void DSAudioOutputStream::QueuePacket(CHAR* bits, UINT32 size)
 	{
 		const INT64 delay = (m_pending * 1000 * 1000) / m_waveFMT.Format.nAvgBytesPerSec;
 		INT32 count = m_callback->OnInput(delay, TinyPerformanceTime::Now(), 0, m_packet);
@@ -265,7 +272,7 @@ namespace MediaSDK
 		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			CHAR* pval = &m_bits[i * m_size];
-			FillPacket(pval, m_size);
+			QueuePacket(pval, m_size);
 			m_pending += m_size;
 		}
 		::MemoryBarrier();
@@ -273,7 +280,7 @@ namespace MediaSDK
 		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			CHAR* pval = &m_bits[i * m_size];
-			PlayPacket(i * m_size, pval, m_size);
+			FillPacket(i * m_size, pval, m_size);
 		}
 		hRes = m_secondaryDSB->SetCurrentPosition(0);
 		if (FAILED(hRes))
@@ -316,7 +323,6 @@ namespace MediaSDK
 				goto _ERROR;
 			}
 		}
-		return TRUE;
 	_ERROR:
 		m_state = PCM_READY;
 		m_callback = NULL;

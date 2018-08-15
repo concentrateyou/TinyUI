@@ -96,6 +96,9 @@
     <ClInclude Include="DSAudioOutputStream.h">
       <Filter>头文件\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="DSAudioInputStream.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -159,6 +162,9 @@
       <Filter>源文件\Audio</Filter>
     </ClCompile>
     <ClCompile Include="DSAudioOutputStream.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="DSAudioInputStream.cpp">
       <Filter>源文件\Audio</Filter>
     </ClCompile>
   </ItemGroup>
