@@ -190,20 +190,17 @@ namespace MediaSDK
 	}
 	void DSAudioOutputStream::OnCallback(BOOLEAN timerFired)
 	{
-		do
-		{
-			if (m_state != PCM_PLAYING)
-				break;
-			m_pending -= m_size;
-			m_offset += 1;
-			m_offset %= m_count;
-			CHAR* pval = &m_bits[m_offset * m_size];
-			FillPacket(pval, m_size);
-			if (m_state != PCM_PLAYING)
-				break;
-			PlayPacket(m_offset * m_size, pval, m_size);
-			m_pending += m_size;
-		} while (0);
+		if (m_state != PCM_PLAYING)
+			return;
+		m_pending -= m_size;
+		m_offset += 1;
+		m_offset %= m_count;
+		CHAR* pval = &m_bits[m_offset * m_size];
+		FillPacket(pval, m_size);
+		if (m_state != PCM_PLAYING)
+			return;
+		PlayPacket(m_offset * m_size, pval, m_size);
+		m_pending += m_size;
 	}
 	BOOL DSAudioOutputStream::PlayPacket(UINT32 offset, CHAR* bits, UINT32 size)
 	{
@@ -263,6 +260,7 @@ namespace MediaSDK
 		m_callback = callback;
 		m_state = PCM_PLAYING;
 		m_pending = 0;
+		//读取外部数据
 		for (UINT32 i = 0; i < m_count; ++i)
 		{
 			CHAR* pval = &m_bits[i * m_size];
@@ -270,10 +268,11 @@ namespace MediaSDK
 			m_pending += m_size;
 		}
 		::MemoryBarrier();
+		//填充缓冲区
 		for (UINT32 i = 0; i < m_count; ++i)
 		{
-			CHAR*	pval = &m_bits[i * m_size];
-
+			CHAR* pval = &m_bits[i * m_size];
+			PlayPacket(i * m_size, pval, m_size);
 		}
 		hRes = m_secondaryDSB->SetCurrentPosition(0);
 		if (FAILED(hRes))
@@ -287,7 +286,6 @@ namespace MediaSDK
 			HandleError(hRes);
 			goto _ERROR;
 		}
-
 		return TRUE;
 	_ERROR:
 		m_state = PCM_READY;
@@ -302,21 +300,25 @@ namespace MediaSDK
 		m_state = PCM_STOPPING;
 		::MemoryBarrier();
 		HRESULT hRes = S_OK;
-		hRes = m_secondaryDSB->Restore();
-		if (FAILED(hRes))
+		if (m_secondaryDSB != NULL)
 		{
-			HandleError(hRes);
-			goto _ERROR;
+			hRes = m_secondaryDSB->Restore();
+			if (FAILED(hRes))
+			{
+				HandleError(hRes);
+				goto _ERROR;
+			}
+			hRes = m_secondaryDSB->Stop();
+			if (FAILED(hRes))
+			{
+				HandleError(hRes);
+				goto _ERROR;
+			}
 		}
-		hRes = m_secondaryDSB->Stop();
-		if (FAILED(hRes))
-		{
-			HandleError(hRes);
-			goto _ERROR;
-		}
+		return TRUE;
 	_ERROR:
-		m_callback = NULL;
 		m_state = PCM_READY;
+		m_callback = NULL;
 		return SUCCEEDED(hRes);
 	}
 
