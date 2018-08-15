@@ -34,12 +34,13 @@ namespace MediaSDK
 		m_size(0),
 		m_state(PCM_NONE)
 	{
-
+		m_event.CreateEvent();
 	}
 
 
 	DSAudioOutputStream::~DSAudioOutputStream()
 	{
+		m_event.Close();
 	}
 
 	void DSAudioOutputStream::OnOpen()
@@ -162,17 +163,6 @@ namespace MediaSDK
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		m_event.CreateEvent();
-		if (!m_event)
-		{
-			HandleError(::GetLastError());
-			goto _ERROR;
-		}
-		if (!m_waiter.Register(m_event, INFINITE, BindCallback(&DSAudioOutputStream::OnCallback, this)))
-		{
-			HandleError(::GetLastError());
-			goto _ERROR;
-		}
 		for (UINT32 i = 0; i < m_count; i++)
 		{
 			notifys[i].dwOffset = (i + 1) * m_size - 1;
@@ -257,6 +247,17 @@ namespace MediaSDK
 		if (m_state != PCM_READY)
 			return FALSE;
 		HRESULT hRes = S_OK;
+		if (!m_event.ResetEvent())
+		{
+			HandleError(::GetLastError());
+			goto _ERROR;
+		}
+		m_waiter.Unregister();
+		if (!m_waiter.Register(m_event, INFINITE, BindCallback(&DSAudioOutputStream::OnCallback, this)))
+		{
+			HandleError(::GetLastError());
+			goto _ERROR;
+		}
 		m_callback = callback;
 		m_state = PCM_PLAYING;
 		m_pending = 0;
