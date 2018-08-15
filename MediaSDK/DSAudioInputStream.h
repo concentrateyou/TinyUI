@@ -42,6 +42,7 @@ namespace MediaSDK
 		TinyWaiter								m_waiter;
 		volatile State							m_state;
 		AudioParameters							m_params;
+		TinyRingBuffer							m_buffer;
 		TinyComPtr<IDirectSoundCapture8>		m_dsc8;
 		TinyComPtr<IDirectSoundCaptureBuffer>	m_dscb;
 		TinyComPtr<IDirectSoundCaptureBuffer8>	m_dscb8;

@@ -12,7 +12,7 @@ namespace TinyFramework
 	namespace IO
 	{
 		/// <summary>
-		/// 循环缓冲
+		/// 固定元素大小循环缓冲
 		/// </summary>
 		class TinyRingBuffer
 		{

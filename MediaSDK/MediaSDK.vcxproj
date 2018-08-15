@@ -139,6 +139,7 @@
     <ClInclude Include="AudioInputStream.h" />
     <ClInclude Include="AudioOutputStream.h" />
     <ClInclude Include="AudioParameters.h" />
+    <ClInclude Include="ByteQueue.h" />
     <ClInclude Include="CameraVisual2D.h" />
     <ClInclude Include="CanvasView.h" />
     <ClInclude Include="AudioFileSink.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="AudioInputStream.cpp" />
     <ClCompile Include="AudioOutputStream.cpp" />
     <ClCompile Include="AudioParameters.cpp" />
+    <ClCompile Include="ByteQueue.cpp" />
     <ClCompile Include="CameraVisual2D.cpp" />
     <ClCompile Include="CanvasView.cpp" />
     <ClCompile Include="AudioFileSink.cpp" />

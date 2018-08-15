@@ -99,6 +99,9 @@
     <ClInclude Include="DSAudioInputStream.h">
       <Filter>头文件\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="ByteQueue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -166,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="DSAudioInputStream.cpp">
       <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteQueue.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

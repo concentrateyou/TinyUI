@@ -12,6 +12,7 @@ namespace MediaSDK
 	public:
 		AudioPacket(const AudioParameters& params);
 		~AudioPacket();
+		void	Reset(const UINT32& size);
 		CHAR*	data();
 		WORD	count() const;
 		UINT32	size() const;

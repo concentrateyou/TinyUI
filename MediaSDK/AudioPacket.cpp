@@ -20,6 +20,12 @@ namespace MediaSDK
 	{
 
 	}
+	void AudioPacket::Reset(const UINT32& size)
+	{
+		m_size = size;
+		m_bits.Reset(new CHAR[m_size]);
+		ASSERT(m_bits);
+	}
 	WORD AudioPacket::Channels() const
 	{
 		return m_wChannels;

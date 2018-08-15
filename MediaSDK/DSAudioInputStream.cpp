@@ -33,6 +33,7 @@ namespace MediaSDK
 		m_params = params;
 		m_state = PCM_NONE;
 		m_size = ((m_waveFMT.nChannels * m_waveFMT.wBitsPerSample) / 8) * m_params.GetFrames();
+		m_buffer.Initialize(m_count, m_size);
 		m_packet.Reset(new AudioPacket(params));
 		ASSERT(m_packet);
 		return TRUE;
@@ -50,10 +51,10 @@ namespace MediaSDK
 	void DSAudioInputStream::OnCallback(BOOLEAN timerFired)
 	{
 		HRESULT hRes = S_OK;
-		if (m_state != PCM_RECORDING)
-			return;
-		if (m_dscb8 != NULL)
+		do
 		{
+			if (m_state != PCM_RECORDING)
+				break;
 			LPVOID	ppvAudioPtr = NULL;
 			DWORD	dwAudioBytes = 0;
 			DWORD	dwReadPos = 0;
@@ -62,17 +63,17 @@ namespace MediaSDK
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
-				goto _ERROR;
+				break;
 			}
 			if (!(dwStatus & DSCBSTATUS_CAPTURING))
 			{
-				goto _ERROR;
+				break;
 			}
 			hRes = m_dscb8->GetCurrentPosition(NULL, &dwReadPos);
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
-				goto _ERROR;
+				break;
 			}
 			LONG blocksize = static_cast<LONG>(dwReadPos - m_dwOffset);
 			if (blocksize < 0)
@@ -80,29 +81,31 @@ namespace MediaSDK
 				blocksize += static_cast<LONG>(m_size * m_count);
 			}
 			if (blocksize == 0)
-				goto _ERROR;
+			{
+				break;
+			}
 			hRes = m_dscb8->Lock(m_dwOffset, static_cast<DWORD>(blocksize), &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
-				goto _ERROR;
+				break;
 			}
 			if (m_callback != NULL)
 			{
-				memcpy_s(m_packet->data(), dwAudioBytes, reinterpret_cast<CHAR*>(ppvAudioPtr), dwAudioBytes);
+				DWORD dwWhrite = m_buffer.Write(ppvAudioPtr, dwAudioBytes);
+				DWORD dwRead = m_buffer.Read(m_packet->data(), m_size);
+				TRACE("dwWhrite:%d, dwRead:%d\n", dwWhrite, dwRead);
 				m_callback->OnOutput(TinyPerformanceTime::Now(), m_packet);
 			}
 			hRes = m_dscb8->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
-				goto _ERROR;
+				break;
 			}
 			m_dwOffset += dwAudioBytes;
 			m_dwOffset %= (m_size * m_count);
-		}
-	_ERROR:
-		return;
+		} while (0);
 	}
 
 	BOOL DSAudioInputStream::Open()
@@ -217,10 +220,7 @@ namespace MediaSDK
 	{
 		if (m_state != PCM_RECORDING)
 			return FALSE;
-		if (m_dscb8 != NULL)
-		{
-			m_dscb8->Stop();
-		}
+		m_dscb8->Stop();
 		m_callback = NULL;
 		m_state = PCM_READY;
 		return TRUE;

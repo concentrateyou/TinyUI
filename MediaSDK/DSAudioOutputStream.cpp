@@ -187,17 +187,20 @@ namespace MediaSDK
 	}
 	void DSAudioOutputStream::OnCallback(BOOLEAN timerFired)
 	{
-		if (m_state != PCM_PLAYING)
-			return;
-		m_pending -= m_size;
-		m_offset += 1;
-		m_offset %= m_count;
-		CHAR* pval = &m_bits[m_offset * m_size];
-		QueuePacket(pval, m_size);
-		if (m_state != PCM_PLAYING)
-			return;
-		FillPacket(m_offset * m_size, pval, m_size);
-		m_pending += m_size;
+		do
+		{
+			if (m_state != PCM_PLAYING)
+				break;
+			m_pending -= m_size;
+			m_offset += 1;
+			m_offset %= m_count;
+			CHAR* pval = &m_bits[m_offset * m_size];
+			QueuePacket(pval, m_size);
+			if (m_state != PCM_PLAYING)
+				break;
+			FillPacket(m_offset * m_size, pval, m_size);
+			m_pending += m_size;
+		} while (0);
 	}
 	BOOL DSAudioOutputStream::FillPacket(UINT32 offset, CHAR* bits, UINT32 size)
 	{
