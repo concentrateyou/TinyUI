@@ -20,7 +20,7 @@ namespace MediaSDK
 		std::unique_ptr<CHAR[]> m_buffer;
 		size_t	m_size;
 		size_t	m_offset;
-		INT32	m_count;
+		INT32	m_current;
 	};
 }
 

@@ -7,7 +7,7 @@ namespace MediaSDK
 		: m_buffer(new CHAR[1024]),
 		m_size(1024),
 		m_offset(0),
-		m_count(0)
+		m_current(0)
 	{
 
 	}
@@ -17,43 +17,45 @@ namespace MediaSDK
 	void ByteQueue::Reset()
 	{
 		m_offset = 0;
-		m_count = 0;
+		m_current = 0;
 	}
 
 	void ByteQueue::Push(const CHAR* data, INT32 size)
 	{
-		size_t total = m_count + size;
+		size_t total = m_current + size;
 		if (total > m_size)
 		{
 			size_t newsize = 2 * m_size;
 			while (total > newsize && newsize > m_size)
 				newsize *= 2;
-			std::unique_ptr<CHAR[]> new_buffer(new CHAR[newsize]);
-			if (m_count > 0)
-				memcpy(new_buffer.get(), front(), m_count);
-			m_buffer = std::move(new_buffer);
+			std::unique_ptr<CHAR[]> buffer(new CHAR[newsize]);
+			if (m_current > 0)
+			{
+				memcpy(buffer.get(), front(), m_current);
+			}
+			m_buffer = std::move(buffer);
 			m_size = newsize;
 			m_offset = 0;
 		}
-		else if ((m_offset + m_count + size) > m_size)
+		else if ((m_offset + m_current + size) > m_size)
 		{
-			memmove(m_buffer.get(), front(), m_count);
+			memmove(m_buffer.get(), front(), m_current);
 			m_offset = 0;
 		}
-		memcpy(front() + m_count, data, size);
-		m_count += size;
+		memcpy(front() + m_current, data, size);
+		m_current += size;
 	}
 
 	void ByteQueue::Peek(const CHAR** data, INT32* size) const
 	{
 		*data = front();
-		*size = m_count;
+		*size = m_current;
 	}
 
-	void ByteQueue::Pop(INT32 count)
+	void ByteQueue::Pop(INT32 size)
 	{
-		m_offset += count;
-		m_count -= count;
+		m_offset += size;
+		m_current -= size;
 		if (m_offset == m_size)
 		{
 			m_offset = 0;

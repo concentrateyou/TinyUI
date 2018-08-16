@@ -2,6 +2,7 @@
 #include "AudioInputStream.h"
 #include "AudioParameters.h"
 #include "AudioPacket.h"
+#include "ByteQueue.h"
 #include <dsound.h>
 
 namespace MediaSDK
@@ -42,7 +43,7 @@ namespace MediaSDK
 		TinyWaiter								m_waiter;
 		volatile State							m_state;
 		AudioParameters							m_params;
-		TinyRingBuffer							m_buffer;
+		ByteQueue								m_queue;
 		TinyComPtr<IDirectSoundCapture8>		m_dsc8;
 		TinyComPtr<IDirectSoundCaptureBuffer>	m_dscb;
 		TinyComPtr<IDirectSoundCaptureBuffer8>	m_dscb8;

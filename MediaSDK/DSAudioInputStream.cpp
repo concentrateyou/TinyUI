@@ -33,7 +33,6 @@ namespace MediaSDK
 		m_params = params;
 		m_state = PCM_NONE;
 		m_size = ((m_waveFMT.nChannels * m_waveFMT.wBitsPerSample) / 8) * m_params.GetFrames();
-		m_buffer.Initialize(m_count, m_size);
 		m_packet.Reset(new AudioPacket(params));
 		ASSERT(m_packet);
 		return TRUE;
@@ -84,24 +83,31 @@ namespace MediaSDK
 			{
 				break;
 			}
-			hRes = m_dscb8->Lock(m_dwOffset, static_cast<DWORD>(blocksize), &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
+			hRes = m_dscb8->Lock(m_dwOffset, m_size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
 				break;
 			}
-			if (m_callback != NULL)
-			{
-				DWORD dwWhrite = m_buffer.Write(ppvAudioPtr, dwAudioBytes);
-				DWORD dwRead = m_buffer.Read(m_packet->data(), m_size);
-				TRACE("dwWhrite:%d, dwRead:%d\n", dwWhrite, dwRead);
-				m_callback->OnOutput(TinyPerformanceTime::Now(), m_packet);
-			}
+			m_queue.Push(static_cast<CHAR*>(ppvAudioPtr), dwAudioBytes);
 			hRes = m_dscb8->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
 			if (FAILED(hRes))
 			{
+				m_queue.Pop(dwAudioBytes);
 				HandleError(hRes);
 				break;
+			}
+			const CHAR* pval = NULL;
+			INT32 psize = 0;
+			m_queue.Peek(&pval, &psize);
+			if (psize >= m_size)
+			{
+				memcpy_s(m_packet->data(), m_size, pval, m_size);
+				m_queue.Pop(m_size);
+				if (m_callback != NULL)
+				{
+					m_callback->OnOutput(TinyPerformanceTime::Now(), m_packet);
+				}
 			}
 			m_dwOffset += dwAudioBytes;
 			m_dwOffset %= (m_size * m_count);
