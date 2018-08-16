@@ -13,6 +13,26 @@ namespace MediaSDK
 	MonitorVisual2D::~MonitorVisual2D()
 	{
 	}
+
+	XMFLOAT2 MonitorVisual2D::GetTranslate()
+	{
+		return m_visual2D.GetTranslate();
+	}
+
+	XMFLOAT2 MonitorVisual2D::GetSize()
+	{
+		return m_visual2D.GetSize();
+	}
+
+	void MonitorVisual2D::SetTranslate(const XMFLOAT2& pos)
+	{
+		m_visual2D.SetTranslate(pos);
+	}
+	void MonitorVisual2D::SetScale(const XMFLOAT2& pos)
+	{
+		m_visual2D.SetScale(pos);
+	}
+
 	UINT MonitorVisual2D::GetOutputCount() const
 	{
 		return m_duplicator.GetOutputCount(m_dx11);

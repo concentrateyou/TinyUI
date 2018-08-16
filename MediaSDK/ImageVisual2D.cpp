@@ -12,6 +12,30 @@ namespace MediaSDK
 	{
 	}
 
+	XMFLOAT2 ImageVisual2D::GetTranslate()
+	{
+		return m_visual2D.GetTranslate();
+	}
+
+	XMFLOAT2 ImageVisual2D::GetSize()
+	{
+		return m_visual2D.GetSize();
+	}
+
+	XMFLOAT2 ImageVisual2D::GetScale()
+	{
+		return m_visual2D.GetScale();
+	}
+
+	void ImageVisual2D::SetTranslate(const XMFLOAT2& pos)
+	{
+		m_visual2D.SetTranslate(pos);
+	}
+	void ImageVisual2D::SetScale(const XMFLOAT2& pos)
+	{
+		m_visual2D.SetScale(pos);
+	}
+
 	void ImageVisual2D::SetFile(const TinyString& szFile)
 	{
 		m_szFile = std::move(szFile);

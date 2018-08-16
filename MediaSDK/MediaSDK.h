@@ -2,6 +2,7 @@
 #include "Common/TinyCommon.h"
 #include "Common/TinyCallback.h"
 #include "Control/TinyControl.h"
+#include "Render/TinyRectTracker.h"
 #include "Media/TinyWave.h"
 #include "DShowCommon.h"
 #include "VideoCapture.h"

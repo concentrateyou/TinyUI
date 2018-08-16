@@ -21,48 +21,12 @@ namespace Bytedance
 		window->SetMinimumSize(TinySize(800, 600));
 		window->SetSize(TinySize(800, 600));
 		window->SetPosition(TinySize(100, 100));
-		//m_canvasView.Create(m_hWND, 0, 0, 1, 1, FALSE);
 		BuildUI({ 800,600 });
-
-		/*	m_source.Open("D:\\test2.wav");
-			AudioParameters ap;
-			ap.SetFrames(1024);
-			ap.SetFormat(m_source.GetFormat());
-			std::vector<PLAYDEVICE> devices;
-			TinySoundPlayer::Enumerate(devices);
-			m_stream.Initialize(ap, 3, GetDesktopWindow(), devices[0].Guid);
-			m_stream.Open();
-			m_stream.Start(&m_source);*/
-			/*m_capture.Initialize(BindCallback(&MainView::OnCallback1, this));
-			std::vector<TinyWASAPIAudio::Name> names;
-			m_capture.GetDevices(eAll, names);
-			m_capture.Open(names[0], NULL);
-			m_waveFile.Create("D:\\test.wav", m_capture.GetFormat());
-			m_capture.Start();*/
-			/*m_waveFile.Open("D:\\test1.wav");
-			m_render.Initialize(BindCallback(&MainView::OnCallback2, this));
-			std::vector<TinyWASAPIAudio::Name> names;
-			m_render.GetDevices(eAll, names);
-			m_render.Open(names[0], m_waveFile.GetFormat());
-			m_render.Start();*/
-
-		AudioParameters ap;
-		ap.SetFrames(1024);
-		m_sink.Create(ap, "D:\\test3.wav");
-		std::vector<PLAYDEVICE> devices1;
-		TinySoundPlayer::Enumerate(devices1);
-		std::vector<CAPTUREDEVICE> devices2;
-		TinySoundCapture::Enumerate(devices2);
-		m_stream.Initialize(ap, 3, GetDesktopWindow(), devices2[0].Guid, devices1[0].Guid);
-		m_stream.Open();
-		m_stream.Start(&m_sink);
 	}
 
 	void MainView::OnUninitialize()
 	{
-		m_waveFile.Close();
-		//m_capture.Stop();
-		//m_capture.Close();
+
 	}
 
 	LRESULT MainView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -88,6 +52,7 @@ namespace Bytedance
 		m_max->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_max_normal"]);
 		m_max->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_max_hover"]);
 		m_max->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_max_down"]);
+		m_max->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMaxClick);
 
 		m_min = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_min);
@@ -96,6 +61,7 @@ namespace Bytedance
 		m_min->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_min_normal"]);
 		m_min->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_min_hover"]);
 		m_min->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_min_down"]);
+		m_min->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMinClick);
 
 		m_close = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_close);
@@ -104,6 +70,7 @@ namespace Bytedance
 		m_close->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_close_normal"]);
 		m_close->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_close_hover"]);
 		m_close->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_close_down"]);
+		m_close->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnCloseClick);
 
 		m_restore = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_restore);
@@ -113,6 +80,7 @@ namespace Bytedance
 		m_restore->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_restore_normal"]);
 		m_restore->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_restore_hover"]);
 		m_restore->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_restore_down"]);
+		m_restore->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnRestoreClick);
 
 		m_setting = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_setting);
@@ -121,6 +89,7 @@ namespace Bytedance
 		m_setting->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["setting_normal"]);
 		m_setting->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["setting_hover"]);
 		m_setting->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["setting_down"]);
+		m_setting->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnSettingClick);
 
 		m_game = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_game);
@@ -132,6 +101,7 @@ namespace Bytedance
 		m_game->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
 		m_game->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
 		m_game->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
+		m_game->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnGameClick);
 
 		m_monitor = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
 		ASSERT(m_monitor);
@@ -143,6 +113,7 @@ namespace Bytedance
 		m_monitor->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
 		m_monitor->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
 		m_monitor->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
+		m_monitor->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMonitorClick);
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
@@ -205,28 +176,5 @@ namespace Bytedance
 	}
 	void MainView::OnMonitorClick(TinyVisual*, EventArgs& args)
 	{
-		/*	Decode::FLVParser parser;
-			parser.Open("D:\\no_stall.flv");
-			parser.Parse();
-			parser.Close();*/
-	}
-	void MainView::OnCallback1(BYTE* bits, LONG count, LPVOID)
-	{
-		/*WAVEFORMATEX* pFMT = m_capture.GetFormat();
-		if (bits != 0)
-		{
-			m_waveFile.Write(bits, count * pFMT->nBlockAlign);
-		}
-		else
-		{
-			TinyScopedArray<BYTE> data(new BYTE[count * pFMT->nBlockAlign]);
-			ZeroMemory(data, count * pFMT->nBlockAlign);
-			m_waveFile.Write(data, count * pFMT->nBlockAlign);
-		}*/
-	}
-	void MainView::OnCallback2(BYTE* bits, LONG size, LPVOID)
-	{
-		LONG numberOfBytesRead = 0;
-		m_waveFile.Read(bits, size, &numberOfBytesRead);
 	}
 }

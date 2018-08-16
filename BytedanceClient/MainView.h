@@ -57,10 +57,6 @@ namespace Bytedance
 		void OnSettingClick(TinyVisual*, EventArgs& args);
 		void OnGameClick(TinyVisual*, EventArgs& args);
 		void OnMonitorClick(TinyVisual*, EventArgs& args);
-
-		void OnCallback1(BYTE*, LONG, LPVOID);
-		void OnCallback2(BYTE*, LONG, LPVOID);
-
 	private:
 		//UI元素
 		//标题栏
@@ -74,14 +70,7 @@ namespace Bytedance
 		//按钮
 		TinyVisualButton*		m_game;//游戏注入
 		TinyVisualButton*		m_monitor;//显示器
-
 	private:
-		//TinyWASAPIAudioCapture	m_capture;
-		//TinyWASAPIAudioRender		m_render;
-		//AudioFileSource			m_source;
-		AudioFileSink			m_sink;
-		//DSAudioOutputStream		m_stream;
-		DSFullDuplexAudioInputStream		m_stream;
-		TinyWaveFile			m_waveFile;
+
 	};
 }

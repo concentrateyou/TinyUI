@@ -21,6 +21,31 @@ namespace MediaSDK
 		}
 	}
 
+	XMFLOAT2 StreamVisual2D::GetTranslate()
+	{
+		return m_visual2D.GetTranslate();
+	}
+
+	XMFLOAT2 StreamVisual2D::GetScale()
+	{
+		return m_visual2D.GetScale();
+	}
+
+	XMFLOAT2 StreamVisual2D::GetSize()
+	{
+		return m_visual2D.GetSize();
+	}
+
+	void StreamVisual2D::SetTranslate(const XMFLOAT2& pos)
+	{
+		m_visual2D.SetTranslate(pos);
+	}
+
+	void StreamVisual2D::SetScale(const XMFLOAT2& pos)
+	{
+		m_visual2D.SetScale(pos);
+	}
+
 	BOOL StreamVisual2D::Open()
 	{
 		return TRUE;

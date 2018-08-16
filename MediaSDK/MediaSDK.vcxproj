@@ -191,6 +191,11 @@
     <ClCompile Include="WaveAudioInputStream.cpp" />
     <ClCompile Include="WaveAudioOutputStream.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LAVPlayer\LAVPlayer.vcxproj">
+      <Project>{e7d1d44c-989a-47c8-a58e-240d8f11e4ea}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

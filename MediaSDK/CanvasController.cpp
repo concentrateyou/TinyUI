@@ -45,10 +45,33 @@ namespace MediaSDK
 		m_visuals.RemoveAll();
 	}
 
+	void CanvasController::MoveUp(IVisual2D* visual)
+	{
+		TinyAutoLock autolock(m_lock);
+		INT index = m_visuals.Lookup(visual);
+		if (index > 0)
+		{
+			IVisual2D* val = m_visuals[index - 1];
+			m_visuals[index - 1] = visual;
+			m_visuals[index] = val;
+		}
+	}
+
+	void CanvasController::MoveDown(IVisual2D* visual)
+	{
+		TinyAutoLock autolock(m_lock);
+		INT index = m_visuals.Lookup(visual);
+		if (index > 0 && index < m_visuals.GetSize())
+		{
+			IVisual2D* val = m_visuals[index + 1];
+			m_visuals[index + 1] = visual;
+			m_visuals[index] = val;
+		}
+	}
+
 	void CanvasController::OnLButtonDown(UINT, WPARAM wParam, LPARAM lParam, BOOL&)
 	{
-		TinyPoint pos(LOWORD(lParam), HIWORD(lParam));
-
+		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 	}
 
 	void CanvasController::OnLButtonUp(UINT, WPARAM wParam, LPARAM lParam, BOOL&)
@@ -66,8 +89,9 @@ namespace MediaSDK
 
 	}
 
-	void CanvasController::OnSize(UINT, WPARAM, LPARAM, BOOL&)
+	void CanvasController::OnSize(UINT, WPARAM, LPARAM lParam, BOOL&)
 	{
+		TinySize size(LOWORD(lParam), HIWORD(lParam));
 
 	}
 }

@@ -19,6 +19,10 @@ namespace MediaSDK
 		void			Close() OVERRIDE;
 		LPCSTR			GetName() OVERRIDE;
 		DX11Image2D*	GetVisual2D() OVERRIDE;
+		XMFLOAT2		GetTranslate() OVERRIDE;
+		XMFLOAT2		GetSize() OVERRIDE;
+		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
+		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
 		DX11&			m_dx11;
 		DX11Image2D		m_visual2D;

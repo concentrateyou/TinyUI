@@ -14,6 +14,31 @@ namespace MediaSDK
 		Close();
 	}
 
+	void CameraVisual2D::SetTranslate(const XMFLOAT2& pos)
+	{
+		m_visual2D.SetTranslate(pos);
+	}
+
+	void CameraVisual2D::SetScale(const XMFLOAT2& pos)
+	{
+		m_visual2D.SetScale(pos);
+	}
+
+	XMFLOAT2 CameraVisual2D::GetTranslate()
+	{
+		return m_visual2D.GetTranslate();
+	}
+
+	XMFLOAT2 CameraVisual2D::GetSize()
+	{
+		return m_visual2D.GetSize();
+	}
+
+	XMFLOAT2 CameraVisual2D::GetScale()
+	{
+		return m_visual2D.GetScale();
+	}
+
 	LPCSTR	CameraVisual2D::GetName()
 	{
 		return TEXT("CameraVisual2D");
