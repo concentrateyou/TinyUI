@@ -83,7 +83,7 @@ namespace MediaSDK
 			{
 				break;
 			}
-			hRes = m_dscb8->Lock(m_dwOffset, m_size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
+			hRes = m_dscb8->Lock(m_dwOffset, blocksize, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
