@@ -49,9 +49,11 @@ namespace Bytedance
 		AudioParameters ap;
 		ap.SetFrames(1024);
 		m_sink.Create(ap, "D:\\test3.wav");
-		std::vector<CAPTUREDEVICE> devices;
-		TinySoundCapture::Enumerate(devices);
-		m_stream.Initialize(ap, 3, GetDesktopWindow(), devices[0].Guid);
+		std::vector<PLAYDEVICE> devices1;
+		TinySoundPlayer::Enumerate(devices1);
+		std::vector<CAPTUREDEVICE> devices2;
+		TinySoundCapture::Enumerate(devices2);
+		m_stream.Initialize(ap, 3, GetDesktopWindow(), devices2[0].Guid, devices1[0].Guid);
 		m_stream.Open();
 		m_stream.Start(&m_sink);
 	}

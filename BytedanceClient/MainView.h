@@ -21,6 +21,7 @@
 #include "WaveAudioInputStream.h"
 #include "DSAudioOutputStream.h"
 #include "DSAudioInputStream.h"
+#include "DSFullDuplexAudioInputStream.h"
 
 #include "Media/TinySoundPlayer.h"
 #include "Media/TinySoundCapture.h"
@@ -80,7 +81,7 @@ namespace Bytedance
 		//AudioFileSource			m_source;
 		AudioFileSink			m_sink;
 		//DSAudioOutputStream		m_stream;
-		DSAudioInputStream		m_stream;
+		DSFullDuplexAudioInputStream		m_stream;
 		TinyWaveFile			m_waveFile;
 	};
 }

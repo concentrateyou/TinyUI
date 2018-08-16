@@ -1,23 +1,26 @@
 #include "stdafx.h"
-#include "DSAudioInputStream.h"
+#include "DSFullDuplexAudioInputStream.h"
 
 namespace MediaSDK
 {
-	DSAudioInputStream::DSAudioInputStream()
+	DSFullDuplexAudioInputStream::DSFullDuplexAudioInputStream()
 		:m_count(0),
 		m_size(0),
 		m_dwOffset(0),
 		m_state(PCM_NONE),
-		m_callback(NULL)
+		m_callback(NULL),
+		m_hWND(NULL),
+		m_captureID(DSDEVID_DefaultCapture),
+		m_renderID(DSDEVID_DefaultPlayback)
 	{
 		m_event.CreateEvent();
 	}
 
-	DSAudioInputStream::~DSAudioInputStream()
+	DSFullDuplexAudioInputStream::~DSFullDuplexAudioInputStream()
 	{
 	}
 
-	BOOL DSAudioInputStream::Initialize(const AudioParameters& params, UINT count, HWND hWND, const GUID& dID)
+	BOOL DSFullDuplexAudioInputStream::Initialize(const AudioParameters& params, UINT count, HWND hWND, const GUID& captureID, const GUID& renderID)
 	{
 		const WAVEFORMATEX* pFMT = params.GetFormat();
 		ASSERT(pFMT);
@@ -28,7 +31,9 @@ namespace MediaSDK
 		m_waveFMT.cbSize = 0;
 		m_waveFMT.nBlockAlign = (m_waveFMT.nChannels * m_waveFMT.wBitsPerSample) / 8;
 		m_waveFMT.nAvgBytesPerSec = m_waveFMT.nBlockAlign * m_waveFMT.nSamplesPerSec;
-		m_dID = dID;
+		m_captureID = captureID;
+		m_renderID = renderID;
+		m_hWND = hWND;
 		m_count = count;
 		m_params = params;
 		m_state = PCM_NONE;
@@ -38,16 +43,16 @@ namespace MediaSDK
 		return TRUE;
 	}
 
-	void DSAudioInputStream::HandleError(HRESULT hRes)
+	void DSFullDuplexAudioInputStream::HandleError(HRESULT hRes)
 	{
-		LOG(ERROR) << "DSAudioInputStream error " << hRes;
+		LOG(ERROR) << "DSFullDuplexAudioInputStream error " << hRes;
 		if (m_callback != NULL)
 		{
 			m_callback->OnError();
 		}
 	}
 
-	void DSAudioInputStream::OnCallback(BOOLEAN timerFired)
+	void DSFullDuplexAudioInputStream::OnCallback(BOOLEAN timerFired)
 	{
 		HRESULT hRes = S_OK;
 		do
@@ -114,46 +119,80 @@ namespace MediaSDK
 		} while (0);
 	}
 
-	BOOL DSAudioInputStream::Open()
+	BOOL DSFullDuplexAudioInputStream::Open()
 	{
 		DSCCAPS caps;
 		ZeroMemory(&caps, sizeof(DSCCAPS));
 		caps.dwSize = sizeof(DSCCAPS);
-		DSCBUFFERDESC dscbdesc;
-		ZeroMemory(&dscbdesc, sizeof(DSCBUFFERDESC));
-		dscbdesc.dwSize = sizeof(DSCBUFFERDESC);
-		dscbdesc.dwFlags = DSCBCAPS_CTRLFX;
-		dscbdesc.dwBufferBytes = m_size * m_count;
-		dscbdesc.dwReserved = 0;
-		dscbdesc.lpwfxFormat = &m_waveFMT;
+		DSCEFFECTDESC dsceds[2];
+		ZeroMemory(&dsceds[0], sizeof(DSCEFFECTDESC));
+		dsceds[0].dwSize = sizeof(DSCEFFECTDESC);
+		dsceds[0].dwFlags = DSCFX_LOCSOFTWARE;
+		dsceds[0].guidDSCFXClass = GUID_DSCFX_CLASS_AEC;
+		dsceds[0].guidDSCFXInstance = GUID_DSCFX_MS_AEC;
+		ZeroMemory(&dsceds[1], sizeof(DSCEFFECTDESC));
+		dsceds[1].dwSize = sizeof(DSCEFFECTDESC);
+		dsceds[1].dwFlags = DSCFX_LOCSOFTWARE;
+		dsceds[1].guidDSCFXClass = GUID_DSCFX_CLASS_NS;
+		dsceds[1].guidDSCFXInstance = GUID_DSCFX_MS_NS;
+
+		DSCBUFFERDESC dscb;
+		ZeroMemory(&dscb, sizeof(DSCBUFFERDESC));
+		dscb.dwSize = sizeof(DSCBUFFERDESC);
+		dscb.dwFlags = DSCBCAPS_CTRLFX;
+		dscb.dwBufferBytes = m_size * m_count;
+		dscb.dwReserved = 0;
+		dscb.lpwfxFormat = &m_waveFMT;
+		dscb.dwFXCount = 2;
+		dscb.lpDSCFXDesc = &dsceds[0];
+
+		DSBUFFERDESC dsb;
+		ZeroMemory(&dsb, sizeof(DSBUFFERDESC));
+		dsb.dwSize = sizeof(DSBUFFERDESC);
+		dsb.dwBufferBytes = m_size * m_count;
+		dsb.lpwfxFormat = &m_waveFMT;
+		dsb.dwReserved = 0;
+		dsb.dwFlags = DSBCAPS_GETCURRENTPOSITION2
+			| DSBCAPS_GLOBALFOCUS
+			| DSBCAPS_CTRLPOSITIONNOTIFY
+			| DSBCAPS_LOCSOFTWARE
+			| DSBCAPS_CTRLFREQUENCY;
+		TinyComPtr<IDirectSoundCaptureFXAec8> aec;
+		TinyComPtr<IDirectSoundCaptureFXNoiseSuppress8> ns;
 		TinyComPtr<IDirectSoundNotify>	notify;
 		TinyScopedArray<DSBPOSITIONNOTIFY> notifys(new DSBPOSITIONNOTIFY[m_count]);
 		ASSERT(notifys);
 		ZeroMemory(notifys, sizeof(DSBPOSITIONNOTIFY) * m_count);
 		HRESULT hRes = S_OK;
-		hRes = DirectSoundCaptureCreate8(&m_dID, &m_dsc8, NULL);
+		hRes = DirectSoundFullDuplexCreate8(&m_captureID, &m_renderID, &dscb, &dsb, m_hWND, DSSCL_PRIORITY, &m_dsfd, &m_dscb8, &m_dsb8, NULL);
 		if (FAILED(hRes))
 		{
-			HandleError(hRes);
-			goto _ERROR;
+			dscb.dwFlags = 0;
+			dscb.dwFXCount = 0;
+			dscb.lpDSCFXDesc = NULL;
+			hRes = DirectSoundFullDuplexCreate8(&m_captureID, &m_renderID, &dscb, &dsb, m_hWND, DSSCL_PRIORITY, &m_dsfd, &m_dscb8, &m_dsb8, NULL);
+			if (FAILED(hRes))
+			{
+				dsb.dwFlags &= ~DSBCAPS_CTRLFREQUENCY;
+				hRes = DirectSoundFullDuplexCreate8(&m_captureID, &m_renderID, &dscb, &dsb, m_hWND, DSSCL_PRIORITY, &m_dsfd, &m_dscb8, &m_dsb8, NULL);
+				if (FAILED(hRes))
+				{
+					HandleError(hRes);
+					goto _ERROR;
+				}
+			}
 		}
-		hRes = m_dsc8->GetCaps(&caps);
-		if (FAILED(hRes))
+		hRes = m_dscb8->GetObjectInPath(GUID_DSCFX_CLASS_AEC, 0, IID_IDirectSoundCaptureFXAec8, (LPVOID*)&aec);
+		if (SUCCEEDED(hRes))
 		{
-			HandleError(hRes);
-			goto _ERROR;
+			DSCFXAec aecMode = { TRUE,TRUE,DSCFX_AEC_MODE_FULL_DUPLEX };
+			aec->SetAllParameters(&aecMode);
 		}
-		hRes = m_dsc8->CreateCaptureBuffer(&dscbdesc, &m_dscb, NULL);
-		if (FAILED(hRes))
+		hRes = m_dscb8->GetObjectInPath(GUID_DSCFX_CLASS_NS, 0, IID_IDirectSoundCaptureFXNoiseSuppress8, (LPVOID*)&ns);
+		if (SUCCEEDED(hRes))
 		{
-			HandleError(hRes);
-			goto _ERROR;
-		}
-		hRes = m_dscb->QueryInterface(IID_IDirectSoundCaptureBuffer8, (LPVOID*)&m_dscb8);
-		if (FAILED(hRes))
-		{
-			HandleError(hRes);
-			goto _ERROR;
+			DSCFXNoiseSuppress nsMode = { TRUE };
+			ns->SetAllParameters(&nsMode);
 		}
 		m_bits.Reset(new CHAR[m_size * m_count]);
 		ASSERT(m_bits);
@@ -182,7 +221,7 @@ namespace MediaSDK
 	}
 
 
-	BOOL DSAudioInputStream::Start(AudioOutputCallback* callback)
+	BOOL DSFullDuplexAudioInputStream::Start(AudioOutputCallback* callback)
 	{
 		if (m_state != PCM_READY)
 			return FALSE;
@@ -195,7 +234,7 @@ namespace MediaSDK
 			return FALSE;
 		}
 		m_waiter.Unregister();
-		if (!m_waiter.Register(m_event, INFINITE, BindCallback(&DSAudioInputStream::OnCallback, this)))
+		if (!m_waiter.Register(m_event, INFINITE, BindCallback(&DSFullDuplexAudioInputStream::OnCallback, this)))
 		{
 			HandleError(::GetLastError());
 			return FALSE;
@@ -209,7 +248,7 @@ namespace MediaSDK
 		return TRUE;
 	}
 
-	BOOL DSAudioInputStream::Stop()
+	BOOL DSFullDuplexAudioInputStream::Stop()
 	{
 		if (m_state != PCM_RECORDING)
 			return FALSE;
@@ -219,23 +258,23 @@ namespace MediaSDK
 		return TRUE;
 	}
 
-	void DSAudioInputStream::Close()
+	void DSFullDuplexAudioInputStream::Close()
 	{
 		HRESULT hRes = S_OK;
 		Stop();
 		m_event.SetEvent();
 		m_waiter.Unregister();
-		m_dsc8.Release();
+		m_dsfd.Release();
 		m_dscb8.Release();
 		m_state = PCM_CLOSED;
 	}
 
-	BOOL DSAudioInputStream::SetVolume(DOUBLE volume)
+	BOOL DSFullDuplexAudioInputStream::SetVolume(DOUBLE volume)
 	{
 		return TRUE;
 	}
 
-	BOOL DSAudioInputStream::GetVolume(DOUBLE* volume)
+	BOOL DSFullDuplexAudioInputStream::GetVolume(DOUBLE* volume)
 	{
 		return TRUE;
 	}

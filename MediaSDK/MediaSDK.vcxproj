@@ -146,6 +146,7 @@
     <ClInclude Include="AudioFileSource.h" />
     <ClInclude Include="DSAudioInputStream.h" />
     <ClInclude Include="DSAudioOutputStream.h" />
+    <ClInclude Include="DSFullDuplexAudioInputStream.h" />
     <ClInclude Include="GameVisual2D.h" />
     <ClInclude Include="ImageVisual2D.h" />
     <ClInclude Include="IVisual2D.h" />
@@ -172,6 +173,7 @@
     <ClCompile Include="AudioFileSource.cpp" />
     <ClCompile Include="DSAudioInputStream.cpp" />
     <ClCompile Include="DSAudioOutputStream.cpp" />
+    <ClCompile Include="DSFullDuplexAudioInputStream.cpp" />
     <ClCompile Include="GameVisual2D.cpp" />
     <ClCompile Include="ImageVisual2D.cpp" />
     <ClCompile Include="IVisual2D.cpp" />
