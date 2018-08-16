@@ -28,7 +28,7 @@ namespace MediaSDK
 			size_t newsize = 2 * m_size;
 			while (total > newsize && newsize > m_size)
 				newsize *= 2;
-			std::unique_ptr<CHAR[]> buffer(new CHAR[newsize]);
+			unique_ptr<CHAR[]> buffer(new CHAR[newsize]);
 			if (m_current > 0)
 			{
 				memcpy(buffer.get(), front(), m_current);

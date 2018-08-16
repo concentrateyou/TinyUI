@@ -17,7 +17,7 @@ namespace MediaSDK
 		void Pop(INT32 count);
 	private:
 		CHAR* front() const;
-		std::unique_ptr<CHAR[]> m_buffer;
+		unique_ptr<CHAR[]> m_buffer;
 		size_t	m_size;
 		size_t	m_offset;
 		INT32	m_current;
