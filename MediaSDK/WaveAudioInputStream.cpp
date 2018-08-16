@@ -7,7 +7,7 @@ namespace MediaSDK
 		:m_dID(0),
 		m_count(0),
 		m_size(0),
-		m_alignsize(0),
+		m_packetsize(0),
 		m_state(PCM_NONE),
 		m_callback(NULL)
 	{
@@ -32,13 +32,14 @@ namespace MediaSDK
 		m_count = count;
 		m_params = params;
 		m_size = ((m_waveFMT.nChannels * m_waveFMT.wBitsPerSample) / 8) * m_params.GetFrames();
+		m_packetsize = sizeof(WAVEHDR) + m_size;
 		m_state = PCM_NONE;
 		return TRUE;
 	}
 
 	inline WAVEHDR* WaveAudioInputStream::GetWAVEHDR(INT index) const
 	{
-		return reinterpret_cast<WAVEHDR*>(&m_bits[index * m_alignsize]);
+		return reinterpret_cast<WAVEHDR*>(&m_bits[index * m_packetsize]);
 	}
 
 	void WaveAudioInputStream::HandleError(MMRESULT hRes)

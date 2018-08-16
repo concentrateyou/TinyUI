@@ -40,7 +40,7 @@ namespace MediaSDK
 		UINT32						m_dID;
 		UINT32 						m_count;//缓冲个数
 		UINT32						m_size;//缓冲大小
-		UINT32						m_alignsize;//缓冲大小
+		UINT32						m_packetsize;//缓冲大小
 		HWAVEIN						m_waveI;
 		WAVEFORMATEX				m_waveFMT;
 		TinyEvent					m_stop;
