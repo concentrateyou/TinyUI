@@ -51,15 +51,15 @@ namespace MediaSDK
 		UINT32								m_pending;//硬件缓冲还没播放的数据
 		UINT32								m_offset;//当前播放偏移量
 		volatile State						m_state;
-		TinyScopedArray<CHAR>				m_bits;
-		TinyScopedPtr<AudioPacket>			m_packet;
-		TinyComPtr<IDirectSound8>			m_ds;
-		TinyComPtr<IDirectSoundBuffer>		m_primaryDSB;
-		TinyComPtr<IDirectSoundBuffer8>		m_secondaryDSB;
 		TinyEvent							m_event;
 		TinyWaiter							m_waiter;
 		WAVEFORMATPCMEX						m_waveFMT;
 		AudioParameters						m_params;
 		AudioInputCallback*					m_callback;
+		TinyScopedArray<CHAR>				m_bits;
+		TinyScopedPtr<AudioPacket>			m_packet;
+		TinyComPtr<IDirectSound8>			m_ds;
+		TinyComPtr<IDirectSoundBuffer>		m_primaryDSB;
+		TinyComPtr<IDirectSoundBuffer8>		m_secondaryDSB;
 	};
 }

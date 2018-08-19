@@ -43,11 +43,11 @@ namespace MediaSDK
 		UINT32						m_pending;//硬件缓冲还没播放的数据
 		volatile State				m_state;
 		TinyLock					m_lock;
-		TinyScopedPtr<AudioPacket>	m_packet;
-		TinyScopedArray<CHAR>		m_bits;
 		HWAVEOUT					m_waveO;
 		WAVEFORMATPCMEX				m_waveFMT;
 		AudioParameters				m_params;
 		AudioInputCallback*			m_callback;
+		TinyScopedPtr<AudioPacket>	m_packet;
+		TinyScopedArray<CHAR>		m_bits;
 	};
 }

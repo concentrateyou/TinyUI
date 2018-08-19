@@ -44,10 +44,10 @@ namespace MediaSDK
 		volatile State							m_state;
 		AudioParameters							m_params;
 		ByteQueue								m_queue;
+		AudioOutputCallback*					m_callback;
 		TinyComPtr<IDirectSoundCapture8>		m_dsc8;
 		TinyComPtr<IDirectSoundCaptureBuffer>	m_dscb;
 		TinyComPtr<IDirectSoundCaptureBuffer8>	m_dscb8;
-		AudioOutputCallback*					m_callback;
 		TinyScopedArray<CHAR>					m_bits;
 		TinyScopedPtr<AudioPacket>				m_packet;
 	};
