@@ -144,6 +144,7 @@
     <ClInclude Include="CanvasView.h" />
     <ClInclude Include="AudioFileSink.h" />
     <ClInclude Include="AudioFileSource.h" />
+    <ClInclude Include="DMOAudioInputStream.h" />
     <ClInclude Include="DSAudioInputStream.h" />
     <ClInclude Include="DSAudioOutputStream.h" />
     <ClInclude Include="DSFullDuplexAudioInputStream.h" />
@@ -157,6 +158,8 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="CanvasController.h" />
     <ClInclude Include="TaskManager.h" />
+    <ClInclude Include="WASAPIAudioInputStream.h" />
+    <ClInclude Include="WASAPIAudioOutputStream.h" />
     <ClInclude Include="WaveAudioInputStream.h" />
     <ClInclude Include="WaveAudioOutputStream.h" />
   </ItemGroup>
@@ -171,6 +174,7 @@
     <ClCompile Include="CanvasView.cpp" />
     <ClCompile Include="AudioFileSink.cpp" />
     <ClCompile Include="AudioFileSource.cpp" />
+    <ClCompile Include="DMOAudioInputStream.cpp" />
     <ClCompile Include="DSAudioInputStream.cpp" />
     <ClCompile Include="DSAudioOutputStream.cpp" />
     <ClCompile Include="DSFullDuplexAudioInputStream.cpp" />
@@ -188,6 +192,8 @@
     <ClCompile Include="StreamVisual2D.cpp" />
     <ClCompile Include="CanvasController.cpp" />
     <ClCompile Include="TaskManager.cpp" />
+    <ClCompile Include="WASAPIAudioInputStream.cpp" />
+    <ClCompile Include="WASAPIAudioOutputStream.cpp" />
     <ClCompile Include="WaveAudioInputStream.cpp" />
     <ClCompile Include="WaveAudioOutputStream.cpp" />
   </ItemGroup>

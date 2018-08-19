@@ -10,10 +10,10 @@ namespace MediaSDK
 		TaskManager(DWORD dwMin, DWORD dwMax);
 		~TaskManager();
 	public:
-		void PostTask();
+		void PostTask(Closure&& callback);
 	private:
-		TinyWin32Threadpool				m_pool;
-		TinyArray<TinyWin32Worker*>		m_works;
+		TinyWin32Threadpool									m_pool;
+		TinyArray<TinyScopedReferencePtr<TinyWin32Worker>>	m_works;
 	};
 }
 

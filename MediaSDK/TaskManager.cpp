@@ -17,10 +17,13 @@ namespace MediaSDK
 		m_pool.Cancel(1);
 		m_pool.Close();
 	}
-	void TaskManager::PostTask()
+	void TaskManager::PostTask(Closure&& callback)
 	{
 		TinyWin32Worker* worker = new TinyWin32Worker(&m_pool);
-		m_works.Add(worker);
-		worker->Close();
+		ASSERT(worker);
+		if (worker->Submit(std::move(callback)))
+		{
+			m_works.Add(worker);
+		}
 	}
 }

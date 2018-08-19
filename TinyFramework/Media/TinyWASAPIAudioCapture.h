@@ -48,7 +48,7 @@ namespace TinyFramework
 			UINT32								m_count;
 			TinyEvent							m_sampleReady;
 			TinyEvent							m_audioStop;
-			IO::TinyThread					m_task;
+			IO::TinyThread						m_task;
 			AudioSessionEvents					m_sessionEvents;
 			TinyScopedArray<BYTE>				m_waveFMT;
 			TinyComPtr<IAudioClient>			m_audioClient;

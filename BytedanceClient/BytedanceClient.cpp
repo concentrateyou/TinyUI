@@ -39,11 +39,38 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
+//class ClassA
+//{
+//public:
+//	virtual ~ClassA() {};
+//	virtual void FunctionA1() {};
+//	void FonctionA2() {};
+//};
+//class ClassB
+//{
+//public:
+//	virtual void FunctionB1() {};
+//	void FonctionB2() {};
+//};
+//class ClassC : public ClassA, public ClassB
+//{
+//public:
+//	void FunctionA1() {};
+//	void FonctionA2() {};
+//	void FunctionB1() {};
+//	void FonctionB2() {};
+//};
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
 	INT       nCmdShow)
 {
+
+	/*ClassC aObject;
+	ClassA* pA = &aObject;
+	ClassB* pB = &aObject;
+	ClassC* pC = &aObject;*/
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -51,8 +78,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
-
-	HMODULE bRes = LoadLibrary("D:\\Bytedance\\xigua_live_assistant_pc\\node_modules\\obs-studio-node\\libobs\\bin\\32bit\\v265.dll");
 
 	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 

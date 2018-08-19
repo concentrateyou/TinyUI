@@ -72,9 +72,6 @@
     <ClInclude Include="WaveAudioOutputStream.h">
       <Filter>头文件\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="CanvasController.h">
-      <Filter>头文件\Video</Filter>
-    </ClInclude>
     <ClInclude Include="CanvasView.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -104,6 +101,18 @@
     </ClInclude>
     <ClInclude Include="DSFullDuplexAudioInputStream.h">
       <Filter>头文件\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="DMOAudioInputStream.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="WASAPIAudioInputStream.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="WASAPIAudioOutputStream.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="CanvasController.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +186,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DSFullDuplexAudioInputStream.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="DMOAudioInputStream.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="WASAPIAudioInputStream.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="WASAPIAudioOutputStream.cpp">
       <Filter>源文件\Audio</Filter>
     </ClCompile>
   </ItemGroup>
