@@ -23,6 +23,9 @@
 #include "DSAudioInputStream.h"
 #include "DSFullDuplexAudioInputStream.h"
 
+#include "WASAPIAudioOutputStream.h"
+#include "AudioManager.h"
+
 #include "Media/TinySoundPlayer.h"
 #include "Media/TinySoundCapture.h"
 
@@ -71,6 +74,7 @@ namespace Bytedance
 		TinyVisualButton*		m_game;//ÓÎÏ·×¢Èë
 		TinyVisualButton*		m_monitor;//ÏÔÊ¾Æ÷
 	private:
-
+		WASAPIAudioOutputStream	m_stream;
+		AudioFileSource			m_source;
 	};
 }

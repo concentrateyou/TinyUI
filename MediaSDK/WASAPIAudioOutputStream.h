@@ -32,8 +32,9 @@ namespace MediaSDK
 	private:
 		void OnMessagePump();
 		void HandleError(HRESULT hRes);
-		BOOL FillSilence(IAudioClient* client, IAudioRenderClient* renderClient);
-		BOOL BuildFormat();
+		void FillPacket(BYTE* bits, LONG size);
+		BOOL FillSilent(IAudioClient* client, IAudioRenderClient* renderClient);
+		BOOL BuildFormat(REFERENCE_TIME& request);
 		BOOL Render(const WAVEFORMATPCMEX& waveFMT, UINT64 lFrequency);
 	private:
 		WORD							m_wFrames;
@@ -48,6 +49,7 @@ namespace MediaSDK
 		TinyEvent						m_sampleReady;
 		TinyEvent						m_audioStop;
 		AudioInputCallback*				m_callback;
+		TinyScopedPtr<AudioPacket>		m_packet;
 		TinyComPtr<IMMDevice>			m_audioDevice;
 		TinyComPtr<ISimpleAudioVolume>	m_audioVolume;
 		TinyComPtr<IAudioClock>			m_audioClock;
