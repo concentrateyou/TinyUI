@@ -9,6 +9,7 @@
 #include "VideoCaptureParam.h"
 #include "IO/TinyRingBuffer.h"
 #include "IO/TinyWin32Threadpool.h"
+#include "IO/TinyThread.h"
 #include "DX11Duplicator.h"
 #include "DX11Image2D.h"
 #include "DX11Graphics2D.h"

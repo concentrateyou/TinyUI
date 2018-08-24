@@ -134,6 +134,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="AudioPacket.h" />
     <ClInclude Include="AudioConverter.h" />
     <ClInclude Include="AudioInputStream.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="WaveAudioOutputStream.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="AudioPacket.cpp" />
     <ClCompile Include="AudioConverter.cpp" />
     <ClCompile Include="AudioInputStream.cpp" />

@@ -114,6 +114,9 @@
     <ClInclude Include="CanvasController.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -195,6 +198,9 @@
       <Filter>源文件\Audio</Filter>
     </ClCompile>
     <ClCompile Include="WASAPIAudioOutputStream.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
       <Filter>源文件\Audio</Filter>
     </ClCompile>
   </ItemGroup>
