@@ -8,7 +8,6 @@ namespace MediaSDK
 	{
 		enum State
 		{
-			PCM_NONE,
 			PCM_READY,
 			PCM_PLAYING,
 			PCM_STOPPING,
@@ -21,8 +20,8 @@ namespace MediaSDK
 		BOOL Open() OVERRIDE;
 		BOOL Start(AudioInputCallback* callback) OVERRIDE;
 		BOOL Stop() OVERRIDE;
-		BOOL GetVolume(DOUBLE* volume) OVERRIDE;
-		BOOL SetVolume(DOUBLE volume) OVERRIDE;
+		BOOL GetVolume(FLOAT* volume) OVERRIDE;
+		BOOL SetVolume(FLOAT volume) OVERRIDE;
 		void Close() OVERRIDE;
 	public:
 		virtual void OnOpen();

@@ -20,31 +20,28 @@ namespace MediaSDK
 	public:
 		WASAPIAudioOutputStream();
 		virtual ~WASAPIAudioOutputStream();
-		BOOL Initialize(WORD wFrames, const string& deviceID, AUDCLNT_SHAREMODE mode);
+		BOOL Initialize(const AudioParameters& params, const string& deviceID, AUDCLNT_SHAREMODE mode);
 	public:
-		const WAVEFORMATPCMEX* GetFormat() const;
 		BOOL Open() OVERRIDE;
 		BOOL Start(AudioInputCallback* callback) OVERRIDE;
 		BOOL Stop() OVERRIDE;
-		BOOL GetVolume(DOUBLE* volume) OVERRIDE;
-		BOOL SetVolume(DOUBLE volume) OVERRIDE;
+		BOOL GetVolume(FLOAT* volume) OVERRIDE;
+		BOOL SetVolume(FLOAT volume) OVERRIDE;
 		void Close() OVERRIDE;
 	private:
 		void OnMessagePump();
 		void HandleError(HRESULT hRes);
-		void FillPacket(BYTE* bits, LONG size);
 		BOOL FillSilent(IAudioClient* client, IAudioRenderClient* renderClient);
-		BOOL BuildFormat(REFERENCE_TIME& request);
-		BOOL Render(const WAVEFORMATPCMEX& waveFMT, UINT64 lFrequency);
+		BOOL BuildFormat();
+		BOOL Render(const WAVEFORMATEX* waveFMT, UINT64 lFrequency);
 	private:
-		WORD							m_wFrames;
 		string							m_deviceID;
 		GUID							m_sessionID;
 		UINT32							m_count;
 		UINT64							m_lFrequency;
+		AudioParameters					m_params;
 		AUDCLNT_SHAREMODE				m_mode;
 		volatile AudioState				m_state;
-		WAVEFORMATPCMEX					m_waveFMT;
 		TinyThread						m_runnable;
 		TinyEvent						m_sampleReady;
 		TinyEvent						m_audioStop;

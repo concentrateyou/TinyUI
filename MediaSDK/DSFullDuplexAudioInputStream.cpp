@@ -269,12 +269,12 @@ namespace MediaSDK
 		m_state = PCM_CLOSED;
 	}
 
-	BOOL DSFullDuplexAudioInputStream::SetVolume(DOUBLE volume)
+	BOOL DSFullDuplexAudioInputStream::SetVolume(FLOAT volume)
 	{
 		return TRUE;
 	}
 
-	BOOL DSFullDuplexAudioInputStream::GetVolume(DOUBLE* volume)
+	BOOL DSFullDuplexAudioInputStream::GetVolume(FLOAT* volume)
 	{
 		return TRUE;
 	}

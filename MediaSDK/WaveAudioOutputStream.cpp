@@ -34,7 +34,7 @@ namespace MediaSDK
 		m_pending(0),
 		m_packetsize(0),
 		m_size(0),
-		m_state(PCM_NONE)
+		m_state(PCM_CLOSED)
 	{
 
 	}
@@ -84,7 +84,7 @@ namespace MediaSDK
 			HandleError(hRes);
 			return FALSE;
 		}
-		m_state = PCM_NONE;
+		m_state = PCM_CLOSED;
 		m_size = ((m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8) * m_params.GetFrames();
 		m_packetsize = sizeof(WAVEHDR) + m_size;
 		m_packet.Reset(new AudioPacket(params));
@@ -151,7 +151,7 @@ namespace MediaSDK
 
 	BOOL WaveAudioOutputStream::Open()
 	{
-		if (m_state != PCM_NONE)
+		if (m_state != PCM_CLOSED)
 			return FALSE;
 		if (m_packetsize * m_count > MaxOpenBufferSize)
 			return FALSE;
@@ -262,7 +262,7 @@ namespace MediaSDK
 		return TRUE;
 	}
 
-	BOOL WaveAudioOutputStream::GetVolume(DOUBLE* volume)
+	BOOL WaveAudioOutputStream::GetVolume(FLOAT* volume)
 	{
 		MMRESULT hRes = MMSYSERR_NOERROR;
 		if (m_waveO != NULL)
@@ -275,7 +275,7 @@ namespace MediaSDK
 		return FALSE;
 	}
 
-	BOOL WaveAudioOutputStream::SetVolume(DOUBLE volume)
+	BOOL WaveAudioOutputStream::SetVolume(FLOAT volume)
 	{
 		MMRESULT hRes = MMSYSERR_NOERROR;
 		if (m_waveO != NULL)

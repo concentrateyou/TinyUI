@@ -23,8 +23,8 @@ namespace MediaSDK
 		virtual BOOL Start(AudioOutputCallback* callback) = 0;
 		virtual BOOL Stop() = 0;
 		virtual void Close() = 0;
-		virtual BOOL SetVolume(DOUBLE volume) = 0;
-		virtual BOOL GetVolume(DOUBLE* volume) = 0;
+		virtual BOOL SetVolume(FLOAT volume) = 0;
+		virtual BOOL GetVolume(FLOAT* volume) = 0;
 	};
 }
 

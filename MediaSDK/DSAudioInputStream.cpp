@@ -7,7 +7,7 @@ namespace MediaSDK
 		:m_count(0),
 		m_size(0),
 		m_dwOffset(0),
-		m_state(PCM_NONE),
+		m_state(PCM_CLOSED),
 		m_callback(NULL)
 	{
 		m_event.CreateEvent();
@@ -31,7 +31,7 @@ namespace MediaSDK
 		m_dID = dID;
 		m_count = count;
 		m_params = params;
-		m_state = PCM_NONE;
+		m_state = PCM_CLOSED;
 		m_size = ((m_waveFMT.nChannels * m_waveFMT.wBitsPerSample) / 8) * m_params.GetFrames();
 		m_packet.Reset(new AudioPacket(params));
 		ASSERT(m_packet);
@@ -177,7 +177,7 @@ namespace MediaSDK
 		m_state = PCM_READY;
 		return TRUE;
 	_ERROR:
-		m_state = PCM_NONE;
+		m_state = PCM_CLOSED;
 		return FALSE;
 	}
 
@@ -221,7 +221,6 @@ namespace MediaSDK
 
 	void DSAudioInputStream::Close()
 	{
-		HRESULT hRes = S_OK;
 		Stop();
 		m_event.SetEvent();
 		m_waiter.Unregister();
@@ -230,12 +229,12 @@ namespace MediaSDK
 		m_state = PCM_CLOSED;
 	}
 
-	BOOL DSAudioInputStream::SetVolume(DOUBLE volume)
+	BOOL DSAudioInputStream::SetVolume(FLOAT volume)
 	{
 		return TRUE;
 	}
 
-	BOOL DSAudioInputStream::GetVolume(DOUBLE* volume)
+	BOOL DSAudioInputStream::GetVolume(FLOAT* volume)
 	{
 		return TRUE;
 	}

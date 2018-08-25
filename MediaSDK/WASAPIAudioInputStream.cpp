@@ -38,12 +38,12 @@ namespace MediaSDK
 		throw std::logic_error("The method or operation is not implemented.");
 	}
 
-	BOOL WASAPIAudioInputStream::SetVolume(DOUBLE volume)
+	BOOL WASAPIAudioInputStream::SetVolume(FLOAT volume)
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}
 
-	BOOL WASAPIAudioInputStream::GetVolume(DOUBLE* volume)
+	BOOL WASAPIAudioInputStream::GetVolume(FLOAT* volume)
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}

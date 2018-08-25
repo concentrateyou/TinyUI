@@ -18,8 +18,8 @@ namespace MediaSDK
 		BOOL Start(AudioOutputCallback* callback) OVERRIDE;
 		BOOL Stop() OVERRIDE;
 		void Close() OVERRIDE;
-		BOOL SetVolume(DOUBLE volume) OVERRIDE;
-		BOOL GetVolume(DOUBLE* volume) OVERRIDE;
+		BOOL SetVolume(FLOAT volume) OVERRIDE;
+		BOOL GetVolume(FLOAT* volume) OVERRIDE;
 	private:
 		WAVEFORMATEX	m_waveI;
 		WAVEFORMATEX	m_waveO;

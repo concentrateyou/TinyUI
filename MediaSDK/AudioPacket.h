@@ -12,17 +12,20 @@ namespace MediaSDK
 	public:
 		AudioPacket(const AudioParameters& params);
 		~AudioPacket();
-		void	Reset(const UINT32& size);
+		void	SetCapacity(const UINT32& capacity);
+		void	SetSize(const UINT32& size);
 		CHAR*	data();
-		WORD	count() const;
-		UINT32	size() const;
+		UINT32  size() const;
+		UINT32	capacity() const;
+		WORD	Frames() const;
 		WORD	Channels() const;
 		WORD	BitsPerSample() const;
 	private:
 		WORD					m_wChannels;
 		WORD					m_wBitsPerSample;
-		WORD					m_wCount;
+		WORD					m_wFrames;
 		UINT32					m_size;
+		UINT32					m_capacity;
 		TinyScopedPtr<CHAR>		m_bits;
 	};
 }

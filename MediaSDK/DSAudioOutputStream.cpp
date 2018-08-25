@@ -33,7 +33,7 @@ namespace MediaSDK
 		m_offset(0),
 		m_size(0),
 		m_hWND(NULL),
-		m_state(PCM_NONE)
+		m_state(PCM_CLOSED)
 	{
 		m_event.CreateEvent();
 	}
@@ -79,7 +79,7 @@ namespace MediaSDK
 		m_waveFMT.dwChannelMask = ChannelsToMask[m_waveFMT.Format.nChannels > MaxChannelsToMask ? MaxChannelsToMask : m_waveFMT.Format.nChannels];
 		m_waveFMT.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
 		m_waveFMT.Samples.wValidBitsPerSample = m_waveFMT.Format.wBitsPerSample;
-		m_state = PCM_NONE;
+		m_state = PCM_CLOSED;
 		m_size = ((m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8) * m_params.GetFrames();//»º³åÇø´óÐ¡
 		m_packetsize = m_size;
 		m_packet.Reset(new AudioPacket(params));
@@ -89,7 +89,7 @@ namespace MediaSDK
 
 	BOOL DSAudioOutputStream::Open()
 	{
-		if (m_state != PCM_NONE)
+		if (m_state != PCM_CLOSED)
 			return FALSE;
 		if (m_packetsize * m_count > MaxOpenBufferSize)
 			return FALSE;
@@ -179,7 +179,7 @@ namespace MediaSDK
 		m_state = PCM_READY;
 		return TRUE;
 	_ERROR:
-		m_state = PCM_NONE;
+		m_state = PCM_CLOSED;
 		m_ds.Release();
 		m_primaryDSB.Release();
 		m_secondaryDSB.Release();
@@ -332,7 +332,7 @@ namespace MediaSDK
 		return SUCCEEDED(hRes);
 	}
 
-	BOOL DSAudioOutputStream::GetVolume(DOUBLE* volume)
+	BOOL DSAudioOutputStream::GetVolume(FLOAT* volume)
 	{
 		HRESULT hRes = S_OK;
 		if (m_secondaryDSB != NULL)
@@ -341,13 +341,13 @@ namespace MediaSDK
 			hRes = m_secondaryDSB->GetVolume(&val);
 			if (FAILED(hRes))
 				HandleError(hRes);
-			*volume = static_cast<DOUBLE>(val);
+			*volume = static_cast<FLOAT>(val);
 			return SUCCEEDED(hRes);
 		}
 		return FALSE;
 	}
 
-	BOOL DSAudioOutputStream::SetVolume(DOUBLE volume)
+	BOOL DSAudioOutputStream::SetVolume(FLOAT volume)
 	{
 		HRESULT hRes = S_OK;
 		if (m_secondaryDSB != NULL)

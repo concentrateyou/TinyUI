@@ -8,7 +8,7 @@ namespace MediaSDK
 		m_count(0),
 		m_size(0),
 		m_packetsize(0),
-		m_state(PCM_NONE),
+		m_state(PCM_CLOSED),
 		m_callback(NULL)
 	{
 		m_stop.CreateEvent();
@@ -33,7 +33,7 @@ namespace MediaSDK
 		m_params = params;
 		m_size = ((m_waveFMT.nChannels * m_waveFMT.wBitsPerSample) / 8) * m_params.GetFrames();
 		m_packetsize = sizeof(WAVEHDR) + m_size;
-		m_state = PCM_NONE;
+		m_state = PCM_CLOSED;
 		return TRUE;
 	}
 
@@ -205,12 +205,12 @@ namespace MediaSDK
 
 	}
 
-	BOOL WaveAudioInputStream::SetVolume(DOUBLE volume)
+	BOOL WaveAudioInputStream::SetVolume(FLOAT volume)
 	{
 		return TRUE;
 	}
 
-	BOOL WaveAudioInputStream::GetVolume(DOUBLE* volume)
+	BOOL WaveAudioInputStream::GetVolume(FLOAT* volume)
 	{
 		return TRUE;
 	}
