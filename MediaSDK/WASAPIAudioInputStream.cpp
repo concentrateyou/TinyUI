@@ -126,12 +126,6 @@ namespace MediaSDK
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		hRes = m_audioClient->GetService(__uuidof(IChannelAudioVolume), (void**)&m_channelVolume);
-		if (FAILED(hRes))
-		{
-			HandleError(hRes);
-			goto _ERROR;
-		}
 		hRes = m_audioClient->GetService(__uuidof(IAudioSessionControl), (void**)&m_audioSession);
 		if (FAILED(hRes))
 		{
@@ -168,7 +162,6 @@ namespace MediaSDK
 		m_audioVolume.Release();
 		m_audioCapture.Release();
 		m_audioSession.Release();
-		m_channelVolume.Release();
 		m_audioDevice.Release();
 		m_state = AUDIO_CLOSED;
 		return FALSE;
@@ -266,7 +259,6 @@ namespace MediaSDK
 		m_audioCapture.Release();
 		m_audioSession.Release();
 		m_audioVolume.Release();
-		m_channelVolume.Release();
 		m_sampleReady.ResetEvent();
 		m_audioStop.ResetEvent();
 		m_callback = NULL;
@@ -275,27 +267,40 @@ namespace MediaSDK
 
 	BOOL WASAPIAudioInputStream::SetVolume(FLOAT volume)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (!m_audioVolume)
+			return FALSE;
+		return SUCCEEDED(m_audioVolume->SetMasterVolume(volume, NULL));
 	}
 
 	BOOL WASAPIAudioInputStream::GetVolume(FLOAT* volume)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (!m_audioVolume)
+			return FALSE;
+		return SUCCEEDED(m_audioVolume->GetMasterVolume(volume));
 	}
 	BOOL WASAPIAudioInputStream::FillPackage(const WAVEFORMATEX* waveFMT, UINT64 lFrequency)
 	{
 		HRESULT hRes = S_OK;
 		DWORD	dwFlags = 0;
+		BYTE*	data = NULL;
+		UINT32	packetsize = 0;
 		UINT32	available = 0;
-		BYTE*	bits = NULL;
-		UINT64  pu64Pos = 0;
-		UINT64	pu64QPCPos = 0;
+		UINT64  pos64 = 0;
+		UINT64	qpc64 = 0;
 		for (;;)
 		{
-			hRes = m_audioCapture->GetBuffer(&bits, &available, &dwFlags, &pu64Pos, &pu64QPCPos);
+			hRes = m_audioCapture->GetNextPacketSize(&packetsize);
+			if (FAILED(hRes))
+			{
+				HandleError(hRes);
+				return FALSE;
+			}
+			if (packetsize <= 0)
+				break;
+			hRes = m_audioCapture->GetBuffer(&data, &available, &dwFlags, &pos64, &qpc64);
 			if (hRes == AUDCLNT_S_BUFFER_EMPTY)
 				break;
-			hRes = m_audioClock->GetPosition(&pu64Pos, &pu64QPCPos);
+			hRes = m_audioClock->GetPosition(&pos64, &qpc64);
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
@@ -310,13 +315,15 @@ namespace MediaSDK
 			else
 			{
 				m_packet->SetSize(size);
-				memcpy_s(m_packet->data(), m_packet->size(), bits, m_packet->size());
+				memcpy_s(m_packet->data(), m_packet->size(), data, m_packet->size());
 			}
-			if (m_callback != NULL)
+			m_callback->OnOutput(TinyPerformanceTime::Now(), m_packet);
+			hRes = m_audioCapture->ReleaseBuffer(available);
+			if (FAILED(hRes))
 			{
-				m_callback->OnOutput(TinyPerformanceTime::Now(), m_packet);
+				HandleError(hRes);
+				return FALSE;
 			}
-			m_audioCapture->ReleaseBuffer(available);
 		}
 		return TRUE;
 	}

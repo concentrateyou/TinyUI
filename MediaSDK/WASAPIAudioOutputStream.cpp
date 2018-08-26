@@ -6,7 +6,9 @@ namespace MediaSDK
 	WASAPIAudioOutputStream::WASAPIAudioOutputStream()
 		:m_state(AUDIO_CLOSED),
 		m_callback(NULL),
-		m_count(0)
+		m_count(0),
+		m_writes(0),
+		m_latency(0)
 	{
 		m_sampleReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 		m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -17,12 +19,84 @@ namespace MediaSDK
 
 	}
 
-	BOOL WASAPIAudioOutputStream::Initialize(const AudioParameters& params, const string& deviceID, AUDCLNT_SHAREMODE mode)
+	BOOL WASAPIAudioOutputStream::GetAudioClient()
+	{
+		HRESULT hRes = m_audioDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
+		if (FAILED(hRes))
+		{
+			HandleError(hRes);
+			return FALSE;
+		}
+		REFERENCE_TIME hns = m_engineLatency * MFTIMES_PER_MS;
+		switch (m_mode)
+		{
+		case AUDCLNT_SHAREMODE_SHARED:
+		{
+			hRes = m_audioClient->Initialize(m_mode, AUDCLNT_STREAMFLAGS_NOPERSIST | AUDCLNT_STREAMFLAGS_EVENTCALLBACK, hns, 0, m_params.GetFormat(), &m_sessionID);
+			if (hRes == AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
+			{
+				hRes = m_audioClient->GetBufferSize(&m_count);
+				if (FAILED(hRes))
+				{
+					HandleError(hRes);
+					return FALSE;
+				}
+				hns = (REFERENCE_TIME)(static_cast<FLOAT>(MFTIMES_PER_SEC) *  m_count / m_params.GetFormat()->nSamplesPerSec + 0.5);
+				m_audioClient.Release();
+				hRes = m_audioDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
+				if (FAILED(hRes))
+				{
+					HandleError(hRes);
+					return FALSE;
+				}
+				hRes = m_audioClient->Initialize(m_mode, AUDCLNT_STREAMFLAGS_NOPERSIST | AUDCLNT_STREAMFLAGS_EVENTCALLBACK, hns, 0, m_params.GetFormat(), &m_sessionID);
+				if (FAILED(hRes))
+				{
+					HandleError(hRes);
+					return FALSE;
+				}
+			}
+		}
+		break;
+		case AUDCLNT_SHAREMODE_EXCLUSIVE:
+		{
+			hRes = m_audioClient->Initialize(m_mode, AUDCLNT_STREAMFLAGS_NOPERSIST | AUDCLNT_STREAMFLAGS_EVENTCALLBACK, hns, hns, m_params.GetFormat(), &m_sessionID);
+			if (hRes == AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
+			{
+				hRes = m_audioClient->GetBufferSize(&m_count);
+				if (FAILED(hRes))
+				{
+					HandleError(hRes);
+					return FALSE;
+				}
+				hns = (REFERENCE_TIME)(static_cast<FLOAT>(MFTIMES_PER_SEC) *  m_count / m_params.GetFormat()->nSamplesPerSec + 0.5);
+				m_audioClient.Release();
+				hRes = m_audioDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
+				if (FAILED(hRes))
+				{
+					HandleError(hRes);
+					return FALSE;
+				}
+				hRes = m_audioClient->Initialize(m_mode, AUDCLNT_STREAMFLAGS_NOPERSIST | AUDCLNT_STREAMFLAGS_EVENTCALLBACK, hns, hns, m_params.GetFormat(), &m_sessionID);
+				if (FAILED(hRes))
+				{
+					HandleError(hRes);
+					return FALSE;
+				}
+			}
+		}
+		break;
+		}
+		return TRUE;
+	}
+
+	BOOL WASAPIAudioOutputStream::Initialize(const AudioParameters& params, const string& deviceID, AUDCLNT_SHAREMODE mode, UINT32 engineLatency)
 	{
 		m_params = params;
 		m_deviceID = deviceID;
 		m_state = AUDIO_CLOSED;
 		m_mode = mode;
+		m_engineLatency = engineLatency;
 		return TRUE;
 	}
 	BOOL WASAPIAudioOutputStream::Open()
@@ -63,39 +137,9 @@ namespace MediaSDK
 		{
 			goto _ERROR;
 		}
-		hRes = m_audioDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
-		if (FAILED(hRes))
+		if (!GetAudioClient())
 		{
-			HandleError(hRes);
 			goto _ERROR;
-		}
-		switch (m_mode)
-		{
-		case AUDCLNT_SHAREMODE_SHARED:
-		{
-			REFERENCE_TIME hns = MILLISECONDS_TO_VISUALIZE * MFTIMES_PER_MS;
-			hRes = m_audioClient->Initialize(m_mode, AUDCLNT_STREAMFLAGS_NOPERSIST | AUDCLNT_STREAMFLAGS_EVENTCALLBACK, hns, 0, m_params.GetFormat(), &m_sessionID);
-			if (FAILED(hRes))
-			{
-				HandleError(hRes);
-				goto _ERROR;
-			}
-		}
-		break;
-		case AUDCLNT_SHAREMODE_EXCLUSIVE:
-		{
-			REFERENCE_TIME hns = ((REFERENCE_TIME)(MFTIMES_PER_SEC * m_count / m_params.GetFormat()->nSamplesPerSec + 0.5));
-			hRes = m_audioClient->Initialize(m_mode, AUDCLNT_STREAMFLAGS_NOPERSIST | AUDCLNT_STREAMFLAGS_EVENTCALLBACK, hns, hns, m_params.GetFormat(), &m_sessionID);
-			if (FAILED(hRes))
-			{
-				if (hRes != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
-				{
-					HandleError(hRes);
-					goto _ERROR;
-				}
-			}
-		}
-		break;
 		}
 		hRes = m_audioClient->GetBufferSize(&m_count);
 		if (FAILED(hRes))
@@ -103,6 +147,14 @@ namespace MediaSDK
 			HandleError(hRes);
 			goto _ERROR;
 		}
+		//REFERENCE_TIME defaultDevicePeriod = 0;
+		//hRes = m_audioClient->GetDevicePeriod(&defaultDevicePeriod, NULL);
+		//if (FAILED(hRes))
+		//{
+		//	HandleError(hRes);
+		//	goto _ERROR;
+		//}
+		//UINT32 size = static_cast<UINT32>(m_params.GetFormat()->nSamplesPerSec * (defaultDevicePeriod / static_cast<double>(MFTIMES_PER_SEC)) + 0.5);
 		hRes = m_audioClient->SetEventHandle(m_sampleReady);
 		if (FAILED(hRes))
 		{
@@ -127,12 +179,19 @@ namespace MediaSDK
 			HandleError(hRes);
 			goto _ERROR;
 		}
+		hRes = m_audioClient->GetStreamLatency(&m_latency);
+		if (FAILED(hRes))
+		{
+			HandleError(hRes);
+			goto _ERROR;
+		}
 		hRes = m_audioClock->GetFrequency(&m_lFrequency);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
+		m_writes = 0;
 		m_state = AUDIO_READY;
 		m_packet.Reset(new AudioPacket(m_params));
 		ASSERT(m_packet);
@@ -187,6 +246,7 @@ namespace MediaSDK
 			HandleError(hRes);
 			return FALSE;
 		}
+		m_writes += size;
 		return TRUE;
 	}
 
@@ -195,6 +255,7 @@ namespace MediaSDK
 		if (m_state != AUDIO_READY)
 			return FALSE;
 		HRESULT hRes = S_OK;
+		m_writes = 0;
 		m_callback = callback;
 		m_state = AUDIO_PLAYING;
 		if (!m_sampleReady.ResetEvent())
@@ -274,6 +335,7 @@ namespace MediaSDK
 	void WASAPIAudioOutputStream::Close()
 	{
 		Stop();
+		m_writes = 0;
 		m_callback = NULL;
 		m_sampleReady.ResetEvent();
 		m_audioStop.ResetEvent();
@@ -285,12 +347,14 @@ namespace MediaSDK
 		m_state = AUDIO_CLOSED;
 	}
 
-	BOOL WASAPIAudioOutputStream::FillPackage(const WAVEFORMATEX* waveFMT, UINT64 lFrequency)
+	BOOL WASAPIAudioOutputStream::FillPackage(const WAVEFORMATEX* waveFMT, REFERENCE_TIME latency, UINT64 lFrequency)
 	{
 		HRESULT hRes = S_OK;
 		BYTE*	data = NULL;
 		UINT32	padding = 0;
 		UINT32	available = 0;
+		UINT64  pos64 = 0;
+		UINT64  qpc64 = 0;
 		switch (m_mode)
 		{
 		case AUDCLNT_SHAREMODE_SHARED:
@@ -311,21 +375,20 @@ namespace MediaSDK
 					return FALSE;
 				}
 				INT64  delayTimestamp = 0;
-				UINT64 position = 0;
-				UINT64 qpc = 0;
 				UINT64 delays = 0;
-				hRes = m_audioClock->GetPosition(&position, &qpc);
+				hRes = m_audioClock->GetPosition(&pos64, &qpc64);
 				if (FAILED(hRes))
 				{
 					delayTimestamp = TinyPerformanceTime::Now();
 				}
 				else
 				{
-					const UINT64 plays = waveFMT->nSamplesPerSec * position / lFrequency;//ÒÑ²¥·Å
-					delays = m_count - plays;
+					const UINT64 plays = waveFMT->nSamplesPerSec * pos64 / lFrequency;
+					delays = m_writes - plays;
 					delayTimestamp = delays * TinyTime::MicrosecondsPerSecond / waveFMT->nSamplesPerSec;
 				}
 				UINT32 size = available * waveFMT->nBlockAlign;
+				m_writes += available;
 				m_packet->SetSize(size);
 				INT32 count = m_callback->OnInput(delays, delayTimestamp, 0, m_packet);
 				size = min(count * waveFMT->nBlockAlign, size);
@@ -398,7 +461,7 @@ namespace MediaSDK
 				break;
 			case WAIT_TIMEOUT:
 			case WAIT_OBJECT_0 + 1:
-				bPlaying = FillPackage(m_params.GetFormat(), m_lFrequency);
+				bPlaying = FillPackage(m_params.GetFormat(), m_latency, m_lFrequency);
 				break;
 			default:
 				bPlaying = FALSE;

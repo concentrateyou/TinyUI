@@ -172,11 +172,11 @@ namespace Bytedance
 	}
 	void MainView::OnGameClick(TinyVisual*, EventArgs& args)
 	{
-		string deviceID = AudioManager::GetDefaultInputID();
+		string deviceID = AudioManager::GetDefaultOutputID();
 		m_source.Open("D:\\1234.wav");
 		AudioParameters params;
 		params.SetFrames(4096);
-		params.SetFormat(AudioManager::GetMixFormat(deviceID));
+		params.SetFormat(m_source.GetFormat());
 		m_stream.Initialize(params, deviceID, AUDCLNT_SHAREMODE_SHARED);
 		m_stream.Open();
 		m_stream.Start(&m_source);

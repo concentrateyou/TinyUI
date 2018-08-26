@@ -19,7 +19,7 @@ namespace MediaSDK
 	public:
 		WASAPIAudioOutputStream();
 		virtual ~WASAPIAudioOutputStream();
-		BOOL Initialize(const AudioParameters& params, const string& deviceID, AUDCLNT_SHAREMODE mode);
+		BOOL Initialize(const AudioParameters& params, const string& deviceID, AUDCLNT_SHAREMODE mode, UINT32 engineLatency = 20);//д╛хо20ms
 	public:
 		BOOL Open() OVERRIDE;
 		BOOL Start(AudioInputCallback* callback) OVERRIDE;
@@ -30,14 +30,17 @@ namespace MediaSDK
 	private:
 		void OnMessagePump();
 		void HandleError(HRESULT hRes);
+		BOOL GetAudioClient();
 		BOOL FillSilent(IAudioClient* client, IAudioRenderClient* renderClient);
-		BOOL BuildFormat();
-		BOOL FillPackage(const WAVEFORMATEX* waveFMT, UINT64 lFrequency);
+		BOOL FillPackage(const WAVEFORMATEX* waveFMT, REFERENCE_TIME latency, UINT64 lFrequency);
 	private:
 		string							m_deviceID;
 		GUID							m_sessionID;
+		UINT32							m_engineLatency;
 		UINT32							m_count;
+		UINT64							m_writes;
 		UINT64							m_lFrequency;
+		REFERENCE_TIME					m_latency;
 		AudioParameters					m_params;
 		AUDCLNT_SHAREMODE				m_mode;
 		volatile AudioState				m_state;

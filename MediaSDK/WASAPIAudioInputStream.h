@@ -30,7 +30,6 @@ namespace MediaSDK
 	private:
 		void OnMessagePump();
 		void HandleError(HRESULT hRes);
-		BOOL BuildFormat();
 		BOOL FillPackage(const WAVEFORMATEX* waveFMT, UINT64 lFrequency);
 		BOOL Loopback(IMMDeviceEnumerator* enumerator,const string& deviceID);
 	private:
@@ -53,7 +52,6 @@ namespace MediaSDK
 		TinyComPtr<IAudioCaptureClient>		m_audioCapture;
 		TinyComPtr<IAudioSessionControl>	m_audioSession;
 		TinyComPtr<ISimpleAudioVolume>		m_audioVolume;
-		TinyComPtr<IChannelAudioVolume >	m_channelVolume;
 	};
 }
 
