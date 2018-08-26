@@ -4,7 +4,7 @@
 namespace MediaSDK
 {
 	WASAPIAudioOutputStream::WASAPIAudioOutputStream()
-		:m_state(AUDIO_NONE),
+		:m_state(AUDIO_CLOSED),
 		m_callback(NULL),
 		m_count(0)
 	{
@@ -21,34 +21,27 @@ namespace MediaSDK
 	{
 		m_params = params;
 		m_deviceID = deviceID;
-		m_state = AUDIO_NONE;
+		m_state = AUDIO_CLOSED;
 		m_mode = mode;
-		return TRUE;
-	}
-	BOOL WASAPIAudioOutputStream::BuildFormat()
-	{
-		if (!m_audioClient)
-			return FALSE;
-		HRESULT hRes = S_OK;
-		WAVEFORMATEX* waveFMT = NULL;
-		hRes = m_audioClient->GetMixFormat(&waveFMT);
-		if (FAILED(hRes))
-		{
-			HandleError(hRes);
-			return FALSE;
-		}
-		m_params.SetFormat(waveFMT);
 		return TRUE;
 	}
 	BOOL WASAPIAudioOutputStream::Open()
 	{
-		if (m_state != AUDIO_NONE)
+		if (m_state != AUDIO_CLOSED)
 			return FALSE;
 		HRESULT hRes = S_OK;
 		wstring wID = UTF8ToUTF16(m_deviceID);
 		DWORD state = DEVICE_STATE_DISABLED;
 		TinyComPtr<IMMDeviceEnumerator> enumerator;
 		hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+		if (hRes == CO_E_NOTINITIALIZED && !enumerator)
+		{
+			hRes = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+			if (SUCCEEDED(hRes))
+			{
+				hRes = ::CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&enumerator));
+			}
+		}
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
@@ -74,10 +67,6 @@ namespace MediaSDK
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
-			goto _ERROR;
-		}
-		if (!BuildFormat())
-		{
 			goto _ERROR;
 		}
 		switch (m_mode)
@@ -149,7 +138,13 @@ namespace MediaSDK
 		ASSERT(m_packet);
 		return TRUE;
 	_ERROR:
-		m_state = AUDIO_NONE;
+		m_callback = NULL;
+		m_audioRenderClient.Release();
+		m_audioClient.Release();
+		m_audioClock.Release();
+		m_audioVolume.Release();
+		m_audioDevice.Release();
+		m_state = AUDIO_CLOSED;
 		return FALSE;
 	}
 
@@ -161,7 +156,6 @@ namespace MediaSDK
 			m_callback->OnError();
 		}
 	}
-
 
 	BOOL WASAPIAudioOutputStream::FillSilent(IAudioClient* client, IAudioRenderClient* renderClient)
 	{
@@ -203,7 +197,11 @@ namespace MediaSDK
 		HRESULT hRes = S_OK;
 		m_callback = callback;
 		m_state = AUDIO_PLAYING;
-
+		if (!m_sampleReady.ResetEvent())
+		{
+			HandleError(::GetLastError());
+			goto _ERROR;
+		}
 		if (m_mode == AUDCLNT_SHAREMODE_SHARED)
 		{
 			if (!FillSilent(m_audioClient, m_audioRenderClient))
@@ -219,6 +217,10 @@ namespace MediaSDK
 		}
 		return TRUE;
 	_ERROR:
+		m_sampleReady.ResetEvent();
+		m_audioStop.ResetEvent();
+		m_runnable.Close(INFINITE);
+		m_callback = NULL;
 		m_state = AUDIO_READY;
 		return FALSE;
 	}
@@ -230,14 +232,14 @@ namespace MediaSDK
 		m_state = AUDIO_STOPPING;
 		::MemoryBarrier();
 		HRESULT hRes = S_OK;
+		m_audioStop.SetEvent();
+		m_runnable.Close(INFINITE);
 		hRes = m_audioClient->Stop();
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		m_audioStop.SetEvent();
-		m_runnable.Close(INFINITE);
 		hRes = m_audioClient->Reset();
 		if (FAILED(hRes))
 		{
@@ -272,6 +274,9 @@ namespace MediaSDK
 	void WASAPIAudioOutputStream::Close()
 	{
 		Stop();
+		m_callback = NULL;
+		m_sampleReady.ResetEvent();
+		m_audioStop.ResetEvent();
 		m_audioRenderClient.Release();
 		m_audioClient.Release();
 		m_audioClock.Release();
@@ -280,7 +285,7 @@ namespace MediaSDK
 		m_state = AUDIO_CLOSED;
 	}
 
-	BOOL WASAPIAudioOutputStream::Render(const WAVEFORMATEX* waveFMT, UINT64 lFrequency)
+	BOOL WASAPIAudioOutputStream::FillPackage(const WAVEFORMATEX* waveFMT, UINT64 lFrequency)
 	{
 		HRESULT hRes = S_OK;
 		BYTE*	data = NULL;
@@ -393,7 +398,10 @@ namespace MediaSDK
 				break;
 			case WAIT_TIMEOUT:
 			case WAIT_OBJECT_0 + 1:
-				bPlaying = Render(m_params.GetFormat(), m_lFrequency);
+				bPlaying = FillPackage(m_params.GetFormat(), m_lFrequency);
+				break;
+			default:
+				bPlaying = FALSE;
 				break;
 			}
 		}

@@ -24,6 +24,7 @@
 #include "DSFullDuplexAudioInputStream.h"
 
 #include "WASAPIAudioOutputStream.h"
+#include "WASAPIAudioInputStream.h";
 #include "AudioManager.h"
 
 #include "Media/TinySoundPlayer.h"
@@ -76,5 +77,8 @@ namespace Bytedance
 	private:
 		WASAPIAudioOutputStream	m_stream;
 		AudioFileSource			m_source;
+
+		WASAPIAudioInputStream	m_streamI;
+		AudioFileSink			m_sink;
 	};
 }

@@ -21,11 +21,12 @@ namespace MediaSDK
 		void Remove(AudioInputStream* stream);
 		void Remove(AudioOutputStream* stream);
 	public:
-		static IMMDevice*  GetDefaultDevice(EDataFlow dataFlow, ERole role);
-		static string GetDefaultInputID();
-		static string GetDefaultOutputID();
-		static string GetCommunicationsInputID();
-		static string GetCommunicationsOutputID();
+		static string			GetDefaultInputID();
+		static string			GetDefaultOutputID();
+		static string			GetCommunicationsInputID();
+		static string			GetCommunicationsOutputID();
+		static IMMDevice*		GetDefaultDevice(EDataFlow dataFlow, ERole role);
+		static WAVEFORMATEX*	GetMixFormat(const string& deviceID);
 	private:
 		static string GetDeviceID(EDataFlow dataFlow, ERole role);
 		void OnChange(LPCWSTR, DWORD);

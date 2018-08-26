@@ -57,8 +57,8 @@ namespace MediaSDK
 		AudioInputCallback*					m_callback;
 		TinyScopedArray<CHAR>				m_bits;
 		TinyScopedPtr<AudioPacket>			m_packet;
-		TinyComPtr<IDirectSound8>			m_ds;
-		TinyComPtr<IDirectSoundBuffer>		m_primaryDSB;
-		TinyComPtr<IDirectSoundBuffer8>		m_secondaryDSB;
+		TinyComPtr<IDirectSound8>			m_sound;
+		TinyComPtr<IDirectSoundBuffer>		m_primary;
+		TinyComPtr<IDirectSoundBuffer8>		m_secondary;
 	};
 }

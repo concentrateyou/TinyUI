@@ -38,7 +38,35 @@ namespace MediaSDK
 	{
 		m_outputs.Remove(stream);
 	}
-	IMMDevice* AudioManager:: GetDefaultDevice(EDataFlow dataFlow, ERole role)
+	WAVEFORMATEX* AudioManager::GetMixFormat(const string& deviceID)
+	{
+		TinyComPtr<IMMDeviceEnumerator> enumerator;
+		HRESULT hRes = ::CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&enumerator));
+		if (hRes == CO_E_NOTINITIALIZED)
+		{
+			hRes = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+			if (SUCCEEDED(hRes))
+			{
+				hRes = ::CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&enumerator));
+			}
+		}
+		if (FAILED(hRes))
+			return NULL;
+		TinyComPtr<IMMDevice> device;
+		hRes = enumerator->GetDevice(UTF8ToUTF16(deviceID).c_str(), &device);
+		if (FAILED(hRes))
+			return NULL;
+		TinyComPtr<IAudioClient> audioClient;
+		hRes = device->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&audioClient);
+		if (FAILED(hRes))
+			return NULL;
+		WAVEFORMATEX* pFMT = NULL;
+		hRes = audioClient->GetMixFormat(&pFMT);
+		if (FAILED(hRes))
+			return NULL;
+		return pFMT;
+	}
+	IMMDevice* AudioManager::GetDefaultDevice(EDataFlow dataFlow, ERole role)
 	{
 		TinyComPtr<IMMDeviceEnumerator> enumerator;
 		HRESULT hRes = ::CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&enumerator));
@@ -61,7 +89,7 @@ namespace MediaSDK
 	string AudioManager::GetDeviceID(EDataFlow dataFlow, ERole role)
 	{
 		string deviceID;
-		TinyComPtr<IMMDevice> device( GetDefaultDevice(dataFlow, role));
+		TinyComPtr<IMMDevice> device(GetDefaultDevice(dataFlow, role));
 		if (device != NULL)
 		{
 			WCHAR* wID = NULL;

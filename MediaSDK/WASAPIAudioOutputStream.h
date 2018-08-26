@@ -11,7 +11,6 @@ namespace MediaSDK
 	{
 		enum AudioState
 		{
-			AUDIO_NONE,
 			AUDIO_READY,
 			AUDIO_PLAYING,
 			AUDIO_STOPPING,
@@ -33,7 +32,7 @@ namespace MediaSDK
 		void HandleError(HRESULT hRes);
 		BOOL FillSilent(IAudioClient* client, IAudioRenderClient* renderClient);
 		BOOL BuildFormat();
-		BOOL Render(const WAVEFORMATEX* waveFMT, UINT64 lFrequency);
+		BOOL FillPackage(const WAVEFORMATEX* waveFMT, UINT64 lFrequency);
 	private:
 		string							m_deviceID;
 		GUID							m_sessionID;

@@ -113,31 +113,31 @@ namespace MediaSDK
 		dbdesc.dwSize = sizeof(dbdesc);
 		dbdesc.dwFlags = DSBCAPS_PRIMARYBUFFER;
 		HRESULT hRes = S_OK;
-		hRes = DirectSoundCreate8(&m_dID, &m_ds, NULL);
+		hRes = DirectSoundCreate8(&m_dID, &m_sound, NULL);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		hRes = m_ds->SetCooperativeLevel(m_hWND, DSSCL_PRIORITY);
+		hRes = m_sound->SetCooperativeLevel(m_hWND, DSSCL_PRIORITY);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		hRes = m_ds->CreateSoundBuffer(&dbdesc, &m_primaryDSB, NULL);
+		hRes = m_sound->CreateSoundBuffer(&dbdesc, &m_primary, NULL);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		hRes = m_primaryDSB->SetFormat(reinterpret_cast<WAVEFORMATEX*>(&m_waveFMT));
+		hRes = m_primary->SetFormat(reinterpret_cast<WAVEFORMATEX*>(&m_waveFMT));
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		hRes = m_primaryDSB->GetCaps(&dsbcaps);
+		hRes = m_primary->GetCaps(&dsbcaps);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
@@ -148,19 +148,19 @@ namespace MediaSDK
 		dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY;
 		dbdesc.dwBufferBytes = m_size * m_count;
 		dbdesc.lpwfxFormat = reinterpret_cast<WAVEFORMATEX*>(&m_waveFMT);
-		hRes = m_ds->CreateSoundBuffer(&dbdesc, &dsb, NULL);
+		hRes = m_sound->CreateSoundBuffer(&dbdesc, &dsb, NULL);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		hRes = dsb->QueryInterface(IID_IDirectSoundBuffer8, (void**)&m_secondaryDSB);
+		hRes = dsb->QueryInterface(IID_IDirectSoundBuffer8, (void**)&m_secondary);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		hRes = m_secondaryDSB->QueryInterface(IID_IDirectSoundNotify, (void**)&notify);
+		hRes = m_secondary->QueryInterface(IID_IDirectSoundNotify, (void**)&notify);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
@@ -179,10 +179,11 @@ namespace MediaSDK
 		m_state = PCM_READY;
 		return TRUE;
 	_ERROR:
+		m_callback = NULL;
 		m_state = PCM_CLOSED;
-		m_ds.Release();
-		m_primaryDSB.Release();
-		m_secondaryDSB.Release();
+		m_sound.Release();
+		m_primary.Release();
+		m_secondary.Release();
 		return FALSE;
 	}
 	void DSAudioOutputStream::OnCallback(BOOLEAN timerFired)
@@ -206,7 +207,7 @@ namespace MediaSDK
 	{
 		LPVOID	ppvAudioPtr = NULL;
 		DWORD	dwAudioBytes = 0;
-		HRESULT hRes = m_secondaryDSB->Lock(offset, size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
+		HRESULT hRes = m_secondary->Lock(offset, size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
 		if (FAILED(hRes))
 		{
 			if (hRes != DSERR_BUFFERLOST)
@@ -214,13 +215,13 @@ namespace MediaSDK
 				HandleError(hRes);
 				return FALSE;
 			}
-			hRes = m_secondaryDSB->Restore();
+			hRes = m_secondary->Restore();
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
 				return FALSE;
 			}
-			hRes = m_secondaryDSB->Lock(offset, m_size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
+			hRes = m_secondary->Lock(offset, m_size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
@@ -228,7 +229,7 @@ namespace MediaSDK
 			}
 		}
 		memcpy(ppvAudioPtr, bits, m_size);
-		hRes = m_secondaryDSB->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
+		hRes = m_secondary->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
@@ -285,13 +286,13 @@ namespace MediaSDK
 			CHAR* pval = &m_bits[i * m_size];
 			FillPacket(i * m_size, pval, m_size);
 		}
-		hRes = m_secondaryDSB->SetCurrentPosition(0);
+		hRes = m_secondary->SetCurrentPosition(0);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		hRes = m_secondaryDSB->Play(0, 0, DSBPLAY_LOOPING);
+		hRes = m_secondary->Play(0, 0, DSBPLAY_LOOPING);
 		if (FAILED(hRes))
 		{
 			HandleError(hRes);
@@ -311,15 +312,15 @@ namespace MediaSDK
 		m_state = PCM_STOPPING;
 		::MemoryBarrier();
 		HRESULT hRes = S_OK;
-		if (m_secondaryDSB != NULL)
+		if (m_secondary != NULL)
 		{
-			hRes = m_secondaryDSB->Restore();
+			hRes = m_secondary->Restore();
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
 				goto _ERROR;
 			}
-			hRes = m_secondaryDSB->Stop();
+			hRes = m_secondary->Stop();
 			if (FAILED(hRes))
 			{
 				HandleError(hRes);
@@ -335,10 +336,10 @@ namespace MediaSDK
 	BOOL DSAudioOutputStream::GetVolume(FLOAT* volume)
 	{
 		HRESULT hRes = S_OK;
-		if (m_secondaryDSB != NULL)
+		if (m_secondary != NULL)
 		{
 			LONG val = 0;
-			hRes = m_secondaryDSB->GetVolume(&val);
+			hRes = m_secondary->GetVolume(&val);
 			if (FAILED(hRes))
 				HandleError(hRes);
 			*volume = static_cast<FLOAT>(val);
@@ -350,9 +351,9 @@ namespace MediaSDK
 	BOOL DSAudioOutputStream::SetVolume(FLOAT volume)
 	{
 		HRESULT hRes = S_OK;
-		if (m_secondaryDSB != NULL)
+		if (m_secondary != NULL)
 		{
-			hRes = m_secondaryDSB->SetVolume(static_cast<LONG>(volume));
+			hRes = m_secondary->SetVolume(static_cast<LONG>(volume));
 			if (FAILED(hRes))
 				HandleError(hRes);
 			return SUCCEEDED(hRes);
@@ -362,28 +363,30 @@ namespace MediaSDK
 	void DSAudioOutputStream::Close()
 	{
 		HRESULT hRes = S_OK;
+		m_callback = NULL;
 		m_event.SetEvent();
+		m_event.ResetEvent();
 		m_waiter.Unregister();
-		if (m_secondaryDSB != NULL)
+		if (m_secondary != NULL)
 		{
-			hRes = m_secondaryDSB->Restore();
+			hRes = m_secondary->Restore();
 			if (FAILED(hRes))
 				HandleError(hRes);
-			hRes = m_secondaryDSB->Stop();
+			hRes = m_secondary->Stop();
 			if (FAILED(hRes))
 				HandleError(hRes);
 		}
-		if (m_primaryDSB != NULL)
+		if (m_primary != NULL)
 		{
-			hRes = m_primaryDSB->Restore();
+			hRes = m_primary->Restore();
 			if (FAILED(hRes))
 				HandleError(hRes);
-			hRes = m_primaryDSB->Stop();
+			hRes = m_primary->Stop();
 			if (FAILED(hRes))
 				HandleError(hRes);
 		}
-		m_secondaryDSB.Release();
-		m_primaryDSB.Release();
+		m_secondary.Release();
+		m_primary.Release();
 		m_state = PCM_CLOSED;
 	}
 }
