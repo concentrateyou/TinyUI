@@ -108,7 +108,7 @@ namespace TinyFramework
 		INT GetSecond() const throw();
 		INT GetDayOfWeek() const throw();
 	public:
-		static INT64 Now() throw();
+		static INT64 Now() throw();//∑µªÿƒ…√Î
 	private:
 		__time64_t m_time;
 	};

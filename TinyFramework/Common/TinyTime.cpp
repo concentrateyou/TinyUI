@@ -390,7 +390,15 @@ namespace TinyFramework
 	}
 	INT64 TinyTime::Now() throw()
 	{
-		return 0;
+		LARGE_INTEGER lFrequency = { 0 };
+		QueryPerformanceFrequency(&lFrequency);
+		LARGE_INTEGER counter = { 0 };
+		QueryPerformanceCounter(&counter);
+		DOUBLE time;
+		time = (DOUBLE)counter.QuadPart;
+		time *= 1000000000.0;
+		time /= (DOUBLE)lFrequency.QuadPart;
+		return static_cast<INT64>(time);
 	}
 	/************************************************************************/
 	/* TinyOleDateTimeSpan													*/

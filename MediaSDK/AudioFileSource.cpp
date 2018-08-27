@@ -23,7 +23,7 @@ namespace MediaSDK
 		return m_waveFile.GetFormat();
 	}
 
-	LONG AudioFileSource::OnInput(INT64 delay, INT64 timestamp, UINT32 skips, AudioPacket* packet)
+	LONG AudioFileSource::OnInput(INT64 delay, INT64 timestamp, AudioPacket* packet)
 	{
 		LONG numberOfBytesRead = 0;
 		m_waveFile.Read(reinterpret_cast<BYTE*>(packet->data()), packet->size(), &numberOfBytesRead);

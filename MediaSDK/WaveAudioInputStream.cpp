@@ -76,7 +76,7 @@ namespace MediaSDK
 		if (m_callback != NULL)
 		{
 			memcpy_s(m_packet->data(), pwh->dwBufferLength, reinterpret_cast<CHAR*>(pwh->lpData), pwh->dwBufferLength);
-			m_callback->OnOutput(TinyPerformanceTime::Now(), m_packet);
+			m_callback->OnOutput(TinyTime::Now(), m_packet);
 		}
 		else
 		{

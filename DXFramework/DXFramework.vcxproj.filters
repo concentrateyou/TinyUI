@@ -195,14 +195,14 @@
     <ClInclude Include="DX10Element.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
-    <ClInclude Include="DX10Texture2DElement.h">
-      <Filter>头文件\DX10</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Texture2DElement.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
     <ClInclude Include="DX11Element.h">
       <Filter>头文件\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Element2D.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10Element2D.h">
+      <Filter>头文件\DX10</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -365,14 +365,14 @@
     <ClCompile Include="DX10Element.cpp">
       <Filter>源文件\DX10</Filter>
     </ClCompile>
-    <ClCompile Include="DX10Texture2DElement.cpp">
-      <Filter>源文件\DX10</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Texture2DElement.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
     <ClCompile Include="DX11Element.cpp">
       <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Element2D.cpp">
+      <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10Element2D.cpp">
+      <Filter>源文件\DX10</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

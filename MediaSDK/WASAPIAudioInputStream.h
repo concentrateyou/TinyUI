@@ -31,7 +31,7 @@ namespace MediaSDK
 		void OnMessagePump();
 		void HandleError(HRESULT hRes);
 		BOOL FillPackage(const WAVEFORMATEX* waveFMT, UINT64 lFrequency);
-		BOOL Loopback(IMMDeviceEnumerator* enumerator,const string& deviceID);
+		BOOL Loopback(IMMDeviceEnumerator* enumerator, const string& deviceID);
 	private:
 		string								m_deviceID;
 		GUID								m_sessionID;

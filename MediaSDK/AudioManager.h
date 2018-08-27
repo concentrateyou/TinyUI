@@ -31,7 +31,7 @@ namespace MediaSDK
 		static string GetDeviceID(EDataFlow dataFlow, ERole role);
 		void OnChange(LPCWSTR, DWORD);
 	private:
-		AudioClientListener	m_listener;
+		AudioClientListener				m_listener;
 		TinyArray<AudioInputStream*>	m_inputs;
 		TinyArray<AudioOutputStream*>	m_outputs;
 	};

@@ -240,7 +240,7 @@ namespace MediaSDK
 	void DSAudioOutputStream::QueuePacket(CHAR* bits, UINT32 size)
 	{
 		const INT64 delay = (m_pending * 1000 * 1000) / m_waveFMT.Format.nAvgBytesPerSec;
-		INT32 count = m_callback->OnInput(delay, TinyPerformanceTime::Now(), 0, m_packet);
+		INT32 count = m_callback->OnInput(delay, TinyTime::Now(), m_packet);
 		size = min(((m_waveFMT.Format.nChannels * m_waveFMT.Format.wBitsPerSample) / 8) * count, size);//读到的字节数
 		do
 		{

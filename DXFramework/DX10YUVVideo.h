@@ -1,11 +1,11 @@
 #pragma once
-#include "DX10Texture2DElement.h"
+#include "DX10Element2D.h"
 #include "Render/TinyGDI.h"
 using namespace TinyFramework;
 
 namespace DXFramework
 {
-	class DX10YUVVideo : public DX10Texture2DElement
+	class DX10YUVVideo : public DX10Element2D
 	{
 		struct VERTEXTYPE
 		{

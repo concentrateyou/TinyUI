@@ -7,7 +7,7 @@ using namespace TinyFramework::IO;
 
 namespace DXFramework
 {
-	class DX10NV12Video : public DX10Texture2DElement
+	class DX10NV12Video : public DX10Element2D
 	{
 		struct VERTEXTYPE
 		{

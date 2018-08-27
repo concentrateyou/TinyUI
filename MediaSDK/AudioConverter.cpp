@@ -3,11 +3,18 @@
 
 namespace MediaSDK
 {
-	AudioConverter::AudioConverter()
+	AudioConverter::AudioConverter(const AudioParameters& src, const AudioParameters& dst)
 	{
+
 	}
 
 	AudioConverter::~AudioConverter()
 	{
+
+	}
+
+	void AudioConverter::HandleError(HRESULT hRes)
+	{
+		LOG(ERROR) << "AudioConverter error " << hRes;
 	}
 }

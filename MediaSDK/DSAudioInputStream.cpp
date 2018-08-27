@@ -106,7 +106,7 @@ namespace MediaSDK
 				m_queue.Pop(m_size);
 				if (m_callback != NULL)
 				{
-					m_callback->OnOutput(TinyPerformanceTime::Now(), m_packet);
+					m_callback->OnOutput(TinyTime::Now(), m_packet);
 				}
 			}
 			m_dwOffset += dwAudioBytes;

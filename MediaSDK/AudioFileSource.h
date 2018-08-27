@@ -12,7 +12,7 @@ namespace MediaSDK
 		AudioFileSource();
 		virtual ~AudioFileSource();
 	public:
-		LONG OnInput(INT64 delay, INT64 timestamp, UINT32 skips, AudioPacket* packet) OVERRIDE;
+		LONG OnInput(INT64 delay, INT64 timestamp, AudioPacket* packet) OVERRIDE;
 		void OnError() OVERRIDE;
 	public:
 		BOOL			Open(LPTSTR pzFile);

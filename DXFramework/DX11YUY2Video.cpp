@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX11YUY2Video, DX11Texture2DElement);
+	IMPLEMENT_DYNAMIC(DX11YUY2Video, DX11Element2D);
 
 	DX11YUY2Video::DX11YUY2Video()
 	{

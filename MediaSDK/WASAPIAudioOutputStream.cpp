@@ -366,7 +366,6 @@ namespace MediaSDK
 					HandleError(hRes);
 					return FALSE;
 				}
-				INT64  delayTimestamp = 0;
 				UINT64 delays = 0;
 				hRes = m_audioClock->GetPosition(&pos64, &qpc64);
 				if (FAILED(hRes))
@@ -379,7 +378,7 @@ namespace MediaSDK
 				UINT32 size = available * waveFMT->nBlockAlign;
 				m_writes += available;
 				m_packet->SetSize(size);
-				INT32 count = m_callback->OnInput(delays, TinyTime::Now(), 0, m_packet);
+				INT32 count = m_callback->OnInput(delays, TinyTime::Now(), m_packet);
 				size = min(count * waveFMT->nBlockAlign, size);
 				memcpy_s(data, size, m_packet->data(), size);
 				hRes = m_audioRenderClient->ReleaseBuffer(available, 0);
@@ -399,24 +398,18 @@ namespace MediaSDK
 				HandleError(hRes);
 				return FALSE;
 			}
-			INT64  delayTimestamp = 0;
-			UINT64 position = 0;
-			UINT64 qpc = 0;
 			UINT64 delays = 0;
-			hRes = m_audioClock->GetPosition(&position, &qpc);
+			hRes = m_audioClock->GetPosition(&pos64, &qpc64);
 			if (FAILED(hRes))
 			{
-				delayTimestamp = TinyPerformanceTime::Now();
+				HandleError(hRes);
+				return FALSE;
 			}
-			else
-			{
-				const UINT64 plays = waveFMT->nSamplesPerSec * position / lFrequency;//已播放
-				delays = m_count - plays;
-				delayTimestamp = delays * TinyTime::MicrosecondsPerSecond / waveFMT->nSamplesPerSec;
-			}
+			const UINT64 plays = waveFMT->nSamplesPerSec * pos64 / lFrequency;//已播放
+			delays = m_count - plays;
 			UINT32 size = available * waveFMT->nBlockAlign;
 			m_packet->SetSize(size);
-			INT32 count = m_callback->OnInput(delays, delayTimestamp, 0, m_packet);
+			INT32 count = m_callback->OnInput(delays, TinyTime::Now(), m_packet);
 			size = min(count * waveFMT->nBlockAlign, size);
 			memcpy_s(data, size, m_packet->data(), size);
 			hRes = m_audioRenderClient->ReleaseBuffer(m_count, 0);

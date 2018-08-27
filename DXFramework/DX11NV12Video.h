@@ -10,7 +10,7 @@ namespace DXFramework
 	/// <summary>
 	/// NV12 (2 planes)
 	/// </summary>
-	class DX11NV12Video : public DX11Texture2DElement
+	class DX11NV12Video : public DX11Element2D
 	{
 		struct VERTEXTYPE
 		{

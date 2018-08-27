@@ -6,7 +6,7 @@
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX11Image2D, DX11Texture2DElement);
+	IMPLEMENT_DYNAMIC(DX11Image2D, DX11Element2D);
 
 	DX11Image2D::DX11Image2D()
 	{

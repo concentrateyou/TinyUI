@@ -6,7 +6,7 @@
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX10Image2D, DX10Texture2DElement);
+	IMPLEMENT_DYNAMIC(DX10Image2D, DX10Element2D);
 
 	DX10Image2D::DX10Image2D()
 	{
