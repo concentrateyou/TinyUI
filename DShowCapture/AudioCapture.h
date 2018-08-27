@@ -24,12 +24,12 @@ namespace DShow
 			string	m_name;
 			string	m_id;
 		};
-		
+
 	public:
 		AudioCapture();
 		virtual ~AudioCapture();
 		BOOL	IsEmpty() const;
-		void	SetCallback(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback);
+		void	SetCallback(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback);
 		BOOL	Initialize(const Name& name);
 		void	Uninitialize();
 		BOOL	Start();
@@ -39,7 +39,7 @@ namespace DShow
 		BOOL	SetVolume(LONG volume);
 		BOOL	GetVolume(LONG& volume);
 	public:
-		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
+		void	OnFrameReceive(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter) OVERRIDE;
 	public:
 		virtual BOOL Allocate(const AudioCaptureParam& param);
 		virtual void Deallocate();
@@ -49,14 +49,14 @@ namespace DShow
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
 	private:
 		//
-		TinyComPtr<IBaseFilter>						m_captureFilter;
-		TinyComPtr<IGraphBuilder>					m_builder;
-		TinyComPtr<IMediaControl>					m_control;
-		TinyComPtr<IPin>							m_captureO;
-		TinyComPtr<IPin>							m_sinkI;
-		TinyComPtr<IAMAudioInputMixer>				m_mixer;
-		TinyScopedReferencePtr<AudioSinkFilter>		m_sinkFilter;
-		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_callback;
+		TinyComPtr<IBaseFilter>								m_captureFilter;
+		TinyComPtr<IGraphBuilder>							m_builder;
+		TinyComPtr<IMediaControl>							m_control;
+		TinyComPtr<IPin>									m_captureO;
+		TinyComPtr<IPin>									m_sinkI;
+		TinyComPtr<IAMAudioInputMixer>						m_mixer;
+		TinyScopedReferencePtr<AudioSinkFilter>				m_sinkFilter;
+		Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>	m_callback;
 	};
 }
 

@@ -24,7 +24,7 @@
 #include "DSFullDuplexAudioInputStream.h"
 
 #include "WASAPIAudioOutputStream.h"
-#include "WASAPIAudioInputStream.h";
+#include "WASAPIAudioInputStream.h"
 #include "AudioManager.h"
 
 #include "Media/TinySoundPlayer.h"

@@ -11,8 +11,10 @@ namespace MediaSDK
 	{
 		DISALLOW_COPY_AND_ASSIGN(AudioConverter)
 	public:
-		AudioConverter(const AudioParameters& src, const AudioParameters& dst);
+		AudioConverter(const AudioParameters& input, const AudioParameters& output);
 		~AudioConverter();
+	public:
+
 	private:
 		void HandleError(HRESULT hRes);
 	};

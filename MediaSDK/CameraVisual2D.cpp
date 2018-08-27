@@ -99,7 +99,7 @@ namespace MediaSDK
 	{
 		return &m_visual2D;
 	}
-	void CameraVisual2D::OnCallback(BYTE* bits, LONG size, FLOAT ts, void*)
+	void CameraVisual2D::OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*)
 	{
 		if (m_ringBuffer.IsEmpty())
 		{

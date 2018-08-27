@@ -71,8 +71,8 @@ namespace LAV
 	private:
 		BOOL Initialize();
 		void Uninitialize();
-		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
-		void OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
+		void OnAudio(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter);
+		void OnVideo(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter);
 		BOOL Copy(BYTE* bits, LONG size);
 	private:
 		HWND										m_hWND;

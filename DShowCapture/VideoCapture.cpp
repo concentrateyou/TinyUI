@@ -33,11 +33,11 @@ namespace DShow
 	{
 		return m_id;
 	}
-	void VideoCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	void VideoCapture::OnFrameReceive(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter)
 	{
 		if (!m_callback.IsNull())
 		{
-			m_callback(bits, size, ts, lpParameter);
+			m_callback(bits, size, timestamp, lpParameter);
 		}
 	}
 	VideoCapture::VideoCapture()
@@ -55,7 +55,7 @@ namespace DShow
 			m_captureO == NULL ||
 			m_control == NULL);
 	}
-	void VideoCapture::SetCallback(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
+	void VideoCapture::SetCallback(Callback<void(BYTE*, LONG, INT64, LPVOID)>&& callback)
 	{
 		m_callback = std::move(callback);
 	}
@@ -84,12 +84,12 @@ namespace DShow
 		hRes = m_builder->AddFilter(m_sinkFilter, FILTER_NAME);
 		if (hRes != S_OK)
 			return FALSE;
-		m_currentFormat.Reset();
+		m_cFormat.Reset();
 		return TRUE;
 	}
 	void VideoCapture::Uninitialize()
 	{
-		m_currentFormat.Reset();
+		m_cFormat.Reset();
 		Pause();
 		Deallocate();
 		if (m_builder != NULL)
@@ -117,7 +117,7 @@ namespace DShow
 	{
 		if (IsEmpty())
 			return FALSE;
-		m_currentFormat.Reset();
+		m_cFormat.Reset();
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
 		if (hRes != S_OK)
@@ -144,7 +144,7 @@ namespace DShow
 					SetAntiFlickerInCaptureFilter();
 					if (request.GetRate() > 0.0F)
 					{
-						vih->AvgTimePerFrame = SecondsToReferenceTime / request.GetRate();
+						vih->AvgTimePerFrame = SecondsToReferenceTime / static_cast<REFERENCE_TIME>(request.GetRate());
 					}
 					//Ê×ÏÈ³¢ÊÔRGB32
 					request.SetFormat(PIXEL_FORMAT_RGB32);
@@ -230,7 +230,7 @@ namespace DShow
 						break;
 						}
 					}
-					m_currentFormat = m_sinkFilter->GetResponseFormat();
+					m_cFormat = m_sinkFilter->GetResponseFormat();
 					return TRUE;
 				}
 			}
@@ -275,7 +275,7 @@ namespace DShow
 	}
 	const VideoCaptureFormat& VideoCapture::GetFormat()
 	{
-		return m_currentFormat;
+		return m_cFormat;
 	}
 	BOOL VideoCapture::ShowProperty(HWND hWND)
 	{

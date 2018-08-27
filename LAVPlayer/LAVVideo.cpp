@@ -12,7 +12,7 @@ namespace LAV
 	{
 
 	}
-	BOOL LAVVideo::Initialize(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
+	BOOL LAVVideo::Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
 	{
 		if (!InitializeVideo())
 			return FALSE;
@@ -100,11 +100,11 @@ namespace LAV
 		}
 		return TRUE;
 	}
-	void LAVVideo::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	void LAVVideo::OnFrameReceive(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter)
 	{
 		if (!m_callback.IsNull())
 		{
-			m_callback(bits, size, ts, lpParameter);
+			m_callback(bits, size, timestamp, lpParameter);
 		}
 	}
 }

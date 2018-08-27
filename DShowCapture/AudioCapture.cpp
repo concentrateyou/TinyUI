@@ -48,14 +48,14 @@ namespace DShow
 			m_captureO == NULL ||
 			m_control == NULL);
 	}
-	void AudioCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	void AudioCapture::OnFrameReceive(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter)
 	{
 		if (!m_callback.IsNull())
 		{
-			m_callback(bits, size, ts, lpParameter);
+			m_callback(bits, size, timestamp, lpParameter);
 		}
 	}
-	void AudioCapture::SetCallback(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
+	void AudioCapture::SetCallback(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
 	{
 		m_callback = std::move(callback);
 	}

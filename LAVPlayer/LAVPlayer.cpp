@@ -324,7 +324,7 @@ namespace LAV
 		}
 		return FALSE;
 	}
-	void LAVPlayer::OnAudio(BYTE* bits, LONG size, FLOAT time, LPVOID lpParameter)
+	void LAVPlayer::OnAudio(BYTE* bits, LONG size, REFERENCE_TIME time, LPVOID lpParameter)
 	{
 		LONGLONG msQPC = m_clock.GetQPCTimeMS();
 		m_clock.SetClock(static_cast<DOUBLE>(time));
@@ -347,7 +347,7 @@ namespace LAV
 			return FALSE;
 		return TRUE;
 	}
-	void LAVPlayer::OnVideo(BYTE* bits, LONG size, FLOAT time, LPVOID lpParameter)
+	void LAVPlayer::OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time, LPVOID lpParameter)
 	{
 		if (Copy(bits, size))
 		{

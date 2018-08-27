@@ -34,7 +34,7 @@ namespace DShow
 		VideoCapture();
 		virtual ~VideoCapture();
 		BOOL	IsEmpty() const;
-		void	SetCallback(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback);
+		void	SetCallback(Callback<void(BYTE*, LONG, INT64, LPVOID)>&& callback);
 		BOOL	Initialize(const Name& name);
 		void	Uninitialize();
 		BOOL	Start();
@@ -47,7 +47,7 @@ namespace DShow
 		virtual BOOL Allocate(const VideoCaptureParam& param);
 		virtual void Deallocate();
 	public:
-		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, void*) OVERRIDE;
+		void	OnFrameReceive(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*) OVERRIDE;
 	public:
 		static BOOL GetDevices(vector<Name>& names);
 		static BOOL GetDeviceFormats(const VideoCapture::Name& device, vector<VideoCaptureFormat>& formats);
@@ -57,20 +57,19 @@ namespace DShow
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:
-		VideoCaptureFormat							m_currentFormat;
-		//
-		TinyComPtr<IGraphBuilder>					m_builder;
-		TinyComPtr<IMediaControl>					m_control;
-		TinyComPtr<IBaseFilter>						m_captureFilter;
-		TinyComPtr<IPin>							m_captureO;
-		TinyComPtr<IBaseFilter>						m_mjpgFilter;
-		TinyComPtr<IPin>							m_mjpgO;//OUT
-		TinyComPtr<IPin>							m_mjpgI;//IN
-		TinyComPtr<IBaseFilter>						m_avFilter;
-		TinyComPtr<IPin>							m_avO;//OUT
-		TinyComPtr<IPin>							m_avI;//IN
-		TinyComPtr<IPin>							m_sinkI;
-		TinyScopedReferencePtr<VideoSinkFilter>		m_sinkFilter;
-		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_callback;
+		VideoCaptureFormat									m_cFormat;
+		TinyComPtr<IGraphBuilder>							m_builder;
+		TinyComPtr<IMediaControl>							m_control;
+		TinyComPtr<IBaseFilter>								m_captureFilter;
+		TinyComPtr<IPin>									m_captureO;
+		TinyComPtr<IBaseFilter>								m_mjpgFilter;
+		TinyComPtr<IPin>									m_mjpgO;//OUT
+		TinyComPtr<IPin>									m_mjpgI;//IN
+		TinyComPtr<IBaseFilter>								m_avFilter;
+		TinyComPtr<IPin>									m_avO;//OUT
+		TinyComPtr<IPin>									m_avI;//IN
+		TinyComPtr<IPin>									m_sinkI;
+		TinyScopedReferencePtr<VideoSinkFilter>				m_sinkFilter;
+		Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>	m_callback;
 	};
 }

@@ -13,7 +13,7 @@ namespace LAV
 	{
 	}
 
-	BOOL LAVAudio::Initialize(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
+	BOOL LAVAudio::Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
 	{
 		if (!InitializeAudio())
 			return FALSE;
@@ -105,11 +105,11 @@ namespace LAV
 		return TRUE;
 	}
 
-	void LAVAudio::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	void LAVAudio::OnFrameReceive(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter)
 	{
 		if (!m_callback.IsNull())
 		{
-			m_callback(bits, size, ts, lpParameter);
+			m_callback(bits, size, timestamp, lpParameter);
 		}
 	}
 }
