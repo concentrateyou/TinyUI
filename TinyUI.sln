@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsCapture", "Graphics
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MediaSDK", "MediaSDK\MediaSDK.vcxproj", "{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyApp", "TinyApp\TinyApp.vcxproj", "{9CBF16D3-CE0C-4378-8C36-384C061E0F64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -325,6 +327,26 @@ Global
 		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release|Win32.Build.0 = Release|Win32
 		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release|x64.ActiveCfg = Release|x64
 		{7FF2453D-9225-4C3C-9EAC-BF50E2479FE3}.Release|x64.Build.0 = Release|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug|Win32.Build.0 = Debug|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug|x64.ActiveCfg = Debug|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug|x64.Build.0 = Debug|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release_MBCS|x64.Build.0 = Release|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release_MT|Win32.Build.0 = Release|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release_MT|x64.ActiveCfg = Release|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release_MT|x64.Build.0 = Release|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release|Win32.ActiveCfg = Release|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release|Win32.Build.0 = Release|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release|x64.ActiveCfg = Release|x64
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

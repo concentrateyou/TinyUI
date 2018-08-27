@@ -51,6 +51,10 @@ namespace MediaSDK
 
 	BOOL ImageVisual2D::Tick()
 	{
+		XMFLOAT2 scale = GetScale();
+		XMFLOAT2 translate = GetTranslate();
+		XMFLOAT2 size = GetSize();
+		m_trackerRect.SetRect(static_cast<LONG>(translate.x), static_cast<LONG>(translate.y), static_cast<LONG>(scale.x * size.x), static_cast<LONG>(scale.y, size.y));
 		return TRUE;
 	}
 

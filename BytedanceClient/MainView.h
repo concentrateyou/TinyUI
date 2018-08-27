@@ -26,9 +26,11 @@
 #include "WASAPIAudioOutputStream.h"
 #include "WASAPIAudioInputStream.h"
 #include "AudioManager.h"
+#include "CanvasView.h"
+#include "CanvasController.h"
 
-#include "Media/TinySoundPlayer.h"
-#include "Media/TinySoundCapture.h"
+#include "CameraVisual2D.h"
+#include "ImageVisual2D.h"
 
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
@@ -61,6 +63,8 @@ namespace Bytedance
 		void OnSettingClick(TinyVisual*, EventArgs& args);
 		void OnGameClick(TinyVisual*, EventArgs& args);
 		void OnMonitorClick(TinyVisual*, EventArgs& args);
+		void OnCameraClick(TinyVisual*, EventArgs& args);
+		void OnImageClick(TinyVisual*, EventArgs& args);
 	private:
 		//UI元素
 		//标题栏
@@ -74,11 +78,10 @@ namespace Bytedance
 		//按钮
 		TinyVisualButton*		m_game;//游戏注入
 		TinyVisualButton*		m_monitor;//显示器
+		TinyVisualButton*		m_camera;//摄像头
+		TinyVisualButton*		m_image;//图片
 	private:
-		WASAPIAudioOutputStream	m_stream;
-		AudioFileSource			m_source;
-
-		WASAPIAudioInputStream	m_streamI;
-		AudioFileSink			m_sink;
+		CanvasView				m_view;
+		CanvasController		m_controller;
 	};
 }

@@ -3,7 +3,7 @@
 
 namespace MediaSDK
 {
-	class IVisual2D
+	class IVisual2D :public TinyRectTracker
 	{
 		DISALLOW_COPY_AND_ASSIGN(IVisual2D)
 	public:

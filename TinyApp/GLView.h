@@ -12,7 +12,6 @@
 #include "DX11Image2D.h"
 #include "DX11Line2D.h"
 #include "DX11Rectangle2D.h"
-#include "DX11RenderView.h"
 #include "DX11Graphics2D.h"
 #include "DX11NV12Video.h"
 using namespace LAV;
@@ -48,13 +47,9 @@ private:
 	static LRESULT CALLBACK MouseFilterHook(INT code, WPARAM wParam, LPARAM lParam);
 
 private:
+	DX11				m_dx11;
 	DX11Graphics2D		m_graphics;
-	//DX11NV12Video		m_image2D;
-	//TinyTimer			m_timer;
-	DX11Image2D		m_image2D;
-	DX11Line2D		m_line2D;
-	DX11Rectangle2D	m_rectangle2D;
-	///*DX9Graphics2D	m_graphics;
-	//DX9Image2D		m_image2D[2];*/
-	//LAVPlayer m_player;
+	DX11Image2D			m_image2D;
+	DX11Line2D			m_line2D;
+	DX11Rectangle2D		m_rectangle2D;
 };

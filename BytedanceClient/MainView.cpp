@@ -8,6 +8,7 @@ namespace Bytedance
 	IMPLEMENT_DYNAMIC(MainView, TinyVisualWindowless);
 
 	MainView::MainView()
+		:m_controller(m_view)
 	{
 	}
 
@@ -115,9 +116,40 @@ namespace Bytedance
 		m_monitor->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
 		m_monitor->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMonitorClick);
 
+		m_camera = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
+		ASSERT(m_camera);
+		m_camera->SetName("btnCamera");
+		m_camera->SetText("ÉãÏñÍ·²¶»ñ");
+		m_camera->SetSize(TinySize(69, 23));
+		m_camera->SetTextColor(RGB(0, 0, 0));
+		m_camera->SetTextAlian(DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		m_camera->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
+		m_camera->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
+		m_camera->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
+		m_camera->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnCameraClick);
+
+		m_image = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
+		ASSERT(m_image);
+		m_image->SetName("btnImage");
+		m_image->SetText("Ìí¼ÓÍ¼Æ¬");
+		m_image->SetSize(TinySize(69, 23));
+		m_image->SetTextColor(RGB(0, 0, 0));
+		m_image->SetTextAlian(DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		m_image->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
+		m_image->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
+		m_image->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
+		m_image->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnImageClick);
+
+		m_native = static_cast<TinyVisualNative*>(m_document.Create(TinyVisualTag::NATIVE, window));
+		ASSERT(m_native);
+		m_native->SetName("native");
+		m_native->SetText("native");
+		m_view.Create(m_hWND, 0, 0, 1, 1, FALSE);
+		m_controller.Initialize({ 1,1 });
+		m_native->SetView(&m_view);
+
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
-
 
 	}
 	void MainView::Resize(INT cx, INT cy)
@@ -135,8 +167,15 @@ namespace Bytedance
 			m_setting->SetPosition(TinyPoint(cx - offset, 0));
 
 			m_game->SetPosition({ 8,550 });
-
 			m_monitor->SetPosition({ 88,550 });
+			m_camera->SetPosition({ 168,550 });
+			m_image->SetPosition({ 248,550 });
+
+			if (IsWindow(m_view))
+			{
+				m_native->SetPosition({ 4, m_close->GetSize().cy + 8 });
+				m_native->SetSize({ cx - 8, 500 });
+			}
 		}
 	}
 
@@ -159,7 +198,6 @@ namespace Bytedance
 	}
 	void MainView::OnSettingClick(TinyVisual* spvis, EventArgs& args)
 	{
-
 		//TinyPoint pos = m_document.GetScreenPos(spvis);
 		//pos.y += spvis->GetSize().cy;
 	}
@@ -172,24 +210,21 @@ namespace Bytedance
 	}
 	void MainView::OnGameClick(TinyVisual*, EventArgs& args)
 	{
-		string deviceID = AudioManager::GetDefaultOutputID();
-		m_source.Open("D:\\1234.wav");
-		AudioParameters params;
-		params.SetFrames(4096);
-		params.SetFormat(m_source.GetFormat());
-		m_stream.Initialize(params, deviceID, AUDCLNT_SHAREMODE_SHARED);
-		m_stream.Open();
-		m_stream.Start(&m_source);
+
 	}
 	void MainView::OnMonitorClick(TinyVisual*, EventArgs& args)
 	{
-		string deviceID = AudioManager::GetDefaultOutputID();
-		AudioParameters params;
-		params.SetFrames(4096);
-		params.SetFormat(AudioManager::GetMixFormat(deviceID));
-		m_sink.Create(params, "D:\\123.wav");
-		m_streamI.Initialize(params, deviceID);
-		m_streamI.Open();
-		m_streamI.Start(&m_sink);
+
+	}
+	void MainView::OnCameraClick(TinyVisual*, EventArgs& args)
+	{
+		//CameraVisual2D*	camera2D = NULL;
+	}
+	void MainView::OnImageClick(TinyVisual*, EventArgs& args)
+	{
+		ImageVisual2D*	image2D = new ImageVisual2D(m_controller.GetDX11());
+		image2D->SetFile("D:\\timg.jpg");
+		image2D->Open();
+		m_controller.Add(image2D);
 	}
 }

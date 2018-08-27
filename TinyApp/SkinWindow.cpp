@@ -29,6 +29,7 @@ BOOL SkinWindow::BuildUI()
 	window->SetMinimumSize(TinySize(800, 600));
 	window->SetSize(TinySize(800, 600));
 	window->SetPosition(TinySize(100, 100));
+	return TRUE;
 }
 
 void SkinWindow::Resize(const TinySize& size)

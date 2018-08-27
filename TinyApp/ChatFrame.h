@@ -17,9 +17,6 @@
 #include "Network/TinyHTTPClient.h"
 #include "DX2D.h"
 #include "WICTexture.h"
-#include "DX9Graphics2D.h"
-#include "DX9Image2D.h"
-#include "DX9RenderView.h"
 #include "Media/TinyMFIntelQSVDecode.h"
 #pragma comment(lib,"sapi.lib")
 
@@ -55,8 +52,8 @@ private:
 	void OnTimerPump();
 	void OnData(BYTE* bits, LONG size, LPVOID ps);
 private:
-	DX9Graphics2D			m_graphics2D;
-	DX9Image2D				m_image2D;
+	/*DX9Graphics2D			m_graphics2D;
+	DX9Image2D				m_image2D;*/
 	TinyThread				m_task;
 	TinySimpleTaskTimer		m_timer;
 	TinyMFIntelQSVDecode	m_qsv;
