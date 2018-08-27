@@ -39,7 +39,7 @@ namespace MediaSDK
 		return m_visual2D.GetScale();
 	}
 
-	LPCSTR	CameraVisual2D::GetName()
+	LPCSTR	CameraVisual2D::GetVisualName()
 	{
 		return TEXT("CameraVisual2D");
 	}

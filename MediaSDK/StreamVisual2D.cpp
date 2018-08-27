@@ -61,7 +61,7 @@ namespace MediaSDK
 
 	}
 
-	LPCSTR StreamVisual2D::GetName()
+	LPCSTR StreamVisual2D::GetVisualName()
 	{
 		return TEXT("StreamVisual2D");
 	}

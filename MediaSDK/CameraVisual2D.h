@@ -16,7 +16,7 @@ namespace MediaSDK
 		BOOL			Open() OVERRIDE;
 		BOOL			Tick() OVERRIDE;
 		void			Close() OVERRIDE;
-		LPCSTR			GetName() OVERRIDE;
+		LPCSTR			GetVisualName() OVERRIDE;
 		DX11Image2D*	GetVisual2D() OVERRIDE;
 		XMFLOAT2		GetTranslate() OVERRIDE;
 		XMFLOAT2		GetScale() OVERRIDE;
@@ -26,15 +26,15 @@ namespace MediaSDK
 	private:
 		void			OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*);
 	private:
-		TinyLock			m_lock;
-		TinyBuffer<BYTE>	m_buffer;
 		UINT				m_linesize;
 		DX11&				m_dx11;
 		DX11Image2D			m_visual2D;
-		TinyRingBuffer		m_ringBuffer;
 		VideoCapture		m_capture;
 		VideoCaptureParam	m_requestParam;
 		VideoCaptureFormat	m_current;
+		TinyLock			m_lock;
+		TinyBuffer<BYTE>	m_buffer;
+		TinyRingBuffer		m_ringBuffer;
 	};
 }
 

@@ -59,7 +59,7 @@ namespace MediaSDK
 	{
 		m_duplicator.Close();
 	}
-	LPCSTR	MonitorVisual2D::GetName()
+	LPCSTR	MonitorVisual2D::GetVisualName()
 	{
 		return TEXT("MonitorVisual2D");
 	}

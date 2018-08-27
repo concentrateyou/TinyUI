@@ -59,7 +59,7 @@ namespace MediaSDK
 		m_visual2D.Destory();
 	}
 
-	LPCSTR ImageVisual2D::GetName()
+	LPCSTR ImageVisual2D::GetVisualName()
 	{
 		return TEXT("ImageVisual2D");
 	}

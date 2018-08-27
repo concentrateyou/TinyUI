@@ -43,7 +43,7 @@ namespace MediaSDK
 		m_visual2D.SetTranslate(pos);
 	}
 
-	PCSTR GameVisual2D::GetName()
+	PCSTR GameVisual2D::GetVisualName()
 	{
 		return TEXT("GameVisual2D");
 	}

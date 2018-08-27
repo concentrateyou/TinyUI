@@ -15,7 +15,7 @@ namespace MediaSDK
 		BOOL			Open() OVERRIDE;
 		BOOL			Tick() OVERRIDE;
 		void			Close() OVERRIDE;
-		LPCSTR			GetName() OVERRIDE;
+		LPCSTR			GetVisualName() OVERRIDE;
 		DX11Image2D*	GetVisual2D() OVERRIDE;
 		XMFLOAT2		GetTranslate() OVERRIDE;
 		XMFLOAT2		GetSize() OVERRIDE;
