@@ -23,7 +23,6 @@ namespace MediaSDK
 		m_params = params;
 		m_deviceID = deviceID;
 		m_state = AUDIO_CLOSED;
-
 		return TRUE;
 	}
 
@@ -317,7 +316,7 @@ namespace MediaSDK
 				m_packet->SetSize(size);
 				memcpy_s(m_packet->data(), m_packet->size(), data, m_packet->size());
 			}
-			m_callback->OnOutput(TinyPerformanceTime::Now(), m_packet);
+			m_callback->OnOutput(TinyTime::Now(), m_packet);
 			hRes = m_audioCapture->ReleaseBuffer(available);
 			if (FAILED(hRes))
 			{

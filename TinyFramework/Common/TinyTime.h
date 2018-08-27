@@ -12,7 +12,6 @@ typedef tagDBTIMESTAMP DBTIMESTAMP;
 
 namespace TinyFramework
 {
-
 	const INT maxTimeBufferSize = 128;
 	const LONG maxDaysInSpan = 3615897L;
 	extern SELECTANY const TCHAR * const szInvalidDateTime = _T("Invalid DateTime");
@@ -108,6 +107,8 @@ namespace TinyFramework
 		INT GetMinute() const throw();
 		INT GetSecond() const throw();
 		INT GetDayOfWeek() const throw();
+	public:
+		static INT64 Now() throw();
 	private:
 		__time64_t m_time;
 	};
@@ -358,8 +359,6 @@ namespace TinyFramework
 		LONGLONG	GetMicroseconds();
 		void		BeginTime();
 		void		EndTime();
-	public:
-		static LONGLONG Now();
 	private:
 		BOOL			m_bRunning;
 		DWORD			m_dwTimerMask;
@@ -368,5 +367,4 @@ namespace TinyFramework
 		LARGE_INTEGER	m_lFrequency;
 		LARGE_INTEGER	m_startPerformanceCount;
 	};
-
 }

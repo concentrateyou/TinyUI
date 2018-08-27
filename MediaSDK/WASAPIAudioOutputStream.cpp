@@ -147,14 +147,6 @@ namespace MediaSDK
 			HandleError(hRes);
 			goto _ERROR;
 		}
-		//REFERENCE_TIME defaultDevicePeriod = 0;
-		//hRes = m_audioClient->GetDevicePeriod(&defaultDevicePeriod, NULL);
-		//if (FAILED(hRes))
-		//{
-		//	HandleError(hRes);
-		//	goto _ERROR;
-		//}
-		//UINT32 size = static_cast<UINT32>(m_params.GetFormat()->nSamplesPerSec * (defaultDevicePeriod / static_cast<double>(MFTIMES_PER_SEC)) + 0.5);
 		hRes = m_audioClient->SetEventHandle(m_sampleReady);
 		if (FAILED(hRes))
 		{
@@ -379,18 +371,15 @@ namespace MediaSDK
 				hRes = m_audioClock->GetPosition(&pos64, &qpc64);
 				if (FAILED(hRes))
 				{
-					delayTimestamp = TinyPerformanceTime::Now();
+					HandleError(hRes);
+					return FALSE;
 				}
-				else
-				{
-					const UINT64 plays = waveFMT->nSamplesPerSec * pos64 / lFrequency;
-					delays = m_writes - plays;
-					delayTimestamp = delays * TinyTime::MicrosecondsPerSecond / waveFMT->nSamplesPerSec;
-				}
+				const UINT64 plays = waveFMT->nSamplesPerSec * pos64 / lFrequency;
+				delays = m_writes - plays;
 				UINT32 size = available * waveFMT->nBlockAlign;
 				m_writes += available;
 				m_packet->SetSize(size);
-				INT32 count = m_callback->OnInput(delays, delayTimestamp, 0, m_packet);
+				INT32 count = m_callback->OnInput(delays, TinyTime::Now(), 0, m_packet);
 				size = min(count * waveFMT->nBlockAlign, size);
 				memcpy_s(data, size, m_packet->data(), size);
 				hRes = m_audioRenderClient->ReleaseBuffer(available, 0);

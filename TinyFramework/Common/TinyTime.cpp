@@ -388,7 +388,10 @@ namespace TinyFramework
 		ptm = GetLocalTm(&ttm);
 		return ptm ? ptm->tm_wday + 1 : 0;
 	}
-
+	INT64 TinyTime::Now() throw()
+	{
+		return 0;
+	}
 	/************************************************************************/
 	/* TinyOleDateTimeSpan													*/
 	/************************************************************************/
@@ -1389,22 +1392,5 @@ namespace TinyFramework
 	{
 		LONGLONG ticks = (1000 * m_lastTime / m_lFrequency.QuadPart);
 		return ticks;
-	}
-
-	LONGLONG TinyPerformanceTime::Now()
-	{
-		LARGE_INTEGER lFrequency = {};
-		if (!QueryPerformanceFrequency(&lFrequency))
-			lFrequency.QuadPart = 0;
-		LARGE_INTEGER currentPerformanceCount = {};
-		::QueryPerformanceCounter(&currentPerformanceCount);
-		LONGLONG qpc = currentPerformanceCount.QuadPart;
-		if (qpc < TinyTime::QPCOverflowThreshold)
-		{
-			return (qpc * TinyTime::MicrosecondsPerSecond / lFrequency.QuadPart);
-		}
-		INT64 seconds = qpc / lFrequency.QuadPart;
-		INT64 ticks = qpc - (seconds * lFrequency.QuadPart);
-		return (seconds * TinyTime::MicrosecondsPerSecond) + ((ticks * TinyTime::MicrosecondsPerSecond) / lFrequency.QuadPart);
 	}
 }
