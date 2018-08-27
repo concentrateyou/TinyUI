@@ -313,16 +313,8 @@ namespace TinyFramework
 					UINT64 position = 0;
 					UINT64 qpc = 0;
 					hRes = m_audioClock->GetPosition(&position, &qpc);
-					if (SUCCEEDED(hRes))
-					{
-						const UINT64 plays = pFMT->nSamplesPerSec * position / m_lFrequency;//ÒÑ²¥·Å
-						const UINT64 delays = m_count - plays;
-						delayTimestamp = delays * TinyTime::MicrosecondsPerSecond / pFMT->nSamplesPerSec;
-					}
-					else
-					{
-						delayTimestamp = TinyPerformanceTime::Now();
-					}
+					if (hRes != S_OK)
+						return FALSE;
 					OnDataAvailable(data, available * pFMT->nBlockAlign, this);
 					hRes = m_audioRender->ReleaseBuffer(m_count, 0);
 					if (hRes != S_OK)
