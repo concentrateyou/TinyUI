@@ -145,29 +145,30 @@ namespace MediaSDK
 			}
 		}
 	}
-
+	void CanvasController::OnRender()
+	{
+		TinyAutoLock autolock(m_lock);
+		m_display.BeginDraw();
+		for (INT i = 0; i < m_visuals.GetSize(); i++)
+		{
+			IVisual2D* visual2D = m_visuals[i];
+			visual2D->Tick();
+			DX11Image2D* image2D = visual2D->GetVisual2D();
+			if (visual2D->IsKindOf(RUNTIME_CLASS(MonitorVisual2D)))
+			{
+				MonitorVisual2D* visual = static_cast<MonitorVisual2D*>(visual2D);
+				m_display.DrawImage(visual->GetCursor());
+			}
+			m_display.DrawImage(*image2D);
+		}
+		m_display.EndDraw();
+	}
 	void CanvasController::OnDraw()
 	{
 		for (;;)
 		{
-			{
-				TinyAutoLock autolock(m_lock);
-				m_display.BeginDraw();
-				for (INT i = 0; i < m_visuals.GetSize(); i++)
-				{
-					IVisual2D* visual2D = m_visuals[i];
-					visual2D->Tick();
-					DX11Image2D* val = visual2D->GetVisual2D();
-					m_display.DrawImage(*val);
-					if (visual2D->IsKindOf(RUNTIME_CLASS(MonitorVisual2D)))
-					{
-						MonitorVisual2D* ps = static_cast<MonitorVisual2D*>(visual2D);
-						m_display.DrawImage(ps->GetCursor());
-					}
-				}
-				m_display.EndDraw();
-				m_dx11.Present();
-			}
+			OnRender();
+			m_dx11.Present();
 			Sleep(30);
 		}
 	}

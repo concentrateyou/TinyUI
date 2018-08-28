@@ -33,6 +33,7 @@ namespace MediaSDK
 	{
 		m_visual2D.SetTranslate(pos);
 	}
+
 	void ImageVisual2D::SetScale(const XMFLOAT2& pos)
 	{
 		m_visual2D.SetScale(pos);

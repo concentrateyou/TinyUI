@@ -27,14 +27,12 @@ namespace MediaSDK
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
-		BOOL			UpdateCursor();
-	private:
-		BOOL				m_bCursor;
-		UINT32				m_index;
-		DX11&				m_dx11;
-		DX11Image2D			m_cursor2D;
-		DX11Image2D			m_visual2D;
-		DX11Duplicator		m_duplicator;
+		BOOL			m_bCursor;
+		UINT32			m_index;
+		DX11&			m_dx11;
+		DX11Cursor2D	m_cursor2D;
+		DX11Image2D		m_visual2D;
+		DX11Duplicator	m_duplicator;
 	};
 }
 

@@ -29,6 +29,7 @@ namespace MediaSDK
 		void		OnSize(UINT, WPARAM, LPARAM, BOOL&);
 		void		OnSetCursor(UINT, WPARAM, LPARAM, BOOL&);
 		void		OnDraw();
+		void		OnRender();
 		IVisual2D*	HitTest(const TinyPoint& pos);
 	private:
 		DX11						m_dx11;

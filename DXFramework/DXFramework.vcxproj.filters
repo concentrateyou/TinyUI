@@ -204,6 +204,9 @@
     <ClInclude Include="DX10Element2D.h">
       <Filter>头文件\DX10</Filter>
     </ClInclude>
+    <ClInclude Include="DX11Cursor2D.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -373,6 +376,9 @@
     </ClCompile>
     <ClCompile Include="DX10Element2D.cpp">
       <Filter>源文件\DX10</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Cursor2D.cpp">
+      <Filter>源文件\DX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

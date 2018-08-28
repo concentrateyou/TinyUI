@@ -12,6 +12,7 @@
 #include "IO/TinyThread.h"
 #include "DX11Duplicator.h"
 #include "DX11Image2D.h"
+#include "DX11Cursor2D.h"
 #include "DX11Graphics2D.h"
 #include "DX11CaptureRunner.h"
 
