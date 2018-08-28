@@ -6,27 +6,35 @@ namespace MediaSDK
 {
 	class MonitorVisual2D : public IVisual2D
 	{
+		DECLARE_DYNAMIC(MonitorVisual2D)
 		DISALLOW_COPY_AND_ASSIGN(MonitorVisual2D)
 	public:
 		MonitorVisual2D(DX11& dx11);
 		virtual	~MonitorVisual2D();
 	public:
 		UINT			GetOutputCount() const;
-		BOOL			SetOutput(UINT index);
+		BOOL			SetOutput(UINT32 index, BOOL bCursor = TRUE);
+		DX11Image2D&	GetCursor();
 	public:
 		BOOL			Open() OVERRIDE;
 		BOOL			Tick() OVERRIDE;
 		void			Close() OVERRIDE;
 		LPCSTR			GetVisualName() OVERRIDE;
 		DX11Image2D*	GetVisual2D() OVERRIDE;
+		XMFLOAT2		GetScale() OVERRIDE;
 		XMFLOAT2		GetTranslate() OVERRIDE;
 		XMFLOAT2		GetSize() OVERRIDE;
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
-		DX11&			m_dx11;
-		DX11Image2D		m_visual2D;
-		DX11Duplicator	m_duplicator;
+		BOOL			UpdateCursor();
+	private:
+		BOOL				m_bCursor;
+		UINT32				m_index;
+		DX11&				m_dx11;
+		DX11Image2D			m_cursor2D;
+		DX11Image2D			m_visual2D;
+		DX11Duplicator		m_duplicator;
 	};
 }
 

@@ -158,7 +158,6 @@
     <ClInclude Include="StreamVisual2D.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="CanvasController.h" />
-    <ClInclude Include="TaskManager.h" />
     <ClInclude Include="VideoPacket.h" />
     <ClInclude Include="WASAPIAudioInputStream.h" />
     <ClInclude Include="WASAPIAudioOutputStream.h" />
@@ -194,7 +193,6 @@
     </ClCompile>
     <ClCompile Include="StreamVisual2D.cpp" />
     <ClCompile Include="CanvasController.cpp" />
-    <ClCompile Include="TaskManager.cpp" />
     <ClCompile Include="VideoPacket.cpp" />
     <ClCompile Include="WASAPIAudioInputStream.cpp" />
     <ClCompile Include="WASAPIAudioOutputStream.cpp" />

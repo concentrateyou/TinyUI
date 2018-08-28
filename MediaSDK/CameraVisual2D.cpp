@@ -3,6 +3,8 @@
 
 namespace MediaSDK
 {
+	IMPLEMENT_DYNAMIC(CameraVisual2D, IVisual2D);
+
 	CameraVisual2D::CameraVisual2D(DX11& dx11)
 		:m_dx11(dx11),
 		m_linesize(0)

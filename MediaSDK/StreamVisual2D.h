@@ -6,6 +6,7 @@ namespace MediaSDK
 {
 	class StreamVisual2D : public IVisual2D
 	{
+		DECLARE_DYNAMIC(StreamVisual2D)
 		DISALLOW_COPY_AND_ASSIGN(StreamVisual2D)
 	public:
 		StreamVisual2D(DX11& dx11);

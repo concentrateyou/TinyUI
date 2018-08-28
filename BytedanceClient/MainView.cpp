@@ -214,17 +214,32 @@ namespace Bytedance
 	}
 	void MainView::OnMonitorClick(TinyVisual*, EventArgs& args)
 	{
-
+		MonitorVisual2D* visual2D = new MonitorVisual2D(m_controller.GetDX11());
+		visual2D->SetOutput(0);
+		visual2D->Open();
+		TinyRectangle client;
+		::GetClientRect(m_view.Handle(), &client);
+		XMFLOAT2 size = visual2D->GetSize();
+		visual2D->SetTranslate(XMFLOAT2(0.0F, 0.0F));
+		visual2D->SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(client)) / size.x, static_cast<FLOAT>(TO_CY(client)) / size.y));
+		visual2D->SetTrackerRect(client);
+		m_controller.Add(visual2D);
 	}
 	void MainView::OnCameraClick(TinyVisual*, EventArgs& args)
 	{
-		//CameraVisual2D*	camera2D = NULL;
+
 	}
 	void MainView::OnImageClick(TinyVisual*, EventArgs& args)
 	{
-		ImageVisual2D*	image2D = new ImageVisual2D(m_controller.GetDX11());
-		image2D->SetFile("D:\\timg.jpg");
-		image2D->Open();
-		m_controller.Add(image2D);
+		ImageVisual2D*	visual2D = new ImageVisual2D(m_controller.GetDX11());
+		visual2D->SetFile("D:\\timg.jpg");
+		visual2D->Open();
+		TinyRectangle client;
+		::GetClientRect(m_view.Handle(), &client);
+		XMFLOAT2 size = visual2D->GetSize();
+		visual2D->SetTranslate(XMFLOAT2(0.0F, 0.0F));
+		visual2D->SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(client)) / size.x, static_cast<FLOAT>(TO_CY(client)) / size.y));
+		visual2D->SetTrackerRect(client);
+		m_controller.Add(visual2D);
 	}
 }

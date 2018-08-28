@@ -317,6 +317,14 @@ namespace TinyFramework
 	{
 		m_trackerRect.SetRectEmpty();
 	}
+	void TinyRectTracker::SetTrackerRect(const TinyRectangle& rectangle)
+	{
+		m_trackerRect.SetRect(rectangle.Position(), rectangle.Size());
+	}
+	void TinyRectTracker::GetTrackerRect(TinyRectangle* pRect) const
+	{
+		memcpy(pRect, &m_trackerRect, sizeof(TinyRectangle));
+	}
 	void TinyRectTracker::GetHandleRect(INT nHandle, TinyRectangle* pHandleRect) const
 	{
 		TinyRectangle rectT = m_trackerRect;

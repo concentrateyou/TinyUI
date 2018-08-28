@@ -15,33 +15,36 @@ namespace TinyFramework
 	public:
 		TinyRectTracker();
 		virtual ~TinyRectTracker();
-		virtual INT GetHandleSize() const;
-		virtual void OnChangedRect(const TinyRectangle& rectOld);
-		void Draw(TinyDC* pDC) const;
-		INT HitTest(const TinyPoint& point) const;
-		BOOL Track(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
-		BOOL TrackRubberBand(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
-		UINT GetHandleMask() const;
-		BOOL SetCursor(HWND hWND, UINT nHitTest) const;
-		void GetHandleRect(INT nHandle, TinyRectangle* pHandleRect) const;
-		void SetEmpty();
+		virtual INT		GetHandleSize() const;
+		virtual void	OnChangedRect(const TinyRectangle& rectOld);
+	public:
+		INT		HitTest(const TinyPoint& point) const;
+		UINT	GetHandleMask() const;
+		BOOL	Track(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
+		BOOL	TrackRubberBand(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
+		BOOL	SetCursor(HWND hWND, UINT nHitTest) const;
+		void	Draw(TinyDC* pDC) const;
+		void	GetHandleRect(INT nHandle, TinyRectangle* pHandleRect) const;
+		void	GetTrackerRect(TinyRectangle* pRect) const;
+		void	SetEmpty();
+		void	SetTrackerRect(const TinyRectangle& rectangle);
 	private:
-		void Construct();
-		INT NormalizeHit(INT nHandle) const;
-		INT HitTestHandles(const TinyPoint& point) const;
-		void AdjustRect(INT nHandle, LPRECT);
-		void GetModifyPointers(INT nHandle, INT**ppx, INT**ppy, INT* px, INT*py);
-		BOOL TrackHandle(INT nHandle, HWND hWND, const TinyPoint& point);
-		void GetTrueRect(LPRECT lpTrueRect) const;
+		INT		NormalizeHit(INT nHandle) const;
+		INT		HitTestHandles(const TinyPoint& point) const;
+		BOOL	TrackHandle(INT nHandle, HWND hWND, const TinyPoint& point);
+		void	Construct();
+		void	AdjustRect(INT nHandle, LPRECT);
+		void	GetModifyPointers(INT nHandle, INT**ppx, INT**ppy, INT* px, INT*py);
+		void	GetTrueRect(LPRECT lpTrueRect) const;
 	protected:
 		INT				m_handleSize;
 		BOOL			m_bErase;
 		BOOL			m_bFinalErase;
 		BOOL			m_bAllowInvert;
-		TinySize		m_sizeMin;
-		TinyRectangle	m_trackerRect;
 		TinyPen			m_pen;
 		TinyBrush		m_brush;
+		TinySize		m_sizeMin;
+		TinyRectangle	m_trackerRect;
 	};
 }
 

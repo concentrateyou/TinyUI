@@ -3,6 +3,8 @@
 
 namespace MediaSDK
 {
+	IMPLEMENT_DYNAMIC(ImageVisual2D, IVisual2D);
+
 	ImageVisual2D::ImageVisual2D(DX11& dx11)
 		:m_dx11(dx11)
 	{
@@ -51,10 +53,6 @@ namespace MediaSDK
 
 	BOOL ImageVisual2D::Tick()
 	{
-		XMFLOAT2 scale = GetScale();
-		XMFLOAT2 translate = GetTranslate();
-		XMFLOAT2 size = GetSize();
-		m_trackerRect.SetRect(static_cast<LONG>(translate.x), static_cast<LONG>(translate.y), static_cast<LONG>(scale.x * size.x), static_cast<LONG>(scale.y, size.y));
 		return TRUE;
 	}
 

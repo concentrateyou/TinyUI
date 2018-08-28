@@ -31,6 +31,9 @@
 
 #include "CameraVisual2D.h"
 #include "ImageVisual2D.h"
+#include "MonitorVisual2D.h"
+#include "GameVisual2D.h"
+#include "StreamVisual2D.h"
 
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;

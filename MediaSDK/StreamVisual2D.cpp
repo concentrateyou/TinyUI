@@ -3,6 +3,8 @@
 
 namespace MediaSDK
 {
+	IMPLEMENT_DYNAMIC(StreamVisual2D, IVisual2D);
+
 	StreamVisual2D::StreamVisual2D(DX11& dx11)
 		:m_dx11(dx11)
 	{

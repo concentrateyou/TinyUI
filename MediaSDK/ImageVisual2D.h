@@ -6,6 +6,7 @@ namespace MediaSDK
 {
 	class ImageVisual2D : public IVisual2D
 	{
+		DECLARE_DYNAMIC(ImageVisual2D)
 		DISALLOW_COPY_AND_ASSIGN(ImageVisual2D)
 	public:
 		ImageVisual2D(DX11& dx11);

@@ -3,12 +3,14 @@
 
 namespace MediaSDK
 {
-	class IVisual2D :public TinyRectTracker
+	class IVisual2D :public TinyRectTracker, public TinyObject
 	{
+		DECLARE_DYNAMIC(IVisual2D)
 		DISALLOW_COPY_AND_ASSIGN(IVisual2D)
 	public:
 		IVisual2D();
 		virtual	~IVisual2D();
+		void OnChangedRect(const TinyRectangle& rectOld) OVERRIDE;
 	public:
 		virtual BOOL			Open() = 0;
 		virtual BOOL			Tick() = 0;

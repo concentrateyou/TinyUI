@@ -159,11 +159,16 @@ namespace MediaSDK
 					visual2D->Tick();
 					DX11Image2D* val = visual2D->GetVisual2D();
 					m_display.DrawImage(*val);
+					if (visual2D->IsKindOf(RUNTIME_CLASS(MonitorVisual2D)))
+					{
+						MonitorVisual2D* ps = static_cast<MonitorVisual2D*>(visual2D);
+						m_display.DrawImage(ps->GetCursor());
+					}
 				}
 				m_display.EndDraw();
 				m_dx11.Present();
 			}
-			Sleep(20);
+			Sleep(30);
 		}
 	}
 
@@ -172,14 +177,12 @@ namespace MediaSDK
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
 			IVisual2D* visual2D = m_visuals[i];
-			XMFLOAT2 translate = visual2D->GetTranslate();
-			XMFLOAT2 scale = visual2D->GetScale();
-			XMFLOAT2 size = visual2D->GetSize();
-			TinyRectangle s;
-			s.SetPosition({ static_cast<LONG>(translate.x),static_cast<LONG>(translate.y) });
-			s.SetSize({ static_cast<LONG>(scale.x * size.x),static_cast<LONG>(scale.y * size.y) });
-			if (s.PtInRect(pos))
+			TinyRectangle rectangle;
+			visual2D->GetTrackerRect(&rectangle);
+			if (rectangle.PtInRect(pos))
+			{
 				return visual2D;
+			}
 		}
 		return NULL;
 	}
