@@ -76,11 +76,11 @@ namespace DXFramework
 		depthDesc.StencilReadMask = 0xFF;
 		depthDesc.StencilWriteMask = 0xFF;
 		depthDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		depthDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 		depthDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		depthDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 		depthDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		depthDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 		depthDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		depthDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 		hRes = m_d3d->CreateDepthStencilState(&depthDesc, &m_enableDepthState);
@@ -91,7 +91,8 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilState(&depthDesc, &m_disableDepthState);
 		if (hRes != S_OK)
 			return FALSE;
-		m_immediateContext->OMSetDepthStencilState(m_enableDepthState, 1);
+		//¹Ø±ÕÉî¶È
+		m_immediateContext->OMSetDepthStencilState(m_disableDepthState, 1);
 		D3D11_RASTERIZER_DESC rasterDesc;
 		ZeroMemory(&rasterDesc, sizeof(rasterDesc));
 		rasterDesc.FrontCounterClockwise = TRUE;
@@ -132,6 +133,8 @@ namespace DXFramework
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_disableBlendState);
 		if (hRes != S_OK)
 			return FALSE;
+		FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
+		m_immediateContext->OMSetBlendState(m_enableBlendState, blendFactor, 0xFFFFFFFF);
 		D3D11_FEATURE_DATA_THREADING option = { 0 };
 		hRes = m_d3d->CheckFeatureSupport(D3D11_FEATURE_THREADING, reinterpret_cast<void*>(&option), sizeof(option));
 		if (hRes != S_OK)

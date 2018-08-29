@@ -61,7 +61,7 @@ namespace DXFramework
 		if (hDC != NULL)
 		{
 			UINT32 pixels = size.cx * size.cy;
-			TinyScopedArray<UINT32> bits(new UINT32[pixels]);
+			UINT32* bits = NULL;
 			HBITMAP hBitmap = ::CreateDIBSection(hDC, reinterpret_cast<BITMAPINFO*>(&h), DIB_RGB_COLORS, reinterpret_cast<void**>(&bits), NULL, 0);
 			ASSERT(hBitmap);
 			memset(bits, 0, pixels * 4);

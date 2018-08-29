@@ -53,7 +53,7 @@ namespace DXFramework
 		textureDesc.ArraySize = 1;
 		textureDesc.Format = desc.ModeDesc.Format;
 		textureDesc.SampleDesc.Count = 1;
-		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
 		TinyComPtr<ID3D11Texture2D> texture2D;
@@ -100,7 +100,7 @@ namespace DXFramework
 		textureDesc.ArraySize = 1;
 		textureDesc.Format = desc.ModeDesc.Format;
 		textureDesc.SampleDesc.Count = 1;
-		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
 		TinyComPtr<ID3D11Texture2D> texture2D;

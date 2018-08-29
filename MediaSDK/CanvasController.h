@@ -4,6 +4,7 @@
 #include "GameVisual2D.h"
 #include "MonitorVisual2D.h"
 #include "StreamVisual2D.h"
+#include "ImageVisual2D.h"
 
 namespace MediaSDK
 {

@@ -82,11 +82,19 @@ namespace MediaSDK
 		ci.cbSize = sizeof(ci);
 		if (!GetCursorInfo(&ci))
 			return FALSE;
-		SIZE size = { GetSize().x,GetSize().y };
+		SIZE size = { m_cursor2D.GetSize().x,m_cursor2D.GetSize().y };
 		HICON hICON = CopyIcon(ci.hCursor);
 		BOOL bRes = m_cursor2D.UpdateCursor(m_dx11, hICON, size);
 		DestroyIcon(hICON);
 		hICON = NULL;
+		m_cursor2D.SetFlipH(m_visual2D.IsFlipH());
+		m_cursor2D.SetFlipV(m_visual2D.IsFlipV());
+		m_cursor2D.SetRotate(m_visual2D.GetRotate());
+		m_cursor2D.SetScale(m_visual2D.GetScale());
+		POINT pos = ci.ptScreenPos;
+		XMFLOAT2 translate = m_visual2D.GetTranslate();
+		ScreenToClient(m_dx11.GetHWND(), &pos);
+		m_cursor2D.SetTranslate(XMFLOAT2(translate.x + static_cast<FLOAT>(pos.x), translate.y + static_cast<FLOAT>(pos.y)));
 		return bRes;
 	}
 	void MonitorVisual2D::Close()
