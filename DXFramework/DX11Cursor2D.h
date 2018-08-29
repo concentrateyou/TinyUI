@@ -15,14 +15,11 @@ namespace DXFramework
 	public:
 		DX11Cursor2D();
 		virtual ~DX11Cursor2D();
-		HICON	GetCursor() const;
 		BOOL	Create(DX11& dx11, HICON hICON);
+		BOOL	UpdateCursor(DX11& dx11, HICON hICON, const SIZE& size);
 	private:
 		BOOL	GetCursor(HICON hICON, SIZE& size);
 		BOOL	AlphaPixels(const UINT32* pixel, UINT32 count);
-		BOOL	UpdateCursor(DX11& dx11, HICON hICON, const SIZE& size);
-	private:
-		HICON	m_hICON;
 	};
 }
 

@@ -35,10 +35,13 @@
 #include "GameVisual2D.h"
 #include "StreamVisual2D.h"
 
+#include "FLVParser.h"
+
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
 using namespace TinyFramework::Media;
 using namespace MediaSDK;
+using namespace Decode;
 
 namespace Bytedance
 {

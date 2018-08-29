@@ -68,18 +68,26 @@ namespace MediaSDK
 		if (!GetCursorInfo(&ci))
 			return FALSE;
 		HICON hICON = CopyIcon(ci.hCursor);
-		if (!m_cursor2D.Create(m_dx11, ci.hCursor))
-		{
-			DestroyIcon(hICON);
-			hICON = NULL;
-		}
-		return TRUE;
+		BOOL bRes = m_cursor2D.Create(m_dx11, hICON);
+		DestroyIcon(hICON);
+		hICON = NULL;
+		return bRes;
 	}
 	BOOL MonitorVisual2D::Tick()
 	{
 		if (!m_duplicator.AcquireNextFrame(m_dx11, 0))
 			return FALSE;
-		return TRUE;
+		CURSORINFO ci;
+		ZeroMemory(&ci, sizeof(ci));
+		ci.cbSize = sizeof(ci);
+		if (!GetCursorInfo(&ci))
+			return FALSE;
+		SIZE size = { GetSize().x,GetSize().y };
+		HICON hICON = CopyIcon(ci.hCursor);
+		BOOL bRes = m_cursor2D.UpdateCursor(m_dx11, hICON, size);
+		DestroyIcon(hICON);
+		hICON = NULL;
+		return bRes;
 	}
 	void MonitorVisual2D::Close()
 	{

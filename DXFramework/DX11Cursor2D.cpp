@@ -6,7 +6,6 @@ namespace DXFramework
 	IMPLEMENT_DYNAMIC(DX11Cursor2D, DX11Image2D);
 
 	DX11Cursor2D::DX11Cursor2D()
-		:m_hICON(NULL)
 	{
 	}
 
@@ -15,17 +14,12 @@ namespace DXFramework
 
 	}
 
-	HICON DX11Cursor2D::GetCursor() const
-	{
-		return m_hICON;
-	}
-
 	BOOL DX11Cursor2D::GetCursor(HICON hICON, SIZE& size)
 	{
 		BITMAP bitmap;
 		ICONINFO ii;
 		ZeroMemory(&ii, sizeof(ii));
-		if (!GetIconInfo(m_hICON, &ii))
+		if (!GetIconInfo(hICON, &ii))
 			goto _ERROR;
 		if (!::GetObject(ii.hbmMask, sizeof(bitmap), &bitmap))
 			goto _ERROR;
@@ -33,6 +27,7 @@ namespace DXFramework
 		size.cy = bitmap.bmHeight / (ii.hbmColor ? 1 : 2);
 		SAFE_DELETE_OBJECT(ii.hbmColor);
 		SAFE_DELETE_OBJECT(ii.hbmMask);
+		return TRUE;
 	_ERROR:
 		SAFE_DELETE_OBJECT(ii.hbmColor);
 		SAFE_DELETE_OBJECT(ii.hbmMask);
@@ -101,7 +96,6 @@ namespace DXFramework
 	}
 	BOOL DX11Cursor2D::Create(DX11& dx11, HICON hICON)
 	{
-		m_hICON = hICON;
 		SIZE size = { 0 };
 		if (!GetCursor(hICON, size))
 			return FALSE;

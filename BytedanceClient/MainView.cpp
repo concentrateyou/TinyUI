@@ -227,7 +227,11 @@ namespace Bytedance
 	}
 	void MainView::OnCameraClick(TinyVisual*, EventArgs& args)
 	{
-
+		//FLVParser parser;
+		//parser.Open("D:\\stream-6594749341888842504.flv");
+		////parser.Open("D:\\2018-08-29 10-24-40.flv");
+		//parser.Parse();
+		//parser.Close();
 	}
 	void MainView::OnImageClick(TinyVisual*, EventArgs& args)
 	{
