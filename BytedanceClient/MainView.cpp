@@ -140,6 +140,18 @@ namespace Bytedance
 		m_image->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
 		m_image->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnImageClick);
 
+		m_media = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
+		ASSERT(m_media);
+		m_media->SetName("btnMedia");
+		m_media->SetText("Ìí¼ÓÊÓÆµ");
+		m_media->SetSize(TinySize(69, 23));
+		m_media->SetTextColor(RGB(0, 0, 0));
+		m_media->SetTextAlian(DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		m_media->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
+		m_media->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
+		m_media->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
+		m_media->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnImageClick);
+
 		m_native = static_cast<TinyVisualNative*>(m_document.Create(TinyVisualTag::NATIVE, window));
 		ASSERT(m_native);
 		m_native->SetName("native");
@@ -227,11 +239,12 @@ namespace Bytedance
 	}
 	void MainView::OnCameraClick(TinyVisual*, EventArgs& args)
 	{
-		//FLVParser parser;
-		//parser.Open("D:\\stream-6594749341888842504.flv");
-		////parser.Open("D:\\2018-08-29 10-24-40.flv");
-		//parser.Parse();
-		//parser.Close();
+	
+	}
+	void MainView::OnMediaClick(TinyVisual*, EventArgs& args)
+	{
+		StreamVisual2D* visual2D = new StreamVisual2D(m_controller.GetDX11());
+		
 	}
 	void MainView::OnImageClick(TinyVisual*, EventArgs& args)
 	{

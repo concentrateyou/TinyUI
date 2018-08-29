@@ -71,6 +71,7 @@ namespace Bytedance
 		void OnMonitorClick(TinyVisual*, EventArgs& args);
 		void OnCameraClick(TinyVisual*, EventArgs& args);
 		void OnImageClick(TinyVisual*, EventArgs& args);
+		void OnMediaClick(TinyVisual*, EventArgs& args);
 	private:
 		//UI元素
 		//标题栏
@@ -86,6 +87,7 @@ namespace Bytedance
 		TinyVisualButton*		m_monitor;//显示器
 		TinyVisualButton*		m_camera;//摄像头
 		TinyVisualButton*		m_image;//图片
+		TinyVisualButton*		m_media;//多媒体
 	private:
 		CanvasView				m_view;
 		CanvasController		m_controller;

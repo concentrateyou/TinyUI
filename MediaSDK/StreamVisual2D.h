@@ -2,6 +2,7 @@
 #include "MediaSDK.h"
 #include "IVisual2D.h"
 
+
 namespace MediaSDK
 {
 	class StreamVisual2D : public IVisual2D
@@ -24,9 +25,13 @@ namespace MediaSDK
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
-		TinyString		m_szURL;
-		DX11&			m_dx11;
-		DX11Image2D		m_visual2D;
+		void			OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time);
+	private:
+		TinyString				m_szURL;
+		TinyLock				m_lock;
+		DX11&					m_dx11;
+		DX11Image2D				m_visual2D;
+		LAVWindowlessPlayer		m_player;
 	};
 }
 

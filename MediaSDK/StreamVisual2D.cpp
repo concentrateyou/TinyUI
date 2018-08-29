@@ -17,10 +17,7 @@ namespace MediaSDK
 
 	void StreamVisual2D::SetFile(const TinyString& szFile)
 	{
-		if (PathFileExists(szFile.CSTR()))
-		{
-
-		}
+		m_szURL = szFile;
 	}
 
 	XMFLOAT2 StreamVisual2D::GetTranslate()
@@ -50,17 +47,28 @@ namespace MediaSDK
 
 	BOOL StreamVisual2D::Open()
 	{
+		m_player.EVENT_VIDEO += Delegate<void(BYTE*, LONG, REFERENCE_TIME)>(this, &StreamVisual2D::OnVideo);
+		if (!m_player.Open(m_szURL.CSTR()))
+			return FALSE;
+		const VIDEOINFOHEADER& vih = m_player.GetVideoFormat();
+		if (!m_visual2D.Create(m_dx11, vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL, FALSE))
+			goto _ERROR;
+		return TRUE;
+	_ERROR:
+		m_player.Close();
 		return TRUE;
 	}
 
 	BOOL StreamVisual2D::Tick()
 	{
+		TinyAutoLock autolock(m_lock);
 		return TRUE;
 	}
 
 	void StreamVisual2D::Close()
 	{
-
+		m_player.Close();
+		m_visual2D.Destory();
 	}
 
 	LPCSTR StreamVisual2D::GetVisualName()
@@ -73,4 +81,11 @@ namespace MediaSDK
 		return &m_visual2D;
 	}
 
+	void StreamVisual2D::OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time)
+	{
+		TinyAutoLock autolock(m_lock);
+		const VIDEOINFOHEADER vih = m_player.GetVideoFormat();
+		UINT linesize = LINESIZE(vih.bmiHeader.biBitCount, vih.bmiHeader.biHeight);
+		m_visual2D.Copy(m_dx11, bits, linesize);
+	}
 }

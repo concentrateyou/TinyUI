@@ -38,8 +38,9 @@ namespace DXFramework
 		for (const UINT32* ps = pixels + count; pixels != ps; ++pixels)
 		{
 			if ((*pixels & 0xff000000) != 0)
-				return true;
+				return TRUE;
 		}
+		return FALSE;
 	}
 	BOOL DX11Cursor2D::UpdateCursor(DX11& dx11, HICON hICON, const SIZE& size)
 	{

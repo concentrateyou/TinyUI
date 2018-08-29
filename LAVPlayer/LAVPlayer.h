@@ -3,9 +3,9 @@
 #include "LAVVideoFilter.h"
 #include "LAVVideo.h"
 #include "LAVAudio.h"
-#include "DX10.h"
-#include "DX10Graphics2D.h"
-#include "DX10Image2D.h"
+#include "DX11.h"
+#include "DX11Graphics2D.h"
+#include "DX11Image2D.h"
 #include "Media/TinyXAudio.h"
 using namespace std;
 using namespace TinyFramework;
@@ -43,6 +43,55 @@ namespace LAV
 		LARGE_INTEGER	m_clockFreq;
 	};
 	/// <summary>
+	///无窗口播放器
+	/// </summary>
+	class LAVWindowlessPlayer
+	{
+		DISALLOW_COPY_AND_ASSIGN(LAVWindowlessPlayer)
+	public:
+		LAVWindowlessPlayer();
+		virtual ~LAVWindowlessPlayer();
+		BOOL Open(LPCSTR pzFile);
+		BOOL Play();
+		void Close();
+		BOOL GetDuration(LONGLONG& time);
+		BOOL GetAvailable(LONGLONG& time1, LONGLONG time2);
+		BOOL GetPosition(LONGLONG& pos);
+		BOOL SetPosition(LONGLONG pos);
+		BOOL SetRate(DOUBLE dRate);
+		BOOL GetRate(DOUBLE* pdRate);
+		BOOL GetTrackCount(UINT& count);
+		BOOL GetTrackType(UINT index, TrackType& type);
+		BOOL ShowProperty(HWND hWND);
+		LAVAudio* GetAudio();
+		LAVVideo* GetVideo();
+		const WAVEFORMATEX&		GetAudioFormat() const;
+		const VIDEOINFOHEADER&	GetVideoFormat() const;
+	public:
+		Event<void(BYTE*, LONG, REFERENCE_TIME)> EVENT_VIDEO;
+	private:
+		BOOL Initialize();
+		void Uninitialize();
+		void OnAudio(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter);
+		void OnVideo(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter);
+		void Copy(BYTE* bits, LONG size, REFERENCE_TIME time);
+	private:
+		WAVEFORMATEX								m_waveFMT;
+		VIDEOINFOHEADER								m_vih;
+		LAVClock									m_clock;
+		TinyXAudio									m_xaudio;
+		TinyPerformanceTimer						m_timer;
+		TinyScopedPtr<LAVAudio>						m_audio;
+		TinyScopedPtr<LAVVideo>						m_video;
+		TinyComPtr<IPin>							m_lavAudioO;
+		TinyComPtr<IPin>							m_lavVideoO;
+		TinyComPtr<IMediaControl>					m_control;
+		TinyComPtr<IMediaSeeking>					m_seeking;
+		TinyComPtr<IAMStreamSelect>					m_asmstream;
+		TinyComPtr<IBaseFilter>						m_lavFilter;//数据源
+		TinyComPtr<IGraphBuilder>					m_builder;
+	};
+	/// <summary>
 	/// https://github.com/Nevcairiel/LAVFilters
 	/// https://msdn.microsoft.com/en-us/library/windows/desktop/dd375655(v=vs.85).aspx
 	/// 基于LAV的全能播放器
@@ -53,7 +102,7 @@ namespace LAV
 		DISALLOW_COPY_AND_ASSIGN(LAVPlayer)
 	public:
 		LAVPlayer();
-		~LAVPlayer();
+		virtual ~LAVPlayer();
 		BOOL Open(HWND hWND, LPCSTR pzFile);
 		BOOL Play();
 		void Close();
@@ -77,9 +126,9 @@ namespace LAV
 	private:
 		HWND										m_hWND;
 		LAVClock									m_clock;
-		DX10										m_dx10;
-		DX10Graphics2D								m_graphics;
-		DX10Image2D									m_image;
+		DX11										m_dx11;
+		DX11Graphics2D								m_graphics;
+		DX11Image2D									m_image;
 		TinyXAudio									m_xaudio;
 		TinyPerformanceTimer						m_timer;
 		TinyScopedPtr<LAVAudio>						m_audio;

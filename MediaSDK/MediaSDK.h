@@ -15,12 +15,14 @@
 #include "DX11Cursor2D.h"
 #include "DX11Graphics2D.h"
 #include "DX11CaptureRunner.h"
+#include "LAVPlayer.h"
 
 using namespace DShow;
 using namespace DXFramework;
 using namespace TinyFramework;
 using namespace TinyFramework::IO;
 using namespace TinyFramework::Media;
+using namespace LAV;
 
 namespace MediaSDK
 {
