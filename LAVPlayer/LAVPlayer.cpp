@@ -467,7 +467,23 @@ namespace LAV
 				ZeroMemory(&mediaType, sizeof(mediaType));
 				if (!m_video->GetMediaType(&mediaType))
 					return FALSE;
-				memcpy(&m_vih, mediaType.pbFormat, sizeof(m_vih));
+				if (mediaType.formattype == FORMAT_VideoInfo2 &&
+					mediaType.subtype == MEDIASUBTYPE_RGB32)
+				{
+					VIDEOINFOHEADER2* s = reinterpret_cast<VIDEOINFOHEADER2*>(mediaType.pbFormat);
+					m_vih.AvgTimePerFrame = s->AvgTimePerFrame;
+					m_vih.dwBitErrorRate = s->dwBitErrorRate;
+					m_vih.dwBitRate = s->dwBitRate;
+					m_vih.rcSource = s->rcSource;
+					m_vih.rcTarget = s->rcTarget;
+					memcpy(&m_vih.bmiHeader, &s->bmiHeader, sizeof(BITMAPINFOHEADER));
+				}
+				if (mediaType.formattype == FORMAT_VideoInfo &&
+					mediaType.subtype == MEDIASUBTYPE_RGB32)
+				{
+					VIDEOINFOHEADER* s = reinterpret_cast<VIDEOINFOHEADER*>(mediaType.pbFormat);
+					memcpy(&m_vih, s, sizeof(m_vih));
+				}
 				FreeMediaType(mediaType);
 			}
 			if (mediaType->majortype == MEDIATYPE_Audio)

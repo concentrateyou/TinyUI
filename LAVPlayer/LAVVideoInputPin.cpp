@@ -18,16 +18,23 @@ namespace LAV
 		GUID type = pMediaType->majortype;
 		if (type != MEDIATYPE_Video)
 			return E_INVALIDARG;
+		if (pMediaType->subtype != MEDIASUBTYPE_RGB32)
+			return E_INVALIDARG;
 		LAVVideo* ps = reinterpret_cast<LAVVideo*>(m_observer);
 		if (ps != NULL)
 		{
 			TinyArray<ScopedMediaType> mediaTypes;
 			if (!ps->GetOutputMediaTypes(mediaTypes))
 				return E_FAIL;
-			for (INT i = 0;i < mediaTypes.GetSize();i++)
+			for (INT i = 0; i < mediaTypes.GetSize(); i++)
 			{
 				AM_MEDIA_TYPE* mediaType = mediaTypes[i].Ptr();
-				if ((mediaType->formattype == FORMAT_VideoInfo2 || mediaType->formattype == FORMAT_VideoInfo) &&
+				if (mediaType->formattype == FORMAT_VideoInfo2 &&
+					mediaType->subtype == MEDIASUBTYPE_RGB32)
+				{
+					return NOERROR;
+				}
+				if (mediaType->formattype == FORMAT_VideoInfo &&
 					mediaType->subtype == MEDIASUBTYPE_RGB32)
 				{
 					return NOERROR;
@@ -48,10 +55,11 @@ namespace LAV
 			TinyArray<ScopedMediaType> mediaTypes;
 			if (!ps->GetOutputMediaTypes(mediaTypes))
 				return E_FAIL;
-			for (INT i = 0;i < mediaTypes.GetSize();i++)
+			for (INT i = 0; i < mediaTypes.GetSize(); i++)
 			{
 				AM_MEDIA_TYPE* mediaType = mediaTypes[i].Ptr();
-				if (mediaType->formattype == FORMAT_VideoInfo2)
+				if (mediaType->formattype == FORMAT_VideoInfo2 &&
+					mediaType->subtype == MEDIASUBTYPE_RGB32)
 				{
 					VIDEOINFOHEADER2* s = reinterpret_cast<VIDEOINFOHEADER2*>(mediaType->pbFormat);
 					VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
@@ -62,20 +70,16 @@ namespace LAV
 					pvi->rcSource = s->rcSource;
 					pvi->rcTarget = s->rcTarget;
 					memcpy(&pvi->bmiHeader, &s->bmiHeader, sizeof(BITMAPINFOHEADER));
-					pMediaType->majortype = MEDIATYPE_Video;
-					pMediaType->formattype = FORMAT_VideoInfo;
-					pMediaType->bTemporalCompression = FALSE;
-					pMediaType->subtype = MEDIASUBTYPE_RGB32;
-					pMediaType->bFixedSizeSamples = TRUE;
-					pMediaType->lSampleSize = pvi->bmiHeader.biWidth * pvi->bmiHeader.biHeight * 4;
+					return NOERROR;
 				}
-				if (mediaType->formattype == FORMAT_VideoInfo)
+				if (mediaType->formattype == FORMAT_VideoInfo &&
+					mediaType->subtype == MEDIASUBTYPE_RGB32)
 				{
 					VIDEOINFOHEADER* s = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 					VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
 					memcpy_s(pvi, sizeof(VIDEOINFOHEADER), s, sizeof(VIDEOINFOHEADER));
+					return NOERROR;
 				}
-				return NOERROR;
 			}
 		}
 		return E_FAIL;

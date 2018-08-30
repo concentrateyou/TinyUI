@@ -53,9 +53,12 @@ namespace MediaSDK
 		const VIDEOINFOHEADER& vih = m_player.GetVideoFormat();
 		if (!m_visual2D.Create(m_dx11, vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL, FALSE))
 			goto _ERROR;
+		if (!m_player.Play())
+			goto _ERROR;
 		return TRUE;
 	_ERROR:
 		m_player.Close();
+		m_visual2D.Destory();
 		return TRUE;
 	}
 
@@ -85,7 +88,7 @@ namespace MediaSDK
 	{
 		TinyAutoLock autolock(m_lock);
 		const VIDEOINFOHEADER vih = m_player.GetVideoFormat();
-		UINT linesize = LINESIZE(vih.bmiHeader.biBitCount, vih.bmiHeader.biHeight);
+		UINT linesize = LINESIZE(vih.bmiHeader.biBitCount, vih.bmiHeader.biWidth);
 		m_visual2D.Copy(m_dx11, bits, linesize);
 	}
 }

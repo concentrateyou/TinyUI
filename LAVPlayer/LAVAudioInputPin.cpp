@@ -25,13 +25,20 @@ namespace LAV
 			TinyArray<ScopedMediaType> mediaTypes;
 			if (!ps->GetOutputMediaTypes(mediaTypes))
 				return E_FAIL;
-			for (INT i = 0;i < mediaTypes.GetSize();i++)
+			for (INT i = 0; i < mediaTypes.GetSize(); i++)
 			{
 				AM_MEDIA_TYPE* mediaType = mediaTypes[i].Ptr();
 				if (mediaType->formattype == FORMAT_WaveFormatEx &&
 					mediaType->subtype == MEDIASUBTYPE_PCM)
 				{
-					return NOERROR;
+					WAVEFORMATEX* s = reinterpret_cast<WAVEFORMATEX*>(mediaType->pbFormat);
+					WAVEFORMATEX* pvi = reinterpret_cast<WAVEFORMATEX*>(pMediaType->pbFormat);
+					if (s->nChannels == pvi->nChannels &&
+						s->wBitsPerSample == pvi->wBitsPerSample &&
+						s->nSamplesPerSec == pvi->nSamplesPerSec)
+					{
+						return NOERROR;
+					}
 				}
 			}
 		}
@@ -49,10 +56,11 @@ namespace LAV
 			TinyArray<ScopedMediaType> mediaTypes;
 			if (!ps->GetOutputMediaTypes(mediaTypes))
 				return E_FAIL;
-			for (INT i = 0;i < mediaTypes.GetSize();i++)
+			for (INT i = 0; i < mediaTypes.GetSize(); i++)
 			{
 				AM_MEDIA_TYPE* mediaType = mediaTypes[i].Ptr();
-				if (mediaType->formattype == FORMAT_WaveFormatEx)
+				if (mediaType->formattype == FORMAT_WaveFormatEx &&
+					mediaType->subtype == MEDIASUBTYPE_PCM)
 				{
 					WAVEFORMATEX* s = reinterpret_cast<WAVEFORMATEX*>(mediaType->pbFormat);
 					WAVEFORMATEX* pvi = reinterpret_cast<WAVEFORMATEX*>(pMediaType->pbFormat);

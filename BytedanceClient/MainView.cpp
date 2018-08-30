@@ -150,7 +150,7 @@ namespace Bytedance
 		m_media->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
 		m_media->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
 		m_media->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
-		m_media->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnImageClick);
+		m_media->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMediaClick);
 
 		m_native = static_cast<TinyVisualNative*>(m_document.Create(TinyVisualTag::NATIVE, window));
 		ASSERT(m_native);
@@ -182,6 +182,7 @@ namespace Bytedance
 			m_monitor->SetPosition({ 88,550 });
 			m_camera->SetPosition({ 168,550 });
 			m_image->SetPosition({ 248,550 });
+			m_media->SetPosition({ 328,550 });
 
 			if (IsWindow(m_view))
 			{
@@ -239,12 +240,20 @@ namespace Bytedance
 	}
 	void MainView::OnCameraClick(TinyVisual*, EventArgs& args)
 	{
-	
+
 	}
 	void MainView::OnMediaClick(TinyVisual*, EventArgs& args)
 	{
 		StreamVisual2D* visual2D = new StreamVisual2D(m_controller.GetDX11());
-		
+		visual2D->SetFile("D:\\Ñ¸À×ÏÂÔØ\\BBCµØÆ½Ïß-Ä¾ÐÇ½ÒÃØ\\Ä¾ÐÇ½ÒÃØ.mp4");
+		visual2D->Open();
+		TinyRectangle client;
+		::GetClientRect(m_view.Handle(), &client);
+		XMFLOAT2 size = visual2D->GetSize();
+		visual2D->SetTranslate(XMFLOAT2(0.0F, 0.0F));
+		visual2D->SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(client)) / size.x, static_cast<FLOAT>(TO_CY(client)) / size.y));
+		visual2D->SetTrackerRect(client);
+		m_controller.Add(visual2D);
 	}
 	void MainView::OnImageClick(TinyVisual*, EventArgs& args)
 	{
