@@ -92,9 +92,9 @@ namespace MediaSDK
 		m_cursor2D.SetRotate(m_visual2D.GetRotate());
 		m_cursor2D.SetScale(m_visual2D.GetScale());
 		POINT pos = ci.ptScreenPos;
+		XMFLOAT2 scale = m_visual2D.GetScale();
 		XMFLOAT2 translate = m_visual2D.GetTranslate();
-		ScreenToClient(m_dx11.GetHWND(), &pos);
-		m_cursor2D.SetTranslate(XMFLOAT2(translate.x + static_cast<FLOAT>(pos.x), translate.y + static_cast<FLOAT>(pos.y)));
+		m_cursor2D.SetTranslate(XMFLOAT2(translate.x + static_cast<FLOAT>(pos.x) * scale.x, translate.y + static_cast<FLOAT>(pos.y) * scale.y));
 		return bRes;
 	}
 	void MonitorVisual2D::Close()
