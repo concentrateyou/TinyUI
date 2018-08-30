@@ -6,7 +6,8 @@ namespace MediaSDK
 	IMPLEMENT_DYNAMIC(StreamVisual2D, IVisual2D);
 
 	StreamVisual2D::StreamVisual2D(DX11& dx11)
-		:m_dx11(dx11)
+		:m_dx11(dx11),
+		m_linesize(0)
 	{
 
 	}
@@ -53,6 +54,7 @@ namespace MediaSDK
 		const VIDEOINFOHEADER& vih = m_player.GetVideoFormat();
 		if (!m_visual2D.Create(m_dx11, vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL, FALSE))
 			goto _ERROR;
+		m_visual2D.SetFlipV(TRUE);
 		if (!m_player.Play())
 			goto _ERROR;
 		return TRUE;
@@ -65,6 +67,13 @@ namespace MediaSDK
 	BOOL StreamVisual2D::Tick()
 	{
 		TinyAutoLock autolock(m_lock);
+		DWORD dwSize = m_ringBuffer.Read(m_buffer, 1);
+		if (dwSize > 0)
+		{
+			if (!m_visual2D.Copy(m_dx11, m_buffer, m_linesize))
+				return FALSE;
+			return TRUE;
+		}
 		return TRUE;
 	}
 
@@ -86,9 +95,15 @@ namespace MediaSDK
 
 	void StreamVisual2D::OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time)
 	{
-		TinyAutoLock autolock(m_lock);
 		const VIDEOINFOHEADER vih = m_player.GetVideoFormat();
 		UINT linesize = LINESIZE(vih.bmiHeader.biBitCount, vih.bmiHeader.biWidth);
-		m_visual2D.Copy(m_dx11, bits, linesize);
+		m_linesize = linesize;
+		if (m_ringBuffer.IsEmpty())
+		{
+			m_buffer.Reset(linesize*vih.bmiHeader.biHeight);
+			m_ringBuffer.Initialize(3, linesize*vih.bmiHeader.biHeight);
+		}
+		TinyAutoLock autolock(m_lock);
+		m_ringBuffer.Write(bits, 1);
 	}
 }

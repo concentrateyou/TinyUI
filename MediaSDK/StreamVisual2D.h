@@ -27,10 +27,13 @@ namespace MediaSDK
 	private:
 		void			OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time);
 	private:
+		UINT					m_linesize;
 		TinyString				m_szURL;
 		TinyLock				m_lock;
 		DX11&					m_dx11;
 		DX11Image2D				m_visual2D;
+		TinyBuffer<BYTE>		m_buffer;
+		TinyRingBuffer			m_ringBuffer;
 		LAVWindowlessPlayer		m_player;
 	};
 }
