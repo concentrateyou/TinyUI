@@ -36,7 +36,7 @@ namespace MediaSDK
 		DX11Graphics2D				m_display;
 		DX11Graphics2D				m_video;
 		TinyArray<IVisual2D*>		m_visuals;
-		TinyTaskManeger::TinyTask*  m_renderTask;
+		TinyTaskManeger::TinyTask*  m_videoTask;
 		TinyTaskManeger&			m_manager;
 	};
 }

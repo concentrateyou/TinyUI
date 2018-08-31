@@ -227,7 +227,7 @@ namespace Bytedance
 	}
 	void MainView::OnMonitorClick(TinyVisual*, EventArgs& args)
 	{
-		MonitorVisual2D* visual2D = new MonitorVisual2D(m_controller.GetDX11());
+		MonitorVisual2D* visual2D = new MonitorVisual2D(m_controller.GetVideoWorker().GetDX11());
 		visual2D->SetOutput(0);
 		visual2D->Open();
 		TinyRectangle client;
@@ -236,7 +236,7 @@ namespace Bytedance
 		visual2D->SetTranslate(XMFLOAT2(0.0F, 0.0F));
 		visual2D->SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(client)) / size.x, static_cast<FLOAT>(TO_CY(client)) / size.y));
 		visual2D->SetTrackerRect(client);
-		m_controller.Add(visual2D);
+		m_controller.GetVideoWorker().Add(visual2D);
 	}
 	void MainView::OnCameraClick(TinyVisual*, EventArgs& args)
 	{
@@ -244,7 +244,7 @@ namespace Bytedance
 	}
 	void MainView::OnMediaClick(TinyVisual*, EventArgs& args)
 	{
-		StreamVisual2D* visual2D = new StreamVisual2D(m_controller.GetDX11());
+		StreamVisual2D* visual2D = new StreamVisual2D(m_controller.GetVideoWorker().GetDX11());
 		visual2D->SetFile("D:\\Ñ¸À×ÏÂÔØ\\BBCµØÆ½Ïß-Ä¾ÐÇ½ÒÃØ\\Ä¾ÐÇ½ÒÃØ.mp4");
 		visual2D->Open();
 		TinyRectangle client;
@@ -253,11 +253,11 @@ namespace Bytedance
 		visual2D->SetTranslate(XMFLOAT2(0.0F, 0.0F));
 		visual2D->SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(client)) / size.x, static_cast<FLOAT>(TO_CY(client)) / size.y));
 		visual2D->SetTrackerRect(client);
-		m_controller.Add(visual2D);
+		m_controller.GetVideoWorker().Add(visual2D);
 	}
 	void MainView::OnImageClick(TinyVisual*, EventArgs& args)
 	{
-		ImageVisual2D*	visual2D = new ImageVisual2D(m_controller.GetDX11());
+		ImageVisual2D*	visual2D = new ImageVisual2D(m_controller.GetVideoWorker().GetDX11());
 		visual2D->SetFile("D:\\timg.jpg");
 		visual2D->Open();
 		TinyRectangle client;
@@ -266,6 +266,6 @@ namespace Bytedance
 		visual2D->SetTranslate(XMFLOAT2(0.0F, 0.0F));
 		visual2D->SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(client)) / size.x, static_cast<FLOAT>(TO_CY(client)) / size.y));
 		visual2D->SetTrackerRect(client);
-		m_controller.Add(visual2D);
+		m_controller.GetVideoWorker().Add(visual2D);
 	}
 }
