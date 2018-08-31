@@ -55,16 +55,20 @@ namespace MediaSDK
 	BOOL VideoWorker::Start()
 	{
 		m_stop = FALSE;
-		/*if (!m_runner.PostTask(BindCallback(&VideoWorker::OnMessagePump, this), 0))
-		{
+		m_renderTask = m_manager.PostTask(BindCallback(&VideoWorker::OnMessagePump, this), 0);
+		if (!m_renderTask)
 			return FALSE;
-		}*/
 		return TRUE;
 	}
 
 	void VideoWorker::Stop()
 	{
 		m_stop = TRUE;
+		if (m_renderTask != NULL)
+		{
+			m_renderTask->Close();
+			m_renderTask = NULL;
+		}
 	}
 	void VideoWorker::Add(IVisual2D* visual)
 	{

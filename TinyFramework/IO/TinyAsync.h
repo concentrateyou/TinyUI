@@ -50,7 +50,7 @@ namespace TinyFramework
 			{
 				friend class TinyTaskManeger;
 			public:
-				BOOL Close();
+				void Close();
 			private:
 				TinyTask();
 				~TinyTask();
@@ -68,7 +68,7 @@ namespace TinyFramework
 			~TinyTaskManeger();
 			TinyTask* PostTask(Closure&& callback, INT delay);
 		private:
-			TinyWin32Threadpool	m_pool;
+			TinyWin32Threadpool		m_pool;
 		};
 	};
 }

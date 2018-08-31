@@ -115,7 +115,7 @@ namespace TinyFramework
 			SAFE_DELETE(m_worker);
 			SAFE_DELETE_HANDLE(m_event);
 		}
-		BOOL TinyTaskManeger::TinyTask::Close()
+		void TinyTaskManeger::TinyTask::Close()
 		{
 			if (m_waiter != NULL)
 			{
@@ -158,13 +158,14 @@ namespace TinyFramework
 			SAFE_DELETE_HANDLE(m_event);
 		}
 
-		TinyTaskManeger::TinyTaskManeger(INT iMax = 12)
+		TinyTaskManeger::TinyTaskManeger(INT iMax)
 		{
-
+			m_pool.Initialize(1, iMax);
 		}
 		TinyTaskManeger::~TinyTaskManeger()
 		{
-
+			m_pool.Cancel();
+			m_pool.Close();
 		}
 		TinyTaskManeger::TinyTask* TinyTaskManeger::PostTask(Closure&& callback, INT delay)
 		{
@@ -175,7 +176,7 @@ namespace TinyFramework
 				if (!task)
 				{
 					TRACE("[TinyTaskManeger] Create TinyTask FAIL\n");
-					return FALSE;
+					return NULL;
 				}
 				task->m_waiter = new TinyWin32Waiter(&m_pool);
 				ASSERT(task->m_waiter);
@@ -192,7 +193,7 @@ namespace TinyFramework
 				if (!task)
 				{
 					TRACE("[TinyTaskManeger] Create TinyTask FAIL\n");
-					return FALSE;
+					return NULL;
 				}
 				task->m_worker = new TinyWin32Worker(&m_pool);
 				ASSERT(task->m_worker);
