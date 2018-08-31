@@ -506,9 +506,6 @@ namespace LAV
 				ZeroMemory(&m_waveFMT, sizeof(m_waveFMT));
 				memcpy(&m_waveFMT, mediaType.pbFormat, sizeof(m_waveFMT));
 				FreeMediaType(mediaType);
-				if (!m_xaudio.Open(&m_waveFMT))
-					return FALSE;
-				m_xaudio.Start();
 			}
 		}
 		return TRUE;
@@ -529,10 +526,9 @@ namespace LAV
 		ZeroMemory(&m_vih, sizeof(m_vih));
 		ZeroMemory(&m_waveFMT, sizeof(m_waveFMT));
 		if (m_control != NULL)
+		{
 			m_control->Stop();
-		m_clock.SetClock(NAN);
-		m_xaudio.Stop();
-		m_xaudio.Close();
+		}
 		Uninitialize();
 	}
 	BOOL LAVWindowlessPlayer::GetDuration(LONGLONG& time)
@@ -660,21 +656,11 @@ namespace LAV
 	}
 	void LAVWindowlessPlayer::OnAudio(BYTE* bits, LONG size, REFERENCE_TIME time, LPVOID lpParameter)
 	{
-		LONGLONG msQPC = m_clock.GetQPCTimeMS();
-		m_clock.SetClock(static_cast<DOUBLE>(time));
-		m_xaudio.Play(bits, size, 5000);
-		m_clock.SetClock(m_clock.GetClock() + (m_clock.GetQPCTimeMS() - msQPC));
-	}
-	void LAVWindowlessPlayer::Copy(BYTE* bits, LONG size, REFERENCE_TIME time)
-	{
-		EVENT_VIDEO(bits, size, time);
+		EVENT_AUDIO(bits, size, time);
 	}
 	void LAVWindowlessPlayer::OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time, LPVOID lpParameter)
 	{
-		Copy(bits, size, time);
-		while (isnan(m_clock.GetClock()));
-		INT delay = static_cast<INT>(time - m_clock.GetClock());
-		m_timer.Waiting(delay, 80);
+		EVENT_VIDEO(bits, size, time);
 	}
 }
 

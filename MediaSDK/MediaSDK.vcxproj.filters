@@ -123,6 +123,9 @@
     <ClInclude Include="CanvasView.h">
       <Filter>头文件\Visual</Filter>
     </ClInclude>
+    <ClInclude Include="VideoWorker.h">
+      <Filter>头文件\Video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -208,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="CanvasView.cpp">
       <Filter>源文件\Visual</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoWorker.cpp">
+      <Filter>源文件\Video</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

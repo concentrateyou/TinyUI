@@ -42,6 +42,34 @@ namespace TinyFramework
 		private:
 			TinyWin32Threadpool	m_pool;
 		};
+
+		class TinyTaskManeger
+		{
+		public:
+			class TinyTask
+			{
+				friend class TinyTaskManeger;
+			public:
+				BOOL Close();
+			private:
+				TinyTask();
+				~TinyTask();
+				BOOL Execute();
+				void OnTask();
+			private:
+				INT					m_delay;
+				HANDLE				m_event;
+				Closure				m_callback;
+				TinyWin32Worker*	m_worker;
+				TinyWin32Waiter*	m_waiter;
+			};
+		public:
+			TinyTaskManeger(INT iMax = 12);
+			~TinyTaskManeger();
+			TinyTask* PostTask(Closure&& callback, INT delay);
+		private:
+			TinyWin32Threadpool	m_pool;
+		};
 	};
 }
 

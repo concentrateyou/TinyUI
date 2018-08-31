@@ -68,19 +68,16 @@ namespace LAV
 		const WAVEFORMATEX&		GetAudioFormat() const;
 		const VIDEOINFOHEADER&	GetVideoFormat() const;
 	public:
+		Event<void(BYTE*, LONG, REFERENCE_TIME)> EVENT_AUDIO;
 		Event<void(BYTE*, LONG, REFERENCE_TIME)> EVENT_VIDEO;
 	private:
 		BOOL Initialize();
 		void Uninitialize();
 		void OnAudio(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter);
 		void OnVideo(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter);
-		void Copy(BYTE* bits, LONG size, REFERENCE_TIME time);
 	private:
 		WAVEFORMATEX								m_waveFMT;
 		VIDEOINFOHEADER								m_vih;
-		LAVClock									m_clock;
-		TinyXAudio									m_xaudio;
-		TinyPerformanceTimer						m_timer;
 		TinyScopedPtr<LAVAudio>						m_audio;
 		TinyScopedPtr<LAVVideo>						m_video;
 		TinyComPtr<IPin>							m_lavAudioO;

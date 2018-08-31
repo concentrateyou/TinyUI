@@ -59,40 +59,38 @@ namespace DXFramework
 		h.bV5CSType = LCS_WINDOWS_COLOR_SPACE;
 		h.bV5Intent = LCS_GM_IMAGES;
 		HDC hDC = ::GetDC(NULL);
-		if (hDC != NULL)
+		if (!hDC)
+			return FALSE;
+		UINT32 pixels = size.cx * size.cy;
+		UINT32* bits = NULL;
+		HBITMAP hBitmap = ::CreateDIBSection(hDC, reinterpret_cast<BITMAPINFO*>(&h), DIB_RGB_COLORS, reinterpret_cast<void**>(&bits), NULL, 0);
+		memset(bits, 0, pixels * 4);
+		TinyMemDC dc(hDC, hBitmap);
+		::ReleaseDC(NULL, hDC);
+		::DrawIconEx(dc, 0, 0, hICON, size.cx, size.cy, 0, NULL, DI_MASK);
+		TinyScopedArray<BOOL> opaque(new BOOL[pixels]);
+		for (UINT32 i = 0; i < pixels; ++i)
+			opaque[i] = !bits[i];
+		memset(bits, 0, pixels * 4);
+		::DrawIconEx(dc, 0, 0, hICON, size.cx, size.cy, 0, NULL, DI_NORMAL);
+		if (!AlphaPixels(static_cast<const UINT32*>(bits), pixels))
 		{
-			UINT32 pixels = size.cx * size.cy;
-			UINT32* bits = NULL;
-			HBITMAP hBitmap = ::CreateDIBSection(hDC, reinterpret_cast<BITMAPINFO*>(&h), DIB_RGB_COLORS, reinterpret_cast<void**>(&bits), NULL, 0);
-			ASSERT(hBitmap);
-			memset(bits, 0, pixels * 4);
-			TinyMemDC dc(hDC, hBitmap);
-			::DrawIconEx(dc, 0, 0, hICON, size.cx, size.cy, 0, NULL, DI_MASK);
-			TinyScopedArray<BOOL> opaque(new BOOL[pixels]);
-			for (UINT32 i = 0; i < pixels; ++i)
-				opaque[i] = !bits[i];
-			memset(bits, 0, pixels * 4);
-			::DrawIconEx(dc, 0, 0, hICON, size.cx, size.cy, 0, NULL, DI_NORMAL);
-			if (!AlphaPixels(static_cast<const UINT32*>(bits), pixels))
+			UINT32* p = static_cast<UINT32*>(bits);
+			for (UINT32 i = 0; i < pixels; ++p, ++i)
 			{
-				UINT32* p = static_cast<UINT32*>(bits);
-				for (UINT32 i = 0; i < pixels; ++p, ++i)
-				{
-					if (opaque[i])
-						*p |= 0xff000000;
-					else
-						*p &= 0x00ffffff;
-				}
+				if (opaque[i])
+					*p |= 0xff000000;
+				else
+					*p &= 0x00ffffff;
 			}
-			D3D11_MAPPED_SUBRESOURCE map;
-			if (Map(dx11, map, FALSE))
-			{
-				memcpy((BYTE*)map.pData, static_cast<void*>(bits), size.cx * size.cy * 4);
-				Unmap(dx11);
-			}
-			SAFE_DELETE_OBJECT(hBitmap);
-			::ReleaseDC(NULL, hDC);
 		}
+		D3D11_MAPPED_SUBRESOURCE map;
+		if (Map(dx11, map, FALSE))
+		{
+			memcpy((BYTE*)map.pData, static_cast<void*>(bits), size.cx * size.cy * 4);
+			Unmap(dx11);
+		}
+		SAFE_DELETE_OBJECT(hBitmap);
 		return TRUE;
 	}
 	BOOL DX11Cursor2D::Create(DX11& dx11, HICON hICON)

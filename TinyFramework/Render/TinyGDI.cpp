@@ -1277,6 +1277,7 @@ namespace TinyFramework
 	}
 	TinyMemDC::TinyMemDC(HDC hDC, HBITMAP hBitmap)
 		:m_hDestDC(hDC),
+		m_hBitmap(NULL),
 		m_hOldBitmap(NULL)
 	{
 		if (Attach(::CreateCompatibleDC(hDC)))
