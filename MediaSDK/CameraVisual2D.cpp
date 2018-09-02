@@ -48,7 +48,7 @@ namespace MediaSDK
 
 	BOOL CameraVisual2D::Select(const VideoCapture::Name& name, const VideoCaptureParam& requestParam)
 	{
-		this->Close();
+		m_capture.Uninitialize();
 		m_capture.SetCallback(BindCallback(&CameraVisual2D::OnCallback, this));
 		if (!m_capture.Initialize(name))
 			return FALSE;
@@ -67,6 +67,7 @@ namespace MediaSDK
 			m_capture.Deallocate();
 			return FALSE;
 		}
+		m_visual2D.SetFlipV(TRUE);
 		m_linesize = LINESIZE(32, size.cx);
 		if (!m_capture.Start())
 			return FALSE;
@@ -82,7 +83,7 @@ namespace MediaSDK
 		m_capture.GetState(state);
 		if (state != State_Running)
 			return FALSE;
-		TinyAutoLock lock(m_lock);
+		TinyAutoLock autolock(m_lock);
 		DWORD dwSize = m_ringBuffer.Read(m_buffer, 1);
 		if (dwSize > 0)
 		{
@@ -108,7 +109,7 @@ namespace MediaSDK
 			m_buffer.Reset(size);
 			m_ringBuffer.Initialize(3, size);
 		}
-		TinyAutoLock lock(m_lock);
+		TinyAutoLock autolock(m_lock);
 		m_ringBuffer.Write(bits, 1);
 	}
 }

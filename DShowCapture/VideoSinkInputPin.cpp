@@ -69,6 +69,11 @@ namespace DShow
 		{
 			m_response.SetRate(m_request.GetRate());
 		}
+		if (subType == MEDIASUBTYPE_RGB32 &&pvi->bmiHeader.biCompression == BI_RGB)
+		{
+			m_response.SetFormat(PIXEL_FORMAT_RGB32);
+			return NOERROR;
+		}
 		if (subType == MediaSubTypeI420 &&	pvi->bmiHeader.biCompression == MAKEFOURCC('I', '4', '2', '0'))
 		{
 			m_response.SetFormat(PIXEL_FORMAT_I420);
@@ -77,11 +82,6 @@ namespace DShow
 		if (subType == MEDIASUBTYPE_YUY2 &&	pvi->bmiHeader.biCompression == MAKEFOURCC('Y', 'U', 'Y', '2'))
 		{
 			m_response.SetFormat(PIXEL_FORMAT_YUY2);
-			return NOERROR;
-		}
-		if (subType == MEDIASUBTYPE_RGB32 &&pvi->bmiHeader.biCompression == BI_RGB)
-		{
-			m_response.SetFormat(PIXEL_FORMAT_RGB32);
 			return NOERROR;
 		}
 		return S_FALSE;
@@ -135,7 +135,7 @@ namespace DShow
 			pvi->bmiHeader.biBitCount = 24;
 			pvi->bmiHeader.biWidth = m_request.GetSize().cx;
 			pvi->bmiHeader.biHeight = m_request.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = ((((24 * m_request.GetSize().cx) + 31) / 32) * 4);
+			pvi->bmiHeader.biSizeImage = LINESIZE(24, pvi->bmiHeader.biWidth) * pvi->bmiHeader.biHeight;
 			pMediaType->subtype = MEDIASUBTYPE_RGB24;
 			break;
 		}
@@ -145,7 +145,7 @@ namespace DShow
 			pvi->bmiHeader.biBitCount = 32;
 			pvi->bmiHeader.biWidth = m_request.GetSize().cx;
 			pvi->bmiHeader.biHeight = m_request.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = m_request.GetSize().cx * m_request.GetSize().cy * 4;
+			pvi->bmiHeader.biSizeImage = LINESIZE(32, pvi->bmiHeader.biWidth) * pvi->bmiHeader.biHeight;
 			pMediaType->subtype = MEDIASUBTYPE_RGB32;
 			break;
 		}

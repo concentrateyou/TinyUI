@@ -136,7 +136,7 @@ namespace MediaSDK
 			UINT64 beginNS = TinyTime::Now();
 			OnRender();
 			m_dx11.Present();
-			Sleep(30);
+			Sleep(20);
 		}
 	}
 	void VideoWorker::OnRender()
@@ -149,11 +149,6 @@ namespace MediaSDK
 			visual2D->Tick();
 			DX11Image2D* image2D = visual2D->GetVisual2D();
 			m_display.DrawImage(*image2D);
-			if (visual2D->IsKindOf(RUNTIME_CLASS(MonitorVisual2D)))
-			{
-				MonitorVisual2D* visual = static_cast<MonitorVisual2D*>(visual2D);
-				m_display.DrawImage(visual->GetCursor());
-			}
 		}
 		m_display.EndDraw();
 	}

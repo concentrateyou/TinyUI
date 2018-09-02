@@ -240,7 +240,32 @@ namespace Bytedance
 	}
 	void MainView::OnCameraClick(TinyVisual*, EventArgs& args)
 	{
-
+		CameraVisual2D* visual2D = new CameraVisual2D(m_controller.GetVideoWorker().GetDX11());
+		vector<VideoCapture::Name> names;
+		VideoCapture::GetDevices(names);
+		vector<VideoCaptureFormat> formats;
+		VideoCapture::GetDeviceFormats(names[0], formats);
+		VideoCaptureParam param;
+		for (INT i = 0; i < formats.size(); i++)
+		{
+			if (formats[i].GetSize().cx == 640 &&
+				formats[i].GetSize().cy == 360 &&
+				(formats[i].GetFormat() == Media::PIXEL_FORMAT_RGB24 ||
+					formats[i].GetFormat() == Media::PIXEL_FORMAT_RGB32))
+			{
+				param.RequestFormat = formats[i];
+				break;
+			}
+		}
+		visual2D->Select(names[0], param);
+		visual2D->Open();
+		TinyRectangle client;
+		::GetClientRect(m_view.Handle(), &client);
+		XMFLOAT2 size = visual2D->GetSize();
+		visual2D->SetTranslate(XMFLOAT2(0.0F, 0.0F));
+		visual2D->SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(client)) / size.x, static_cast<FLOAT>(TO_CY(client)) / size.y));
+		visual2D->SetTrackerRect(client);
+		m_controller.GetVideoWorker().Add(visual2D);
 	}
 	void MainView::OnMediaClick(TinyVisual*, EventArgs& args)
 	{
