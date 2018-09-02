@@ -136,7 +136,7 @@ namespace MediaSDK
 			UINT64 beginNS = TinyTime::Now();
 			OnRender();
 			m_dx11.Present();
-			Sleep(20);
+			Sleep(30);
 		}
 	}
 	void VideoWorker::OnRender()
@@ -146,9 +146,25 @@ namespace MediaSDK
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
 			IVisual2D* visual2D = m_visuals[i];
-			visual2D->Tick();
-			DX11Image2D* image2D = visual2D->GetVisual2D();
-			m_display.DrawImage(*image2D);
+			if (visual2D->Tick())
+			{
+
+				DX11Image2D* image2D = visual2D->GetVisual2D();
+				if (visual2D->IsKindOf(RUNTIME_CLASS(CameraVisual2D)))
+				{
+					FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
+					m_dx11.AllowBlend(FALSE, blendFactor);
+					m_display.DrawImage(*image2D);
+				}
+				if (visual2D->IsKindOf(RUNTIME_CLASS(MonitorVisual2D)))
+				{
+					FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
+					m_dx11.AllowBlend(TRUE, blendFactor);
+					m_display.DrawImage(*image2D);
+					MonitorVisual2D* visual = static_cast<MonitorVisual2D*>(visual2D);
+					m_display.DrawImage(visual->GetCursor());
+				}
+			}
 		}
 		m_display.EndDraw();
 	}

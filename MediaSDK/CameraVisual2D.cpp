@@ -9,7 +9,7 @@ namespace MediaSDK
 		:m_dx11(dx11),
 		m_linesize(0)
 	{
-		m_linesize = 0;
+
 	}
 	CameraVisual2D::~CameraVisual2D()
 	{

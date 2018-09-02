@@ -250,8 +250,7 @@ namespace Bytedance
 		{
 			if (formats[i].GetSize().cx == 640 &&
 				formats[i].GetSize().cy == 360 &&
-				(formats[i].GetFormat() == Media::PIXEL_FORMAT_RGB24 ||
-					formats[i].GetFormat() == Media::PIXEL_FORMAT_RGB32))
+				formats[i].GetFormat() == Media::PIXEL_FORMAT_RGB24)
 			{
 				param.RequestFormat = formats[i];
 				break;
