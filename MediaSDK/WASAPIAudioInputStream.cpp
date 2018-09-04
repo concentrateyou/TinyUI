@@ -316,7 +316,9 @@ namespace MediaSDK
 				m_packet->SetSize(size);
 				memcpy_s(m_packet->data(), m_packet->size(), data, m_packet->size());
 			}
-			m_callback->OnOutput(TinyTime::Now(), m_packet);
+			INT64 timestamp = TinyTime::Now();
+			timestamp -= (INT64)available * 1000000000ULL / (INT64)waveFMT->nSamplesPerSec;
+			m_callback->OnOutput(timestamp, m_packet);
 			hRes = m_audioCapture->ReleaseBuffer(available);
 			if (FAILED(hRes))
 			{

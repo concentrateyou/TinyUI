@@ -6,6 +6,8 @@
 #include "StreamVisual2D.h"
 #include "ImageVisual2D.h"
 
+#define NUM_TEXTURES 2
+
 namespace MediaSDK
 {
 	class VideoWorker
@@ -28,13 +30,15 @@ namespace MediaSDK
 		IVisual2D*  HitTest(const TinyPoint& pos);
 	private:
 		void		OnMessagePump();
-		void		OnRender();
+		void		OnDisplay();
+		void		OnOutputs();
 	private:
 		BOOL						m_stop;
+		UINT32						m_texture;
 		TinyLock					m_lock;
 		DX11						m_dx11;
 		DX11Graphics2D				m_display;
-		DX11Graphics2D				m_video;
+		DX11Graphics2D*				m_videos[NUM_TEXTURES];
 		TinyArray<IVisual2D*>		m_visuals;
 		TinyTaskManeger::TinyTask*  m_videoTask;
 		TinyTaskManeger&			m_manager;

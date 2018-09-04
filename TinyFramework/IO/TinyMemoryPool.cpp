@@ -1,59 +1,60 @@
 #include "../stdafx.h"
 #include <process.h>
 #include "../Common/TinyUtility.h"
-#include "TinyFixedAlloc.h"
+#include "TinyMemoryPool.h"
 
 namespace TinyFramework
 {
 	namespace IO
 	{
-		TinyFixedAllocNoSync::TinyFixedAllocNoSync()
+		TinyMemoryAlloc::TinyMemoryAlloc()
 			:m_pNodeFree(NULL),
 			m_pBlocks(NULL),
-			m_allocSize(0),
-			m_blockSize(0)
+			m_size(0),
+			m_count(0)
 		{
 		}
 
-		TinyFixedAllocNoSync::~TinyFixedAllocNoSync()
+		TinyMemoryAlloc::~TinyMemoryAlloc()
 		{
 			FreeAll();
 		}
-		UINT TinyFixedAllocNoSync::GetAllocSize()
+		UINT32 TinyMemoryAlloc::GetElementSize()
 		{
-			return m_allocSize;
+			return m_size;
 		}
-		void TinyFixedAllocNoSync::Initialize(UINT blockSize, UINT allocSize)
+		void TinyMemoryAlloc::Initialize(UINT32 count, UINT32 size)
 		{
-			ASSERT(allocSize >= sizeof(TinyNode));
-
-			if (allocSize < sizeof(TinyNode))
-				allocSize = sizeof(TinyNode);
-			if (blockSize <= 1)
-				blockSize = 3;
-
-			m_allocSize = allocSize;
-			m_blockSize = blockSize;
+			ASSERT(size >= sizeof(TinyNode));
+			if (size < sizeof(TinyNode))
+				size = sizeof(TinyNode);
+			if (count <= 1)
+				count = 3;
+			m_size = size;
+			m_count = count;
 			m_pNodeFree = NULL;
 			m_pBlocks = NULL;
 		}
-		void TinyFixedAllocNoSync::FreeAll()
+		void TinyMemoryAlloc::FreeAll()
 		{
-			m_pBlocks->Destory();
-			m_pBlocks = NULL;
+			if (m_pBlocks != NULL)
+			{
+				m_pBlocks->Destory();
+				m_pBlocks = NULL;
+			}
 			m_pNodeFree = NULL;
-			m_blockSize = 0;
-			m_allocSize = 0;
+			m_count = 0;
+			m_size = 0;
 		}
 
-		void* TinyFixedAllocNoSync::Alloc()
+		void* TinyMemoryAlloc::Alloc()
 		{
 			if (m_pNodeFree == NULL)
 			{
-				TinyPlex* pNewBlock = TinyPlex::Create(m_pBlocks, m_blockSize, m_allocSize);
+				TinyPlex* pNewBlock = TinyPlex::Create(m_pBlocks, m_count, m_size);
 				TinyNode* pNode = (TinyNode*)pNewBlock->data();
-				(BYTE*&)pNode += (m_allocSize * m_blockSize) - m_allocSize;
-				for (INT i = m_blockSize - 1; i >= 0; i--, (BYTE*&)pNode -= m_allocSize)
+				(BYTE*&)pNode += (m_size * m_count) - m_size;
+				for (UINT32 i = m_count - 1; i >= 0; i--, (BYTE*&)pNode -= m_size)
 				{
 					pNode->pNext = m_pNodeFree;
 					m_pNodeFree = pNode;
@@ -65,27 +66,27 @@ namespace TinyFramework
 			return pNode;
 		}
 
-		void TinyFixedAllocNoSync::Free(void* p)
+		void TinyMemoryAlloc::Free(void* ps)
 		{
-			if (p != NULL)
+			if (ps != NULL)
 			{
-				TinyNode* pNode = (TinyNode*)p;
+				TinyNode* pNode = (TinyNode*)ps;
 				pNode->pNext = m_pNodeFree;
 				m_pNodeFree = pNode;
 			}
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyFixedAlloc::TinyFixedAlloc()
+		TinyMemoryPool::TinyMemoryPool()
 		{
 			InitializeCriticalSection(&m_cs);
 		}
 
-		TinyFixedAlloc::~TinyFixedAlloc()
+		TinyMemoryPool::~TinyMemoryPool()
 		{
 			DeleteCriticalSection(&m_cs);
 		}
 
-		void TinyFixedAlloc::FreeAll()
+		void TinyMemoryPool::FreeAll()
 		{
 			EnterCriticalSection(&m_cs);
 			__try
@@ -98,7 +99,7 @@ namespace TinyFramework
 			}
 		}
 
-		void* TinyFixedAlloc::Alloc()
+		void* TinyMemoryPool::Alloc()
 		{
 			EnterCriticalSection(&m_cs);
 			void* ps = NULL;
@@ -115,7 +116,7 @@ namespace TinyFramework
 			return ps;
 		}
 
-		void TinyFixedAlloc::Free(void* p)
+		void TinyMemoryPool::Free(void* p)
 		{
 			if (p != NULL)
 			{

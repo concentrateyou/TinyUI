@@ -9,4 +9,10 @@ namespace MediaSDK
 		VideoPacket();
 		~VideoPacket();
 	};
+
+	struct tagVideoSample
+	{
+		INT64 timestamp;
+
+	}VideoSample;
 }

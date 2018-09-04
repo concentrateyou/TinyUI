@@ -193,9 +193,6 @@
     <ClCompile Include="Network\TinyHTTPCommon.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
-    <ClCompile Include="IO\TinyFixedAlloc.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
     <ClCompile Include="Common\TinyHandleMap.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
@@ -457,6 +454,9 @@
     <ClCompile Include="Windowless\TinyVisualNative.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
+    <ClCompile Include="IO\TinyMemoryPool.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -696,9 +696,6 @@
     <ClInclude Include="Render\TinyDDraw.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyFixedAlloc.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyHandleMap.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -920,6 +917,9 @@
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualNative.h">
       <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyMemoryPool.h">
+      <Filter>头文件\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

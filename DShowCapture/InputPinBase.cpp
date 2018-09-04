@@ -85,7 +85,7 @@ namespace DShow
 		hRes = pSample->GetTime(&times, &timee);
 		if (hRes != S_OK && hRes != VFW_E_SAMPLE_TIME_NOT_SET)
 			return hRes;
-		FLOAT time = (hRes == VFW_E_SAMPLE_TIME_NOT_SET ? 0.0F : (timee * 1000.0F / 10000000.0F));
+		REFERENCE_TIME time = (hRes == VFW_E_SAMPLE_TIME_NOT_SET ? 0.0F : times * 100);//µ¥Î»ÊÇÄÉÃë
 		m_observer->OnFrameReceive(bits, size, time, m_observer->m_lpParameter);
 		return NOERROR;
 	}

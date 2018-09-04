@@ -6,8 +6,8 @@ namespace MediaSDK
 	VideoWorker::VideoWorker(TinyTaskManeger& manager)
 		:m_manager(manager),
 		m_display(m_dx11),
-		m_video(m_dx11),
-		m_stop(FALSE)
+		m_stop(FALSE),
+		m_texture(0)
 	{
 
 	}
@@ -30,10 +30,14 @@ namespace MediaSDK
 			return FALSE;
 		if (!m_display.Create())
 			return FALSE;
-		if (!m_video.InitializeShaders())
-			return FALSE;
-		if (!m_video.Create(outputSize.cx, outputSize.cy))
-			return FALSE;
+		for (INT i = 0; i < NUM_TEXTURES; i++)
+		{
+			m_videos[i] = new DX11Graphics2D(m_dx11);
+			if (!m_videos[i]->InitializeShaders())
+				return FALSE;
+			if (!m_videos[i]->Create(outputSize.cx, outputSize.cy))
+				return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL VideoWorker::Resize(const TinySize& size)
@@ -134,12 +138,12 @@ namespace MediaSDK
 			if (m_stop)
 				break;
 			UINT64 beginNS = TinyTime::Now();
-			OnRender();
+			OnDisplay();
 			m_dx11.Present();
 			Sleep(30);
 		}
 	}
-	void VideoWorker::OnRender()
+	void VideoWorker::OnDisplay()
 	{
 		TinyAutoLock autolock(m_lock);
 		m_display.BeginDraw();
@@ -148,7 +152,6 @@ namespace MediaSDK
 			IVisual2D* visual2D = m_visuals[i];
 			if (visual2D->Tick())
 			{
-
 				DX11Image2D* image2D = visual2D->GetVisual2D();
 				if (visual2D->IsKindOf(RUNTIME_CLASS(CameraVisual2D)))
 				{
@@ -164,9 +167,19 @@ namespace MediaSDK
 					MonitorVisual2D* visual = static_cast<MonitorVisual2D*>(visual2D);
 					m_display.DrawImage(visual->GetCursor());
 				}
+				if (visual2D->IsKindOf(RUNTIME_CLASS(ImageVisual2D)))
+				{
+					FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
+					m_dx11.AllowBlend(TRUE, blendFactor);
+					m_display.DrawImage(*image2D);
+				}
 			}
 		}
 		m_display.EndDraw();
+	}
+	void VideoWorker::OnOutputs()
+	{
+
 	}
 }
 

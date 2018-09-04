@@ -27,7 +27,7 @@ namespace MediaSDK
 	private:
 		void			OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*);
 	private:
-		UINT				m_linesize;
+		UINT32				m_linesize;
 		DX11&				m_dx11;
 		DX11Image2D			m_visual2D;
 		VideoCapture		m_capture;

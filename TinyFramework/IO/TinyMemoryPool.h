@@ -11,37 +11,37 @@ namespace TinyFramework
 {
 	namespace IO
 	{
-		class TinyFixedAllocNoSync
+		class TinyMemoryAlloc
 		{
 		public:
-			TinyFixedAllocNoSync();
-			~TinyFixedAllocNoSync();
-			UINT GetAllocSize();
-			void Initialize(UINT bloakcSize, UINT allocSize = 64);
+			TinyMemoryAlloc();
+			~TinyMemoryAlloc();
+			UINT32	GetElementSize();
+			void	Initialize(UINT32 count, UINT32 size = 64);
 		public:
-			void* Alloc();
-			void Free(void* p);
-			void FreeAll();
+			void*	Alloc();
+			void	Free(void* p);
+			void	FreeAll();
 		protected:
 			struct TinyNode
 			{
 				TinyNode* pNext;
 			};
 		protected:
-			UINT		m_allocSize;
-			UINT		m_blockSize;
+			UINT32		m_size;
+			UINT32		m_count;
 			TinyPlex*	m_pBlocks;
 			TinyNode*	m_pNodeFree;
 		};
 		/// <summary>
 		/// 线程安全的固定大小内存池
 		/// </summary>
-		class TinyFixedAlloc : public TinyFixedAllocNoSync
+		class TinyMemoryPool : public TinyMemoryAlloc
 		{
-			typedef class TinyFixedAllocNoSync base;
+			typedef class TinyMemoryAlloc base;
 		public:
-			TinyFixedAlloc();
-			~TinyFixedAlloc();
+			TinyMemoryPool();
+			~TinyMemoryPool();
 		public:
 			void* Alloc();
 			void Free(void* p);
