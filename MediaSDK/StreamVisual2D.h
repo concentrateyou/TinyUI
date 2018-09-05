@@ -26,7 +26,8 @@ namespace MediaSDK
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
-		void			OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time);
+		void			OnAudio(BYTE* bits, LONG size, REFERENCE_TIME timestamp);
+		void			OnVideo(BYTE* bits, LONG size, REFERENCE_TIME timestamp);
 	private:
 		TinyString					m_szURL;
 		LAVVideoFormat				m_vF;

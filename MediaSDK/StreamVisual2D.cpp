@@ -52,11 +52,13 @@ namespace MediaSDK
 
 	BOOL StreamVisual2D::Open()
 	{
+		m_player.EVENT_AUDIO += Delegate<void(BYTE*, LONG, REFERENCE_TIME)>(this, &StreamVisual2D::OnAudio);
 		m_player.EVENT_VIDEO += Delegate<void(BYTE*, LONG, REFERENCE_TIME)>(this, &StreamVisual2D::OnVideo);
 		if (!m_player.Open(m_szURL.CSTR(), m_vF, m_aF))
 			return FALSE;
-		const VIDEOINFOHEADER& vih = m_player.GetVideoFormat();
-		if (!m_visual2D.Create(m_dx11, vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL, FALSE))
+		const LAVVideoFormat& vF = m_player.GetVideoFormat();
+		TinySize sizeT = vF.GetSize();
+		if (!m_visual2D.Create(m_dx11, sizeT.cx, sizeT.cy, NULL, FALSE))
 			goto _ERROR;
 		m_visual2D.SetFlipV(TRUE);
 		if (!m_player.Play())
@@ -96,15 +98,19 @@ namespace MediaSDK
 	{
 		return &m_visual2D;
 	}
+	void StreamVisual2D::OnAudio(BYTE* bits, LONG size, REFERENCE_TIME timestamp)
+	{
+		const LAVAudioFormat& aF = m_player.GetAudioFormat();
 
+	}
 	void StreamVisual2D::OnVideo(BYTE* bits, LONG size, REFERENCE_TIME timestamp)
 	{
 		const LAVVideoFormat& vF = m_player.GetVideoFormat();
-		TinySize vsize = vF.GetSize();
+		TinySize sizeT = vF.GetSize();
 		VideoSample sample;
 		ZeroMemory(&sample, sizeof(sample));
-		sample.cx = static_cast<UINT32>(vsize.cx);
-		sample.cy = static_cast<UINT32>(vsize.cy);
+		sample.cx = static_cast<UINT32>(sizeT.cx);
+		sample.cy = static_cast<UINT32>(sizeT.cy);
 		sample.format = vF.GetFormat();
 		sample.timestamp = timestamp;
 		switch (sample.format)

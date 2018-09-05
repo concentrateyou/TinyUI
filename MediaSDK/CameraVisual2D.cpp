@@ -116,9 +116,9 @@ namespace MediaSDK
 	{
 		VideoSample sample;
 		ZeroMemory(&sample, sizeof(sample));
-		TinySize vsize = m_current.GetSize();
-		sample.cx = static_cast<UINT32>(vsize.cx);
-		sample.cy = static_cast<UINT32>(vsize.cy);
+		TinySize sizeT = m_current.GetSize();
+		sample.cx = static_cast<UINT32>(sizeT.cx);
+		sample.cy = static_cast<UINT32>(sizeT.cy);
 		sample.format = m_current.GetFormat();
 		sample.timestamp = timestamp;
 		switch (sample.format)

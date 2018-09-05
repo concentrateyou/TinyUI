@@ -66,6 +66,7 @@ namespace DShow
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocatorRequirements(_Out_ ALLOCATOR_PROPERTIES *pProps)
 	{
+		UNUSED(pProps);
 		return E_NOTIMPL;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::Receive(IMediaSample *pSample)
