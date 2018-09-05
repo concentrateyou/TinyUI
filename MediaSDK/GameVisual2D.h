@@ -13,7 +13,7 @@ namespace MediaSDK
 		void			Select(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 	public:
 		BOOL			Open() OVERRIDE;
-		BOOL			Tick() OVERRIDE;
+		BOOL			Tick(INT64& timestamp) OVERRIDE;
 		void			Close() OVERRIDE;
 		LPCSTR			GetVisualName() OVERRIDE;
 		DX11Image2D*	GetVisual2D() OVERRIDE;

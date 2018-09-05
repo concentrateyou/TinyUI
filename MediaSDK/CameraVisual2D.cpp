@@ -6,8 +6,7 @@ namespace MediaSDK
 	IMPLEMENT_DYNAMIC(CameraVisual2D, IVisual2D);
 
 	CameraVisual2D::CameraVisual2D(DX11& dx11)
-		:m_dx11(dx11),
-		m_linesize(0)
+		:m_dx11(dx11)
 	{
 
 	}
@@ -68,28 +67,34 @@ namespace MediaSDK
 			return FALSE;
 		}
 		m_visual2D.SetFlipV(TRUE);
-		m_linesize = LINESIZE(32, size.cx);
 		if (!m_capture.Start())
 			return FALSE;
 		return TRUE;
 	}
-	BOOL CameraVisual2D::Tick()
+	BOOL CameraVisual2D::Tick(INT64& timestamp)
 	{
+		timestamp = -1;
 		if (m_visual2D.IsEmpty())
-			return FALSE;
-		if (m_buffer.IsEmpty())
 			return FALSE;
 		FILTER_STATE state;
 		m_capture.GetState(state);
 		if (state != State_Running)
 			return FALSE;
 		TinyAutoLock autolock(m_lock);
-		DWORD dwSize = m_ringBuffer.Read(m_buffer, 1);
-		if (dwSize > 0)
+		if (m_samples.GetSize() > 0)
 		{
-			m_visual2D.Copy(m_dx11, m_buffer, m_linesize);
+			const VideoSample& sample = m_samples.GetFirst();
+			if (sample.format == PIXEL_FORMAT_RGB32)
+			{
+				if (m_visual2D.Copy(m_dx11, sample.data[0], sample.linesize[0]))
+				{
+					timestamp = sample.timestamp;
+					return TRUE;
+				}
+			}
+
 		}
-		return TRUE;
+		return FALSE;
 	}
 	void CameraVisual2D::Close()
 	{
@@ -104,12 +109,50 @@ namespace MediaSDK
 	}
 	void CameraVisual2D::OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*)
 	{
-		if (m_ringBuffer.IsEmpty())
+		VideoSample sample;
+		ZeroMemory(&sample, sizeof(sample));
+		TinySize vsize = m_current.GetSize();
+		sample.cx = static_cast<UINT32>(vsize.cx);
+		sample.cy = static_cast<UINT32>(vsize.cy);
+		sample.format = m_current.GetFormat();
+		sample.timestamp = timestamp;
+		switch (sample.format)
 		{
-			m_buffer.Reset(size);
-			m_ringBuffer.Initialize(3, size);
+		case PIXEL_FORMAT_RGB32:
+			sample.data[0] = bits;
+			sample.linesize[0] = sample.cx * 4;
+			break;
+		case PIXEL_FORMAT_YUY2:
+		case PIXEL_FORMAT_UYVY:
+			sample.data[0] = bits;
+			sample.linesize[0] = sample.cx * 2;
+			break;
+		case PIXEL_FORMAT_I420:
+			sample.data[0] = bits;
+			sample.data[1] = sample.data[0] + (sample.cx * sample.cy);
+			sample.data[2] = sample.data[1] + (sample.cx * sample.cy / 4);
+			sample.linesize[0] = sample.cx;
+			sample.linesize[1] = sample.cx / 2;
+			sample.linesize[2] = sample.cx / 2;
+			break;
+		case PIXEL_FORMAT_YV12:
+			sample.data[0] = bits;
+			sample.data[2] = sample.data[0] + (sample.cx *  sample.cy);
+			sample.data[1] = sample.data[2] + (sample.cx *  sample.cy / 4);
+			sample.linesize[0] = sample.cx;
+			sample.linesize[1] = sample.cx / 2;
+			sample.linesize[2] = sample.cx / 2;
+			break;
+		case PIXEL_FORMAT_NV12:
+			sample.data[0] = bits;
+			sample.data[1] = sample.data[0] + (sample.cx *  sample.cy);
+			sample.linesize[0] = sample.cx;
+			sample.linesize[1] = sample.cx;
+			break;
+		default:
+			return;
 		}
 		TinyAutoLock autolock(m_lock);
-		m_ringBuffer.Write(bits, 1);
+		m_samples.InsertLast(sample);
 	}
 }

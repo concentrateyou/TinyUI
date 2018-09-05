@@ -59,7 +59,7 @@ namespace MediaSDK
 	{
 		m_captureRunner.Close();
 	}
-	BOOL GameVisual2D::Tick()
+	BOOL GameVisual2D::Tick(INT64& timestamp)
 	{
 		SharedCaptureDATA* pCaptureDATA = m_captureRunner.GetSharedCaptureDATA();
 		if (pCaptureDATA != NULL && pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)

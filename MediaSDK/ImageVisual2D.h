@@ -15,7 +15,7 @@ namespace MediaSDK
 		void			SetFile(const TinyString& szFile);
 	public:
 		BOOL			Open() OVERRIDE;
-		BOOL			Tick() OVERRIDE;
+		BOOL			Tick(INT64& timestamp) OVERRIDE;
 		void			Close() OVERRIDE;
 		LPCSTR			GetVisualName() OVERRIDE;
 		DX11Image2D*	GetVisual2D() OVERRIDE;

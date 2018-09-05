@@ -1,6 +1,7 @@
 #pragma once
 #include "MediaSDK.h"
 #include "IVisual2D.h"
+#include "VideoPacket.h"
 
 namespace MediaSDK
 {
@@ -15,27 +16,26 @@ namespace MediaSDK
 		BOOL			Select(const VideoCapture::Name& name, const VideoCaptureParam& requestParam);
 	public:
 		BOOL			Open() OVERRIDE;
-		BOOL			Tick() OVERRIDE;
+		BOOL			Tick(INT64& timestamp) OVERRIDE;
 		void			Close() OVERRIDE;
 		LPCSTR			GetVisualName() OVERRIDE;
 		DX11Image2D*	GetVisual2D() OVERRIDE;
+		XMFLOAT2		GetSize() OVERRIDE;
+
 		XMFLOAT2		GetTranslate() OVERRIDE;
 		XMFLOAT2		GetScale() OVERRIDE;
-		XMFLOAT2		GetSize() OVERRIDE;
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
 		void			OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*);
 	private:
-		UINT32				m_linesize;
-		DX11&				m_dx11;
-		DX11Image2D			m_visual2D;
-		VideoCapture		m_capture;
-		VideoCaptureParam	m_requestParam;
-		VideoCaptureFormat	m_current;
-		TinyLock			m_lock;
-		TinyBuffer<BYTE>	m_buffer;
-		TinyRingBuffer		m_ringBuffer;
+		DX11&						m_dx11;
+		DX11Image2D					m_visual2D;
+		VideoCapture				m_capture;
+		VideoCaptureParam			m_requestParam;
+		VideoCaptureFormat			m_current;
+		TinyLock					m_lock;
+		TinyLinkList<VideoSample>	m_samples;
 	};
 }
 

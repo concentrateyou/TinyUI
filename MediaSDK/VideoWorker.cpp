@@ -150,7 +150,8 @@ namespace MediaSDK
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
 			IVisual2D* visual2D = m_visuals[i];
-			if (visual2D->Tick())
+			INT64 timestamp = 0;
+			if (visual2D->Tick(timestamp))
 			{
 				DX11Image2D* image2D = visual2D->GetVisual2D();
 				if (visual2D->IsKindOf(RUNTIME_CLASS(CameraVisual2D)))

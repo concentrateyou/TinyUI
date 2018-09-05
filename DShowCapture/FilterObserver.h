@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include <strmif.h>
 #include "Common/TinyCore.h"
 using namespace TinyFramework;
 

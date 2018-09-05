@@ -625,6 +625,11 @@ namespace TinyFramework
 			{
 
 			}
+			TinyNode(T&& value)
+				:m_value(std::move(value))
+			{
+
+			}
 		};
 	public:
 		explicit TinyLinkList(DWORD dwSize = 10);

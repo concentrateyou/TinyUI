@@ -73,7 +73,7 @@ namespace MediaSDK
 		hICON = NULL;
 		return bRes;
 	}
-	BOOL MonitorVisual2D::Tick()
+	BOOL MonitorVisual2D::Tick(INT64& timestamp)
 	{
 		if (!m_duplicator.AcquireNextFrame(m_dx11, 0))
 			return FALSE;

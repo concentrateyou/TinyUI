@@ -52,7 +52,7 @@ namespace MediaSDK
 		return m_visual2D.Load(m_dx11, m_szFile.CSTR());
 	}
 
-	BOOL ImageVisual2D::Tick()
+	BOOL ImageVisual2D::Tick(INT64& timestamp)
 	{
 		return TRUE;
 	}

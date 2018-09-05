@@ -64,7 +64,7 @@ namespace MediaSDK
 		return TRUE;
 	}
 
-	BOOL StreamVisual2D::Tick()
+	BOOL StreamVisual2D::Tick(INT64& timestamp)
 	{
 		TinyAutoLock autolock(m_lock);
 		DWORD dwSize = m_ringBuffer.Read(m_buffer, 1);

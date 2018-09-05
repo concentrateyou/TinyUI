@@ -26,7 +26,7 @@ using namespace LAV;
 
 namespace MediaSDK
 {
-
+#define MAX_AV_PLANES 8
 }
 
 
