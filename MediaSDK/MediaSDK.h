@@ -10,6 +10,7 @@
 #include "IO/TinyAsync.h"
 #include "IO/TinyRingBuffer.h"
 #include "IO/TinyThread.h"
+#include "IO/TinyMemoryPool.h"
 #include "DX11Duplicator.h"
 #include "DX11Image2D.h"
 #include "DX11Cursor2D.h"

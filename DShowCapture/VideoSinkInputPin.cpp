@@ -84,15 +84,15 @@ namespace DShow
 			m_response.SetFormat(PIXEL_FORMAT_YUY2);
 			return NOERROR;
 		}
-		return S_FALSE;
+		return E_FAIL;
 	}
 	HRESULT VideoSinkInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType)
 	{
 		if (position != 0)
-			return S_FALSE;
+			return E_FAIL;
 
 		if (pMediaType->cbFormat < sizeof(VIDEOINFOHEADER))
-			return S_FALSE;
+			return E_FAIL;
 
 		VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
 		ZeroMemory(pvi, sizeof(VIDEOINFOHEADER));
@@ -150,7 +150,7 @@ namespace DShow
 			break;
 		}
 		default:
-			return S_FALSE;
+			return E_FAIL;
 		}
 		pMediaType->bFixedSizeSamples = TRUE;
 		pMediaType->lSampleSize = pvi->bmiHeader.biSizeImage;

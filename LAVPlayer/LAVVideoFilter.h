@@ -2,7 +2,9 @@
 #include "DShowCommon.h"
 #include "ScopedMediaType.h"
 #include "FilterObserver.h"
+#include "LAVCommon.h"
 #include "LAVVideoInputPin.h"
+
 #include <dshow.h>
 #include <uuids.h>
 #include <string>
@@ -12,6 +14,7 @@
 using namespace std;
 using namespace TinyFramework;
 using namespace DShow;
+using namespace TinyFramework::Media;
 
 namespace LAV
 {
@@ -22,8 +25,10 @@ namespace LAV
 	public:
 		explicit LAVVideoFilter(FilterObserver* observer);
 		virtual ~LAVVideoFilter();
-		INT GetPinCount() OVERRIDE;
-		IPin* GetPin(INT index) OVERRIDE;
+		const LAVVideoFormat& GetResponseFormat();
+		void	SetRequestFormat(const LAVVideoFormat& request);
+		INT		GetPinCount() OVERRIDE;
+		IPin*	GetPin(INT index) OVERRIDE;
 	private:
 		TinyScopedReferencePtr<LAVVideoInputPin> m_inputPin;
 	};

@@ -1,5 +1,6 @@
 #pragma once
 #include "DShowCommon.h"
+#include "LAVCommon.h"
 #include "ScopedMediaType.h"
 #include "FilterBase.h"
 #include "FilterObserver.h"
@@ -23,8 +24,13 @@ namespace LAV
 	public:
 		LAVVideoInputPin(FilterBase* pFilter, FilterObserver* observer);
 		virtual ~LAVVideoInputPin();
+		const LAVVideoFormat& GetResponseFormat();
+		void	SetRequestFormat(const LAVVideoFormat& request);
 		HRESULT CheckMediaType(const AM_MEDIA_TYPE* pMediaType) OVERRIDE;
 		HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType) OVERRIDE;
+	private:
+		LAVVideoFormat	m_request;
+		LAVVideoFormat	m_response;
 	};
 }
 

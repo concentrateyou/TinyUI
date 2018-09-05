@@ -1,5 +1,6 @@
 #pragma once
 #include "DShowCommon.h"
+#include "LAVCommon.h"
 #include "ScopedMediaType.h"
 #include "FilterBase.h"
 #include "FilterObserver.h"
@@ -24,8 +25,13 @@ namespace LAV
 	public:
 		LAVAudioInputPin(FilterBase* pFilter, FilterObserver* observer);
 		virtual ~LAVAudioInputPin();
+		const LAVAudioFormat& GetResponseFormat();
+		void	SetRequestFormat(const LAVAudioFormat& request);
 		HRESULT CheckMediaType(const AM_MEDIA_TYPE* pMediaType) OVERRIDE;
 		HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType) OVERRIDE;
+	private:
+		LAVAudioFormat	m_request;
+		LAVAudioFormat	m_response;
 	};
 }
 

@@ -7,6 +7,9 @@
 #include <string>
 using namespace std;
 
+#define ROUND(x,y) (((x)+(y-1))&~(y-1))
+#define ROUND4(x) ROUND(x, 4)
+
 namespace TinyFramework
 {
 	namespace IO
@@ -43,9 +46,9 @@ namespace TinyFramework
 			TinyMemoryPool();
 			~TinyMemoryPool();
 		public:
-			void* Alloc();
-			void Free(void* p);
-			void FreeAll();
+			void*	Alloc();
+			void	Free(void* p);
+			void	FreeAll();
 		protected:
 			CRITICAL_SECTION m_cs;
 		};

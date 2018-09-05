@@ -1,7 +1,7 @@
 #pragma once
 #include "MediaSDK.h"
 #include "IVisual2D.h"
-
+#include "VideoPacket.h"
 
 namespace MediaSDK
 {
@@ -27,14 +27,13 @@ namespace MediaSDK
 	private:
 		void			OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time);
 	private:
-		UINT					m_linesize;
-		TinyString				m_szURL;
-		TinyLock				m_lock;
-		DX11&					m_dx11;
-		DX11Image2D				m_visual2D;
-		TinyBuffer<BYTE>		m_buffer;
-		TinyRingBuffer			m_ringBuffer;
-		LAVWindowlessPlayer		m_player;
+		TinyString					m_szURL;
+		TinyLock					m_lock;
+		DX11&						m_dx11;
+		DX11Image2D					m_visual2D;
+		LAVWindowlessPlayer			m_player;
+		TinyMemoryPool				m_pool;
+		TinyLinkList<VideoSample>	m_samples;
 	};
 }
 

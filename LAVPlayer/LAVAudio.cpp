@@ -13,7 +13,7 @@ namespace LAV
 	{
 	}
 
-	BOOL LAVAudio::Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
+	BOOL LAVAudio::Initialize()
 	{
 		if (!InitializeAudio())
 			return FALSE;
@@ -37,6 +37,12 @@ namespace LAV
 			return FALSE;
 		hRes = m_builder->Connect(m_audioO, m_sinkI);
 		if (hRes != S_OK)
+			return FALSE;
+		return TRUE;
+	}
+	BOOL LAVAudio::Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
+	{
+		if (!Initialize())
 			return FALSE;
 		m_callback = std::move(callback);
 		return TRUE;

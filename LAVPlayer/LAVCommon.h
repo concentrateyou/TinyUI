@@ -14,6 +14,7 @@
 using namespace std;
 using namespace TinyFramework;
 using namespace DShow;
+using namespace TinyFramework::Media;
 
 
 namespace LAV
@@ -38,5 +39,40 @@ namespace LAV
 		~ScopedBSTR();
 	private:
 		BSTR	m_bstr;
+	};
+	/// <summary>
+	///视频格式
+	/// </summary>
+	class  LAVVideoFormat
+	{
+	public:
+		LAVVideoFormat();
+		LAVVideoFormat(const TinySize& size, VideoPixelFormat vpf);
+		BOOL IsValid() const;
+		void SetFormat(VideoPixelFormat vpf);
+		void SetSize(const TinySize& size);
+		void SetSize(INT cx, INT cy);
+		void Reset();
+		const TinySize& GetSize() const;
+		const VideoPixelFormat GetFormat() const;
+		const string ToString() const;
+		static string PixelFormatToString(VideoPixelFormat format);
+	private:
+		TinySize			m_size;
+		VideoPixelFormat	m_vpf;
+	};
+	/// <summary>
+	///音频格式
+	/// </summary>
+	class LAVAudioFormat
+	{
+	public:
+		LAVAudioFormat();
+		~LAVAudioFormat();
+		WAVEFORMATEX GetFormat() const;
+		void SetFormat(const WAVEFORMATEX& wfx);
+		string ToString() const;
+	private:
+		WAVEFORMATEX	m_wft;
 	};
 }

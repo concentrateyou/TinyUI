@@ -11,6 +11,7 @@ namespace LAV
 	public:
 		LAVAudio(IGraphBuilder* builder, IPin* lavAudioO);
 		~LAVAudio();
+		BOOL Initialize();
 		BOOL Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback);
 		void Uninitialize();
 		BOOL GetMediaType(AM_MEDIA_TYPE* pType);

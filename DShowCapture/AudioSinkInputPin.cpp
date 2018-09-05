@@ -39,7 +39,7 @@ namespace DShow
 			m_response = m_request;
 			return NOERROR;
 		}
-		return S_FALSE;
+		return E_FAIL;
 	}
 	HRESULT AudioSinkInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType)
 	{

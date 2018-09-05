@@ -5,6 +5,7 @@
 #include "Common/TinyUtility.h"
 #include "IO/TinyRingQueue.h"
 #include "IO/TinyRingBuffer.h"
+#include "Media/TinyMedia.h"
 #include "Render/TinyGDI.h"
 #include <dshow.h>
 #include <uuids.h>

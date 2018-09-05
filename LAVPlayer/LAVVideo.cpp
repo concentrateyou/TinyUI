@@ -12,7 +12,7 @@ namespace LAV
 	{
 
 	}
-	BOOL LAVVideo::Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
+	BOOL LAVVideo::Initialize()
 	{
 		if (!InitializeVideo())
 			return FALSE;
@@ -36,6 +36,12 @@ namespace LAV
 			return FALSE;
 		hRes = m_builder->Connect(m_videoO, m_sinkI);
 		if (hRes != S_OK)
+			return FALSE;
+		return TRUE;
+	}
+	BOOL LAVVideo::Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
+	{
+		if (!Initialize())
 			return FALSE;
 		m_callback = std::move(callback);
 		return TRUE;

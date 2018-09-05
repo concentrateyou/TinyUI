@@ -21,4 +21,14 @@ namespace LAV
 	{
 		return index == 0 ? m_inputPin : NULL;
 	}
+	const LAVAudioFormat& LAVAudioFilter::GetResponseFormat()
+	{
+		ASSERT(m_inputPin);
+		return m_inputPin->GetResponseFormat();
+	}
+	void LAVAudioFilter::SetRequestFormat(const LAVAudioFormat& request)
+	{
+		ASSERT(m_inputPin);
+		m_inputPin->SetRequestFormat(request);
+	}
 }

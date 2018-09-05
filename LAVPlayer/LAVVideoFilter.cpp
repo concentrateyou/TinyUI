@@ -22,4 +22,15 @@ namespace LAV
 	{
 		return index == 0 ? m_inputPin : NULL;
 	}
+
+	const LAVVideoFormat& LAVVideoFilter::GetResponseFormat()
+	{
+		ASSERT(m_inputPin);
+		return	m_inputPin->GetResponseFormat();
+	}
+	void LAVVideoFilter::SetRequestFormat(const LAVVideoFormat& request)
+	{
+		ASSERT(m_inputPin);
+		m_inputPin->SetRequestFormat(request);
+	}
 }

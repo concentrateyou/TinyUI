@@ -48,7 +48,6 @@ namespace DShow
 		static BOOL GetDeviceFormats(const AudioCapture::Name& device, vector<AudioCaptureFormat>& formats);
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
 	private:
-		//
 		TinyComPtr<IBaseFilter>								m_captureFilter;
 		TinyComPtr<IGraphBuilder>							m_builder;
 		TinyComPtr<IMediaControl>							m_control;

@@ -6,8 +6,7 @@ namespace MediaSDK
 	IMPLEMENT_DYNAMIC(StreamVisual2D, IVisual2D);
 
 	StreamVisual2D::StreamVisual2D(DX11& dx11)
-		:m_dx11(dx11),
-		m_linesize(0)
+		:m_dx11(dx11)
 	{
 
 	}
@@ -66,14 +65,14 @@ namespace MediaSDK
 
 	BOOL StreamVisual2D::Tick(INT64& timestamp)
 	{
-		TinyAutoLock autolock(m_lock);
+		/*TinyAutoLock autolock(m_lock);
 		DWORD dwSize = m_ringBuffer.Read(m_buffer, 1);
 		if (dwSize > 0)
 		{
 			if (!m_visual2D.Copy(m_dx11, m_buffer, m_linesize))
 				return FALSE;
 			return TRUE;
-		}
+		}*/
 		return TRUE;
 	}
 
@@ -97,13 +96,15 @@ namespace MediaSDK
 	{
 		const VIDEOINFOHEADER vih = m_player.GetVideoFormat();
 		UINT linesize = LINESIZE(vih.bmiHeader.biBitCount, vih.bmiHeader.biWidth);
-		m_linesize = linesize;
-		if (m_ringBuffer.IsEmpty())
-		{
-			m_buffer.Reset(linesize*vih.bmiHeader.biHeight);
-			m_ringBuffer.Initialize(3, linesize*vih.bmiHeader.biHeight);
-		}
-		TinyAutoLock autolock(m_lock);
-		m_ringBuffer.Write(bits, 1);
+		VideoSample sample;
+		ZeroMemory(&sample, sizeof(sample));
+		
+		/*	if (m_ringBuffer.IsEmpty())
+			{
+				m_buffer.Reset(linesize*vih.bmiHeader.biHeight);
+				m_ringBuffer.Initialize(3, linesize*vih.bmiHeader.biHeight);
+			}
+			TinyAutoLock autolock(m_lock);
+			m_ringBuffer.Write(bits, 1);*/
 	}
 }

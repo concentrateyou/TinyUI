@@ -364,6 +364,126 @@ namespace LAV
 	{
 
 	}
+
+	BOOL LAVWindowlessPlayer::GetFormats(LPCSTR pzFile, vector<LAVVideoFormat>& videos, vector<LAVAudioFormat>& audios)
+	{
+		TinyComPtr<IGraphBuilder> builder;
+		HRESULT hRes = builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
+		if (hRes != S_OK)
+			return FALSE;
+		TinyComPtr<IBaseFilter>	lavFilter;
+		if (!GetFilterByCLSID("{B98D13E7-55DB-4385-A33D-09FD1BA26338}", &lavFilter))
+			return FALSE;
+		hRes = builder->AddFilter(lavFilter, NULL);
+		if (hRes != S_OK)
+			return FALSE;
+		TinyComPtr<IFileSourceFilter> sourceFilter;
+		hRes = lavFilter->QueryInterface(&sourceFilter);
+		if (hRes != S_OK)
+			return FALSE;
+		TinyComPtr<IAMStreamSelect>	asmstream;
+		hRes = lavFilter->QueryInterface(&asmstream);
+		if (hRes != S_OK)
+			return FALSE;
+		wstring wsz = StringToWString(pzFile);
+		hRes = sourceFilter->Load(wsz.c_str(), NULL);
+		if (hRes != S_OK)
+			return FALSE;
+		DWORD streams = 0;
+		hRes = asmstream->Count(&streams);
+		if (hRes != S_OK)
+			return FALSE;
+		TinyComPtr<IPin>	lavAudioO;
+		TinyComPtr<IPin>	lavVideoO;
+		for (DWORD i = 0; i < streams; i++)
+		{
+			DWORD dwFlags;
+			TinyScopedPtr<WCHAR, ComMemeryDeleter<WCHAR>> wszName;
+			ScopedMediaType mediaType;
+			hRes = asmstream->Info(i, mediaType.Receive(), &dwFlags, NULL, NULL, &wszName, NULL, NULL);
+			if (hRes != S_OK)
+				return FALSE;
+			if (mediaType->majortype == MEDIATYPE_Video)
+			{
+				hRes = asmstream->Enable(i, AMSTREAMSELECTENABLE_ENABLE);
+				if (hRes != S_OK)
+					return FALSE;
+				hRes = lavFilter->FindPin(L"Video", &lavVideoO);
+				if (hRes != S_OK)
+					return FALSE;
+				TinyScopedPtr<LAVVideo> video(new LAVVideo(builder, lavVideoO));
+				if (!video->Initialize())
+					return FALSE;
+				TinyArray<ScopedMediaType> types;
+				video->GetOutputMediaTypes(types);
+				for (INT i = 0; i < types.GetSize(); i++)
+				{
+					ScopedMediaType& mediaType = types[i];
+					LAVVideoFormat vf;
+					VIDEOINFOHEADER* s = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+					vf.SetSize(s->bmiHeader.biWidth, abs(s->bmiHeader.biHeight));
+					if (mediaType->subtype == MEDIASUBTYPE_RGB32)
+					{
+						vf.SetFormat(PIXEL_FORMAT_RGB32);
+						videos.push_back(vf);
+					}
+					if (mediaType->subtype == MEDIASUBTYPE_NV12)
+					{
+						vf.SetFormat(PIXEL_FORMAT_NV12);
+						videos.push_back(vf);
+					}
+					if (mediaType->subtype == MEDIASUBTYPE_YUY2)
+					{
+						vf.SetFormat(PIXEL_FORMAT_YUY2);
+						videos.push_back(vf);
+					}
+					if (mediaType->subtype == MEDIASUBTYPE_UYVY)
+					{
+						vf.SetFormat(PIXEL_FORMAT_UYVY);
+						videos.push_back(vf);
+					}
+					if (mediaType->subtype == MEDIASUBTYPE_I420)
+					{
+						vf.SetFormat(PIXEL_FORMAT_I420);
+						videos.push_back(vf);
+					}
+					if (mediaType->subtype == MEDIASUBTYPE_YV12)
+					{
+						vf.SetFormat(PIXEL_FORMAT_YV12);
+						videos.push_back(vf);
+					}
+				}
+			}
+			if (mediaType->majortype == MEDIATYPE_Audio)
+			{
+				hRes = asmstream->Enable(i, AMSTREAMSELECTENABLE_ENABLE);
+				if (hRes != S_OK)
+					return FALSE;
+				hRes = lavFilter->FindPin(L"Audio", &lavAudioO);
+				if (hRes != S_OK)
+					return FALSE;
+				TinyScopedPtr<LAVAudio> audio(new LAVAudio(builder, lavVideoO));
+				if (!audio->Initialize())
+					return FALSE;
+				TinyArray<ScopedMediaType> types;
+				audio->GetOutputMediaTypes(types);
+				for (INT i = 0; i < types.GetSize(); i++)
+				{
+					ScopedMediaType& mediaType = types[i];
+					if (mediaType->formattype == FORMAT_WaveFormatEx &&
+						mediaType->subtype == MEDIASUBTYPE_PCM)
+					{
+						WAVEFORMATEX* s = reinterpret_cast<WAVEFORMATEX*>(mediaType->pbFormat);
+						LAVAudioFormat af;
+						af.SetFormat(*s);
+						audios.push_back(af);
+					}
+				}
+			}
+		}
+		return TRUE;
+	}
+
 	BOOL LAVWindowlessPlayer::Initialize()
 	{
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);

@@ -3,6 +3,7 @@
 #include "ScopedMediaType.h"
 #include "FilterBase.h"
 #include "FilterObserver.h"
+#include "LAVCommon.h"
 #include "LAVAudioInputPin.h"
 #include <dshow.h>
 #include <uuids.h>
@@ -23,8 +24,10 @@ namespace LAV
 	public:
 		explicit LAVAudioFilter(FilterObserver* observer);
 		virtual ~LAVAudioFilter();
-		INT GetPinCount() OVERRIDE;
-		IPin* GetPin(INT index) OVERRIDE;
+		const LAVAudioFormat& GetResponseFormat();
+		void	SetRequestFormat(const LAVAudioFormat& request);
+		INT		GetPinCount() OVERRIDE;
+		IPin*	GetPin(INT index) OVERRIDE;
 	private:
 		TinyScopedReferencePtr<LAVAudioInputPin> m_inputPin;
 	};

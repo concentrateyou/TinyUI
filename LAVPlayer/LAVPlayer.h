@@ -70,6 +70,8 @@ namespace LAV
 	public:
 		Event<void(BYTE*, LONG, REFERENCE_TIME)> EVENT_AUDIO;
 		Event<void(BYTE*, LONG, REFERENCE_TIME)> EVENT_VIDEO;
+	public:
+		static BOOL GetFormats(LPCSTR pzFile, vector<LAVVideoFormat>& videos, vector<LAVAudioFormat>& audios);
 	private:
 		BOOL Initialize();
 		void Uninitialize();
