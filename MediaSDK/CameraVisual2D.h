@@ -27,6 +27,7 @@ namespace MediaSDK
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
+		void			CopySample();
 		void			OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*);
 	private:
 		DX11&						m_dx11;
@@ -34,6 +35,7 @@ namespace MediaSDK
 		VideoCapture				m_capture;
 		VideoCaptureParam			m_requestParam;
 		VideoCaptureFormat			m_current;
+		VideoSample					m_sample;
 		TinyLock					m_lock;
 		TinyLinkList<VideoSample>	m_samples;
 	};
