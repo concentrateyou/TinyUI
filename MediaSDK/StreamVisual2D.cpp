@@ -14,10 +14,15 @@ namespace MediaSDK
 	StreamVisual2D::~StreamVisual2D()
 	{
 	}
-
-	void StreamVisual2D::SetFile(const TinyString& szFile)
+	BOOL StreamVisual2D::QueryFormats(LPCSTR pzFile, vector<LAVVideoFormat>& videos, vector<LAVAudioFormat>& audios)
+	{
+		return LAVWindowlessPlayer::GetFormats(pzFile, videos, audios);
+	}
+	void StreamVisual2D::SetFile(const TinyString& szFile, const LAVVideoFormat& vF, const LAVAudioFormat& aF)
 	{
 		m_szURL = szFile;
+		m_vF = vF;
+		m_aF = aF;
 	}
 
 	XMFLOAT2 StreamVisual2D::GetTranslate()
@@ -48,7 +53,7 @@ namespace MediaSDK
 	BOOL StreamVisual2D::Open()
 	{
 		m_player.EVENT_VIDEO += Delegate<void(BYTE*, LONG, REFERENCE_TIME)>(this, &StreamVisual2D::OnVideo);
-		if (!m_player.Open(m_szURL.CSTR()))
+		if (!m_player.Open(m_szURL.CSTR(), m_vF, m_aF))
 			return FALSE;
 		const VIDEOINFOHEADER& vih = m_player.GetVideoFormat();
 		if (!m_visual2D.Create(m_dx11, vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL, FALSE))
@@ -92,19 +97,53 @@ namespace MediaSDK
 		return &m_visual2D;
 	}
 
-	void StreamVisual2D::OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time)
+	void StreamVisual2D::OnVideo(BYTE* bits, LONG size, REFERENCE_TIME timestamp)
 	{
-		const VIDEOINFOHEADER vih = m_player.GetVideoFormat();
-		UINT linesize = LINESIZE(vih.bmiHeader.biBitCount, vih.bmiHeader.biWidth);
+		const LAVVideoFormat& vF = m_player.GetVideoFormat();
+		TinySize vsize = vF.GetSize();
 		VideoSample sample;
 		ZeroMemory(&sample, sizeof(sample));
-		
-		/*	if (m_ringBuffer.IsEmpty())
-			{
-				m_buffer.Reset(linesize*vih.bmiHeader.biHeight);
-				m_ringBuffer.Initialize(3, linesize*vih.bmiHeader.biHeight);
-			}
-			TinyAutoLock autolock(m_lock);
-			m_ringBuffer.Write(bits, 1);*/
+		sample.cx = static_cast<UINT32>(vsize.cx);
+		sample.cy = static_cast<UINT32>(vsize.cy);
+		sample.format = vF.GetFormat();
+		sample.timestamp = timestamp;
+		switch (sample.format)
+		{
+		case PIXEL_FORMAT_RGB32:
+			sample.data[0] = bits;
+			sample.linesize[0] = sample.cx * 4;
+			break;
+		case PIXEL_FORMAT_YUY2:
+		case PIXEL_FORMAT_UYVY:
+			sample.data[0] = bits;
+			sample.linesize[0] = sample.cx * 2;
+			break;
+		case PIXEL_FORMAT_I420:
+			sample.data[0] = bits;
+			sample.data[1] = sample.data[0] + (sample.cx * sample.cy);
+			sample.data[2] = sample.data[1] + (sample.cx * sample.cy / 4);
+			sample.linesize[0] = sample.cx;
+			sample.linesize[1] = sample.cx / 2;
+			sample.linesize[2] = sample.cx / 2;
+			break;
+		case PIXEL_FORMAT_YV12:
+			sample.data[0] = bits;
+			sample.data[2] = sample.data[0] + (sample.cx *  sample.cy);
+			sample.data[1] = sample.data[2] + (sample.cx *  sample.cy / 4);
+			sample.linesize[0] = sample.cx;
+			sample.linesize[1] = sample.cx / 2;
+			sample.linesize[2] = sample.cx / 2;
+			break;
+		case PIXEL_FORMAT_NV12:
+			sample.data[0] = bits;
+			sample.data[1] = sample.data[0] + (sample.cx *  sample.cy);
+			sample.linesize[0] = sample.cx;
+			sample.linesize[1] = sample.cx;
+			break;
+		default:
+			return;
+		}
+		TinyAutoLock autolock(m_lock);
+		m_samples.InsertLast(sample);
 	}
 }

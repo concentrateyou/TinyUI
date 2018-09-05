@@ -11,12 +11,13 @@ namespace LAV
 	public:
 		LAVVideo(IGraphBuilder* builder, IPin* lavVideoO);
 		~LAVVideo();
-		BOOL	Initialize();
-		BOOL	Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback);
+		BOOL	Initialize(const LAVVideoFormat& vf);
+		BOOL	Initialize(const LAVVideoFormat& vf, Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback);
 		void	Uninitialize();
 		BOOL	GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes);
 		BOOL	GetMediaType(AM_MEDIA_TYPE* pType);
 		BOOL	GetVideoSettings(ILAVVideoSettings* settings);
+		const LAVVideoFormat& GetResponseFormat() const;
 	public:
 		void	OnFrameReceive(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter) OVERRIDE;
 	private:

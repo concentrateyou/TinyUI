@@ -84,7 +84,7 @@ namespace LAV
 	{
 		return m_video;
 	}
-	BOOL LAVPlayer::Open(HWND hWND, LPCSTR pzFile)
+	BOOL LAVPlayer::Open(HWND hWND, LPCSTR pzFile, const LAVVideoFormat& vF, const LAVAudioFormat& aF)
 	{
 		if (!PathFileExists(pzFile))
 			return FALSE;
@@ -124,7 +124,7 @@ namespace LAV
 				m_video.Reset(new LAVVideo(m_builder, m_lavVideoO));
 				if (!m_video)
 					return FALSE;
-				if (!m_video->Initialize(BindCallback(&LAVPlayer::OnVideo, this)))
+				if (!m_video->Initialize(vF, BindCallback(&LAVPlayer::OnVideo, this)))
 					return FALSE;
 				AM_MEDIA_TYPE mediaType;
 				ZeroMemory(&mediaType, sizeof(mediaType));
@@ -157,7 +157,7 @@ namespace LAV
 				m_audio.Reset(new LAVAudio(m_builder, m_lavAudioO));
 				if (!m_audio)
 					return FALSE;
-				if (!m_audio->Initialize(BindCallback(&LAVPlayer::OnAudio, this)))
+				if (!m_audio->Initialize(aF, BindCallback(&LAVPlayer::OnAudio, this)))
 					return FALSE;
 				AM_MEDIA_TYPE mediaType;
 				ZeroMemory(&mediaType, sizeof(mediaType));
@@ -368,33 +368,33 @@ namespace LAV
 	BOOL LAVWindowlessPlayer::GetFormats(LPCSTR pzFile, vector<LAVVideoFormat>& videos, vector<LAVAudioFormat>& audios)
 	{
 		TinyComPtr<IGraphBuilder> builder;
-		HRESULT hRes = builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
-		if (hRes != S_OK)
-			return FALSE;
 		TinyComPtr<IBaseFilter>	lavFilter;
-		if (!GetFilterByCLSID("{B98D13E7-55DB-4385-A33D-09FD1BA26338}", &lavFilter))
-			return FALSE;
-		hRes = builder->AddFilter(lavFilter, NULL);
-		if (hRes != S_OK)
-			return FALSE;
 		TinyComPtr<IFileSourceFilter> sourceFilter;
-		hRes = lavFilter->QueryInterface(&sourceFilter);
-		if (hRes != S_OK)
-			return FALSE;
 		TinyComPtr<IAMStreamSelect>	asmstream;
-		hRes = lavFilter->QueryInterface(&asmstream);
-		if (hRes != S_OK)
-			return FALSE;
-		wstring wsz = StringToWString(pzFile);
-		hRes = sourceFilter->Load(wsz.c_str(), NULL);
-		if (hRes != S_OK)
-			return FALSE;
-		DWORD streams = 0;
-		hRes = asmstream->Count(&streams);
-		if (hRes != S_OK)
-			return FALSE;
 		TinyComPtr<IPin>	lavAudioO;
 		TinyComPtr<IPin>	lavVideoO;
+		wstring wsz = StringToWString(pzFile);
+		DWORD streams = 0;
+		HRESULT hRes = builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
+		if (hRes != S_OK)
+			goto _ERROR;
+		if (!GetFilterByCLSID("{B98D13E7-55DB-4385-A33D-09FD1BA26338}", &lavFilter))
+			goto _ERROR;
+		hRes = builder->AddFilter(lavFilter, NULL);
+		if (hRes != S_OK)
+			goto _ERROR;
+		hRes = lavFilter->QueryInterface(&sourceFilter);
+		if (hRes != S_OK)
+			goto _ERROR;
+		hRes = lavFilter->QueryInterface(&asmstream);
+		if (hRes != S_OK)
+			goto _ERROR;
+		hRes = sourceFilter->Load(wsz.c_str(), NULL);
+		if (hRes != S_OK)
+			goto _ERROR;
+		hRes = asmstream->Count(&streams);
+		if (hRes != S_OK)
+			goto _ERROR;
 		for (DWORD i = 0; i < streams; i++)
 		{
 			DWORD dwFlags;
@@ -402,23 +402,24 @@ namespace LAV
 			ScopedMediaType mediaType;
 			hRes = asmstream->Info(i, mediaType.Receive(), &dwFlags, NULL, NULL, &wszName, NULL, NULL);
 			if (hRes != S_OK)
-				return FALSE;
+				goto _ERROR;
 			if (mediaType->majortype == MEDIATYPE_Video)
 			{
 				hRes = asmstream->Enable(i, AMSTREAMSELECTENABLE_ENABLE);
 				if (hRes != S_OK)
-					return FALSE;
+					goto _ERROR;
 				hRes = lavFilter->FindPin(L"Video", &lavVideoO);
 				if (hRes != S_OK)
-					return FALSE;
+					goto _ERROR;
 				TinyScopedPtr<LAVVideo> video(new LAVVideo(builder, lavVideoO));
-				if (!video->Initialize())
-					return FALSE;
+				video->Initialize(LAVVideoFormat());
 				TinyArray<ScopedMediaType> types;
 				video->GetOutputMediaTypes(types);
 				for (INT i = 0; i < types.GetSize(); i++)
 				{
 					ScopedMediaType& mediaType = types[i];
+					if (mediaType->formattype != FORMAT_VideoInfo)
+						continue;
 					LAVVideoFormat vf;
 					VIDEOINFOHEADER* s = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 					vf.SetSize(s->bmiHeader.biWidth, abs(s->bmiHeader.biHeight));
@@ -453,18 +454,18 @@ namespace LAV
 						videos.push_back(vf);
 					}
 				}
+				video->Uninitialize();
 			}
 			if (mediaType->majortype == MEDIATYPE_Audio)
 			{
 				hRes = asmstream->Enable(i, AMSTREAMSELECTENABLE_ENABLE);
 				if (hRes != S_OK)
-					return FALSE;
+					goto _ERROR;
 				hRes = lavFilter->FindPin(L"Audio", &lavAudioO);
 				if (hRes != S_OK)
-					return FALSE;
-				TinyScopedPtr<LAVAudio> audio(new LAVAudio(builder, lavVideoO));
-				if (!audio->Initialize())
-					return FALSE;
+					goto _ERROR;
+				TinyScopedPtr<LAVAudio> audio(new LAVAudio(builder, lavAudioO));
+				audio->Initialize(LAVAudioFormat());
 				TinyArray<ScopedMediaType> types;
 				audio->GetOutputMediaTypes(types);
 				for (INT i = 0; i < types.GetSize(); i++)
@@ -479,9 +480,21 @@ namespace LAV
 						audios.push_back(af);
 					}
 				}
+				audio->Uninitialize();
 			}
 		}
-		return TRUE;
+	_ERROR:
+		if (builder != NULL)
+		{
+			builder->Disconnect(lavAudioO);
+			builder->Disconnect(lavVideoO);
+			builder->RemoveFilter(lavFilter);
+		}
+		asmstream.Release();
+		lavAudioO.Release();
+		lavVideoO.Release();
+		lavFilter.Release();
+		return SUCCEEDED(hRes);
 	}
 
 	BOOL LAVWindowlessPlayer::Initialize()
@@ -531,22 +544,22 @@ namespace LAV
 	{
 		return m_video;
 	}
-	const WAVEFORMATEX&	 LAVWindowlessPlayer::GetAudioFormat() const
+	const LAVAudioFormat&	 LAVWindowlessPlayer::GetAudioFormat() const
 	{
-		return m_waveFMT;
+		return m_aF;
 	}
-	const VIDEOINFOHEADER& LAVWindowlessPlayer::GetVideoFormat() const
+	const LAVVideoFormat& LAVWindowlessPlayer::GetVideoFormat() const
 	{
-		return m_vih;
+		return m_vF;
 	}
-	BOOL LAVWindowlessPlayer::Open(LPCSTR pzFile)
+	BOOL LAVWindowlessPlayer::Open(LPCSTR pzFile, const LAVVideoFormat& vF, const LAVAudioFormat& aF)
 	{
 		if (!PathFileExists(pzFile))
 			return FALSE;
 		if (!Initialize())
 			return FALSE;
-		ZeroMemory(&m_vih, sizeof(m_vih));
-		ZeroMemory(&m_waveFMT, sizeof(m_waveFMT));
+		ZeroMemory(&m_vF, sizeof(LAVVideoFormat));
+		ZeroMemory(&m_aF, sizeof(LAVAudioFormat));
 		TinyComPtr<IFileSourceFilter> sourceFilter;
 		HRESULT hRes = m_lavFilter->QueryInterface(&sourceFilter);
 		if (hRes != S_OK)
@@ -581,30 +594,9 @@ namespace LAV
 				m_video.Reset(new LAVVideo(m_builder, m_lavVideoO));
 				if (!m_video)
 					return FALSE;
-				if (!m_video->Initialize(BindCallback(&LAVWindowlessPlayer::OnVideo, this)))
+				if (!m_video->Initialize(vF, BindCallback(&LAVWindowlessPlayer::OnVideo, this)))
 					return FALSE;
-				AM_MEDIA_TYPE mediaType;
-				ZeroMemory(&mediaType, sizeof(mediaType));
-				if (!m_video->GetMediaType(&mediaType))
-					return FALSE;
-				if (mediaType.formattype == FORMAT_VideoInfo2 &&
-					mediaType.subtype == MEDIASUBTYPE_RGB32)
-				{
-					VIDEOINFOHEADER2* s = reinterpret_cast<VIDEOINFOHEADER2*>(mediaType.pbFormat);
-					m_vih.AvgTimePerFrame = s->AvgTimePerFrame;
-					m_vih.dwBitErrorRate = s->dwBitErrorRate;
-					m_vih.dwBitRate = s->dwBitRate;
-					m_vih.rcSource = s->rcSource;
-					m_vih.rcTarget = s->rcTarget;
-					memcpy(&m_vih.bmiHeader, &s->bmiHeader, sizeof(BITMAPINFOHEADER));
-				}
-				if (mediaType.formattype == FORMAT_VideoInfo &&
-					mediaType.subtype == MEDIASUBTYPE_RGB32)
-				{
-					VIDEOINFOHEADER* s = reinterpret_cast<VIDEOINFOHEADER*>(mediaType.pbFormat);
-					memcpy(&m_vih, s, sizeof(m_vih));
-				}
-				FreeMediaType(mediaType);
+				m_vF = m_video->GetResponseFormat();
 			}
 			if (mediaType->majortype == MEDIATYPE_Audio)
 			{
@@ -617,15 +609,9 @@ namespace LAV
 				m_audio.Reset(new LAVAudio(m_builder, m_lavAudioO));
 				if (!m_audio)
 					return FALSE;
-				if (!m_audio->Initialize(BindCallback(&LAVWindowlessPlayer::OnAudio, this)))
+				if (!m_audio->Initialize(aF, BindCallback(&LAVWindowlessPlayer::OnAudio, this)))
 					return FALSE;
-				AM_MEDIA_TYPE mediaType;
-				ZeroMemory(&mediaType, sizeof(mediaType));
-				if (!m_audio->GetMediaType(&mediaType))
-					return FALSE;
-				ZeroMemory(&m_waveFMT, sizeof(m_waveFMT));
-				memcpy(&m_waveFMT, mediaType.pbFormat, sizeof(m_waveFMT));
-				FreeMediaType(mediaType);
+				m_aF = m_audio->GetResponseFormat();
 			}
 		}
 		return TRUE;
@@ -643,8 +629,8 @@ namespace LAV
 	}
 	void LAVWindowlessPlayer::Close()
 	{
-		ZeroMemory(&m_vih, sizeof(m_vih));
-		ZeroMemory(&m_waveFMT, sizeof(m_waveFMT));
+		ZeroMemory(&m_vF, sizeof(LAVVideoFormat));
+		ZeroMemory(&m_aF, sizeof(LAVAudioFormat));
 		if (m_control != NULL)
 		{
 			m_control->Stop();

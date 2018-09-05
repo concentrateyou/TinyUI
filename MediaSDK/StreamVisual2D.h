@@ -12,7 +12,8 @@ namespace MediaSDK
 	public:
 		StreamVisual2D(DX11& dx11);
 		virtual ~StreamVisual2D();
-		void	SetFile(const TinyString& szFile);
+		void	SetFile(const TinyString& szFile, const LAVVideoFormat& vF, const LAVAudioFormat& aF);
+		static BOOL	QueryFormats(LPCSTR pzFile, vector<LAVVideoFormat>& videos, vector<LAVAudioFormat>& audios);
 	public:
 		BOOL			Open() OVERRIDE;
 		BOOL			Tick(INT64& timestamp) OVERRIDE;
@@ -28,6 +29,8 @@ namespace MediaSDK
 		void			OnVideo(BYTE* bits, LONG size, REFERENCE_TIME time);
 	private:
 		TinyString					m_szURL;
+		LAVVideoFormat				m_vF;
+		LAVAudioFormat				m_aF;
 		TinyLock					m_lock;
 		DX11&						m_dx11;
 		DX11Image2D					m_visual2D;

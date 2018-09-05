@@ -11,11 +11,12 @@ namespace LAV
 	public:
 		LAVAudio(IGraphBuilder* builder, IPin* lavAudioO);
 		~LAVAudio();
-		BOOL Initialize();
-		BOOL Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback);
+		BOOL Initialize(const LAVAudioFormat& af);
+		BOOL Initialize(const LAVAudioFormat& af, Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback);
 		void Uninitialize();
 		BOOL GetMediaType(AM_MEDIA_TYPE* pType);
 		BOOL GetAudioSettings(ILAVAudioSettings* settings);
+		const LAVAudioFormat& GetResponseFormat() const;
 	public:
 		BOOL GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes);
 		void OnFrameReceive(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter) OVERRIDE;

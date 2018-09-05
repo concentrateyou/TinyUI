@@ -51,7 +51,7 @@ namespace LAV
 	public:
 		LAVWindowlessPlayer();
 		virtual ~LAVWindowlessPlayer();
-		BOOL Open(LPCSTR pzFile);
+		BOOL Open(LPCSTR pzFile, const LAVVideoFormat& vF, const LAVAudioFormat& aF);
 		BOOL Play();
 		void Close();
 		BOOL GetDuration(LONGLONG& time);
@@ -65,8 +65,8 @@ namespace LAV
 		BOOL ShowProperty(HWND hWND);
 		LAVAudio* GetAudio();
 		LAVVideo* GetVideo();
-		const WAVEFORMATEX&		GetAudioFormat() const;
-		const VIDEOINFOHEADER&	GetVideoFormat() const;
+		const LAVAudioFormat&		GetAudioFormat() const;
+		const LAVVideoFormat&		GetVideoFormat() const;
 	public:
 		Event<void(BYTE*, LONG, REFERENCE_TIME)> EVENT_AUDIO;
 		Event<void(BYTE*, LONG, REFERENCE_TIME)> EVENT_VIDEO;
@@ -78,8 +78,8 @@ namespace LAV
 		void OnAudio(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter);
 		void OnVideo(BYTE* bits, LONG size, REFERENCE_TIME timestamp, LPVOID lpParameter);
 	private:
-		WAVEFORMATEX								m_waveFMT;
-		VIDEOINFOHEADER								m_vih;
+		LAVVideoFormat								m_vF;
+		LAVAudioFormat								m_aF;
 		TinyScopedPtr<LAVAudio>						m_audio;
 		TinyScopedPtr<LAVVideo>						m_video;
 		TinyComPtr<IPin>							m_lavAudioO;
@@ -102,7 +102,7 @@ namespace LAV
 	public:
 		LAVPlayer();
 		virtual ~LAVPlayer();
-		BOOL Open(HWND hWND, LPCSTR pzFile);
+		BOOL Open(HWND hWND, LPCSTR pzFile, const LAVVideoFormat& vF, const LAVAudioFormat& aF);
 		BOOL Play();
 		void Close();
 		BOOL GetDuration(LONGLONG& time);

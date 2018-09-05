@@ -13,13 +13,14 @@ namespace LAV
 	{
 	}
 
-	BOOL LAVAudio::Initialize()
+	BOOL LAVAudio::Initialize(const LAVAudioFormat& af)
 	{
 		if (!InitializeAudio())
 			return FALSE;
 		m_sinkFilter = new LAVAudioFilter(this);
 		if (!m_sinkFilter)
 			return FALSE;
+		m_sinkFilter->SetRequestFormat(af);
 		HRESULT hRes = m_builder->AddFilter(m_sinkFilter, NULL);
 		if (hRes != S_OK)
 			return FALSE;
@@ -40,9 +41,9 @@ namespace LAV
 			return FALSE;
 		return TRUE;
 	}
-	BOOL LAVAudio::Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
+	BOOL LAVAudio::Initialize(const LAVAudioFormat& af, Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
 	{
-		if (!Initialize())
+		if (!Initialize(af))
 			return FALSE;
 		m_callback = std::move(callback);
 		return TRUE;
@@ -75,6 +76,11 @@ namespace LAV
 		if (!m_audioFilter)
 			return FALSE;
 		return SUCCEEDED(m_audioFilter->QueryInterface(__uuidof(ILAVAudioSettings), (void **)&settings));
+	}
+	const LAVAudioFormat& LAVAudio::GetResponseFormat() const
+	{
+		ASSERT(m_sinkFilter);
+		return m_sinkFilter->GetResponseFormat();
 	}
 	BOOL LAVAudio::InitializeAudio()
 	{

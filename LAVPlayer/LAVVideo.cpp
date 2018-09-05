@@ -12,13 +12,14 @@ namespace LAV
 	{
 
 	}
-	BOOL LAVVideo::Initialize()
+	BOOL LAVVideo::Initialize(const LAVVideoFormat& vf)
 	{
 		if (!InitializeVideo())
 			return FALSE;
 		m_sinkFilter = new LAVVideoFilter(this);
 		if (!m_sinkFilter)
 			return FALSE;
+		m_sinkFilter->SetRequestFormat(vf);
 		HRESULT hRes = m_builder->AddFilter(m_sinkFilter, NULL);
 		if (hRes != S_OK)
 			return FALSE;
@@ -39,9 +40,9 @@ namespace LAV
 			return FALSE;
 		return TRUE;
 	}
-	BOOL LAVVideo::Initialize(Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
+	BOOL LAVVideo::Initialize(const LAVVideoFormat& vf, Callback<void(BYTE*, LONG, REFERENCE_TIME, LPVOID)>&& callback)
 	{
-		if (!Initialize())
+		if (!Initialize(vf))
 			return FALSE;
 		m_callback = std::move(callback);
 		return TRUE;
@@ -79,6 +80,11 @@ namespace LAV
 		if (!m_videoFilter)
 			return FALSE;
 		return SUCCEEDED(m_videoFilter->QueryInterface(__uuidof(ILAVVideoSettings), (void **)&settings));
+	}
+	const LAVVideoFormat& LAVVideo::GetResponseFormat() const
+	{
+		ASSERT(m_sinkFilter);
+		return m_sinkFilter->GetResponseFormat();
 	}
 	BOOL LAVVideo::InitializeVideo()
 	{

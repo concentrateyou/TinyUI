@@ -268,8 +268,22 @@ namespace Bytedance
 	}
 	void MainView::OnMediaClick(TinyVisual*, EventArgs& args)
 	{
+		vector<LAVVideoFormat> videos;
+		vector<LAVAudioFormat> audios;
+		StreamVisual2D::QueryFormats("D:\\Ñ¸À×ÏÂÔØ\\BBCµØÆ½Ïß-Ä¾ÐÇ½ÒÃØ\\Ä¾ÐÇ½ÒÃØ.mp4", videos, audios);
+		LAVVideoFormat vF;
+		LAVAudioFormat aF;
+		for (int i = 0; i < videos.size(); i++)
+		{
+			if (videos[i].GetFormat() == Media::PIXEL_FORMAT_RGB32)
+			{
+				vF = videos[i];
+				break;
+			}
+		}
+		aF = audios[0];
 		StreamVisual2D* visual2D = new StreamVisual2D(m_controller.GetVideoWorker().GetDX11());
-		visual2D->SetFile("D:\\Ñ¸À×ÏÂÔØ\\BBCµØÆ½Ïß-Ä¾ÐÇ½ÒÃØ\\Ä¾ÐÇ½ÒÃØ.mp4");
+		visual2D->SetFile("D:\\Ñ¸À×ÏÂÔØ\\BBCµØÆ½Ïß-Ä¾ÐÇ½ÒÃØ\\Ä¾ÐÇ½ÒÃØ.mp4", vF, aF);
 		visual2D->Open();
 		TinyRectangle client;
 		::GetClientRect(m_view.Handle(), &client);
