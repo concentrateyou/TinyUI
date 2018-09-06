@@ -24,7 +24,10 @@ namespace MediaSDK
 	{
 		m_visual2D.SetScale(pos);
 	}
-
+	void CameraVisual2D::SetName(LPCSTR pzName)
+	{
+		m_szname = pzName;
+	}
 	XMFLOAT2 CameraVisual2D::GetTranslate()
 	{
 		return m_visual2D.GetTranslate();
@@ -40,9 +43,9 @@ namespace MediaSDK
 		return m_visual2D.GetScale();
 	}
 
-	LPCSTR	CameraVisual2D::GetVisualName()
+	LPCSTR	CameraVisual2D::GetName()
 	{
-		return TEXT("CameraVisual2D");
+		return m_szname.CSTR();
 	}
 
 	BOOL CameraVisual2D::Select(const VideoCapture::Name& name, const VideoCaptureParam& requestParam)
@@ -101,16 +104,17 @@ namespace MediaSDK
 		}
 		return TRUE;
 	}
+	BOOL CameraVisual2D::Draw(DX11Graphics2D& g)
+	{
+		FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
+		m_dx11.AllowBlend(FALSE, blendFactor);
+		return g.DrawImageYUY2BT601(m_visual2D);
+	}
 	void CameraVisual2D::Close()
 	{
 		m_capture.Stop();
 		m_capture.Deallocate();
 		m_visual2D.Destory();
-	}
-
-	DX11Element2D* CameraVisual2D::GetVisual2D()
-	{
-		return &m_visual2D;
 	}
 	void CameraVisual2D::OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*)
 	{

@@ -33,7 +33,10 @@ namespace MediaSDK
 	{
 		return m_visual2D.GetSize();
 	}
-
+	void GameVisual2D::SetName(LPCSTR pzName)
+	{
+		m_szname = pzName;
+	}
 	void GameVisual2D::SetScale(const XMFLOAT2& pos)
 	{
 		m_visual2D.SetScale(pos);
@@ -43,13 +46,9 @@ namespace MediaSDK
 		m_visual2D.SetTranslate(pos);
 	}
 
-	PCSTR GameVisual2D::GetVisualName()
+	PCSTR GameVisual2D::GetName()
 	{
-		return TEXT("GameVisual2D");
-	}
-	DX11Image2D* GameVisual2D::GetVisual2D()
-	{
-		return NULL;
+		return m_szname.CSTR();
 	}
 	BOOL GameVisual2D::Open()
 	{
@@ -130,5 +129,11 @@ namespace MediaSDK
 			}
 		}
 		return FALSE;
+	}
+	BOOL GameVisual2D::Draw(DX11Graphics2D& g)
+	{
+		FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
+		m_dx11.AllowBlend(TRUE, blendFactor);
+		return g.DrawImage(m_visual2D);
 	}
 }

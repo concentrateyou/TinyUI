@@ -29,7 +29,10 @@ namespace MediaSDK
 	{
 		return m_visual2D.GetSize();
 	}
-
+	void MonitorVisual2D::SetName(LPCSTR pzName)
+	{
+		m_szNAME = pzName;
+	}
 	void MonitorVisual2D::SetTranslate(const XMFLOAT2& pos)
 	{
 		m_visual2D.SetTranslate(pos);
@@ -97,17 +100,23 @@ namespace MediaSDK
 		m_cursor2D.SetTranslate(XMFLOAT2(translate.x + static_cast<FLOAT>(pos.x) * scale.x, translate.y + static_cast<FLOAT>(pos.y) * scale.y));
 		return bRes;
 	}
+	BOOL MonitorVisual2D::Draw(DX11Graphics2D& g)
+	{
+		FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
+		m_dx11.AllowBlend(TRUE, blendFactor);
+		if (g.DrawImage(m_visual2D))
+		{
+			return g.DrawImage(m_cursor2D);
+		}
+		return FALSE;
+	}
 	void MonitorVisual2D::Close()
 	{
 		m_duplicator.Close();
 		m_visual2D.Destory();
 	}
-	LPCSTR	MonitorVisual2D::GetVisualName()
+	LPCSTR	MonitorVisual2D::GetName()
 	{
-		return TEXT("MonitorVisual2D");
-	}
-	DX11Image2D* MonitorVisual2D::GetVisual2D()
-	{
-		return &m_visual2D;
+		return m_szNAME.CSTR();
 	}
 }

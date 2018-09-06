@@ -17,12 +17,13 @@ namespace MediaSDK
 	public:
 		BOOL			Open() OVERRIDE;
 		BOOL			Tick(INT64& timestamp) OVERRIDE;
+		BOOL			Draw(DX11Graphics2D& g) OVERRIDE;
 		void			Close() OVERRIDE;
-		LPCSTR			GetVisualName() OVERRIDE;
-		DX11Image2D*	GetVisual2D() OVERRIDE;
+		LPCSTR			GetName() OVERRIDE;
 		XMFLOAT2		GetTranslate() OVERRIDE;
 		XMFLOAT2		GetSize() OVERRIDE;
 		XMFLOAT2		GetScale() OVERRIDE;
+		void			SetName(LPCSTR pzName) OVERRIDE;
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
@@ -30,6 +31,7 @@ namespace MediaSDK
 		void			OnVideo(BYTE* bits, LONG size, REFERENCE_TIME timestamp);
 	private:
 		TinyString					m_szURL;
+		TinyString					m_szNAME;
 		LAVVideoFormat				m_vF;
 		LAVAudioFormat				m_aF;
 		TinyLock					m_lock;

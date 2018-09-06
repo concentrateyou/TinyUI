@@ -16,16 +16,18 @@ namespace MediaSDK
 	public:
 		BOOL			Open() OVERRIDE;
 		BOOL			Tick(INT64& timestamp) OVERRIDE;
+		BOOL			Draw(DX11Graphics2D& graphice2D) OVERRIDE;
 		void			Close() OVERRIDE;
-		LPCSTR			GetVisualName() OVERRIDE;
-		DX11Image2D*	GetVisual2D() OVERRIDE;
+		LPCSTR			GetName() OVERRIDE;
 		XMFLOAT2		GetTranslate() OVERRIDE;
 		XMFLOAT2		GetSize() OVERRIDE;
 		XMFLOAT2		GetScale() OVERRIDE;
+		void			SetName(LPCSTR pzName) OVERRIDE;
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
 		TinyString		m_szFile;
+		TinyString		m_szNAME;
 		DX11&			m_dx11;
 		DX11Image2D		m_visual2D;
 	};

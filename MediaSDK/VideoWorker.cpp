@@ -153,40 +153,7 @@ namespace MediaSDK
 			INT64 timestamp = 0;
 			if (visual2D->Tick(timestamp))
 			{
-				DX11Element2D* image2D = visual2D->GetVisual2D();
-				if (visual2D->IsKindOf(RUNTIME_CLASS(CameraVisual2D)))
-				{
-					FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
-					m_dx11.AllowBlend(FALSE, blendFactor);
-					if (image2D->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
-					{
-						m_display.DrawImage(*static_cast<DX11Image2D*>(image2D));
-					}
-					if (image2D->IsKindOf(RUNTIME_CLASS(DX11YUY2Video)))
-					{
-						m_display.DrawImageYUY2BT601(*static_cast<DX11YUY2Video*>(image2D));
-					}
-				}
-				if (visual2D->IsKindOf(RUNTIME_CLASS(MonitorVisual2D)))
-				{
-					FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
-					m_dx11.AllowBlend(TRUE, blendFactor);
-					if (image2D->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
-					{
-						m_display.DrawImage(*static_cast<DX11Image2D*>(image2D));
-					}
-					MonitorVisual2D* visual = static_cast<MonitorVisual2D*>(visual2D);
-					m_display.DrawImage(visual->GetCursor());
-				}
-				if (visual2D->IsKindOf(RUNTIME_CLASS(ImageVisual2D)))
-				{
-					FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
-					m_dx11.AllowBlend(TRUE, blendFactor);
-					if (image2D->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
-					{
-						m_display.DrawImage(*static_cast<DX11Image2D*>(image2D));
-					}
-				}
+				visual2D->Draw(m_display);
 			}
 		}
 		m_display.EndDraw();

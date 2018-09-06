@@ -13,10 +13,6 @@ namespace DXFramework
 	DX11Graphics2D::~DX11Graphics2D()
 	{
 	}
-	DX11& DX11Graphics2D::GetDX11()
-	{
-		return m_dx11;
-	}
 	BOOL DX11Graphics2D::IsEmpty() const
 	{
 		return m_render2D == NULL || m_renderView == NULL;

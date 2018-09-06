@@ -49,7 +49,10 @@ namespace MediaSDK
 	{
 		m_visual2D.SetScale(pos);
 	}
-
+	void StreamVisual2D::SetName(LPCSTR pzName)
+	{
+		m_szNAME = pzName;
+	}
 	BOOL StreamVisual2D::Open()
 	{
 		m_player.EVENT_AUDIO += Delegate<void(BYTE*, LONG, REFERENCE_TIME)>(this, &StreamVisual2D::OnAudio);
@@ -82,6 +85,10 @@ namespace MediaSDK
 		}*/
 		return TRUE;
 	}
+	BOOL StreamVisual2D::Draw(DX11Graphics2D& g)
+	{
+		return TRUE;
+	}
 
 	void StreamVisual2D::Close()
 	{
@@ -89,15 +96,11 @@ namespace MediaSDK
 		m_visual2D.Destory();
 	}
 
-	LPCSTR StreamVisual2D::GetVisualName()
+	LPCSTR StreamVisual2D::GetName()
 	{
 		return TEXT("StreamVisual2D");
 	}
 
-	DX11Image2D* StreamVisual2D::GetVisual2D()
-	{
-		return &m_visual2D;
-	}
 	void StreamVisual2D::OnAudio(BYTE* bits, LONG size, REFERENCE_TIME timestamp)
 	{
 		const LAVAudioFormat& aF = m_player.GetAudioFormat();

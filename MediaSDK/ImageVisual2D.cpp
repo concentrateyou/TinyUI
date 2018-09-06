@@ -28,7 +28,10 @@ namespace MediaSDK
 	{
 		return m_visual2D.GetScale();
 	}
-
+	void ImageVisual2D::SetName(LPCSTR pzName)
+	{
+		m_szNAME = pzName;
+	}
 	void ImageVisual2D::SetTranslate(const XMFLOAT2& pos)
 	{
 		m_visual2D.SetTranslate(pos);
@@ -57,19 +60,20 @@ namespace MediaSDK
 		return TRUE;
 	}
 
+	BOOL ImageVisual2D::Draw(DX11Graphics2D& g)
+	{
+		FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
+		m_dx11.AllowBlend(TRUE, blendFactor);
+		return g.DrawImage(m_visual2D);
+	}
+
 	void ImageVisual2D::Close()
 	{
 		m_visual2D.Destory();
 	}
 
-	LPCSTR ImageVisual2D::GetVisualName()
+	LPCSTR ImageVisual2D::GetName()
 	{
-		return TEXT("ImageVisual2D");
+		return m_szNAME.CSTR();
 	}
-
-	DX11Image2D* ImageVisual2D::GetVisual2D()
-	{
-		return &m_visual2D;
-	}
-
 }

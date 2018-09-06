@@ -18,7 +18,6 @@ namespace DXFramework
 	public:
 		DX11Graphics2D(DX11& dx11);
 		virtual ~DX11Graphics2D();
-		DX11&					GetDX11();
 		BOOL					InitializeShaders();
 		BOOL					Create();//ƒ¨»œ¥¥Ω®±≥æ∞¿Î∆¡
 		BOOL					Create(D3D11_TEXTURE2D_DESC& desc);
