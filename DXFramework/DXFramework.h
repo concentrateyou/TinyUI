@@ -24,9 +24,11 @@
 #include "IO/TinyThread.h"
 #include "IO/TinyRingQueue.h"
 #include "Render/TinyGDI.h"
+#include "Media/TinyMedia.h"
 #pragma comment(lib,"Dwmapi.lib")
 using namespace DirectX;
 using namespace TinyFramework;
+using namespace TinyFramework::Media;
 using namespace std;
 
 namespace DXFramework

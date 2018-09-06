@@ -16,7 +16,7 @@ namespace MediaSDK
 		virtual BOOL			Tick(INT64& timestamp) = 0;
 		virtual void			Close() = 0;
 		virtual	LPCSTR			GetVisualName() = 0;
-		virtual DX11Image2D*	GetVisual2D() = 0;
+		virtual DX11Element2D*	GetVisual2D() = 0;
 		virtual XMFLOAT2		GetSize() = 0;
 		virtual XMFLOAT2		GetTranslate() = 0;
 		virtual XMFLOAT2		GetScale() = 0;

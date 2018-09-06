@@ -8,7 +8,8 @@ namespace DXFramework
 	DX11Element2D::DX11Element2D()
 		:m_bFlipH(FALSE),
 		m_bFlipV(FALSE),
-		m_angle(0.0F)
+		m_angle(0.0F),
+		m_videoF(PIXEL_FORMAT_UNKNOWN)
 	{
 		m_size.x = m_size.y = 0.0F;
 		m_translate.x = m_translate.y = 0.0F;
@@ -33,6 +34,10 @@ namespace DXFramework
 	{
 		return m_translate;
 	}
+	VideoPixelFormat DX11Element2D::GetFormat() const
+	{
+		return m_videoF;
+	}
 	BOOL DX11Element2D::IsFlipH() const
 	{
 		return m_bFlipH;
@@ -56,6 +61,10 @@ namespace DXFramework
 	void DX11Element2D::SetTranslate(const XMFLOAT2& pos)
 	{
 		m_translate = pos;
+	}
+	void DX11Element2D::SetFormat(VideoPixelFormat vF)
+	{
+		m_videoF = vF;
 	}
 	void DX11Element2D::SetFlipH(BOOL bFlag)
 	{

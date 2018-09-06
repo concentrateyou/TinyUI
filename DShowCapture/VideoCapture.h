@@ -11,7 +11,7 @@ using namespace TinyFramework;
 namespace DShow
 {
 	/// <summary>
-	/// 视频捕获
+	/// 视频捕获 YUY2数据会有多个IMediaSample, RGB32只有一个IMediaSample
 	/// </summary>
 	class VideoCapture : public FilterObserver
 	{

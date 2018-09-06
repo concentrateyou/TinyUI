@@ -19,9 +19,8 @@ namespace MediaSDK
 		BOOL			Tick(INT64& timestamp) OVERRIDE;
 		void			Close() OVERRIDE;
 		LPCSTR			GetVisualName() OVERRIDE;
-		DX11Image2D*	GetVisual2D() OVERRIDE;
+		DX11Element2D*	GetVisual2D() OVERRIDE;
 		XMFLOAT2		GetSize() OVERRIDE;
-
 		XMFLOAT2		GetTranslate() OVERRIDE;
 		XMFLOAT2		GetScale() OVERRIDE;
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
@@ -31,7 +30,7 @@ namespace MediaSDK
 		void			OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*);
 	private:
 		DX11&						m_dx11;
-		DX11Image2D					m_visual2D;
+		DX11YUY2Video				m_visual2D;
 		VideoCapture				m_capture;
 		VideoCaptureParam			m_requestParam;
 		VideoCaptureFormat			m_current;

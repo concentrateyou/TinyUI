@@ -61,12 +61,12 @@ namespace MediaSDK
 			return FALSE;
 		m_current = m_capture.GetFormat();
 		TinySize size = m_current.GetSize();
-		if (!m_visual2D.Create(m_dx11, size.cx, size.cy, NULL, FALSE))
+		if (!m_visual2D.Create(m_dx11, size.cx, size.cy))
 		{
 			m_capture.Deallocate();
 			return FALSE;
 		}
-		m_visual2D.SetFlipV(TRUE);
+		m_visual2D.SetFormat(PIXEL_FORMAT_YUY2);
 		if (!m_capture.Start())
 			return FALSE;
 		return TRUE;
@@ -92,7 +92,7 @@ namespace MediaSDK
 		if (state != State_Running)
 			return FALSE;
 		CopySample();
-		if (m_sample.format == PIXEL_FORMAT_RGB32)
+		if (m_sample.format == PIXEL_FORMAT_YUY2)
 		{
 			if (m_visual2D.Copy(m_dx11, m_sample.data[0], m_sample.linesize[0]))
 			{
@@ -108,7 +108,7 @@ namespace MediaSDK
 		m_visual2D.Destory();
 	}
 
-	DX11Image2D* CameraVisual2D::GetVisual2D()
+	DX11Element2D* CameraVisual2D::GetVisual2D()
 	{
 		return &m_visual2D;
 	}
