@@ -24,7 +24,7 @@ namespace DXFramework
 		BOOL			IsEmpty() const;
 		BOOL			Create(DX11& dx11, INT cx, INT cy);
 		void			Destory();
-		BOOL			Copy(DX11& dx11, const BYTE* bits, UINT stride);
+		BOOL			Copy(DX11& dx11, const BYTE* bits, UINT32 linesize);
 		DX11Texture2D*	GetTexture();
 	public:
 		BOOL			DrawImage(DX11& dx11) OVERRIDE;
@@ -32,8 +32,8 @@ namespace DXFramework
 		BOOL			Initialize(DX11& dx11);
 		BOOL			Calculate(DX11& dx11);
 	private:
-		DX11Texture2D				m_texture;
 		VERTEXTYPE					m_vertexTypes[6];
+		DX11Texture2D				m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertex;
 		TinyComPtr<ID3D11Buffer>	m_index;
 	};

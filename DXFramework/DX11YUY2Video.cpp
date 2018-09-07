@@ -23,7 +23,7 @@ namespace DXFramework
 		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		desc.Width = (cx + 1) / 2;
+		desc.Width = cx;
 		desc.Height = cy;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
@@ -53,18 +53,31 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
-	BOOL DX11YUY2Video::Copy(DX11& dx11, const BYTE* bits, UINT stride)
+	BOOL DX11YUY2Video::Copy(DX11& dx11, const BYTE* bits, UINT32 linesize)
 	{
 		D3D11_MAPPED_SUBRESOURCE ms;
 		ZeroMemory(&ms, sizeof(ms));
 		if (!m_texture.Map(dx11, ms))
 			return FALSE;
+		//442->444
 		BYTE*	dst = static_cast<BYTE*>(ms.pData);
-		INT		cy = static_cast<INT>(m_size.y);
-		UINT	linesize = min(ms.RowPitch, stride);
-		for (INT i = 0; i < cy; i++)
+		UINT32	cy = static_cast<UINT32>(m_size.y);
+		DWORD size = linesize >> 2;
+		for (UINT32 y = 0; y < cy; y++)
 		{
-			memcpy(dst + i * ms.RowPitch, bits + i * stride, linesize);
+			LPDWORD output = (LPDWORD)(dst + (y * ms.RowPitch));
+			LPDWORD input1 = (LPDWORD)(bits + (y * linesize));
+			LPDWORD input2 = input1 + size;
+			while (input1 < input2)
+			{
+				register DWORD dw = *input1;
+				output[0] = dw;
+				dw &= 0xFFFFFF00;
+				dw |= BYTE(dw >> 16);
+				output[1] = dw;
+				output += 2;
+				input1++;
+			}
 		}
 		m_texture.Unmap(dx11);
 		return TRUE;

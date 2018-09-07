@@ -1,4 +1,4 @@
-Texture2D	theTexture : register(t0);
+Texture2D	 theTexture : register(t0);
 SamplerState theSampler : register(s0);
 
 struct PixelInputType
@@ -8,22 +8,18 @@ struct PixelInputType
     float4 color : COLOR0;
 };
 
+static const float4x4 yuvMat = {
+	1.164384f,  1.164384f,  1.164384f,  0.000000f,
+	0.000000f,  -0.391762f, 2.017232f,  0.000000f,
+	1.596027f,  -0.812968f, 0.000000f,  0.000000f,
+	-0.874202f,  0.531668f, -1.085631f, 1.000000f
+};
+
 float4 PS_MAIN(PixelInputType input) : SV_TARGET
 {
-	const float3 offset = {-0.0627450980392157, -0.5019607843137255, -0.5019607843137255};
-    const float3 Rcoeff = {1.1644,  0.0000,  1.5960};
-    const float3 Gcoeff = {1.1644, -0.3918, -0.8130};
-    const float3 Bcoeff = {1.1644,  2.0172,  0.0000};
-
-    float4 textureColor;
-	float3 yuv;
-	yuv.x = theTexture.Sample(theSampler, input.tex).r;
-    yuv.y = theTexture.Sample(theSampler, input.tex).g;
-	yuv.z = theTexture.Sample(theSampler, input.tex).a;
-	yuv += offset;
-	textureColor.r = dot(yuv, Rcoeff);
-	textureColor.g = dot(yuv, Gcoeff);
-	textureColor.b = dot(yuv, Bcoeff);
-	textureColor.a = 1.0f;
-	return textureColor * input.color;
+	float4 yuvx = theTexture.Sample(theSampler, input.tex).rgab;
+    float4 color = mul(float4(yuvx.xyz, 1.0), yuvMat);
+	color = saturate(color);
+	color = color * input.color;
+    return color;
 };
