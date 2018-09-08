@@ -19,7 +19,8 @@ namespace TinyFramework
 		public:
 			TinyMemoryAlloc();
 			~TinyMemoryAlloc();
-			UINT32	GetElementSize();
+			BOOL	IsEmpty() const;
+			UINT32	GetElementSize() const;
 			void	Initialize(UINT32 count, UINT32 size = 64);
 		public:
 			void*	Alloc();
@@ -46,6 +47,7 @@ namespace TinyFramework
 			TinyMemoryPool();
 			~TinyMemoryPool();
 		public:
+			void	Initialize(UINT32 count, UINT32 size);
 			void*	Alloc();
 			void	Free(void* p);
 			void	FreeAll();

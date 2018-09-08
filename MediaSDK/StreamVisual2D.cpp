@@ -114,9 +114,9 @@ namespace MediaSDK
 		ZeroMemory(&sample, sizeof(sample));
 		sample.cx = static_cast<UINT32>(sizeT.cx);
 		sample.cy = static_cast<UINT32>(sizeT.cy);
-		sample.format = vF.GetFormat();
+		sample.iFormat = vF.GetFormat();
 		sample.timestamp = timestamp;
-		switch (sample.format)
+		switch (sample.iFormat)
 		{
 		case PIXEL_FORMAT_RGB32:
 			sample.data[0] = bits;

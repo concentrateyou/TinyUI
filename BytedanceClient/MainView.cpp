@@ -248,14 +248,19 @@ namespace Bytedance
 		VideoCaptureParam param;
 		for (INT i = 0; i < formats.size(); i++)
 		{
-			if (formats[i].GetSize().cx == 640 &&
+			if (formats[i].GetRate() > 15.0F &&
+				formats[i].GetSize().cx == 640 &&
 				formats[i].GetSize().cy == 360 &&
-				formats[i].GetFormat() == Media::PIXEL_FORMAT_RGB24)
+				(formats[i].GetFormat() == Media::PIXEL_FORMAT_MJPEG ||
+					formats[i].GetFormat() == Media::PIXEL_FORMAT_RGB24 ||
+					formats[i].GetFormat() == Media::PIXEL_FORMAT_RGB32))
 			{
 				param.RequestFormat = formats[i];
 				break;
 			}
 		}
+		param.RequestFormat.SetFormat(Media::PIXEL_FORMAT_YUY2);
+		param.RequestFormat.SetSize({ 640,360 });
 		visual2D->Select(names[0], param);
 		visual2D->Open();
 		TinyRectangle client;

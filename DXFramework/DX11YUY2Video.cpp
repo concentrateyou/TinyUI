@@ -59,7 +59,6 @@ namespace DXFramework
 		ZeroMemory(&ms, sizeof(ms));
 		if (!m_texture.Map(dx11, ms))
 			return FALSE;
-		//442->444
 		BYTE*	dst = static_cast<BYTE*>(ms.pData);
 		UINT32	cy = static_cast<UINT32>(m_size.y);
 		DWORD size = linesize >> 2;

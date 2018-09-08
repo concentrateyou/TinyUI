@@ -58,7 +58,7 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	m_dx11.Initialize(m_hWND, 1, 1);
 	m_graphics.InitializeShaders();
 	m_graphics.Create();
-	m_image2D.Load(m_graphics.GetDX11(), "D:\\timg.jpg");
+	m_image2D.Load(m_dx11, "D:\\timg.jpg");
 	//m_image2D.SetScale(XMFLOAT2(0.2F, 0.2F));
 	m_graphics.BeginDraw();
 	/*XMFLOAT2 points[4];

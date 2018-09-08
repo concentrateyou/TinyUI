@@ -74,7 +74,7 @@ namespace MediaSDK
 			return FALSE;
 		return TRUE;
 	}
-	void CameraVisual2D::CopySample()
+	BOOL CameraVisual2D::CopySample()
 	{
 		TinyAutoLock autolock(m_lock);
 		if (m_samples.GetSize() > 0)
@@ -83,7 +83,9 @@ namespace MediaSDK
 			const VideoSample& sample = m_samples.GetAt(pos);
 			memcpy_s(&m_sample, sizeof(VideoSample), &sample, sizeof(VideoSample));
 			m_samples.RemoveAt(pos);
+			return TRUE;
 		}
+		return FALSE;
 	}
 	BOOL CameraVisual2D::Tick(INT64& timestamp)
 	{
@@ -94,13 +96,19 @@ namespace MediaSDK
 		m_capture.GetState(state);
 		if (state != State_Running)
 			return FALSE;
-		CopySample();
-		if (m_sample.format == PIXEL_FORMAT_YUY2)
+		BOOL bRes = CopySample();
+		if (m_sample.iFormat == PIXEL_FORMAT_UNKNOWN)
+			return FALSE;
+		if (m_sample.iFormat == PIXEL_FORMAT_YUY2)
 		{
 			if (m_visual2D.Copy(m_dx11, m_sample.data[0], m_sample.linesize[0]))
 			{
 				timestamp = m_sample.timestamp;
 			}
+		}
+		if (bRes)
+		{
+			m_pool.Free(m_sample.data[0]);
 		}
 		return TRUE;
 	}
@@ -118,26 +126,30 @@ namespace MediaSDK
 	}
 	void CameraVisual2D::OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*)
 	{
+		if (m_pool.IsEmpty())
+		{
+			m_pool.Initialize(3, size);
+		}
 		VideoSample sample;
 		ZeroMemory(&sample, sizeof(sample));
 		TinySize sizeT = m_current.GetSize();
 		sample.cx = static_cast<UINT32>(sizeT.cx);
 		sample.cy = static_cast<UINT32>(sizeT.cy);
-		sample.format = m_current.GetFormat();
+		sample.iFormat = m_current.GetFormat();
+		sample.size = size;
+		sample.data[0] = static_cast<BYTE*>(m_pool.Alloc());
+		memcpy_s(sample.data[0], size, bits, size);
 		sample.timestamp = timestamp;
-		switch (sample.format)
+		switch (sample.iFormat)
 		{
 		case PIXEL_FORMAT_RGB32:
-			sample.data[0] = bits;
 			sample.linesize[0] = sample.cx * 4;
 			break;
 		case PIXEL_FORMAT_YUY2:
 		case PIXEL_FORMAT_UYVY:
-			sample.data[0] = bits;
 			sample.linesize[0] = sample.cx * 2;
 			break;
 		case PIXEL_FORMAT_I420:
-			sample.data[0] = bits;
 			sample.data[1] = sample.data[0] + (sample.cx * sample.cy);
 			sample.data[2] = sample.data[1] + (sample.cx * sample.cy / 4);
 			sample.linesize[0] = sample.cx;
@@ -145,7 +157,6 @@ namespace MediaSDK
 			sample.linesize[2] = sample.cx / 2;
 			break;
 		case PIXEL_FORMAT_YV12:
-			sample.data[0] = bits;
 			sample.data[2] = sample.data[0] + (sample.cx *  sample.cy);
 			sample.data[1] = sample.data[2] + (sample.cx *  sample.cy / 4);
 			sample.linesize[0] = sample.cx;
@@ -153,7 +164,6 @@ namespace MediaSDK
 			sample.linesize[2] = sample.cx / 2;
 			break;
 		case PIXEL_FORMAT_NV12:
-			sample.data[0] = bits;
 			sample.data[1] = sample.data[0] + (sample.cx *  sample.cy);
 			sample.linesize[0] = sample.cx;
 			sample.linesize[1] = sample.cx;

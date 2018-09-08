@@ -19,19 +19,19 @@ namespace TinyFramework
 		{
 			FreeAll();
 		}
-		UINT32 TinyMemoryAlloc::GetElementSize()
+		BOOL TinyMemoryAlloc::IsEmpty() const
+		{
+			return m_pBlocks == NULL;
+		}
+		UINT32 TinyMemoryAlloc::GetElementSize() const
 		{
 			return m_size;
 		}
 		void TinyMemoryAlloc::Initialize(UINT32 count, UINT32 size)
 		{
 			ASSERT(size >= sizeof(TinyNode));
-			if (size < sizeof(TinyNode))
-				size = sizeof(TinyNode);
-			if (count <= 1)
-				count = 3;
 			m_size = size;
-			m_count = count;
+			m_count = count <= 1 ? 3 : count;
 			m_pNodeFree = NULL;
 			m_pBlocks = NULL;
 		}
@@ -54,7 +54,7 @@ namespace TinyFramework
 				TinyPlex* pNewBlock = TinyPlex::Create(m_pBlocks, m_count, m_size);
 				TinyNode* pNode = (TinyNode*)pNewBlock->data();
 				(BYTE*&)pNode += (m_size * m_count) - m_size;
-				for (UINT32 i = m_count - 1; i >= 0; i--, (BYTE*&)pNode -= m_size)
+				for (INT32 i = m_count - 1; i >= 0; i--, (BYTE*&)pNode -= m_size)
 				{
 					pNode->pNext = m_pNodeFree;
 					m_pNodeFree = pNode;
@@ -99,13 +99,19 @@ namespace TinyFramework
 			}
 		}
 
+		void TinyMemoryPool::Initialize(UINT32 count, UINT32 size)
+		{
+			base::Initialize(count, size + sizeof(TinyNode));
+		}
+
 		void* TinyMemoryPool::Alloc()
 		{
 			EnterCriticalSection(&m_cs);
-			void* ps = NULL;
+			BYTE* ps = NULL;
 			try
 			{
-				ps = base::Alloc();
+				ps = static_cast<BYTE*>(base::Alloc());
+				ps += sizeof(TinyNode);
 			}
 			catch (...)
 			{
@@ -113,7 +119,7 @@ namespace TinyFramework
 				throw;
 			}
 			LeaveCriticalSection(&m_cs);
-			return ps;
+			return static_cast<void*>(ps);
 		}
 
 		void TinyMemoryPool::Free(void* p)
@@ -123,7 +129,9 @@ namespace TinyFramework
 				EnterCriticalSection(&m_cs);
 				__try
 				{
-					base::Free(p);
+					BYTE* ps = static_cast<BYTE*>(p);
+					ps -= sizeof(TinyNode);
+					base::Free(static_cast<void*>(ps));
 				}
 				__finally
 				{
