@@ -62,10 +62,6 @@ namespace DXFramework
 	{
 		m_translate = pos;
 	}
-	void DX11Element2D::SetFormat(VideoPixelFormat vF)
-	{
-		m_videoF = vF;
-	}
 	void DX11Element2D::SetFlipH(BOOL bFlag)
 	{
 		m_bFlipH = bFlag;

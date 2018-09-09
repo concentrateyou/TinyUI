@@ -26,14 +26,8 @@ namespace TinyFramework
 			BOOL	Initialize(DWORD count, DWORD esize);
 			DWORD	Read(void* data, DWORD count);
 			DWORD	Write(const void* data, DWORD count);
-			/// <summary>
-			/// 可读取的数据
-			/// </summary>
-			DWORD	GetAvailableOUT();
-			/// <summary>
-			/// 可写入的数据
-			/// </summary>
-			DWORD	GetAvailableIN();
+			DWORD	GetAvailableOUT();//可读取的数据
+			DWORD	GetAvailableIN();//可写入的数据
 		private:
 			LONG	MoveReadPtr(LONG count);
 		public:

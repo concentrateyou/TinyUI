@@ -69,23 +69,23 @@ namespace MediaSDK
 			m_capture.Deallocate();
 			return FALSE;
 		}
-		m_visual2D.SetFormat(PIXEL_FORMAT_YUY2);
 		if (!m_capture.Start())
+		{
+			m_capture.Deallocate();
 			return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL CameraVisual2D::CopySample()
 	{
 		TinyAutoLock autolock(m_lock);
-		if (m_samples.GetSize() > 0)
-		{
-			ITERATOR pos = m_samples.First();
-			const VideoSample& sample = m_samples.GetAt(pos);
-			memcpy_s(&m_sample, sizeof(VideoSample), &sample, sizeof(VideoSample));
-			m_samples.RemoveAt(pos);
-			return TRUE;
-		}
-		return FALSE;
+		if (m_samples.GetSize() <= 0)
+			return FALSE;
+		ITERATOR pos = m_samples.First();
+		const VideoSample& sample = m_samples.GetAt(pos);
+		memcpy_s(&m_sample, sizeof(VideoSample), &sample, sizeof(VideoSample));
+		m_samples.RemoveAt(pos);
+		return TRUE;
 	}
 	BOOL CameraVisual2D::Tick(INT64& timestamp)
 	{
@@ -97,14 +97,18 @@ namespace MediaSDK
 		if (state != State_Running)
 			return FALSE;
 		BOOL bRes = CopySample();
-		if (m_sample.iFormat == PIXEL_FORMAT_UNKNOWN)
+		switch (m_sample.iFormat)
+		{
+		case PIXEL_FORMAT_UNKNOWN:
 			return FALSE;
-		if (m_sample.iFormat == PIXEL_FORMAT_YUY2)
+		case PIXEL_FORMAT_YUY2:
 		{
 			if (m_visual2D.Copy(m_dx11, m_sample.data[0], m_sample.linesize[0]))
 			{
 				timestamp = m_sample.timestamp;
 			}
+		}
+		break;
 		}
 		if (bRes)
 		{

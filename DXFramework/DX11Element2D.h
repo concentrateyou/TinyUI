@@ -22,7 +22,6 @@ namespace DXFramework
 		void				SetRotate(FLOAT angle);
 		void				SetScale(const XMFLOAT2& scale);
 		void				SetTranslate(const XMFLOAT2& pos);
-		void				SetFormat(VideoPixelFormat vF);
 		void				SetFlipH(BOOL bFlag);
 		void				SetFlipV(BOOL bFlag);
 	public:

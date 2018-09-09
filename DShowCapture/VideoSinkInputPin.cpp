@@ -69,6 +69,11 @@ namespace DShow
 		{
 			m_response.SetRate(m_request.GetRate());
 		}
+		if (subType == MEDIASUBTYPE_RGB24 &&pvi->bmiHeader.biCompression == BI_RGB)
+		{
+			m_response.SetFormat(PIXEL_FORMAT_RGB24);
+			return NOERROR;
+		}
 		if (subType == MEDIASUBTYPE_RGB32 &&pvi->bmiHeader.biCompression == BI_RGB)
 		{
 			m_response.SetFormat(PIXEL_FORMAT_RGB32);

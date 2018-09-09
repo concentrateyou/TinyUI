@@ -146,11 +146,6 @@ namespace DShow
 					{
 						vih->AvgTimePerFrame = SecondsToReferenceTime / static_cast<REFERENCE_TIME>(request.GetRate());
 					}
-					VideoPixelFormat vF = request.GetFormat();
-					if (vF == PIXEL_FORMAT_RGB24 || vF == PIXEL_FORMAT_MJPEG)
-					{
-						request.SetFormat(PIXEL_FORMAT_RGB32);
-					}
 					m_sinkFilter->SetRequestFormat(request);
 					hRes = streamConfig->SetFormat(mediaType.Ptr());
 					if (hRes != S_OK)
