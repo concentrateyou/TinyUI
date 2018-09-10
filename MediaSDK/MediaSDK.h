@@ -28,6 +28,8 @@ using namespace LAV;
 namespace MediaSDK
 {
 #define MAX_AV_PLANES 8
+
+	BOOL WINAPI SleepNS(UINT64 ns);
 }
 
 

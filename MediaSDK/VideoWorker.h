@@ -31,9 +31,11 @@ namespace MediaSDK
 	private:
 		void		OnMessagePump();
 		void		OnDisplay();
-		void		OnOutputs();
+		void		OnOutput();
+		void		OnSleep(UINT64& time, UINT64 intervalNS);
 	private:
 		BOOL						m_stop;
+		DOUBLE                      m_videoFPS;//ʵʱFPS
 		UINT32						m_texture;
 		TinyLock					m_lock;
 		DX11						m_dx11;

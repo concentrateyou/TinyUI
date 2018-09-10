@@ -7,7 +7,8 @@ namespace MediaSDK
 		:m_manager(manager),
 		m_display(m_dx11),
 		m_stop(FALSE),
-		m_texture(0)
+		m_texture(0),
+		m_videoFPS(0.0)
 	{
 
 	}
@@ -129,23 +130,57 @@ namespace MediaSDK
 		}
 		return NULL;
 	}
+	void VideoWorker::OnSleep(UINT64& time, UINT64 intervalNS)
+	{
+		UINT64 current = time;
+		UINT64 t = current + intervalNS;
+		INT count;
+		if (SleepNS(t))
+		{
+			time = t;
+			count = 1;
+		}
+		else
+		{
+			count = (INT)((TinyTime::Now() - current) / intervalNS);
+			time = current + intervalNS * count;
+		}
+	}
 	void VideoWorker::OnMessagePump()
 	{
+		TinyPerformanceTime time;
+		UINT32 totalFrames = 0;
+		UINT32 totalFPSFrames = 0;
+		UINT64 totalNS = 0;
+		UINT64 totalFPSNS = 0;
 		UINT64 latestNS = 0;
+		UINT64 interval = (UINT64)(1000000000.0 * ((DOUBLE)1 / (DOUBLE)30));
 		UINT64 videoNS = TinyTime::Now();
 		for (;;)
 		{
 			if (m_stop)
 				break;
 			UINT64 beginNS = TinyTime::Now();
+			latestNS = videoNS;
 			OnDisplay();
-			m_dx11.Present();
-			Sleep(30);
+			OnOutput();
+			OnSleep(videoNS, interval);
+			UINT64 costNS = TinyTime::Now() - beginNS;
+			totalNS += costNS;
+			totalFPSNS += (videoNS - latestNS);
+			totalFPSFrames++;
+			if (totalFPSNS >= 1000000000ULL)
+			{
+				m_videoFPS = (DOUBLE)totalFPSFrames / ((DOUBLE)totalFPSNS / 1000000000.0);
+				totalNS = 0;
+				totalFPSNS = 0;
+				totalFPSFrames = 0;
+			}
 		}
 	}
 	void VideoWorker::OnDisplay()
 	{
-		TinyAutoLock autolock(m_lock);
+		m_lock.Lock();
 		m_display.BeginDraw();
 		for (INT i = 0; i < m_visuals.GetSize(); i++)
 		{
@@ -157,8 +192,10 @@ namespace MediaSDK
 			}
 		}
 		m_display.EndDraw();
+		m_lock.Unlock();
+		m_dx11.Present();
 	}
-	void VideoWorker::OnOutputs()
+	void VideoWorker::OnOutput()
 	{
 
 	}
