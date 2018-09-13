@@ -146,6 +146,7 @@ namespace MediaSDK
 			time = current + intervalNS * count;
 		}
 	}
+
 	void VideoWorker::OnMessagePump()
 	{
 		TinyPerformanceTime time;

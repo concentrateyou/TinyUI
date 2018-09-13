@@ -27,19 +27,21 @@ namespace MediaSDK
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
-		BOOL			CopySample();
+		BOOL			Copy(VideoSample& sample, INT64& timestamp);
+		BOOL			Pop(VideoSample& sample);
+		void			Push(BYTE* bits, LONG size, REFERENCE_TIME timestamp);
 		void			OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*);
 	private:
 		DX11&						m_dx11;
 		DX11YUY2Video				m_visual2D;
-		VideoCapture				m_capture;
-		VideoCaptureParam			m_requestParam;
-		VideoCaptureFormat			m_current;
-		VideoSample					m_sample;
 		TinyString					m_szname;
 		TinyLock					m_lock;
 		TinyMemoryPool				m_pool;
 		TinyLinkList<VideoSample>	m_samples;
+		VideoCapture				m_capture;
+		VideoCaptureParam			m_requestParam;
+		VideoCaptureFormat			m_current;
+		VideoSample					m_sample;
 	};
 }
 

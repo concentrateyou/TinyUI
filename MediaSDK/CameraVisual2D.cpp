@@ -63,8 +63,8 @@ namespace MediaSDK
 		if (!m_capture.Allocate(m_requestParam))
 			return FALSE;
 		m_current = m_capture.GetFormat();
-		TinySize size = m_current.GetSize();
-		if (!m_visual2D.Create(m_dx11, size.cx, size.cy))
+		TinySize sizeT = m_current.GetSize();
+		if (!m_visual2D.Create(m_dx11, sizeT.cx, sizeT.cy))
 		{
 			m_capture.Deallocate();
 			return FALSE;
@@ -76,17 +76,6 @@ namespace MediaSDK
 		}
 		return TRUE;
 	}
-	BOOL CameraVisual2D::CopySample()
-	{
-		TinyAutoLock autolock(m_lock);
-		if (m_samples.GetSize() <= 0)
-			return FALSE;
-		ITERATOR pos = m_samples.First();
-		const VideoSample& sample = m_samples.GetAt(pos);
-		memcpy_s(&m_sample, sizeof(VideoSample), &sample, sizeof(VideoSample));
-		m_samples.RemoveAt(pos);
-		return TRUE;
-	}
 	BOOL CameraVisual2D::Tick(INT64& timestamp)
 	{
 		timestamp = -1;
@@ -96,25 +85,17 @@ namespace MediaSDK
 		m_capture.GetState(state);
 		if (state != State_Running)
 			return FALSE;
-		BOOL bRes = CopySample();
-		switch (m_sample.iFormat)
+		BOOL bRes = FALSE;
+		if (Pop(m_sample))
 		{
-		case PIXEL_FORMAT_UNKNOWN:
-			return FALSE;
-		case PIXEL_FORMAT_YUY2:
-		{
-			if (m_visual2D.Copy(m_dx11, m_sample.data[0], m_sample.linesize[0]))
-			{
-				timestamp = m_sample.timestamp;
-			}
-		}
-		break;
-		}
-		if (bRes)
-		{
+			bRes = Copy(m_sample, timestamp);
 			m_pool.Free(m_sample.data[0]);
 		}
-		return TRUE;
+		else
+		{
+			bRes = Copy(m_sample, timestamp);
+		}
+		return bRes;
 	}
 	BOOL CameraVisual2D::Draw(DX11Graphics2D& g)
 	{
@@ -128,7 +109,35 @@ namespace MediaSDK
 		m_capture.Deallocate();
 		m_visual2D.Destory();
 	}
-	void CameraVisual2D::OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*)
+	BOOL CameraVisual2D::Copy(VideoSample& sample, INT64& timestamp)
+	{
+		switch (sample.iFormat)
+		{
+		case PIXEL_FORMAT_UNKNOWN:
+			return FALSE;
+		case PIXEL_FORMAT_YUY2:
+		{
+			if (m_visual2D.Copy(m_dx11, sample.data[0], sample.linesize[0]))
+			{
+				timestamp = sample.timestamp;
+			}
+		}
+		break;
+		}
+		return TRUE;
+	}
+	BOOL CameraVisual2D::Pop(VideoSample& sample)
+	{
+		TinyAutoLock autolock(m_lock);
+		if (m_samples.GetSize() <= 0)
+			return FALSE;
+		ITERATOR pos = m_samples.First();
+		const VideoSample& sampleT = m_samples.GetAt(pos);
+		memcpy_s(&sample, sizeof(VideoSample), &sampleT, sizeof(VideoSample));
+		m_samples.RemoveAt(pos);
+		return TRUE;
+	}
+	void CameraVisual2D::Push(BYTE* bits, LONG size, REFERENCE_TIME timestamp)
 	{
 		if (m_pool.IsEmpty())
 		{
@@ -177,5 +186,9 @@ namespace MediaSDK
 		}
 		TinyAutoLock autolock(m_lock);
 		m_samples.InsertLast(sample);
+	}
+	void CameraVisual2D::OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*)
+	{
+		Push(bits, size, timestamp);
 	}
 }
