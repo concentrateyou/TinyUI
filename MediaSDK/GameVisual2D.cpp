@@ -60,8 +60,14 @@ namespace MediaSDK
 	}
 	BOOL GameVisual2D::Tick(INT64& timestamp)
 	{
+		if (!m_captureRunner.IsCapturing())
+			return FALSE;
 		SharedCaptureDATA* pCaptureDATA = m_captureRunner.GetSharedCaptureDATA();
-		if (pCaptureDATA != NULL && pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
+		if (!pCaptureDATA)
+			return FALSE;
+		switch (pCaptureDATA->CaptureType)
+		{
+		case CAPTURETYPE_MEMORYTEXTURE:
 		{
 			SharedTextureDATA* pTextureDATA = m_captureRunner.GetSharedTextureDATA(pCaptureDATA->MapSize);
 			if (pTextureDATA != NULL)
@@ -82,7 +88,9 @@ namespace MediaSDK
 							{
 								XMFLOAT2 size = m_visual2D.GetSize();
 								if (pCaptureDATA->Pitch == ms.RowPitch)
+								{
 									memcpy(ms.pData, m_textures[dwCurrentID], pCaptureDATA->Pitch * static_cast<INT>(size.y));
+								}
 								else
 								{
 									UINT bestPitch = std::min<UINT>(pCaptureDATA->Pitch, ms.RowPitch);
@@ -106,7 +114,9 @@ namespace MediaSDK
 							{
 								XMFLOAT2 size = m_visual2D.GetSize();
 								if (pCaptureDATA->Pitch == ms.RowPitch)
+								{
 									memcpy(ms.pData, m_textures[dwNextID], pCaptureDATA->Pitch * static_cast<INT>(size.y));
+								}
 								else
 								{
 									UINT bestPitch = std::min<UINT>(pCaptureDATA->Pitch, ms.RowPitch);
@@ -124,16 +134,19 @@ namespace MediaSDK
 							break;
 						}
 					} while (0);
-					return TRUE;
 				}
 			}
 		}
-		return FALSE;
+		break;
+		case CAPTURETYPE_SHAREDTEXTURE:
+			break;
+		}
+		return TRUE;
 	}
 	BOOL GameVisual2D::Draw(DX11Graphics2D& g)
 	{
 		FLOAT blendFactor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
-		m_dx11.AllowBlend(TRUE, blendFactor);
+		m_dx11.AllowBlend(FALSE, blendFactor);
 		return g.DrawImage(m_visual2D);
 	}
 }

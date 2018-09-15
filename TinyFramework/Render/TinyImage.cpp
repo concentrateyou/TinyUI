@@ -370,10 +370,6 @@ namespace TinyFramework
 			LOG(ERROR) << "stbi_load_from_file FAIL";
 			goto _ERROR;
 		}
-		else
-		{
-			LOG(INFO) << "stbi_load_from_file OK";
-		}
 		BITMAPINFO bmi;
 		memset(&bmi, 0, sizeof(BITMAPINFO));
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);

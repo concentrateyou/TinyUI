@@ -158,12 +158,19 @@ namespace DXFramework
 	}
 	BOOL DX11Texture2D::Map(DX11& dx11, D3D11_MAPPED_SUBRESOURCE& ms, BOOL bReadoly)
 	{
-		HRESULT hRes = dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms);
-		return SUCCEEDED(hRes);
+		if (m_texture2D != NULL)
+		{
+			HRESULT hRes = dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms);
+			return SUCCEEDED(hRes);
+		}
+		return FALSE;
 	}
 	void DX11Texture2D::Unmap(DX11& dx11)
 	{
-		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
+		if (m_texture2D != NULL)
+		{
+			dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
+		}
 	}
 	BOOL DX11Texture2D::SaveAs(DX11& dx11, const CHAR* pzFile, IMAGE_FILE_FORMAT format)
 	{

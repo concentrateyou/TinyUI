@@ -147,42 +147,42 @@ namespace GraphicsCapture
 	public:
 		DX8CaptureDATA();
 		~DX8CaptureDATA();
-		BOOL Create(IDirect3DDevice8* pThis, INT cx, INT cy, D3DFORMAT format);
-		void Destory();
-		BOOL Update();
-		BOOL Enter();
-		void Leave();
-		void SetCopying(BOOL bCopy);
-		BOOL IsCopying() const;
-		BYTE* GetPointer() const;
-		DWORD GetPitch() const;
+		BOOL				Create(IDirect3DDevice8* pThis, INT cx, INT cy, D3DFORMAT format);
+		void				Destory();
+		BOOL				Update();
+		BOOL				Enter();
+		void				Leave();
+		void				SetCopying(BOOL bCopy);
+		BOOL				IsCopying() const;
+		BYTE*				GetPointer() const;
+		UINT32				GetPitch() const;
 		IDirect3DSurface8*	GetSurface();
 	private:
-		IDirect3DSurface8*	m_surface;
-		BOOL				m_copying;
-		TinyLock			m_lock;
-		DWORD				m_dwPitch;
-		BYTE*				m_bits;
-		TinySize			m_size;
+		BOOL							m_bCopying;
+		UINT32							m_pitch;
+		BYTE*							m_bits;
+		TinyLock						m_lock;
+		TinySize						m_size;
+		TinyComPtr<IDirect3DSurface8>	m_surface;
 	};
 	DX8CaptureDATA::DX8CaptureDATA()
-		:m_copying(FALSE),
+		:m_bCopying(FALSE),
 		m_bits(NULL),
-		m_dwPitch(0)
+		m_pitch(0)
 	{
 
 	}
 	DX8CaptureDATA::~DX8CaptureDATA()
 	{
-
+		Destory();
 	}
-	void DX8CaptureDATA::SetCopying(BOOL bCopy)
+	void DX8CaptureDATA::SetCopying(BOOL bCopying)
 	{
-		m_copying = bCopy;
+		m_bCopying = bCopying;
 	}
 	BOOL DX8CaptureDATA::IsCopying() const
 	{
-		return m_copying;
+		return m_bCopying;
 	}
 	IDirect3DSurface8*	DX8CaptureDATA::GetSurface()
 	{
@@ -192,9 +192,9 @@ namespace GraphicsCapture
 	{
 		return m_bits;
 	}
-	DWORD DX8CaptureDATA::GetPitch() const
+	UINT32 DX8CaptureDATA::GetPitch() const
 	{
-		return m_dwPitch;
+		return m_pitch;
 	}
 	BOOL DX8CaptureDATA::Create(IDirect3DDevice8* pThis, INT cx, INT cy, D3DFORMAT format)
 	{
@@ -204,15 +204,15 @@ namespace GraphicsCapture
 			D3DLOCKED_RECT lr;
 			if (SUCCEEDED(m_surface->LockRect(&lr, NULL, D3DLOCK_READONLY)))
 			{
-				if (m_dwPitch != lr.Pitch || m_size.cy != cy)
+				if (m_pitch != lr.Pitch || m_size.cy != cy)
 				{
-					m_dwPitch = lr.Pitch;
+					m_pitch = lr.Pitch;
 					m_size.cx = cx;
 					m_size.cy = cy;
 					SAFE_DELETE_ARRAY(m_bits);
-					m_bits = new BYTE[m_dwPitch * cy];
+					m_bits = new BYTE[m_pitch * cy];
 				}
-				memcpy(m_bits, lr.pBits, m_dwPitch * cy);
+				memcpy(m_bits, lr.pBits, m_pitch * cy);
 				m_surface->UnlockRect();
 				return TRUE;
 			}
@@ -226,25 +226,30 @@ namespace GraphicsCapture
 		D3DLOCKED_RECT lr;
 		if (SUCCEEDED(m_surface->LockRect(&lr, NULL, D3DLOCK_READONLY)))
 		{
-			if (m_dwPitch != lr.Pitch)
+			if (m_pitch != lr.Pitch)
 			{
-				m_dwPitch = lr.Pitch;
+				m_pitch = lr.Pitch;
 				SAFE_DELETE_ARRAY(m_bits);
-				m_bits = new BYTE[m_dwPitch * m_size.cy];
+				m_bits = new BYTE[m_pitch * m_size.cy];
 			}
-			memcpy(m_bits, static_cast<LPBYTE>(lr.pBits), m_dwPitch * m_size.cy);
+			memcpy(m_bits, static_cast<LPBYTE>(lr.pBits), m_pitch * m_size.cy);
 			m_surface->UnlockRect();
-			m_copying = TRUE;
+			m_bCopying = TRUE;
 			return TRUE;
 		}
 		return FALSE;
 	}
 	void DX8CaptureDATA::Destory()
 	{
-		SAFE_RELEASE(m_surface);
+		if (m_bCopying)
+		{
+			TinyAutoLock autolock(m_lock);
+			m_surface->UnlockRect();
+			m_bCopying = FALSE;
+		}
+		m_surface.Release();
 		SAFE_DELETE_ARRAY(m_bits);
-		m_dwPitch = 0;
-		m_copying = FALSE;
+		m_pitch = 0;
 	}
 	BOOL DX8CaptureDATA::Enter()
 	{
@@ -263,14 +268,14 @@ namespace GraphicsCapture
 		m_textures[0] = m_textures[1] = NULL;
 		m_copy.CreateEvent();
 		m_close.CreateEvent();
-		for (INT i = 0;i < NUM_BUFFERS;i++)
+		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			m_captures[i] = new DX8CaptureDATA();
 		}
 	}
 	DX8GraphicsCapture::~DX8GraphicsCapture()
 	{
-		for (INT i = 0;i < NUM_BUFFERS;i++)
+		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			SAFE_DELETE(m_captures[i]);
 		}
@@ -350,7 +355,6 @@ namespace GraphicsCapture
 						m_captureDATA.Format = sd.Format;
 						m_captureDATA.Size.cx = sd.Width;
 						m_captureDATA.Size.cy = sd.Height;
-						m_captureDATA.Pitch = 4 * sd.Width;
 						m_bTextures = DX8CPUHook(d3d);
 					}
 				}
@@ -452,18 +456,19 @@ namespace GraphicsCapture
 		HRESULT hRes = S_OK;
 		m_captureDATA.CaptureType = CAPTURETYPE_MEMORYTEXTURE;
 		m_captureDATA.bFlip = FALSE;
-		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[i]);
 			if (!pDATA->Create(d3d, m_captureDATA.Size.cx, m_captureDATA.Size.cy, (D3DFORMAT)m_captureDATA.Format))
 				return FALSE;
 		}
+		DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[0]);
+		m_captureDATA.Pitch = pDATA->GetPitch();
 		UINT size1 = (sizeof(SharedTextureDATA) + 15) & 0xFFFFFFF0;
 		UINT size2 = (m_captureDATA.Pitch * m_captureDATA.Size.cy + 15) & 0xFFFFFFF0;
 		m_captureDATA.MapSize = size1 + size2 * 2;
-		sharedCapture->MapSize = m_captureDATA.MapSize;
+		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
+		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
 		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
 		sharedTexture->Texture1Offset = size1;
 		sharedTexture->Texture2Offset = size1 + size2;

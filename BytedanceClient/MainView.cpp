@@ -223,7 +223,14 @@ namespace Bytedance
 	}
 	void MainView::OnGameClick(TinyVisual*, EventArgs& args)
 	{
-
+		GameVisual2D* visual2D = new GameVisual2D(m_controller.GetVideoWorker().GetDX11());
+		visual2D->Select("Warcraft III","War3.exe","D:\\SourceCode\\TinyUI\\Debug\\GameDetour32.dll");
+		//visual2D->Select("Direct3DWindowClass", "BasicHLSL10.exe", "D:\\SourceCode\\TinyUI\\Debug\\GameDetour32.dll");
+		visual2D->Open();
+		TinyRectangle client;
+		::GetClientRect(m_view.Handle(), &client);
+		visual2D->SetTrackerRect(client);
+		m_controller.GetVideoWorker().Add(visual2D);
 	}
 	void MainView::OnMonitorClick(TinyVisual*, EventArgs& args)
 	{

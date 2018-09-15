@@ -9,6 +9,7 @@ namespace DXFramework
 	static BOOL g_WIC2 = FALSE;
 	IWICImagingFactory* GetWIC()
 	{
+		CoInitializeEx(NULL, 0);
 		static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
 		IWICImagingFactory* factory = nullptr;
 		InitOnceExecuteOnce(&s_initOnce,

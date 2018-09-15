@@ -165,6 +165,10 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
+	BOOL DX11CaptureRunner::IsCapturing() const
+	{
+		return m_bCapturing;
+	}
 	BOOL DX11CaptureRunner::BeginCapture()
 	{
 		ASSERT(m_pDX11);
@@ -195,28 +199,26 @@ namespace DXFramework
 					TRACE("BeginCapture GetSharedTextureDATA-TextureHandle==NULL-FAIL\n");
 					return FALSE;
 				}
-				TinyAutoLock lock(m_lock);
-				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
+				TinyAutoLock autolock(m_lock);
 				m_image.Destory();
 				if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
 				{
 					TRACE("BeginCapture m_image.Load-FAIL\n");
 					return FALSE;
 				}
-				m_image.SetSize(XMFLOAT2(static_cast<FLOAT>(vp.Width()), static_cast<FLOAT>(vp.Height())));
 				break;
 			}
 			if (pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
-				TinyAutoLock lock(m_lock);
-				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
+				TinyAutoLock autolock(m_lock);
 				m_image.Destory();
 				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
 				{
 					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;
 				}
-				m_image.SetSize(XMFLOAT2(static_cast<FLOAT>(vp.Width()), static_cast<FLOAT>(vp.Height())));
+				m_image.SetTranslate(XMFLOAT2(0.0F, 0.0F));
+				m_image.SetScale(XMFLOAT2(1.0F, 1.0F));
 				break;
 			}
 		} while (0);

@@ -17,6 +17,7 @@ namespace DXFramework
 		SharedCaptureDATA*		GetSharedCaptureDATA();
 		SharedTextureDATA*		GetSharedTextureDATA(DWORD dwSize);
 		BYTE*					GetSharedTexture(DWORD dwSize);
+		BOOL					IsCapturing() const;
 	private:
 		void					OnMessagePump();
 		WNDINFO					GetWNDINFO();
