@@ -243,6 +243,7 @@ namespace GraphicsCapture
 	{
 		if (m_bCopying)
 		{
+			LOG(INFO) << "[DX8CaptureDATA] Destory UnlockRect\n";
 			TinyAutoLock autolock(m_lock);
 			m_surface->UnlockRect();
 			m_bCopying = FALSE;
@@ -275,9 +276,13 @@ namespace GraphicsCapture
 	}
 	DX8GraphicsCapture::~DX8GraphicsCapture()
 	{
+		LOG(INFO) << "Îö¹¹ DX8GraphicsCapture\n";
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
-			SAFE_DELETE(m_captures[i]);
+			DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[i]);
+			pDATA->Destory();
+			SAFE_DELETE(pDATA);
+			m_captures[i] = NULL;
 		}
 	}
 	BOOL DX8GraphicsCapture::Initialize(HWND hWND)

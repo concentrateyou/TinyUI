@@ -236,6 +236,7 @@ namespace GraphicsCapture
 	{
 		if (m_bCopying)
 		{
+			LOG(INFO) << "[DX9CaptureDATA] Destory UnlockRect\n";
 			TinyAutoLock autolock(m_lock);
 			m_renderTarget->UnlockRect();
 			m_bCopying = FALSE;
@@ -320,9 +321,12 @@ namespace GraphicsCapture
 	}
 	DX9GraphicsCapture::~DX9GraphicsCapture()
 	{
+		LOG(INFO) << "Îö¹¹ DX9GraphicsCapture\n";
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
+			m_captures[i]->Destory();
 			SAFE_DELETE(m_captures[i]);
+			m_captures[i] = NULL;
 		}
 	}
 	BOOL DX9GraphicsCapture::Initialize(HWND hWND)
@@ -436,7 +440,6 @@ namespace GraphicsCapture
 		{
 			if (!m_bTextures)
 			{
-				LOG(INFO) << "DX9Capture GetDX9PatchType\n";
 				m_patchType = GetDX9PatchType(m_hD3D9);
 				TinyComPtr<IDirect3DSurface9> backBuffer;
 				if (SUCCEEDED(d3d->GetRenderTarget(0, &backBuffer)))
@@ -524,7 +527,7 @@ namespace GraphicsCapture
 	}
 	void DX9GraphicsCapture::Reset()
 	{
-		LOG(INFO) << "Reset\n";
+		LOG(INFO) << "[DX9GraphicsCapture] Reset\n";
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
 		m_surface.Release();
@@ -535,7 +538,7 @@ namespace GraphicsCapture
 		m_captureTask.Close(500);
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
-			DX9CaptureDATA* pDATA = reinterpret_cast<DX9CaptureDATA*>(m_captures[i]);
+			DX9CaptureDATA* pDATA = m_captures[i];
 			pDATA->Destory();
 		}
 		m_dx.m_textureMemery.Unmap();

@@ -160,6 +160,7 @@ namespace DXFramework
 	{
 		if (m_texture2D != NULL)
 		{
+			LOG(INFO) << "[DX11Texture2D] Map : " << m_texture2D;
 			HRESULT hRes = dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms);
 			return SUCCEEDED(hRes);
 		}
@@ -169,6 +170,7 @@ namespace DXFramework
 	{
 		if (m_texture2D != NULL)
 		{
+			LOG(INFO) << "[DX11Texture2D] Unmap : " << m_texture2D;
 			dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
 		}
 	}
