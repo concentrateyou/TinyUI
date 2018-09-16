@@ -63,27 +63,33 @@ namespace TinyFramework
 	}
 	BOOL TinyEvent::SetEvent()
 	{
-		ASSERT(m_hEvent != NULL);
-		return ::SetEvent(m_hEvent);
+		if (m_hEvent != NULL)
+			return ::SetEvent(m_hEvent);
+		return FALSE;
 	}
 	BOOL TinyEvent::PulseEvent()
 	{
-		ASSERT(m_hEvent != NULL);
-		return ::PulseEvent(m_hEvent);
+		if (m_hEvent != NULL)
+			return ::PulseEvent(m_hEvent);
+		return FALSE;
 	}
 	BOOL TinyEvent::ResetEvent()
 	{
-		ASSERT(m_hEvent != NULL);
-		return ::ResetEvent(m_hEvent);
+		if (m_hEvent != NULL)
+			return ::ResetEvent(m_hEvent);
+		return FALSE;
 	}
 	BOOL TinyEvent::WaitEvent(DWORD dwTimeout)
 	{
-		ASSERT(m_hEvent != NULL);
-		DWORD dwRet = ::WaitForSingleObject(m_hEvent, dwTimeout);
-		if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
-			return TRUE;
-		else
-			return FALSE;
+		if (m_hEvent != NULL)
+		{
+			DWORD dwRes = ::WaitForSingleObject(m_hEvent, dwTimeout);
+			if (dwRes == WAIT_OBJECT_0 || dwRes == WAIT_ABANDONED)
+				return TRUE;
+			else
+				return FALSE;
+		}
+		return FALSE;
 	}
 	void TinyEvent::Close()
 	{

@@ -242,28 +242,24 @@ namespace DXFramework
 		m_image.Destory();
 		return TRUE;
 	}
-	BOOL DX10CaptureRunner::Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	BOOL DX10CaptureRunner::Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName, BOOL bSafe)
 	{
-		HANDLE hProcess = NULL;
 		StrCpy(m_targetWND.className, className.STR());
 		StrCpy(m_targetWND.exeName, exeName.STR());
 		EnumWindows(DX10CaptureRunner::EnumWindow, reinterpret_cast<LPARAM>(&m_targetWND));
-		if (m_targetWND.hWND)
+		if (IsWindow(m_targetWND.hWND))
 		{
-			TRACE("TryCapture hWND != NULL\n");
 			if (!m_targetWND.dwThreadID || !m_targetWND.dwProcessID)
 			{
-				TRACE("!m_targetWND.dwThreadID || !m_targetWND.dwProcessID\n");
 				m_bCapturing = FALSE;
-				goto _ERROR;
+				return FALSE;
 			}
 		}
 		else
 		{
 			m_bCapturing = FALSE;
-			goto _ERROR;
+			return FALSE;
 		}
-
 		if (OpenEvents())
 		{
 			m_start.SetEvent();
@@ -274,44 +270,26 @@ namespace DXFramework
 		{
 			if (!CreateEvents())
 			{
-				TRACE("BuildEvents == FALSE\n");
-				goto _ERROR;
+				return FALSE;
 			}
 		}
-
-		hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, m_targetWND.dwProcessID);
-		if (!hProcess)
+		TinyProcess process;
+		if (!process.Open(PROCESS_ALL_ACCESS, FALSE, m_targetWND.dwProcessID))
 		{
-			TRACE("hProcess == NULL\n");
 			CloseEvents();
-			goto _ERROR;
 		}
-		TRACE("Begin InjectLibrary\n");
-		if (!InjectLibrary(hProcess, dllName.STR()))
+		if (!InjectLibrary(process, dllName.STR()))
 		{
 			TRACE("InjectLibrary - FALSE\n");
 			CloseEvents();
-			goto _ERROR;
 		}
-		if (!DuplicateHandle(GetCurrentProcess(), hProcess, GetCurrentProcess(), &m_targetWND.hProcess, 0, FALSE, DUPLICATE_SAME_ACCESS))
+		if (!process.Duplicate(m_targetWND.hProcess))
 		{
-			TRACE("DuplicateHandle - FALSE\n");
 			CloseEvents();
-			goto _ERROR;
 		}
 		m_start.SetEvent();
 		Sleep(500);
 		m_bCapturing = BeginCapture();
-		if (m_bCapturing)
-		{
-			TRACE("AttemptCapture - m_bCapturing = TRUE\n");
-		}
-	_ERROR:
-		if (hProcess)
-		{
-			CloseHandle(hProcess);
-			hProcess = NULL;
-		}
 		return m_bCapturing;
 	}
 	void DX10CaptureRunner::Tick()

@@ -59,6 +59,7 @@ namespace TinyFramework
 			}
 			if (!bRes)
 			{
+				LOG(INFO) << "[TinyThread] Terminate\n";
 				Terminate(-1);
 			}
 			if (m_handle != NULL)

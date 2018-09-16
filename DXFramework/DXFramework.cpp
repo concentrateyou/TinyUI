@@ -81,7 +81,8 @@ namespace DXFramework
 	typedef BOOL(WINAPI *VIRTUALFREEEX)(HANDLE, LPVOID, SIZE_T, DWORD);
 	typedef HANDLE(WINAPI *LOADLIBRARY) (DWORD, BOOL, DWORD);
 	typedef HANDLE(WINAPI *FREELIBRARY) (HMODULE);
-
+	typedef HANDLE(WINAPI *OPPROC) (DWORD, BOOL, DWORD);
+	typedef HHOOK(WINAPI *SETWINDOWSHOOKEX)(int, HOOKPROC, HINSTANCE, DWORD);
 	REFGUID GetWICCodec(IMAGE_FILE_FORMAT format)
 	{
 		switch (format)
@@ -106,10 +107,57 @@ namespace DXFramework
 		}
 		return GUID_ContainerFormatBmp;
 	}
-
+	BOOL WINAPI InjectLibrarySafe(DWORD threadID, const CHAR *pszDLL)
+	{
+		if (!PathFileExists(pszDLL))
+			return FALSE;
+		BOOL	bRes = TRUE;
+		HHOOK	hHook = NULL;
+		HMODULE hUser32 = NULL;
+		HMODULE hInstance = NULL;
+		hInstance = LoadLibrary(pszDLL);
+		if (!hInstance)
+			return FALSE;
+		hUser32 = GetModuleHandle(TEXT("USER32"));
+		SETWINDOWSHOOKEX pSETWINDOWSHOOKEX = (SETWINDOWSHOOKEX)GetProcAddress(hUser32, TEXT("SetWindowsHookExA"));
+		if (!pSETWINDOWSHOOKEX)
+		{
+			bRes = FALSE;
+			goto _ERROR;
+		}
+		LPVOID address = GetProcAddress(hInstance, "_GameDetourProc@12");
+		if (!address)
+		{
+			bRes = FALSE;
+			goto _ERROR;
+		}
+		hHook = pSETWINDOWSHOOKEX(WH_GETMESSAGE, (HOOKPROC)address, hInstance, threadID);
+		if (!hHook)
+		{
+			bRes = FALSE;
+			goto _ERROR;
+		}
+		for (INT i = 0; i < 20; i++)
+		{
+			PostThreadMessage(threadID, WM_USER + 432, 0, (LPARAM)hHook);
+		}
+		Sleep(1000);
+		for (INT i = 0; i < 20; i++)
+		{
+			PostThreadMessage(threadID, WM_USER + 432, 0, (LPARAM)hHook);
+		}
+		Sleep(1000);
+	_ERROR:
+		if (hInstance != NULL)
+		{
+			FreeLibrary(hInstance);
+			hInstance = NULL;
+		}
+		return bRes;
+	}
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL)
 	{
-		if (!hProcess || !pszDLL)
+		if (!hProcess || !PathFileExists(pszDLL))
 			return FALSE;
 		HMODULE hInstance = NULL;
 		HANDLE	hTask = NULL;
@@ -131,13 +179,19 @@ namespace DXFramework
 			return FALSE;
 		DWORD dwSize = strlen(pszDLL);
 		dwSize = (dwSize + 1) * sizeof(CHAR);
-		LPVOID pAlloc = (LPVOID)(*pVIRTUALALLOCEX)(hProcess, NULL, dwSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+		LPVOID pAlloc = (LPVOID)(*pVIRTUALALLOCEX)(hProcess, NULL, dwSize, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 		if (!pAlloc)
+		{
+			DWORD dwError = GetLastError();
 			return FALSE;
+		}
 		SIZE_T size = 0;
 		BOOL bRes = (*pWRITEPROCESSMEMORY)(hProcess, pAlloc, (LPVOID)pszDLL, dwSize, &size);
 		if (!bRes)
+		{
+			bRes = FALSE;
 			goto _ERROR;
+		}
 		address = (FARPROC)GetProcAddress(hInstance, TEXT("LoadLibraryA"));
 		if (!address)
 		{
@@ -155,6 +209,7 @@ namespace DXFramework
 			DWORD dw;
 			GetExitCodeThread(hTask, &dw);
 			bRes = dw != 0;
+			dw = GetLastError();
 		}
 	_ERROR:
 		if (hTask != NULL)
@@ -182,7 +237,6 @@ namespace DXFramework
 		CREATEREMOTETHREAD pCREATEREMOTETHREAD = (CREATEREMOTETHREAD)GetProcAddress(hInstance, TEXT("CreateRemoteThread"));
 		if (!pCREATEREMOTETHREAD)
 			return FALSE;
-
 #if defined(_WIN64)
 		HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, GetProcessId(hProcess));
 		if (hSnapshot == INVALID_HANDLE_VALUE)
@@ -228,7 +282,7 @@ namespace DXFramework
 		{
 			CloseHandle(hTask);
 			hTask = NULL;
-		}
+	}
 		TRACE("UninjectLibrary\n");
 		return bRes;
 #else
@@ -241,9 +295,8 @@ namespace DXFramework
 		VIRTUALFREEEX pVIRTUALFREEEX = (VIRTUALFREEEX)GetProcAddress(hInstance, TEXT("VirtualFreeEx"));
 		if (!pVIRTUALFREEEX)
 			return FALSE;
-		DWORD dwSize = strlen(pszDLL);
-		dwSize = (dwSize + 1) * sizeof(CHAR);
-		LPVOID pAlloc = (LPVOID)(*pVIRTUALALLOCEX)(hProcess, NULL, dwSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+		DWORD dwSize = (strlen(pszDLL) + 1) * sizeof(CHAR);
+		LPVOID pAlloc = (LPVOID)(*pVIRTUALALLOCEX)(hProcess, NULL, dwSize, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 		if (!pAlloc)
 			return FALSE;
 		SIZE_T size = 0;
@@ -304,7 +357,7 @@ namespace DXFramework
 		TRACE("UninjectLibrary\n");
 		return bRes;
 #endif
-	}
+}
 	BOOL WINAPI ProcessExists(const TinyString& exeName, PROCESSINFO& ps)
 	{
 		DWORD processes[1024];
@@ -312,7 +365,7 @@ namespace DXFramework
 		if (!EnumProcesses(processes, sizeof(processes), &cbNeeded))
 			return FALSE;
 		DWORD dwCount = cbNeeded / sizeof(DWORD);
-		for (UINT i = 0;i < dwCount;i++)
+		for (UINT i = 0; i < dwCount; i++)
 		{
 			ps.dwProcessID = processes[i];
 			HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, ps.dwProcessID);

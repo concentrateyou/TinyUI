@@ -23,6 +23,7 @@
 #include "IO/TinySharedMemory.h"
 #include "IO/TinyThread.h"
 #include "IO/TinyRingQueue.h"
+#include "IO/TinyProcess.h"
 #include "Render/TinyGDI.h"
 #include "Media/TinyMedia.h"
 #pragma comment(lib,"Dwmapi.lib")
@@ -58,8 +59,6 @@ namespace DXFramework
 	};
 
 	REFGUID GetWICCodec(IMAGE_FILE_FORMAT format);
-
-
 
 	typedef struct tagWNDINFO
 	{
@@ -144,4 +143,5 @@ namespace DXFramework
 	BOOL WINAPI ProcessExists(const TinyString& exeName, PROCESSINFO& ps);
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 	BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
+	BOOL WINAPI InjectLibrarySafe(DWORD threadID, const CHAR *pszDLL);
 }

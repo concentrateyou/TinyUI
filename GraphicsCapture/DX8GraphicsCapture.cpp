@@ -276,7 +276,6 @@ namespace GraphicsCapture
 	}
 	DX8GraphicsCapture::~DX8GraphicsCapture()
 	{
-		LOG(INFO) << "Îö¹¹ DX8GraphicsCapture\n";
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[i]);

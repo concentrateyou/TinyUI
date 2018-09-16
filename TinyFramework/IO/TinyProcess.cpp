@@ -130,9 +130,9 @@ namespace TinyFramework
 		{
 			m_handles[2] = handle;
 		}
-		BOOL TinyProcess::Open(DWORD dwPID)
+		BOOL TinyProcess::Open(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwPID)
 		{
-			m_hProcess = ::OpenProcess(PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION | SYNCHRONIZE, FALSE, dwPID);
+			m_hProcess = ::OpenProcess(dwDesiredAccess, bInheritHandle, dwPID);
 			return m_hProcess != NULL;
 		}
 		BOOL TinyProcess::Create(const string& app, const vector<string>& args)

@@ -22,18 +22,18 @@ namespace GameDetour
 		BOOL Attach(HMODULE hModule);
 		BOOL Detach(HMODULE hModule);
 	private:
-		void BeginCapture();
-		void EndCapture();
+		void BeginDetour();
+		void EndDetour();
 		void OnMessagePump();
 	private:
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
-		IO::TinyThread	m_task;
-		HINSTANCE		m_hInstance;
-		HWND			m_hWNDD3D;
 		BOOL			m_bDX8Detour;
 		BOOL			m_bDX9Detour;
 		BOOL			m_bDXGIDetour;
+		HWND			m_hWNDD3D;
+		HINSTANCE		m_hInstance;
+		IO::TinyThread	m_task;
 	};
 }
 

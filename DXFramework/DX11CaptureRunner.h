@@ -24,7 +24,7 @@ namespace DXFramework
 		void					Tick();
 		BOOL					BeginCapture();
 		BOOL					EndCapture();
-		BOOL					Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
+		BOOL					Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName, BOOL bSafe = TRUE);
 		BOOL					CreateEvents();
 		BOOL					OpenEvents();
 		void					CloseEvents();

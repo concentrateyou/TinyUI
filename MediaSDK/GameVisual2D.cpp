@@ -61,7 +61,10 @@ namespace MediaSDK
 	BOOL GameVisual2D::Tick(INT64& timestamp)
 	{
 		if (!m_captureRunner.IsCapturing())
+		{
+			//TRACE("IsCapturing FAIL\n");
 			return FALSE;
+		}
 		SharedCaptureDATA* pCaptureDATA = m_captureRunner.GetSharedCaptureDATA();
 		if (!pCaptureDATA)
 			return FALSE;
@@ -135,13 +138,14 @@ namespace MediaSDK
 						}
 					} while (0);
 				}
+				return TRUE;
 			}
 		}
 		break;
 		case CAPTURETYPE_SHAREDTEXTURE:
-			break;
+			return TRUE;
 		}
-		return TRUE;
+		return FALSE;
 	}
 	BOOL GameVisual2D::Draw(DX11Graphics2D& g)
 	{

@@ -66,7 +66,6 @@ namespace GraphicsCapture
 	}
 	void DX::Uninitialize()
 	{
-		LOG(INFO) << "DX::Uninitialize\n";
 		m_mutes[0].Close();
 		m_mutes[1].Close();
 		m_start.Close();

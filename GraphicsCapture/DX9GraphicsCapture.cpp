@@ -321,7 +321,6 @@ namespace GraphicsCapture
 	}
 	DX9GraphicsCapture::~DX9GraphicsCapture()
 	{
-		LOG(INFO) << "Îö¹¹ DX9GraphicsCapture\n";
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			m_captures[i]->Destory();

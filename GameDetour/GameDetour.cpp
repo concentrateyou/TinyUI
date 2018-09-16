@@ -15,7 +15,8 @@ namespace GameDetour
 		:m_hWNDD3D(NULL),
 		m_bDX8Detour(FALSE),
 		m_bDX9Detour(FALSE),
-		m_bDXGIDetour(FALSE)
+		m_bDXGIDetour(FALSE),
+		m_hInstance(NULL)
 	{
 
 	}
@@ -30,44 +31,67 @@ namespace GameDetour
 		memset(szName, 0, MAX_PATH);
 		GetModuleBaseName(GetCurrentProcess(), NULL, szName, MAX_PATH);
 		LOG(INFO) << szName << " GameCapture::Attach\n";
-		return m_task.Submit(BindCallback(&GameDetour::OnMessagePump, this));
+		if (!m_task.Submit(BindCallback(&GameDetour::OnMessagePump, this)))
+		{
+			return FALSE;
+		}
+		return TRUE;
 	}
 	BOOL GameDetour::Detach(HMODULE hModule)
 	{
 		CHAR szName[MAX_PATH];
 		memset(szName, 0, MAX_PATH);
 		GetModuleBaseName(GetCurrentProcess(), NULL, szName, MAX_PATH);
-		LOG(INFO) << szName << " GameCapture::Detach\n";
-		m_bDX9Detour = m_bDXGIDetour = FALSE;
-		if (m_hWNDD3D != NULL)
+		m_bDX8Detour = m_bDX9Detour = m_bDXGIDetour = FALSE;
+		if (IsWindow(m_hWNDD3D))
 		{
-			::PostMessage(m_hWNDD3D, WM_CLOSE, NULL, NULL);
+			LOG(INFO) << szName << " [GameCapture] GameCapture WM_CLOSE \n";
+			::SendMessage(m_hWNDD3D, WM_CLOSE, NULL, NULL);
+			m_task.Close(1000);
 		}
-		return m_task.Close(1500);
+		EndDetour();
+		m_hWNDD3D = NULL;
+		LOG(INFO) << szName << " [GameCapture] Detach\n";
+		return TRUE;
 	}
-	void GameDetour::BeginCapture()
+	void GameDetour::BeginDetour()
 	{
 		if (g_dx.Initialize())
 		{
-			LOG(INFO) << "g_dx.Initialize() OK\n";
-			if (!m_bDX8Detour)
+			LOG(INFO) << "DX Initialize() OK\n";
+			do
 			{
-				LOG(INFO) << "Begin g_dx8.Initialize\n";
-				m_bDX8Detour = g_dx8.Initialize(m_hWNDD3D);
-			}
-			if (!m_bDX9Detour)
-			{
-				LOG(INFO) << "Begin g_dx9.Initialize\n";
-				m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
-			}
-			if (!m_bDXGIDetour)
-			{
-				LOG(INFO) << "Begin g_dxgi.Initialize\n";
-				m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
-			}
+				if (!m_bDX8Detour)
+				{
+					m_bDX8Detour = g_dx8.Initialize(m_hWNDD3D);
+				}
+				if (m_bDX8Detour)
+				{
+					LOG(INFO) << "DX8 Initialize OK\n";
+					break;
+				}
+				if (!m_bDX9Detour)
+				{
+					m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
+				}
+				if (m_bDX9Detour)
+				{
+					LOG(INFO) << "DX9 Initialize OK\n";
+					break;
+				}
+				if (!m_bDXGIDetour)
+				{
+					m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
+				}
+				if (m_bDXGIDetour)
+				{
+					LOG(INFO) << "DXGI Initialize() OK\n";
+					break;
+				}
+			} while (0);
 		}
 	}
-	void GameDetour::EndCapture()
+	void GameDetour::EndDetour()
 	{
 		g_dx.Uninitialize();
 		LOG(INFO) << "Uninitialize OK\n";
@@ -96,14 +120,13 @@ namespace GameDetour
 		}
 		if (m_hWNDD3D != NULL)
 		{
-			BeginCapture();
-			MSG msg;
+			BeginDetour();
+			MSG msg = { 0 };
 			while (GetMessage(&msg, NULL, 0, 0))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
-			EndCapture();
 		}
 	}
 
@@ -112,10 +135,11 @@ namespace GameDetour
 		switch (message)
 		{
 		case WM_CLOSE:
+			LOG(INFO) << "[GameDetour] WindowProc WM_CLOSE\n";
 			::DestroyWindow(hwnd);
 			break;
 		case WM_DESTROY:
-			LOG(INFO) << "WindowProcedure WM_DESTROY\n";
+			LOG(INFO) << "[GameDetour] WindowProc WM_DESTROY\n";
 			::PostQuitMessage(0);
 			break;
 		}
