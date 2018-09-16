@@ -297,12 +297,11 @@ namespace DXFramework
 				CloseEvents();
 			}
 		}
-		if (!process.Duplicate(m_targetWND.hProcess))
+		if (!DuplicateHandle(GetCurrentProcess(), process, GetCurrentProcess(), &m_targetWND.hProcess, 0, FALSE, DUPLICATE_SAME_ACCESS))
 		{
 			CloseEvents();
 		}
 		m_start.SetEvent();
-		Sleep(500);
 		m_bCapturing = BeginCapture();
 		return m_bCapturing;
 	}

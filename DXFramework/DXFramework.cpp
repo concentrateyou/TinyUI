@@ -74,6 +74,9 @@ namespace DXFramework
 		ReleaseDC(NULL, hDC);
 		return boundingBox;
 	}
+#define RETRY_INTERVAL_MS      500
+#define TOTAL_RETRY_TIME_MS    4000
+#define RETRY_COUNT            (TOTAL_RETRY_TIME_MS / RETRY_INTERVAL_MS)
 	//////////////////////////////////////////////////////////////////////////
 	typedef HANDLE(WINAPI *CREATEREMOTETHREAD)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD);
 	typedef BOOL(WINAPI *WRITEPROCESSMEMORY)(HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T*);
@@ -137,22 +140,18 @@ namespace DXFramework
 			bRes = FALSE;
 			goto _ERROR;
 		}
-		for (INT i = 0; i < 20; i++)
+		for (INT i = 0; i < RETRY_COUNT; i++)
 		{
+			Sleep(RETRY_INTERVAL_MS);
 			PostThreadMessage(threadID, WM_USER + 432, 0, (LPARAM)hHook);
 		}
-		Sleep(1000);
-		for (INT i = 0; i < 20; i++)
-		{
-			PostThreadMessage(threadID, WM_USER + 432, 0, (LPARAM)hHook);
-		}
-		Sleep(1000);
 	_ERROR:
-		if (hInstance != NULL)
-		{
-			FreeLibrary(hInstance);
-			hInstance = NULL;
-		}
+		//_ERROR:
+		//	if (hInstance != NULL)
+		//	{
+		//		FreeLibrary(hInstance);
+		//		hInstance = NULL;
+		//	}
 		return bRes;
 	}
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL)
@@ -282,7 +281,7 @@ namespace DXFramework
 		{
 			CloseHandle(hTask);
 			hTask = NULL;
-	}
+		}
 		TRACE("UninjectLibrary\n");
 		return bRes;
 #else
@@ -357,7 +356,7 @@ namespace DXFramework
 		TRACE("UninjectLibrary\n");
 		return bRes;
 #endif
-}
+	}
 	BOOL WINAPI ProcessExists(const TinyString& exeName, PROCESSINFO& ps)
 	{
 		DWORD processes[1024];
