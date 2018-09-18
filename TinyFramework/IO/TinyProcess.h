@@ -53,7 +53,8 @@ namespace TinyFramework
 			void SetError(HANDLE handle);
 			BOOL Create(const string& app, const vector<string>& args);
 			BOOL Open(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwPID);
-			BOOL Wait(DWORD dwMS, DWORD& dwExitCode);//等待進程退出
+			BOOL Wait(DWORD dwMS);
+			BOOL WaitExit(DWORD dwMS, DWORD& dwExitCode);//等待進程退出
 			BOOL Terminate(DWORD dwMS = 60 * 1000);
 			TinyProcess Duplicate(HANDLE handle);
 			static TinyProcess Current();

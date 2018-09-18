@@ -182,8 +182,18 @@ namespace TinyFramework
 		{
 			return GetProcessId(m_hProcess);
 		}
-		BOOL TinyProcess::Wait(DWORD dwMS, DWORD& dwExitCode)
+		BOOL TinyProcess::Wait(DWORD dwMS)
 		{
+			if (!m_hProcess)
+				return FALSE;
+			if (::WaitForSingleObject(m_hProcess, dwMS) != WAIT_OBJECT_0)
+				return FALSE;
+			return TRUE;
+		}
+		BOOL TinyProcess::WaitExit(DWORD dwMS, DWORD& dwExitCode)
+		{
+			if (!m_hProcess)
+				return FALSE;
 			if (::WaitForSingleObject(m_hProcess, dwMS) != WAIT_OBJECT_0)
 				return FALSE;
 			if (!::GetExitCodeProcess(m_hProcess, &dwExitCode))

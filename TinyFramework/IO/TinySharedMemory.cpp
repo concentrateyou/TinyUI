@@ -103,6 +103,7 @@ namespace TinyFramework
 		}
 		BOOL TinySharedMemory::Close()
 		{
+			Unmap();
 			if (!m_hFileMap)
 				return FALSE;
 			if (::CloseHandle(m_hFileMap))
@@ -114,8 +115,13 @@ namespace TinyFramework
 		}
 		BOOL TinySharedMemory::Map(ULONGLONG offset, DWORD dwBytes)
 		{
-			if (!m_hFileMap || m_pMemory)
+			if (!m_hFileMap)
 				return FALSE;
+			if (m_pMemory != NULL)
+			{
+				UnmapViewOfFile(m_pMemory);
+				m_pMemory = NULL;
+			}
 			m_pMemory = MapViewOfFile(m_hFileMap, m_bReadonly ? FILE_MAP_READ : FILE_MAP_READ | FILE_MAP_WRITE, static_cast<ULONGLONG>(offset) >> 32, static_cast<DWORD>(offset), dwBytes);
 			if (!m_pMemory)
 				return FALSE;
@@ -124,8 +130,7 @@ namespace TinyFramework
 		}
 		BOOL TinySharedMemory::Unmap()
 		{
-			if (m_pMemory &&
-				UnmapViewOfFile(m_pMemory))
+			if (m_pMemory != NULL && UnmapViewOfFile(m_pMemory))
 			{
 				m_pMemory = NULL;
 				return TRUE;
@@ -136,9 +141,9 @@ namespace TinyFramework
 		{
 			return m_pMemory;
 		}
-		BOOL TinySharedMemory::IsValid() const
+		BOOL TinySharedMemory::IsEmpty() const
 		{
-			return m_hFileMap != NULL;
+			return m_hFileMap == NULL;
 		}
 		DWORD TinySharedMemory::GetMapSize() const
 		{

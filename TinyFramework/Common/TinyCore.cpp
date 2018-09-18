@@ -84,10 +84,13 @@ namespace TinyFramework
 		if (m_hEvent != NULL)
 		{
 			DWORD dwRes = ::WaitForSingleObject(m_hEvent, dwTimeout);
-			if (dwRes == WAIT_OBJECT_0 || dwRes == WAIT_ABANDONED)
+			if (dwRes == WAIT_OBJECT_0)
 				return TRUE;
-			else
-				return FALSE;
+			if (dwRes == WAIT_ABANDONED)
+			{
+				LOG(INFO) << "Event WAIT_ABANDONED";
+				return TRUE;
+			}
 		}
 		return FALSE;
 	}

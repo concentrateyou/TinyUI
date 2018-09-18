@@ -28,13 +28,13 @@ namespace TinyFramework
 			BOOL	Map(ULONGLONG offset = 0, DWORD dwBytes = 0);
 			BOOL	Unmap();
 			void*	Address() const;
-			BOOL	IsValid() const;
+			BOOL	IsEmpty() const;
 			DWORD	GetMapSize() const;
 			DWORD	GetSize() const;
 		private:
 			BOOL        m_bReadonly;
-			HANDLE		m_hFileMap;
 			void*       m_pMemory;
+			HANDLE		m_hFileMap;
 			DWORD		m_dwSize;
 			DWORD		m_dwMapSize;
 		};

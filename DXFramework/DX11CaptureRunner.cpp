@@ -32,22 +32,22 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureRunner::OpenEvents()
 	{
-		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID));
+		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwPID));
 		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwProcessID));
+		name = std::move(StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwPID));
 		if (!m_stop.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", CAPTURE_READY_EVENT, m_targetWND.dwProcessID));
+		name = std::move(StringPrintf("%s%d", CAPTURE_READY_EVENT, m_targetWND.dwPID));
 		if (!m_ready.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", CAPTURE_EXIT_EVENT, m_targetWND.dwProcessID));
+		name = std::move(StringPrintf("%s%d", CAPTURE_EXIT_EVENT, m_targetWND.dwPID));
 		if (!m_exit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
@@ -56,22 +56,22 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureRunner::CreateEvents()
 	{
-		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID));
+		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwPID));
 		if (!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwProcessID));
+		name = std::move(StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwPID));
 		if (!m_stop.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", CAPTURE_READY_EVENT, m_targetWND.dwProcessID));
+		name = std::move(StringPrintf("%s%d", CAPTURE_READY_EVENT, m_targetWND.dwPID));
 		if (!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", CAPTURE_EXIT_EVENT, m_targetWND.dwProcessID));
+		name = std::move(StringPrintf("%s%d", CAPTURE_EXIT_EVENT, m_targetWND.dwPID));
 		if (!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;
@@ -134,25 +134,25 @@ namespace DXFramework
 		LPWNDINFO ws = reinterpret_cast<LPWNDINFO>(lParam);
 		if (!IsWindowVisible(hwnd))
 			return TRUE;
-		TCHAR windowClass[MAX_PATH];
-		TCHAR windowExecutable[MAX_PATH];
-		if (GetClassName(hwnd, windowClass, MAX_PATH))
+		TCHAR szClass[MAX_PATH];
+		TCHAR szExecutable[MAX_PATH];
+		if (GetClassName(hwnd, szClass, MAX_PATH))
 		{
-			if (strncasecmp(windowClass, ws->className, strlen(ws->className)) == 0)
+			if (strncasecmp(szClass, ws->className, strlen(ws->className)) == 0)
 			{
-				DWORD processID = 0;
-				DWORD dwThreadID = GetWindowThreadProcessId(hwnd, &processID);
-				if (HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID))
+				DWORD dwPID = 0;
+				DWORD dwTID = GetWindowThreadProcessId(hwnd, &dwPID);
+				if (HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, dwPID))
 				{
 					DWORD size = MAX_PATH;
-					if (QueryFullProcessImageName(hProcess, 0, windowExecutable, &size))
+					if (QueryFullProcessImageName(hProcess, 0, szExecutable, &size))
 					{
-						CHAR* pzName = PathFindFileName(windowExecutable);
+						CHAR* pzName = PathFindFileName(szExecutable);
 						if (strncasecmp(pzName, ws->exeName, strlen(pzName)) == 0)
 						{
 							ws->hWND = hwnd;
-							ws->dwProcessID = processID;
-							ws->dwThreadID = dwThreadID;
+							ws->dwPID = dwPID;
+							ws->dwTID = dwTID;
 							CloseHandle(hProcess);
 							hProcess = NULL;
 							return FALSE;
@@ -250,15 +250,7 @@ namespace DXFramework
 		StrCpy(m_targetWND.className, className.STR());
 		StrCpy(m_targetWND.exeName, exeName.STR());
 		EnumWindows(DX11CaptureRunner::EnumWindow, reinterpret_cast<LPARAM>(&m_targetWND));
-		if (IsWindow(m_targetWND.hWND))
-		{
-			if (!m_targetWND.dwThreadID || !m_targetWND.dwProcessID)
-			{
-				m_bCapturing = FALSE;
-				return FALSE;
-			}
-		}
-		else
+		if (!IsWindow(m_targetWND.hWND))
 		{
 			m_bCapturing = FALSE;
 			return FALSE;
@@ -277,13 +269,13 @@ namespace DXFramework
 			}
 		}
 		TinyProcess process;
-		if (!process.Open(PROCESS_ALL_ACCESS, FALSE, m_targetWND.dwProcessID))
+		if (!process.Open(PROCESS_ALL_ACCESS, FALSE, m_targetWND.dwPID))
 		{
 			CloseEvents();
 		}
 		if (bSafe)
 		{
-			if (!InjectLibrarySafe(m_targetWND.dwThreadID, dllName.STR()))
+			if (!InjectLibrarySafe(m_targetWND.dwTID, dllName.STR()))
 			{
 				TRACE("InjectLibrarySafe - FALSE\n");
 				CloseEvents();
@@ -312,7 +304,7 @@ namespace DXFramework
 			TRACE("Tick - EndCapture\n");
 			EndCapture();
 		}
-		if (m_bCapturing && !m_ready && m_targetWND.dwProcessID)
+		if (m_bCapturing && !m_ready && m_targetWND.dwPID)
 		{
 			TRACE("Tick - CreateEvents\n");
 			CreateEvents();

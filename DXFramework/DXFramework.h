@@ -65,8 +65,8 @@ namespace DXFramework
 		CHAR	className[MAX_PATH];
 		CHAR	exeName[MAX_PATH];
 		HWND	hWND;
-		DWORD	dwProcessID;
-		DWORD	dwThreadID;
+		DWORD	dwPID;
+		DWORD	dwTID;
 		HANDLE	hProcess;
 	}WNDINFO, *LPWNDINFO;
 
