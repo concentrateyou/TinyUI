@@ -19,7 +19,7 @@ namespace GraphicsCapture
 		void Uninitialize();
 		BOOL SetWindowsHook();
 		void UnhookWindowsHook();
-		SharedCaptureDATA* GetSharedCaptureDATA();
+		HookDATA* GetHookDATA();
 		SharedTextureDATA* GetSharedTextureDATA(DWORD dwSize = sizeof(SharedTextureDATA));
 		BYTE* GetSharedTexture(DWORD dwSize = sizeof(SharedTextureDATA));
 	private:

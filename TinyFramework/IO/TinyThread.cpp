@@ -57,11 +57,6 @@ namespace TinyFramework
 			{
 				bRes == (WaitForSingleObject(m_handle, dwMS) == WAIT_OBJECT_0);
 			}
-			if (!bRes)
-			{
-				LOG(INFO) << "[TinyThread] Terminate\n";
-				Terminate(-1);
-			}
 			if (m_handle != NULL)
 			{
 				CloseHandle(m_handle);

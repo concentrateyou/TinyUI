@@ -7,8 +7,8 @@ namespace MediaSDK
 		:m_dx11(dx11),
 		m_captureRunner(&dx11, m_visual2D)
 	{
-		m_mutes[0].Create(FALSE, TEXTURE_MUTEX1, NULL);
-		m_mutes[1].Create(FALSE, TEXTURE_MUTEX2, NULL);
+		m_mutes[0].Create(FALSE, MUTEX_TEXTURE1, NULL);
+		m_mutes[1].Create(FALSE, MUTEX_TEXTURE2, NULL);
 	}
 
 	GameVisual2D::~GameVisual2D()
@@ -65,18 +65,18 @@ namespace MediaSDK
 			//TRACE("IsCapturing FAIL\n");
 			return FALSE;
 		}
-		SharedCaptureDATA* pCaptureDATA = m_captureRunner.GetSharedCaptureDATA();
-		if (!pCaptureDATA)
+		HookDATA* hookDATA = m_captureRunner.GetHookDATA();
+		if (!hookDATA)
 			return FALSE;
-		switch (pCaptureDATA->CaptureType)
+		switch (hookDATA->CaptureType)
 		{
 		case CAPTURETYPE_MEMORYTEXTURE:
 		{
-			SharedTextureDATA* pTextureDATA = m_captureRunner.GetSharedTextureDATA(pCaptureDATA->MapSize);
+			SharedTextureDATA* pTextureDATA = m_captureRunner.GetSharedTextureDATA(hookDATA->MapSize);
 			if (pTextureDATA != NULL)
 			{
 				DWORD dwCurrentID = pTextureDATA->CurrentID;
-				BYTE* pBits = m_captureRunner.GetSharedTexture(pCaptureDATA->MapSize);
+				BYTE* pBits = m_captureRunner.GetSharedTexture(hookDATA->MapSize);
 				m_textures[0] = pBits + pTextureDATA->Texture1Offset;
 				m_textures[1] = pBits + pTextureDATA->Texture2Offset;
 				if (pTextureDATA != NULL)
@@ -90,17 +90,17 @@ namespace MediaSDK
 							if (m_visual2D.Map(m_dx11, ms, FALSE))
 							{
 								XMFLOAT2 size = m_visual2D.GetSize();
-								if (pCaptureDATA->Pitch == ms.RowPitch)
+								if (hookDATA->Pitch == ms.RowPitch)
 								{
-									memcpy(ms.pData, m_textures[dwCurrentID], pCaptureDATA->Pitch * static_cast<INT>(size.y));
+									memcpy(ms.pData, m_textures[dwCurrentID], hookDATA->Pitch * static_cast<INT>(size.y));
 								}
 								else
 								{
-									UINT bestPitch = std::min<UINT>(pCaptureDATA->Pitch, ms.RowPitch);
+									UINT bestPitch = std::min<UINT>(hookDATA->Pitch, ms.RowPitch);
 									LPBYTE input = m_textures[dwCurrentID];
 									for (INT y = 0; y < static_cast<INT>(size.y); y++)
 									{
-										LPBYTE curInput = ((LPBYTE)input) + (pCaptureDATA->Pitch*y);
+										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch*y);
 										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);
 										memcpy(curOutput, curInput, bestPitch);
 									}
@@ -116,17 +116,17 @@ namespace MediaSDK
 							if (m_visual2D.Map(m_dx11, ms, FALSE))
 							{
 								XMFLOAT2 size = m_visual2D.GetSize();
-								if (pCaptureDATA->Pitch == ms.RowPitch)
+								if (hookDATA->Pitch == ms.RowPitch)
 								{
-									memcpy(ms.pData, m_textures[dwNextID], pCaptureDATA->Pitch * static_cast<INT>(size.y));
+									memcpy(ms.pData, m_textures[dwNextID], hookDATA->Pitch * static_cast<INT>(size.y));
 								}
 								else
 								{
-									UINT bestPitch = std::min<UINT>(pCaptureDATA->Pitch, ms.RowPitch);
+									UINT bestPitch = std::min<UINT>(hookDATA->Pitch, ms.RowPitch);
 									LPBYTE input = m_textures[dwNextID];
 									for (INT y = 0; y < static_cast<INT>(size.y); y++)
 									{
-										LPBYTE curInput = ((LPBYTE)input) + (pCaptureDATA->Pitch * y);
+										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch * y);
 										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);
 										memcpy(curOutput, curInput, bestPitch);
 									}

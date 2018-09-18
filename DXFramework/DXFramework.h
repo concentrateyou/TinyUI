@@ -96,14 +96,16 @@ namespace DXFramework
 		ULONG* pPresentFlags,
 		ULONGLONG* pWin32kUpdateId);
 
-#define BEGIN_CAPTURE_EVENT		TEXT("BeginCapture")
-#define END_CAPTURE_EVENT       TEXT("EndCapture")
-#define CAPTURE_READY_EVENT     TEXT("CaptureReady")
-#define CAPTURE_EXIT_EVENT      TEXT("CaptureExit")
 #define SHAREDCAPTURE_MEMORY	TEXT("Local\\SharedCaptureMemory")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
-#define TEXTURE_MUTEX1          TEXT("TextureMutex1")
-#define TEXTURE_MUTEX2          TEXT("TextureMutex2")
+
+#define EVENT_CAPTURE_START		TEXT("EVENT_CAPTURE_START")
+#define EVENT_CAPTURE_STOP      TEXT("EVENT_CAPTURE_STOP")
+#define EVENT_HOOK_READY		TEXT("EVENT_HOOK_READY")
+#define EVENT_HOOK_EXIT			TEXT("EVENT_HOOK_EXIT")
+#define MUTEX_TEXTURE1          TEXT("MUTEX_TEXTURE1")
+#define MUTEX_TEXTURE2          TEXT("MUTEX_TEXTURE2")
+
 #define D3DX_PI    (3.14159265358979323846)
 #define D3DX_1BYPI ( 1.0 / D3DX_PI )
 
@@ -111,23 +113,20 @@ namespace DXFramework
 #define CAPTURETYPE_SHAREDTEXTURE   2
 
 #pragma pack(push, 8)
-	typedef struct tagSharedCaptureDATA
+	typedef struct tagHookDATA
 	{
-		UINT		CaptureType;
-		DWORD		Format;
-		SIZE		Size;
 		BOOL		bFlip;
 		BOOL		bMultisample;
-		UINT		Pitch;
+		UINT32		CaptureType;
+		DWORD		Format;
+		SIZE		Size;
+		UINT32		Pitch;
 		DWORD		MapSize;
 		HWND		HwndCapture;
-	}SharedCaptureDATA;
-	/// <summary>
-	/// 共享纹理数据
-	/// </summary>
+	}HookDATA;
+
 	typedef struct tagSharedTextureDATA
 	{
-		LONGLONG    FrameTime;
 		HANDLE      TextureHandle;
 		DWORD       Texture1Offset;
 		DWORD		Texture2Offset;

@@ -124,7 +124,7 @@ namespace TinyFramework
 			}
 			if (m_worker != NULL)
 			{
-				m_waiter->Wait(FALSE);
+				m_worker->Wait(FALSE);
 				m_worker->Close();
 			}
 			delete this;

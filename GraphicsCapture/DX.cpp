@@ -21,7 +21,7 @@ namespace GraphicsCapture
 	{
 		if (code != HCBT_DESTROYWND)
 			return CallNextHookEx(g_dx.m_hhk, code, wParam, lParam);
-		SharedCaptureDATA* sharedCapture = g_dx.GetSharedCaptureDATA();
+		HookDATA* sharedCapture = g_dx.GetHookDATA();
 		ASSERT(sharedCapture);
 		if (sharedCapture->HwndCapture == reinterpret_cast<HWND>(wParam))
 		{
@@ -46,15 +46,15 @@ namespace GraphicsCapture
 		{
 			return FALSE;
 		}
-		if (!m_mutes[0].Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX1) && !m_mutes[0].Create(FALSE, TEXTURE_MUTEX1, NULL))
+		if (!m_mutes[0].Open(MUTEX_ALL_ACCESS, FALSE, MUTEX_TEXTURE1) && !m_mutes[0].Create(FALSE, MUTEX_TEXTURE1, NULL))
 		{
 			return FALSE;
 		}
-		if (!m_mutes[1].Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX2) && !m_mutes[1].Create(FALSE, TEXTURE_MUTEX2, NULL))
+		if (!m_mutes[1].Open(MUTEX_ALL_ACCESS, FALSE, MUTEX_TEXTURE2) && !m_mutes[1].Create(FALSE, MUTEX_TEXTURE2, NULL))
 		{
 			return FALSE;
 		}
-		if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) && !m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
+		if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) && !m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(HookDATA)))
 		{
 			return FALSE;
 		}
@@ -77,11 +77,11 @@ namespace GraphicsCapture
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
 	}
-	SharedCaptureDATA* DX::GetSharedCaptureDATA()
+	HookDATA* DX::GetHookDATA()
 	{
 		if (!m_captureMemery.Address())
 		{
-			if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) && !m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
+			if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) && !m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(HookDATA)))
 			{
 				return NULL;
 			}
@@ -90,7 +90,7 @@ namespace GraphicsCapture
 				return NULL;
 			}
 		}
-		return reinterpret_cast<SharedCaptureDATA*>(m_captureMemery.Address());
+		return reinterpret_cast<HookDATA*>(m_captureMemery.Address());
 	}
 	SharedTextureDATA* DX::GetSharedTextureDATA(DWORD dwSize)
 	{
@@ -135,26 +135,26 @@ namespace GraphicsCapture
 	BOOL DX::BuildEvents()
 	{
 		DWORD dwProcessID = GetCurrentProcessId();
-		if (!m_start.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, dwProcessID).c_str()))
+		if (!m_start.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_START, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		LOG(INFO) << "m_start CreateEvent:" << StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, dwProcessID).c_str();
-		if (!m_stop.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", END_CAPTURE_EVENT, dwProcessID).c_str()))
+		LOG(INFO) << "m_start CreateEvent:" << StringPrintf("%s%d", EVENT_CAPTURE_START, dwProcessID).c_str();
+		if (!m_stop.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_STOP, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		LOG(INFO) << "m_stop CreateEvent:" << StringPrintf("%s%d", END_CAPTURE_EVENT, dwProcessID).c_str();
-		if (!m_ready.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", CAPTURE_READY_EVENT, dwProcessID).c_str()))
+		LOG(INFO) << "m_stop CreateEvent:" << StringPrintf("%s%d", EVENT_CAPTURE_STOP, dwProcessID).c_str();
+		if (!m_ready.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", EVENT_HOOK_READY, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		LOG(INFO) << "m_ready CreateEvent:" << StringPrintf("%s%d", CAPTURE_READY_EVENT, dwProcessID).c_str();
-		if (!m_exit.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID).c_str()))
+		LOG(INFO) << "m_ready CreateEvent:" << StringPrintf("%s%d", EVENT_HOOK_READY, dwProcessID).c_str();
+		if (!m_exit.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", EVENT_HOOK_EXIT, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		LOG(INFO) << "m_exit CreateEvent:" << StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID).c_str();
+		LOG(INFO) << "m_exit CreateEvent:" << StringPrintf("%s%d", EVENT_HOOK_EXIT, dwProcessID).c_str();
 		return TRUE;
 	}
 	BOOL DX::SetWindowsHook()

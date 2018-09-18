@@ -146,12 +146,6 @@ namespace DXFramework
 			PostThreadMessage(threadID, WM_USER + 432, 0, (LPARAM)hHook);
 		}
 	_ERROR:
-		//_ERROR:
-		//	if (hInstance != NULL)
-		//	{
-		//		FreeLibrary(hInstance);
-		//		hInstance = NULL;
-		//	}
 		return bRes;
 	}
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL)

@@ -82,7 +82,7 @@ namespace GraphicsCapture
 		HMODULE							m_hD3D9;
 		TinyEvent						m_copy;
 		TinyEvent						m_close;
-		SharedCaptureDATA				m_captureDATA;
+		HookDATA				m_captureDATA;
 		LPVOID							m_currentPointer;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;

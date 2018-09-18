@@ -14,7 +14,7 @@ namespace DXFramework
 		void					SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 		BOOL					Submit();
 		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
-		SharedCaptureDATA*		GetSharedCaptureDATA();
+		HookDATA*				GetHookDATA();
 		SharedTextureDATA*		GetSharedTextureDATA(DWORD dwSize);
 		BYTE*					GetSharedTexture(DWORD dwSize);
 		BOOL					IsCapturing() const;

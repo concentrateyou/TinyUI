@@ -32,22 +32,22 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureRunner::OpenEvents()
 	{
-		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwPID));
+		string name = std::move(StringPrintf("%s%d", EVENT_CAPTURE_START, m_targetWND.dwPID));
 		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwPID));
+		name = std::move(StringPrintf("%s%d", EVENT_CAPTURE_STOP, m_targetWND.dwPID));
 		if (!m_stop.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", CAPTURE_READY_EVENT, m_targetWND.dwPID));
+		name = std::move(StringPrintf("%s%d", EVENT_HOOK_READY, m_targetWND.dwPID));
 		if (!m_ready.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", CAPTURE_EXIT_EVENT, m_targetWND.dwPID));
+		name = std::move(StringPrintf("%s%d", EVENT_HOOK_EXIT, m_targetWND.dwPID));
 		if (!m_exit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
@@ -56,22 +56,22 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureRunner::CreateEvents()
 	{
-		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwPID));
+		string name = std::move(StringPrintf("%s%d", EVENT_CAPTURE_START, m_targetWND.dwPID));
 		if (!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwPID));
+		name = std::move(StringPrintf("%s%d", EVENT_CAPTURE_STOP, m_targetWND.dwPID));
 		if (!m_stop.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", CAPTURE_READY_EVENT, m_targetWND.dwPID));
+		name = std::move(StringPrintf("%s%d", EVENT_HOOK_READY, m_targetWND.dwPID));
 		if (!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", CAPTURE_EXIT_EVENT, m_targetWND.dwPID));
+		name = std::move(StringPrintf("%s%d", EVENT_HOOK_EXIT, m_targetWND.dwPID));
 		if (!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;
@@ -85,16 +85,16 @@ namespace DXFramework
 		m_ready.Close();
 		m_exit.Close();
 	}
-	SharedCaptureDATA* DX11CaptureRunner::GetSharedCaptureDATA()
+	HookDATA* DX11CaptureRunner::GetHookDATA()
 	{
 		if (!m_captureMemory.Address())
 		{
 			if (!m_captureMemory.Open(SHAREDCAPTURE_MEMORY, FALSE))
 				return NULL;
-			if (!m_captureMemory.Map(0, sizeof(SharedCaptureDATA)))
+			if (!m_captureMemory.Map(0, sizeof(HookDATA)))
 				return NULL;
 		}
-		SharedCaptureDATA* pDATA = reinterpret_cast<SharedCaptureDATA*>(m_captureMemory.Address());
+		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_captureMemory.Address());
 		return pDATA;
 	}
 	SharedTextureDATA* DX11CaptureRunner::GetSharedTextureDATA(DWORD dwSize)
@@ -178,13 +178,13 @@ namespace DXFramework
 			TRACE("BeginCapture BuildEvents-FAIL\n");
 			return FALSE;
 		}
-		SharedCaptureDATA* pCaptureDATA = GetSharedCaptureDATA();
-		if (!pCaptureDATA)
+		HookDATA* hookDATA = GetHookDATA();
+		if (!hookDATA)
 		{
 			TRACE("BeginCapture GetSharedCaptureDATA-FAIL\n");
 			return FALSE;
 		}
-		SharedTextureDATA* pTextureDATA = GetSharedTextureDATA(pCaptureDATA->MapSize);
+		SharedTextureDATA* pTextureDATA = GetSharedTextureDATA(hookDATA->MapSize);
 		if (!pTextureDATA)
 		{
 			TRACE("BeginCapture GetSharedTextureDATA-FAIL\n");
@@ -192,7 +192,7 @@ namespace DXFramework
 		}
 		do
 		{
-			if (pCaptureDATA->CaptureType == CAPTURETYPE_SHAREDTEXTURE)
+			if (hookDATA->CaptureType == CAPTURETYPE_SHAREDTEXTURE)
 			{
 				if (!pTextureDATA->TextureHandle)
 				{
@@ -208,11 +208,11 @@ namespace DXFramework
 				}
 				break;
 			}
-			if (pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
+			if (hookDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
 				TinyAutoLock autolock(m_lock);
 				m_image.Destory();
-				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
+				if (!m_image.Create(*m_pDX11, hookDATA->Size.cx, hookDATA->Size.cy, NULL, FALSE))
 				{
 					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;

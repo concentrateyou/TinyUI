@@ -15,7 +15,7 @@ namespace GraphicsCapture
 		BOOL Render(IDXGISwapChain *swap, UINT flags);
 		BOOL DX10GPUHook(ID3D10Device *device);
 	public:
-		SharedCaptureDATA				m_captureDATA;
+		HookDATA				m_captureDATA;
 		DXGI_FORMAT						m_dxgiFormat;
 		BOOL							m_bCapturing;
 		BOOL							m_bTextures;

@@ -206,6 +206,7 @@ namespace Bytedance
 	}
 	void MainView::OnCloseClick(TinyVisual*, EventArgs& args)
 	{
+		m_controller.GetVideoWorker().Stop();
 		m_document.ReleaseCapture();
 		::SendMessage(m_hWND, WM_SYSCOMMAND, SC_CLOSE, NULL);
 	}
@@ -224,8 +225,8 @@ namespace Bytedance
 	void MainView::OnGameClick(TinyVisual*, EventArgs& args)
 	{
 		GameVisual2D* visual2D = new GameVisual2D(m_controller.GetVideoWorker().GetDX11());
-		visual2D->Select("Warcraft III","War3.exe","D:\\SourceCode\\TinyUI\\Debug\\GameDetour32.dll");
-		//visual2D->Select("GEMAINWINDOWCLASS", "Europa_Client.exe", "D:\\Develop\\TinyUI\\Debug\\GameDetour32.dll");
+		//visual2D->Select("Warcraft III","War3.exe","D:\\SourceCode\\TinyUI\\Debug\\GameDetour32.dll");
+		visual2D->Select("Direct3DWindowClass", "BasicHLSL11.exe", "D:\\SourceCode\\TinyUI\\Debug\\GameDetour32.dll");
 		visual2D->Open();
 		TinyRectangle client;
 		::GetClientRect(m_view.Handle(), &client);

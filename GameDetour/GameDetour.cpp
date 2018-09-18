@@ -68,7 +68,6 @@ namespace GameDetour
 				if (m_bDX8Detour)
 				{
 					LOG(INFO) << "DX8 Initialize OK\n";
-					break;
 				}
 				if (!m_bDX9Detour)
 				{
@@ -77,7 +76,6 @@ namespace GameDetour
 				if (m_bDX9Detour)
 				{
 					LOG(INFO) << "DX9 Initialize OK\n";
-					break;
 				}
 				if (!m_bDXGIDetour)
 				{
@@ -86,7 +84,6 @@ namespace GameDetour
 				if (m_bDXGIDetour)
 				{
 					LOG(INFO) << "DXGI Initialize() OK\n";
-					break;
 				}
 			} while (0);
 		}

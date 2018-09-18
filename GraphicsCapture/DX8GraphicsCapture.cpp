@@ -471,12 +471,11 @@ namespace GraphicsCapture
 		UINT size1 = (sizeof(SharedTextureDATA) + 15) & 0xFFFFFFF0;
 		UINT size2 = (m_captureDATA.Pitch * m_captureDATA.Size.cy + 15) & 0xFFFFFFF0;
 		m_captureDATA.MapSize = size1 + size2 * 2;
-		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
+		HookDATA* sharedCapture = m_dx.GetHookDATA();
 		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
 		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
 		sharedTexture->Texture1Offset = size1;
 		sharedTexture->Texture2Offset = size1 + size2;
-		sharedTexture->FrameTime = 0;
 		sharedTexture->TextureHandle = NULL;
 		BYTE* ps = m_dx.GetSharedTexture(m_captureDATA.MapSize);
 		m_textures[0] = ps + sharedTexture->Texture1Offset;
