@@ -22,8 +22,7 @@ namespace GameDetour
 		BOOL Attach(HMODULE hModule);
 		BOOL Detach(HMODULE hModule);
 	private:
-		void BeginDetour();
-		void EndDetour();
+		void Detour();
 		void OnMessagePump();
 	private:
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);

@@ -28,8 +28,13 @@ namespace GameDetour
 	{
 		m_hInstance = hModule;
 		CHAR szName[MAX_PATH];
-		memset(szName, 0, MAX_PATH);
 		GetModuleBaseName(GetCurrentProcess(), NULL, szName, MAX_PATH);
+		if (!g_dx.Initialize())
+		{
+			LOG(ERROR) << "DX Initialize() FAIL\n";
+		}
+		GetModuleFileName(m_hInstance, szName, MAX_PATH);
+		LoadLibrary(szName);
 		LOG(INFO) << szName << " GameCapture::Attach\n";
 		if (!m_task.Submit(BindCallback(&GameDetour::OnMessagePump, this)))
 		{
@@ -40,7 +45,6 @@ namespace GameDetour
 	BOOL GameDetour::Detach(HMODULE hModule)
 	{
 		CHAR szName[MAX_PATH];
-		memset(szName, 0, MAX_PATH);
 		GetModuleBaseName(GetCurrentProcess(), NULL, szName, MAX_PATH);
 		m_bDX8Detour = m_bDX9Detour = m_bDXGIDetour = FALSE;
 		if (IsWindow(m_hWNDD3D))
@@ -49,49 +53,37 @@ namespace GameDetour
 			::SendMessage(m_hWNDD3D, WM_CLOSE, NULL, NULL);
 			m_task.Close(1000);
 		}
-		EndDetour();
+		g_dx.Uninitialize();
 		m_hWNDD3D = NULL;
 		LOG(INFO) << szName << " [GameCapture] Detach\n";
 		return TRUE;
 	}
-	void GameDetour::BeginDetour()
+	void GameDetour::Detour()
 	{
-		if (g_dx.Initialize())
+		if (!m_bDX8Detour)
 		{
-			LOG(INFO) << "DX Initialize() OK\n";
-			do
-			{
-				if (!m_bDX8Detour)
-				{
-					m_bDX8Detour = g_dx8.Initialize(m_hWNDD3D);
-				}
-				if (m_bDX8Detour)
-				{
-					LOG(INFO) << "DX8 Initialize OK\n";
-				}
-				if (!m_bDX9Detour)
-				{
-					m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
-				}
-				if (m_bDX9Detour)
-				{
-					LOG(INFO) << "DX9 Initialize OK\n";
-				}
-				if (!m_bDXGIDetour)
-				{
-					m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
-				}
-				if (m_bDXGIDetour)
-				{
-					LOG(INFO) << "DXGI Initialize() OK\n";
-				}
-			} while (0);
+			m_bDX8Detour = g_dx8.Initialize(m_hWNDD3D);
 		}
-	}
-	void GameDetour::EndDetour()
-	{
-		g_dx.Uninitialize();
-		LOG(INFO) << "Uninitialize OK\n";
+		if (m_bDX8Detour)
+		{
+			LOG(INFO) << "DX8 Initialize OK\n";
+		}
+		if (!m_bDX9Detour)
+		{
+			m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
+		}
+		if (m_bDX9Detour)
+		{
+			LOG(INFO) << "DX9 Initialize OK\n";
+		}
+		if (!m_bDXGIDetour)
+		{
+			m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
+		}
+		if (m_bDXGIDetour)
+		{
+			LOG(INFO) << "DXGI Initialize() OK\n";
+		}
 	}
 	void GameDetour::OnMessagePump()
 	{
@@ -117,7 +109,7 @@ namespace GameDetour
 		}
 		if (m_hWNDD3D != NULL)
 		{
-			BeginDetour();
+			Detour();
 			MSG msg = { 0 };
 			while (GetMessage(&msg, NULL, 0, 0))
 			{
