@@ -13,10 +13,11 @@ namespace GraphicsCapture
 		DXGIGraphicsCapture(DX10GraphicsCapture& dx10, DX101GraphicsCapture& dx101, DX11GraphicsCapture& dx11);
 		~DXGIGraphicsCapture();
 		BOOL Initialize(HWND hWND);
-		void Release();
+		void Reset();
+		BOOL hookable();
 	public:
-		TinyDetour	m_dxPresent;
-		TinyDetour	m_dxResizeBuffers;
+		TinyDetour	m_present;
+		TinyDetour	m_resize;
 	public:
 		BOOL					m_bDX10;
 		BOOL					m_bDX101;

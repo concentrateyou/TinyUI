@@ -51,18 +51,16 @@ namespace GraphicsCapture
 		LOG(INFO) << "DX101Capture::Initialize OK\n";
 		return TRUE;
 	}
-	void DX101GraphicsCapture::Release()
+	void DX101GraphicsCapture::Reset()
 	{
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
-		m_resource.Release();
 		m_copy2D.Release();
-		m_dx.m_textureMemery.Unmap();
-		m_dx.m_textureMemery.Close();
+		m_texture2D.Release();
+		m_dx.m_textureDATA.Close();
 	}
 	BOOL DX101GraphicsCapture::Setup(IDXGISwapChain *swap)
 	{
-		LOG(INFO) << "DX101Capture Setup OK\n";
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Device1> device;
 		hRes = swap->GetDevice(__uuidof(ID3D10Device1), (void**)&device);
@@ -77,7 +75,7 @@ namespace GraphicsCapture
 		m_captureDATA.Format = m_dxgiFormat;
 		m_captureDATA.Size.cx = scd.BufferDesc.Width;
 		m_captureDATA.Size.cy = scd.BufferDesc.Height;
-		m_captureDATA.HwndCapture = scd.OutputWindow;
+		m_captureDATA.Window = scd.OutputWindow;
 		m_captureDATA.bMultisample = scd.SampleDesc.Count > 1;
 		if (m_captureDATA.bMultisample)
 		{
@@ -102,14 +100,14 @@ namespace GraphicsCapture
 		m_dx.SetWindowsHook();
 		return TRUE;
 	}
-	BOOL DX101GraphicsCapture::Render(IDXGISwapChain *swap, UINT flags)
+	BOOL DX101GraphicsCapture::Draw(IDXGISwapChain *swap, UINT flags)
 	{
 		HRESULT hRes = S_OK;
 		if (m_bCapturing && m_dx.m_stop.WaitEvent(0))
 		{
 			LOG(INFO) << "DX101Capture::Render m_stop OK\n";
 			m_bCapturing = FALSE;
-			Release();
+			Reset();
 			return FALSE;
 		}
 		if (!m_bCapturing && m_dx.m_start.WaitEvent(0))
@@ -138,12 +136,12 @@ namespace GraphicsCapture
 							D3D10_TEXTURE2D_DESC desc;
 							backBuffer->GetDesc(&desc);
 							device->ResolveSubresource(m_copy2D, 0, backBuffer, 0, desc.Format);
-							device->CopyResource(m_resource, m_copy2D);
+							device->CopyResource(m_texture2D, m_copy2D);
 						}
 					}
 					else
 					{
-						device->CopyResource(m_resource, backBuffer);
+						device->CopyResource(m_texture2D, backBuffer);
 					}
 				}
 			}
@@ -165,14 +163,12 @@ namespace GraphicsCapture
 		texGameDesc.Usage = D3D10_USAGE_DEFAULT;
 		texGameDesc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
 		TinyComPtr<ID3D10Texture2D> dx10Texture2D;
-		if (FAILED(hRes = device->CreateTexture2D(&texGameDesc, NULL, &dx10Texture2D)))
+		if (FAILED(hRes = device->CreateTexture2D(&texGameDesc, NULL, &m_texture2D)))
 			return FALSE;
-		if (FAILED(hRes = dx10Texture2D->QueryInterface(__uuidof(ID3D10Resource), (void**)&m_resource)))
+		TinyComPtr<IDXGIResource> dxgiResource;
+		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
 			return FALSE;
-		TinyComPtr<IDXGIResource> resource;
-		if (FAILED(hRes = dx10Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
-			return FALSE;
-		if (FAILED(hRes = resource->GetSharedHandle(&m_hTextureHandle)))
+		if (FAILED(hRes = dxgiResource->GetSharedHandle(&m_hTextureHandle)))
 			return FALSE;
 		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		m_captureDATA.bFlip = FALSE;

@@ -68,6 +68,7 @@ namespace DXFramework
 		DWORD	dwPID;
 		DWORD	dwTID;
 		HANDLE	hProcess;
+		BOOL	bX86;
 	}WNDINFO, *LPWNDINFO;
 
 	typedef struct tagPROCESSINFO
@@ -102,7 +103,7 @@ namespace DXFramework
 #define EVENT_CAPTURE_START		TEXT("EVENT_CAPTURE_START")
 #define EVENT_CAPTURE_STOP      TEXT("EVENT_CAPTURE_STOP")
 #define EVENT_HOOK_READY		TEXT("EVENT_HOOK_READY")
-#define EVENT_HOOK_EXIT			TEXT("EVENT_HOOK_EXIT")
+#define EVENT_HOOK_INIT			TEXT("EVENT_HOOK_INIT")
 #define MUTEX_TEXTURE1          TEXT("MUTEX_TEXTURE1")
 #define MUTEX_TEXTURE2          TEXT("MUTEX_TEXTURE2")
 
@@ -122,7 +123,7 @@ namespace DXFramework
 		SIZE		Size;
 		UINT32		Pitch;
 		DWORD		MapSize;
-		HWND		HwndCapture;
+		HWND		Window;
 	}HookDATA;
 
 	typedef struct tagSharedTextureDATA

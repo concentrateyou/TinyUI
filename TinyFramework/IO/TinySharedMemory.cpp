@@ -68,7 +68,7 @@ namespace TinyFramework
 		TinySharedMemory::TinySharedMemory()
 			:m_hFileMap(NULL),
 			m_bReadonly(FALSE),
-			m_pMemory(NULL)
+			m_address(NULL)
 		{
 
 		}
@@ -94,52 +94,41 @@ namespace TinyFramework
 		BOOL TinySharedMemory::Open(const TinyString& name, BOOL bReadonly)
 		{
 			DWORD dwAccess = FILE_MAP_READ | SECTION_QUERY;
-			if (!bReadonly) dwAccess |= FILE_MAP_WRITE;
+			if (!bReadonly)
+				dwAccess |= FILE_MAP_WRITE;
 			m_bReadonly = bReadonly;
-			m_hFileMap = OpenFileMapping(dwAccess, false, name.IsEmpty() ? NULL : name.STR());
+			m_hFileMap = OpenFileMapping(dwAccess, FALSE, name.IsEmpty() ? NULL : name.STR());
 			if (!m_hFileMap)
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinySharedMemory::Close()
+		void TinySharedMemory::Close()
 		{
 			Unmap();
-			if (!m_hFileMap)
-				return FALSE;
-			if (::CloseHandle(m_hFileMap))
-			{
-				m_hFileMap = NULL;
-				return TRUE;
-			}
-			return FALSE;
+			SAFE_CLOSE_HANDLE(m_hFileMap);
 		}
 		BOOL TinySharedMemory::Map(ULONGLONG offset, DWORD dwBytes)
 		{
 			if (!m_hFileMap)
 				return FALSE;
-			if (m_pMemory != NULL)
-			{
-				UnmapViewOfFile(m_pMemory);
-				m_pMemory = NULL;
-			}
-			m_pMemory = MapViewOfFile(m_hFileMap, m_bReadonly ? FILE_MAP_READ : FILE_MAP_READ | FILE_MAP_WRITE, static_cast<ULONGLONG>(offset) >> 32, static_cast<DWORD>(offset), dwBytes);
-			if (!m_pMemory)
+			Unmap();
+			m_address = MapViewOfFile(m_hFileMap, m_bReadonly ? FILE_MAP_READ : FILE_MAP_READ | FILE_MAP_WRITE, static_cast<ULONGLONG>(offset) >> 32, static_cast<DWORD>(offset), dwBytes);
+			if (!m_address)
 				return FALSE;
 			m_dwMapSize = dwBytes;
 			return TRUE;
 		}
-		BOOL TinySharedMemory::Unmap()
+		void TinySharedMemory::Unmap()
 		{
-			if (m_pMemory != NULL && UnmapViewOfFile(m_pMemory))
+			if (m_address != NULL)
 			{
-				m_pMemory = NULL;
-				return TRUE;
+				UnmapViewOfFile(m_address);
+				m_address = NULL;
 			}
-			return FALSE;
 		}
 		void* TinySharedMemory::Address() const
 		{
-			return m_pMemory;
+			return m_address;
 		}
 		BOOL TinySharedMemory::IsEmpty() const
 		{

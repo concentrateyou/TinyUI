@@ -135,6 +135,10 @@ namespace TinyFramework
 			m_hProcess = ::OpenProcess(dwDesiredAccess, bInheritHandle, dwPID);
 			return m_hProcess != NULL;
 		}
+		void TinyProcess::Close()
+		{
+			SAFE_CLOSE_HANDLE(m_hProcess);
+		}
 		BOOL TinyProcess::Create(const string& app, const vector<string>& args)
 		{
 			if (!PathFileExists(app.c_str()))
@@ -152,7 +156,7 @@ namespace TinyFramework
 				line.append(" ");
 				line.append(args[i]);
 			}
-			if (!CreateProcess(app.c_str(), &line[0], NULL, NULL, TRUE, 0, NULL, NULL, &si, &info))
+			if (!CreateProcess(app.c_str(), &line[0], NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &info))
 				return FALSE;
 			m_hProcess = info.hProcess;
 			return TRUE;
@@ -161,14 +165,17 @@ namespace TinyFramework
 		{
 			return TinyProcess(GetCurrentProcess());
 		}
-		TinyProcess TinyProcess::Duplicate(HANDLE handle)
+		HANDLE TinyProcess::Duplicate()
+		{
+			HANDLE handle = NULL;
+			::DuplicateHandle(GetCurrentProcess(), m_hProcess, GetCurrentProcess(), &handle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+			return handle;
+		}
+		HANDLE TinyProcess::Duplicate(HANDLE handle)
 		{
 			HANDLE hHandle = NULL;
-			if (!::DuplicateHandle(GetCurrentProcess(), handle, GetCurrentProcess(), &hHandle, 0, FALSE, DUPLICATE_SAME_ACCESS))
-			{
-				return TinyProcess();
-			}
-			return TinyProcess(hHandle);
+			::DuplicateHandle(GetCurrentProcess(), handle, GetCurrentProcess(), &hHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+			return hHandle;
 		}
 		BOOL TinyProcess::IsEmpty() const
 		{

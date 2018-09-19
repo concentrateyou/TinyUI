@@ -47,11 +47,6 @@ namespace DXFramework
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", EVENT_HOOK_EXIT, m_targetWND.dwPID));
-		if (!m_exit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
-		{
-			return FALSE;
-		}
 		return TRUE;
 	}
 	BOOL DX10CaptureRunner::CreateEvents()
@@ -68,11 +63,6 @@ namespace DXFramework
 		}
 		name = std::move(StringPrintf("%s%d", EVENT_HOOK_READY, m_targetWND.dwPID));
 		if (!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
-		{
-			return FALSE;
-		}
-		name = std::move(StringPrintf("%s%d", EVENT_HOOK_EXIT, m_targetWND.dwPID));
-		if (!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;
 		}

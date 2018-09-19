@@ -23,16 +23,17 @@ namespace GraphicsCapture
 		SharedTextureDATA* GetSharedTextureDATA(DWORD dwSize = sizeof(SharedTextureDATA));
 		BYTE* GetSharedTexture(DWORD dwSize = sizeof(SharedTextureDATA));
 	private:
-		BOOL BuildEvents();
+		BOOL CreateEvents();
 	public:
 		HHOOK					m_hhk;
 		TinyMutex				m_mutes[2];
+		TinyEvent				m_init;
 		TinyEvent				m_start;
 		TinyEvent				m_stop;
 		TinyEvent				m_ready;
 		TinyEvent				m_exit;
-		IO::TinySharedMemory	m_captureMemery;
-		IO::TinySharedMemory	m_textureMemery;
+		IO::TinySharedMemory	m_hookDATA;
+		IO::TinySharedMemory	m_textureDATA;
 	};
 	SELECTANY extern DX g_dx;
 }

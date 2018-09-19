@@ -102,7 +102,7 @@ _ERROR:
 	{
 		dwID = GetLastError();
 	}
-	SAFE_DELETE_HANDLE(hTask);
+	SAFE_CLOSE_HANDLE(hTask);
 	if (pDATA != NULL)
 	{
 		pVIRTUALFREEEX(hProcess, pDATA, 0, MEM_RELEASE);
@@ -300,7 +300,7 @@ static BOOL InjectLibraryFull(DWORD dwID, const WCHAR* dll)
 	return InjectLibrary(process, dll);
 }
 
-static BOOL InjectHelper(WCHAR *argv[], const WCHAR *dll)
+static BOOL Inject(WCHAR *argv[], const WCHAR *dll)
 {
 	DWORD dwID = 0;
 	DWORD bSAFE = FALSE;
@@ -334,7 +334,7 @@ int main(int argc, char *argv_ansi[])
 				{
 					*(++start) = 0;
 					wcscpy(start, argv[1]);
-					bRes = InjectHelper(argv, dll);
+					bRes = Inject(argv, dll);
 				}
 			}
 		}

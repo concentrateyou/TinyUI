@@ -540,8 +540,8 @@ namespace GraphicsCapture
 			DX9CaptureDATA* pDATA = m_captures[i];
 			pDATA->Destory();
 		}
-		m_dx.m_textureMemery.Unmap();
-		m_dx.m_textureMemery.Close();
+		m_dx.m_textureDATA.Unmap();
+		m_dx.m_textureDATA.Close();
 	}
 	BOOL DX9GraphicsCapture::Setup(IDirect3DDevice9 *pThis)
 	{
@@ -564,7 +564,7 @@ namespace GraphicsCapture
 				m_captureDATA.Format = pp.BackBufferFormat;
 				m_captureDATA.Size.cx = pp.BackBufferWidth;
 				m_captureDATA.Size.cy = pp.BackBufferHeight;
-				m_captureDATA.HwndCapture = pp.hDeviceWindow;
+				m_captureDATA.Window = pp.hDeviceWindow;
 				m_dx.SetWindowsHook();
 				m_dX9Present.Initialize(GetVTable(pThis, (68 / 4)), (FARPROC)DX9Present);
 				m_dX9Reset.Initialize(GetVTable(pThis, (64 / 4)), (FARPROC)DX9Reset);

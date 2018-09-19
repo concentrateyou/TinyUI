@@ -3,11 +3,11 @@
 
 namespace GraphicsCapture
 {
-	HRESULT STDMETHODCALLTYPE DX_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
+	HRESULT STDMETHODCALLTYPE DX_DXGISwapPresent(IDXGISwapChain *swap, UINT syncInterval, UINT flags)
 	{
-		g_dxgi.m_dxPresent.EndDetour();
+		g_dxgi.m_present.EndDetour();
 		TinyComPtr<IUnknown> unknow;
-		if (SUCCEEDED(pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
+		if (SUCCEEDED(swap->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
 		{
 			do
 			{
@@ -17,11 +17,11 @@ namespace GraphicsCapture
 					g_dxgi.m_bDX10 = TRUE;
 					if (g_dxgi.m_currentSwap == NULL)
 					{
-						g_dxgi.m_currentSwap = g_dx10.Setup(pThis) ? pThis : NULL;
+						g_dxgi.m_currentSwap = g_dx10.Setup(swap) ? swap : NULL;
 					}
-					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dxgi.m_currentSwap == pThis)
+					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dxgi.m_currentSwap == swap)
 					{
-						g_dx10.Render(pThis, flags);
+						g_dx10.Draw(swap, flags);
 					}
 					break;
 				}
@@ -30,11 +30,11 @@ namespace GraphicsCapture
 					g_dxgi.m_bDX101 = TRUE;
 					if (g_dxgi.m_currentSwap == NULL)
 					{
-						g_dxgi.m_currentSwap = g_dx101.Setup(pThis) ? pThis : NULL;
+						g_dxgi.m_currentSwap = g_dx101.Setup(swap) ? swap : NULL;
 					}
-					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dxgi.m_currentSwap == pThis)
+					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dxgi.m_currentSwap == swap)
 					{
-						g_dx101.Render(pThis, flags);
+						g_dx101.Draw(swap, flags);
 					}
 					break;
 				}
@@ -43,25 +43,25 @@ namespace GraphicsCapture
 					g_dxgi.m_bDX11 = TRUE;
 					if (g_dxgi.m_currentSwap == NULL)
 					{
-						g_dxgi.m_currentSwap = g_dx11.Setup(pThis) ? pThis : NULL;
+						g_dxgi.m_currentSwap = g_dx11.Setup(swap) ? swap : NULL;
 					}
-					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dxgi.m_currentSwap == pThis)
+					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dxgi.m_currentSwap == swap)
 					{
-						g_dx11.Render(pThis, flags);
+						g_dx11.Draw(swap, flags);
 					}
 					break;
 				}
 			} while (0);
 		}
-		HRESULT hRes = pThis->Present(syncInterval, flags);
-		g_dxgi.m_dxPresent.BeginDetour();
+		HRESULT hRes = swap->Present(syncInterval, flags);
+		g_dxgi.m_present.BeginDetour();
 		return hRes;
 	}
-	HRESULT STDMETHODCALLTYPE DX_DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
+	HRESULT STDMETHODCALLTYPE DX_DXGISwapResizeBuffers(IDXGISwapChain *swap, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
 	{
-		g_dxgi.m_dxResizeBuffers.EndDetour();
+		g_dxgi.m_resize.EndDetour();
 		TinyComPtr<IUnknown> unknow;
-		if (SUCCEEDED(pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
+		if (SUCCEEDED(swap->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
 		{
 			do
 			{
@@ -69,26 +69,26 @@ namespace GraphicsCapture
 				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device), (void**)&device)))
 				{
 					g_dxgi.m_bDX10 = TRUE;
-					g_dx10.Release();
+					g_dx10.Reset();
 					break;
 				}
 				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device1), (void**)&device)))
 				{
 					g_dxgi.m_bDX101 = TRUE;
-					g_dx101.Release();
+					g_dx101.Reset();
 					break;
 				}
 				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D11Device), (void**)&device)))
 				{
 					g_dxgi.m_bDX11 = TRUE;
-					g_dx11.Release();
+					g_dx11.Reset();
 					break;
 				}
 			} while (0);
 		}
 		g_dxgi.m_currentSwap = NULL;
-		HRESULT hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
-		g_dxgi.m_dxResizeBuffers.BeginDetour();
+		HRESULT hRes = swap->ResizeBuffers(bufferCount, width, height, giFormat, flags);
+		g_dxgi.m_resize.BeginDetour();
 		return hRes;
 	}
 
@@ -129,31 +129,35 @@ namespace GraphicsCapture
 		if (swap != NULL)
 		{
 			ULONG *vtable = *(ULONG**)swap.Ptr();
-			if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DX_DXGISwapPresent))
+			if (!m_present.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DX_DXGISwapPresent))
 				return FALSE;
-			if (!m_dxResizeBuffers.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DX_DXGISwapResizeBuffers))
+			if (!m_resize.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DX_DXGISwapResizeBuffers))
 				return FALSE;
-			if (!m_dxPresent.BeginDetour())
+			if (!m_present.BeginDetour())
 				return FALSE;
-			if (!m_dxResizeBuffers.BeginDetour())
+			if (!m_resize.BeginDetour())
 				return FALSE;
 			return TRUE;
 		}
 		return FALSE;
 	}
-	void DXGIGraphicsCapture::Release()
+	BOOL DXGIGraphicsCapture::hookable()
+	{
+		return	!m_present.IsEmpty() && !m_resize.IsEmpty();
+	}
+	void DXGIGraphicsCapture::Reset()
 	{
 		if (m_bDX10)
 		{
-			g_dx10.Release();
+			g_dx10.Reset();
 		}
 		if (m_bDX101)
 		{
-			g_dx101.Release();
+			g_dx101.Reset();
 		}
 		if (m_bDX11)
 		{
-			g_dx11.Release();
+			g_dx11.Reset();
 		}
 	}
 }

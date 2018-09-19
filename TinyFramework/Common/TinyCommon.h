@@ -102,10 +102,10 @@ namespace TinyFramework
 #define SAFE_DELETE_ARRAY(p) { if (p) { delete[] (p); (p)=NULL; } }
 #endif    
 #ifndef SAFE_DELETE_OBJECT
-#define SAFE_DELETE_OBJECT(p) { if (p) { DeleteObject(p); (p)=NULL; } }
+#define SAFE_DELETE_OBJECT(p) { if (p) { ::DeleteObject(p); (p)=NULL; } }
 #endif    
-#ifndef SAFE_DELETE_HANDLE
-#define SAFE_DELETE_HANDLE(p) { if (p) { CloseHandle(p); (p)=NULL; } }
+#ifndef SAFE_CLOSE_HANDLE
+#define SAFE_CLOSE_HANDLE(p) { if (p) { ::CloseHandle(p); (p)=NULL; } }
 #endif      
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(p)  { if (p) { (p)->Release(); (p)=NULL; } }

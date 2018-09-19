@@ -44,19 +44,21 @@ namespace TinyFramework
 			TinyProcess& operator=(TinyProcess&& other);
 			virtual ~TinyProcess();
 			operator HANDLE() const;
-			BOOL IsEmpty() const;
-			DWORD GetPID() const;
-			DWORD GetPriority() const;
-			BOOL IsActive() const;
-			void SetInput(HANDLE handle);
-			void SetOutput(HANDLE handle);
-			void SetError(HANDLE handle);
-			BOOL Create(const string& app, const vector<string>& args);
-			BOOL Open(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwPID);
-			BOOL Wait(DWORD dwMS);
-			BOOL WaitExit(DWORD dwMS, DWORD& dwExitCode);//等待進程退出
-			BOOL Terminate(DWORD dwMS = 60 * 1000);
-			TinyProcess Duplicate(HANDLE handle);
+			BOOL	IsEmpty() const;
+			DWORD	GetPID() const;
+			DWORD	GetPriority() const;
+			BOOL	IsActive() const;
+			void	SetInput(HANDLE handle);
+			void	SetOutput(HANDLE handle);
+			void	SetError(HANDLE handle);
+			BOOL	Create(const string& app, const vector<string>& args);
+			BOOL	Open(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwPID);
+			void	Close();
+			BOOL	Wait(DWORD dwMS);
+			BOOL	WaitExit(DWORD dwMS, DWORD& dwExitCode);//等待進程退出
+			BOOL	Terminate(DWORD dwMS = 60 * 1000);
+			HANDLE	Duplicate();
+			static HANDLE Duplicate(HANDLE handle);
 			static TinyProcess Current();
 		private:
 			HANDLE	m_hProcess;

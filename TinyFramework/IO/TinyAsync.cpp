@@ -17,7 +17,7 @@ namespace TinyFramework
 		{
 			SAFE_DELETE(m_waiter);
 			SAFE_DELETE(m_worker);
-			SAFE_DELETE_HANDLE(m_event);
+			SAFE_CLOSE_HANDLE(m_event);
 		}
 		BOOL TinyWorkerPoolTaskRunner::TinyTask::Execute()
 		{
@@ -45,7 +45,7 @@ namespace TinyFramework
 			{
 				m_callback();
 			}
-			SAFE_DELETE_HANDLE(m_event);
+			SAFE_CLOSE_HANDLE(m_event);
 			if (m_waiter != NULL)
 				m_waiter->Close();
 			if (m_worker != NULL)
@@ -113,7 +113,7 @@ namespace TinyFramework
 		{
 			SAFE_DELETE(m_waiter);
 			SAFE_DELETE(m_worker);
-			SAFE_DELETE_HANDLE(m_event);
+			SAFE_CLOSE_HANDLE(m_event);
 		}
 		void TinyTaskManeger::TinyTask::Close()
 		{
@@ -155,7 +155,7 @@ namespace TinyFramework
 			{
 				m_callback();
 			}
-			SAFE_DELETE_HANDLE(m_event);
+			SAFE_CLOSE_HANDLE(m_event);
 		}
 
 		TinyTaskManeger::TinyTaskManeger(INT iMax)

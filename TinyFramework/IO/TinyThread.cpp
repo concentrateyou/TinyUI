@@ -17,11 +17,7 @@ namespace TinyFramework
 
 		TinyThread::~TinyThread()
 		{
-			if (m_handle != NULL)
-			{
-				CloseHandle(m_handle);
-				m_handle = NULL;
-			}
+			SAFE_CLOSE_HANDLE(m_handle);
 		}
 		HANDLE	TinyThread::Handle() const
 		{
@@ -42,11 +38,7 @@ namespace TinyFramework
 		BOOL TinyThread::Submit(Closure&& callback)
 		{
 			m_callback = std::move(callback);
-			if (m_handle != NULL)
-			{
-				CloseHandle(m_handle);
-				m_handle = NULL;
-			}
+			SAFE_CLOSE_HANDLE(m_handle);
 			m_handle = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyThread::Callback, (LPVOID)this, 0, &m_dwID);
 			return m_handle != NULL;
 		}
@@ -57,11 +49,7 @@ namespace TinyFramework
 			{
 				bRes == (WaitForSingleObject(m_handle, dwMS) == WAIT_OBJECT_0);
 			}
-			if (m_handle != NULL)
-			{
-				CloseHandle(m_handle);
-				m_handle = NULL;
-			}
+			SAFE_CLOSE_HANDLE(m_handle);
 			return bRes;
 		}
 

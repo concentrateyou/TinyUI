@@ -62,7 +62,6 @@ namespace MediaSDK
 	{
 		if (!m_captureRunner.IsCapturing())
 		{
-			//TRACE("IsCapturing FAIL\n");
 			return FALSE;
 		}
 		HookDATA* hookDATA = m_captureRunner.GetHookDATA();

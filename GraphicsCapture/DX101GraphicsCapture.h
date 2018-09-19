@@ -10,9 +10,9 @@ namespace GraphicsCapture
 		DX101GraphicsCapture(DX& dx);
 		~DX101GraphicsCapture();
 		BOOL Initialize(HWND hWND, TinyComPtr<IDXGISwapChain>& swap);
-		void Release();
+		void Reset();
 		BOOL Setup(IDXGISwapChain *swap);
-		BOOL Render(IDXGISwapChain *swap, UINT flags);
+		BOOL Draw(IDXGISwapChain *swap, UINT flags);
 		BOOL DX101GPUHook(ID3D10Device1 *device);
 	public:
 		DX&								m_dx;
@@ -21,8 +21,8 @@ namespace GraphicsCapture
 		HANDLE							m_hTextureHandle;
 		HMODULE							m_hD3D101;
 		DXGI_FORMAT						m_dxgiFormat;
-		HookDATA				m_captureDATA;
-		TinyComPtr<ID3D10Resource>		m_resource;
+		HookDATA						m_captureDATA;
+		TinyComPtr<ID3D10Texture2D>		m_texture2D;
 		TinyComPtr<ID3D10Texture2D>		m_copy2D;
 	};
 	SELECTANY extern DX101GraphicsCapture g_dx101(g_dx);

@@ -10,18 +10,18 @@ namespace GraphicsCapture
 		DX10GraphicsCapture(DX& dx);
 		~DX10GraphicsCapture();
 		BOOL Initialize(HWND hWND, TinyComPtr<IDXGISwapChain>& swap);
-		void Release();
+		void Reset();
 		BOOL Setup(IDXGISwapChain *swap);
-		BOOL Render(IDXGISwapChain *swap, UINT flags);
+		BOOL Draw(IDXGISwapChain *swap, UINT flags);
 		BOOL DX10GPUHook(ID3D10Device *device);
 	public:
-		HookDATA				m_captureDATA;
+		HookDATA						m_captureDATA;
 		DXGI_FORMAT						m_dxgiFormat;
 		BOOL							m_bCapturing;
 		BOOL							m_bTextures;
 		HANDLE							m_hTextureHandle;
 		HMODULE							m_hD3D10;
-		TinyComPtr<ID3D10Resource>		m_resource;
+		TinyComPtr<ID3D10Texture2D>		m_texture2D;
 		TinyComPtr<ID3D10Texture2D>		m_copy2D;
 		TinyDetour						m_dxPresent;
 		TinyDetour						m_dxResizeBuffers;

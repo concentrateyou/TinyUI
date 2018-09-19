@@ -150,7 +150,7 @@ namespace TinyFramework
 		BOOL	Uninitialize();
 		BOOL	BeginDetour();
 		BOOL	EndDetour();
-		BOOL	IsValid() const;
+		BOOL	IsEmpty() const;
 		LPVOID	GetOrig() const;
 	protected:
 		BOOL	m_bAbove;

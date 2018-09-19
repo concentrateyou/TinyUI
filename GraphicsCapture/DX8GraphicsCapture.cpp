@@ -400,8 +400,8 @@ namespace GraphicsCapture
 			DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[i]);
 			pDATA->Destory();
 		}
-		m_dx.m_textureMemery.Unmap();
-		m_dx.m_textureMemery.Close();
+		m_dx.m_textureDATA.Unmap();
+		m_dx.m_textureDATA.Close();
 	}
 	BOOL DX8GraphicsCapture::Setup(LPVOID pThis)
 	{
@@ -410,7 +410,7 @@ namespace GraphicsCapture
 		D3DDEVICE_CREATION_PARAMETERS parameters;
 		if (SUCCEEDED(d3d->GetCreationParameters(&parameters)))
 		{
-			m_captureDATA.HwndCapture = parameters.hFocusWindow;
+			m_captureDATA.Window = parameters.hFocusWindow;
 		}
 		TinyComPtr<IDirect3DSurface8> backBuffer;
 		if (SUCCEEDED(d3d->GetRenderTarget(&backBuffer)))

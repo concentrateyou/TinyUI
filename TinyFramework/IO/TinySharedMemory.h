@@ -24,16 +24,16 @@ namespace TinyFramework
 			BOOL	Create(const TinyString& name, DWORD dwSize);
 			BOOL	Delete();
 			BOOL	Open(const TinyString& name, BOOL bReadonly = FALSE);
-			BOOL	Close();
+			void	Close();
 			BOOL	Map(ULONGLONG offset = 0, DWORD dwBytes = 0);
-			BOOL	Unmap();
+			void	Unmap();
 			void*	Address() const;
 			BOOL	IsEmpty() const;
 			DWORD	GetMapSize() const;
 			DWORD	GetSize() const;
 		private:
 			BOOL        m_bReadonly;
-			void*       m_pMemory;
+			void*       m_address;
 			HANDLE		m_hFileMap;
 			DWORD		m_dwSize;
 			DWORD		m_dwMapSize;
