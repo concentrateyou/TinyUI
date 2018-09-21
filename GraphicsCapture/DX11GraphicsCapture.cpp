@@ -6,9 +6,9 @@ namespace GraphicsCapture
 {
 	DX11GraphicsCapture::DX11GraphicsCapture(DX& dx)
 		:m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
-		m_hTextureHandle(NULL),
+		m_handle(NULL),
 		m_bCapturing(FALSE),
-		m_bReady(FALSE),
+		m_bActive(FALSE),
 		m_dx(dx)
 	{
 	}
@@ -39,36 +39,37 @@ namespace GraphicsCapture
 			D3D_FEATURE_LEVEL_9_2,
 			D3D_FEATURE_LEVEL_9_1,
 		};
-		DXGI_SWAP_CHAIN_DESC swapDesc;
-		ZeroMemory(&swapDesc, sizeof(swapDesc));
-		swapDesc.BufferCount = 2;
-		swapDesc.BufferDesc.Width = 1;
-		swapDesc.BufferDesc.Height = 1;
-		swapDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		swapDesc.BufferDesc.RefreshRate.Numerator = 0;
-		swapDesc.BufferDesc.RefreshRate.Denominator = 1;
-		swapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapDesc.OutputWindow = hWND;
-		swapDesc.SampleDesc.Count = 1;
-		swapDesc.SampleDesc.Quality = 0;
-		swapDesc.Windowed = TRUE;
-		swapDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		swapDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-		swapDesc.Flags = 0;
+		DXGI_SWAP_CHAIN_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.BufferCount = 2;
+		desc.BufferDesc.Width = 1;
+		desc.BufferDesc.Height = 1;
+		desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.BufferDesc.RefreshRate.Numerator = 0;
+		desc.BufferDesc.RefreshRate.Denominator = 1;
+		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		desc.OutputWindow = hWND;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.Windowed = TRUE;
+		desc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		desc.Flags = 0;
 		TinyComPtr<ID3D11Device> device;
 		TinyComPtr<ID3D11DeviceContext>	immediateContext;
-		D3D_FEATURE_LEVEL level;
-		if (FAILED(hRes = (*d3d11Create)(NULL, D3D_DRIVER_TYPE_NULL, NULL, 0, levels, 6, D3D11_SDK_VERSION, &swapDesc, &swap, &device, &level, &immediateContext)))
+		D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_9_3;
+		if (FAILED(hRes = (*d3d11Create)(NULL, D3D_DRIVER_TYPE_NULL, NULL, 0, levels, 6, D3D11_SDK_VERSION, &desc, &swap, &device, &level, &immediateContext)))
 			return FALSE;
 		return TRUE;
 	}
 	void DX11GraphicsCapture::Reset()
 	{
-		m_bReady = FALSE;
-		m_hTextureHandle = NULL;
-		m_texture2D.Release();
+		m_bActive = FALSE;
+		m_bCapturing = FALSE;
+		m_handle = NULL;
 		m_copy2D.Release();
+		m_texture2D.Release();
 		m_dx.m_textureDATA.Close();
 	}
 	BOOL DX11GraphicsCapture::Setup(IDXGISwapChain *swap)
@@ -83,7 +84,7 @@ namespace GraphicsCapture
 		hRes = swap->GetDesc(&scd);
 		if (hRes != S_OK)
 			return FALSE;
-		m_dxgiFormat = GetDX10PlusTextureFormat(scd.BufferDesc.Format);
+		m_dxgiFormat = GetDXTextureFormat(scd.BufferDesc.Format);
 		m_captureDATA.Format = m_dxgiFormat;
 		m_captureDATA.Size.cx = scd.BufferDesc.Width;
 		m_captureDATA.Size.cy = scd.BufferDesc.Height;
@@ -128,11 +129,11 @@ namespace GraphicsCapture
 		TinyComPtr<ID3D11Device> device;
 		if (SUCCEEDED(hRes = swap->GetDevice(__uuidof(ID3D11Device), (void**)&device)))
 		{
-			if (m_bCapturing && !m_bReady)
+			if (m_bCapturing && !m_bActive)
 			{
-				m_bReady = DX11GPUHook(device);
+				m_bActive = DX11GPUHook(device);
 			}
-			if (m_bReady)
+			if (m_bActive)
 			{
 				TinyComPtr<ID3D11DeviceContext> context;
 				device->GetImmediateContext(&context);
@@ -181,7 +182,7 @@ namespace GraphicsCapture
 		TinyComPtr<IDXGIResource> dxgiResource;
 		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
 			return FALSE;
-		if (FAILED(hRes = dxgiResource->GetSharedHandle(&m_hTextureHandle)))
+		if (FAILED(hRes = dxgiResource->GetSharedHandle(&m_handle)))
 			return FALSE;
 		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		m_captureDATA.bFlip = FALSE;
@@ -189,7 +190,7 @@ namespace GraphicsCapture
 		HookDATA* hookDATA = m_dx.GetHookDATA();
 		memcpy(hookDATA, &m_captureDATA, sizeof(m_captureDATA));
 		TextureDATA* textureDATA = m_dx.GetTextureDATA();
-		textureDATA->TextureHandle = m_hTextureHandle;
+		textureDATA->TextureHandle = m_handle;
 		m_dx.m_targetReady.SetEvent();
 		return TRUE;
 	}

@@ -17,9 +17,9 @@ namespace GraphicsCapture
 		BOOL DX11CPUHook(ID3D11Device *swap);
 	public:
 		DX&								m_dx;
-		BOOL							m_bReady;
-		BOOL							m_bCapturing;
-		HANDLE							m_hTextureHandle;
+		volatile BOOL					m_bActive;
+		volatile BOOL					m_bCapturing;
+		HANDLE							m_handle;
 		HMODULE							m_hD3D11;
 		DXGI_FORMAT						m_dxgiFormat;
 		HookDATA						m_captureDATA;

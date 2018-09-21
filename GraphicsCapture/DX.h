@@ -3,7 +3,7 @@
 
 namespace GraphicsCapture
 {
-	DXGI_FORMAT GetDX10PlusTextureFormat(DXGI_FORMAT s);
+	DXGI_FORMAT GetDXTextureFormat(DXGI_FORMAT s);
 	LRESULT CALLBACK DXCbtFilter(INT code, WPARAM wParam, LPARAM lParam);
 
 	HRESULT STDMETHODCALLTYPE DX_DXGISwapPresent(IDXGISwapChain *swap, UINT syncInterval, UINT flags);

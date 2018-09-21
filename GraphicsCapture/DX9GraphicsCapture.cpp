@@ -530,7 +530,7 @@ namespace GraphicsCapture
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
 		m_surface.Release();
-		m_resource.Release();
+		m_texture2D.Release();
 		m_d3d10.Release();
 		m_copy.SetEvent();
 		m_close.SetEvent();
@@ -706,21 +706,14 @@ namespace GraphicsCapture
 		desc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
 		desc.Usage = D3D10_USAGE_DEFAULT;
 		desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
-		TinyComPtr<ID3D10Texture2D> d3d10Texture2D;
-		HRESULT hRes = m_d3d10->CreateTexture2D(&desc, NULL, &d3d10Texture2D);
+		HRESULT hRes = m_d3d10->CreateTexture2D(&desc, NULL, &m_texture2D);
 		if (hRes != S_OK)
 		{
 			LOG(ERROR) << "[DX9GPUHook] CreateTexture2D FAIL\n";
 			return FALSE;
 		}
-		hRes = d3d10Texture2D->QueryInterface(__uuidof(ID3D10Resource), (void**)&m_resource);
-		if (hRes != S_OK)
-		{
-			LOG(ERROR) << "[DX9GPUHook] ID3D10Resource FAIL\n";
-			return FALSE;
-		}
 		TinyComPtr<IDXGIResource> dxgiResource;
-		hRes = d3d10Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource);
+		hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource);
 		if (hRes != S_OK)
 		{
 			LOG(ERROR) << "[DX9GPUHook] IDXGIResource FAIL\n";
@@ -770,8 +763,8 @@ namespace GraphicsCapture
 		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		m_captureDATA.bFlip = FALSE;
 		m_captureDATA.MapSize = sizeof(TextureDATA);
-		HookDATA* sharedCapture = m_dx.GetHookDATA();
-		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
+		HookDATA* hookDATA = m_dx.GetHookDATA();
+		memcpy(hookDATA, &m_captureDATA, sizeof(m_captureDATA));
 		TextureDATA* textureDATA = m_dx.GetTextureDATA();
 		textureDATA->TextureHandle = m_hTextureHandle;
 		m_dx.m_targetReady.SetEvent();

@@ -17,9 +17,9 @@ namespace GraphicsCapture
 	public:
 		HookDATA						m_captureDATA;
 		DXGI_FORMAT						m_dxgiFormat;
-		BOOL							m_bCapturing;
-		BOOL							m_bTextures;
-		HANDLE							m_hTextureHandle;
+		volatile BOOL					m_bCapturing;
+		volatile BOOL					m_bActive;
+		HANDLE							m_handle;
 		HMODULE							m_hD3D10;
 		TinyComPtr<ID3D10Texture2D>		m_texture2D;
 		TinyComPtr<ID3D10Texture2D>		m_copy2D;

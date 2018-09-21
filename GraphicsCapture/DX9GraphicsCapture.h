@@ -89,7 +89,7 @@ namespace GraphicsCapture
 		IO::TinyThread					m_captureTask;
 		DX9CaptureDATA*					m_captures[NUM_BUFFERS];
 		TinyComPtr<ID3D10Device1>		m_d3d10;
-		TinyComPtr<ID3D10Resource>		m_resource;
+		TinyComPtr<ID3D10Texture2D>		m_texture2D;
 		TinyComPtr<IDirect3DSurface9>	m_surface;
 		TinyDetour						m_dX9Release;
 		TinyDetour						m_dX9EndScene;

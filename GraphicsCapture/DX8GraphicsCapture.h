@@ -22,7 +22,7 @@ namespace GraphicsCapture
 		void OnMessagePump();
 	public:
 		LPVOID							m_currentPointer;
-		HookDATA				m_captureDATA;
+		HookDATA						m_captureDATA;
 		BOOL							m_bCapturing;
 		BOOL							m_bTextures;
 		DWORD							m_d3dFormat;
