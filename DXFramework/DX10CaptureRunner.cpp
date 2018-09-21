@@ -42,7 +42,7 @@ namespace DXFramework
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", EVENT_HOOK_READY, m_targetWND.dwPID));
+		name = std::move(StringPrintf("%s%d", EVENT_HOOK_TARGET_READY, m_targetWND.dwPID));
 		if (!m_ready.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
@@ -61,7 +61,7 @@ namespace DXFramework
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", EVENT_HOOK_READY, m_targetWND.dwPID));
+		name = std::move(StringPrintf("%s%d", EVENT_HOOK_TARGET_READY, m_targetWND.dwPID));
 		if (!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;

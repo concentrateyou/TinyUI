@@ -194,7 +194,7 @@ namespace GraphicsCapture
 		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
 		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();
 		sharedTexture->TextureHandle = m_hTextureHandle;
-		m_dx.m_ready.SetEvent();
+		m_dx.m_targetReady.SetEvent();
 		return TRUE;
 	}
 }

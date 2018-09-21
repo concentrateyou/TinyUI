@@ -242,7 +242,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX10.cpp" />
-    <ClCompile Include="DX10CaptureRunner.cpp" />
     <ClCompile Include="DX10ColorShader.cpp" />
     <ClCompile Include="DX10Duplicator.cpp" />
     <ClCompile Include="DX10Element.cpp" />

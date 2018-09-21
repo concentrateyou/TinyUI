@@ -323,7 +323,7 @@ int main(int argc, char *argv_ansi[])
 	argv = CommandLineToArgvW(pCommandLineW, &argc);
 	if (argv != NULL)
 	{
-		if (argc == 4)
+		if (argc == 5)
 		{
 			DWORD dwSize = 0;
 			dwSize = GetModuleFileNameW(NULL, dll, MAX_PATH);

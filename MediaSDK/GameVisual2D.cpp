@@ -14,9 +14,9 @@ namespace MediaSDK
 	GameVisual2D::~GameVisual2D()
 	{
 	}
-	void GameVisual2D::Select(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	void GameVisual2D::Select(const TinyString& className, const TinyString& exeName)
 	{
-		m_captureRunner.SetConfig(className, exeName, dllName);
+		m_captureRunner.SetConfig(className, exeName);
 	}
 
 	XMFLOAT2 GameVisual2D::GetTranslate()

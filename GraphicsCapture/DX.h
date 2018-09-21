@@ -27,11 +27,10 @@ namespace GraphicsCapture
 	public:
 		HHOOK					m_hhk;
 		TinyMutex				m_mutes[2];
-		TinyEvent				m_init;
+		TinyEvent				m_sourceReady;
 		TinyEvent				m_start;
 		TinyEvent				m_stop;
-		TinyEvent				m_ready;
-		TinyEvent				m_exit;
+		TinyEvent				m_targetReady;
 		IO::TinySharedMemory	m_hookDATA;
 		IO::TinySharedMemory	m_textureDATA;
 	};

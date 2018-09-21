@@ -481,7 +481,7 @@ namespace GraphicsCapture
 		m_textures[0] = ps + sharedTexture->Texture1Offset;
 		m_textures[1] = ps + sharedTexture->Texture2Offset;
 		m_captureTask.Submit(BindCallback(&DX8GraphicsCapture::OnMessagePump, this));
-		m_dx.m_ready.SetEvent();
+		m_dx.m_targetReady.SetEvent();
 		return TRUE;
 	}
 	void DX8GraphicsCapture::OnMessagePump()

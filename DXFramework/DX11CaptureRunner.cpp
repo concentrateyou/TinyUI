@@ -17,18 +17,12 @@ namespace DXFramework
 		inject.resize(MAX_PATH);
 		GetModuleFileName(NULL, &inject[0], MAX_PATH);
 		inject = inject.substr(0, inject.find_last_of("\\", string::npos, 1));
-		inject += ws.bX86 ? "Inject32.exe" : "Inject64.exe";
-		if (PathFileExists(inject.c_str()))
+		inject += ws.bX86 ? "\\Inject32.exe" : "\\Inject64.exe";
+		if (!PathFileExists(inject.c_str()))
 			return  FALSE;
 		string dll;
-		dll.resize(MAX_PATH);
-		GetModuleFileName(NULL, &dll[0], MAX_PATH);
-		dll = dll.substr(0, dll.find_last_of("\\", string::npos, 1));
-		dll += ws.bX86 ? "GameDetour32.dll" : "GameDetour64.dll";
-		if (PathFileExists(dll.c_str()))
-			return  FALSE;
+		dll = ws.bX86 ? "GameDetour32.dll" : "GameDetour64.dll";
 		vector<string> args;
-		args.push_back(inject);
 		args.push_back(dll);
 		args.push_back(std::to_string(anticheat));
 		args.push_back(std::to_string(ws.dwTID));
@@ -41,13 +35,12 @@ namespace DXFramework
 	{
 		return m_process.Wait(dwMS);
 	}
-	BOOL GameInject::GetExitCode(DWORD& exit)
+	BOOL GameInject::Close()
 	{
-		return ::GetExitCodeProcess(m_process, &exit);
-	}
-	void GameInject::Close()
-	{
+		DWORD exit = 0;
+		::GetExitCodeProcess(m_process, &exit);
 		m_process.Close();
+		return exit == 0;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	DX11CaptureRunner::DX11CaptureRunner(DX11* pDX11, DX11Image2D& image)
@@ -56,18 +49,17 @@ namespace DXFramework
 		m_pDX11(pDX11),
 		m_image2D(image)
 	{
-		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
+		ZeroMemory(&m_target, sizeof(m_target));
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	}
 	DX11CaptureRunner::~DX11CaptureRunner()
 	{
 
 	}
-	void DX11CaptureRunner::SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	void DX11CaptureRunner::SetConfig(const TinyString& className, const TinyString& exeName)
 	{
 		m_szClass = std::move(className);
 		m_szEXE = std::move(exeName);
-		m_szDLL = std::move(dllName);
 	}
 	BOOL DX11CaptureRunner::Submit()
 	{
@@ -80,19 +72,19 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureRunner::OpenEvents()
 	{
-		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_START, m_targetWND.dwPID).c_str()))
+		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_START, m_target.dwPID).c_str()))
 		{
 			return FALSE;
 		}
-		if (!m_stop.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_STOP, m_targetWND.dwPID).c_str()))
+		if (!m_stop.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_STOP, m_target.dwPID).c_str()))
 		{
 			return FALSE;
 		}
-		if (!m_ready.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_HOOK_READY, m_targetWND.dwPID).c_str()))
+		if (!m_targetReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_HOOK_TARGET_READY, m_target.dwPID).c_str()))
 		{
 			return FALSE;
 		}
-		if (!m_init.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_HOOK_INIT, m_targetWND.dwPID).c_str()))
+		if (!m_sourceReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_HOOK_SOURCE_READY, m_target.dwPID).c_str()))
 		{
 			return FALSE;
 		}
@@ -103,8 +95,9 @@ namespace DXFramework
 	{
 		m_start.Close();
 		m_stop.Close();
-		m_ready.Close();
-		m_init.Close();
+		m_targetReady.Close();
+		m_sourceReady.Close();
+		m_close.Close();
 	}
 	HookDATA* DX11CaptureRunner::GetHookDATA()
 	{
@@ -187,7 +180,7 @@ namespace DXFramework
 	{
 		return m_bCapturing;
 	}
-	BOOL DX11CaptureRunner::Start()
+	BOOL DX11CaptureRunner::StartCapture()
 	{
 		ASSERT(m_pDX11);
 		BOOL bRes = S_OK;
@@ -242,81 +235,91 @@ namespace DXFramework
 		} while (0);
 		return TRUE;
 	}
-	void DX11CaptureRunner::Stop()
+	void DX11CaptureRunner::StopCapture()
 	{
 		m_stop.SetEvent();
 		m_textureDATA.Close();
 		m_hookDATA.Close();
 		m_start.Close();
 		m_stop.Close();
-		m_ready.Close();
-		m_init.Close();
-		m_inject.Close();
-		SAFE_CLOSE_HANDLE(m_targetWND.hProcess);
-		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
+		m_targetReady.Close();
+		m_sourceReady.Close();
+		m_injector.Close();
+		SAFE_CLOSE_HANDLE(m_target.hProcess);
+		ZeroMemory(&m_target, sizeof(m_target));
 		m_bCapturing = FALSE;
+		m_bActive = FALSE;
 		m_image2D.Destory();
+	}
+	BOOL DX11CaptureRunner::AttemptExisting()
+	{
+		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_START, m_target.dwPID).c_str()))
+		{
+			return FALSE;
+		}
+		m_start.SetEvent();
+		return TRUE;
+	}
+	BOOL DX11CaptureRunner::AttemptDetour(BOOL anticheat)
+	{
+		return m_injector.Open(m_target, anticheat);
 	}
 	BOOL DX11CaptureRunner::Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName, BOOL anticheat)
 	{
-		StrCpy(m_targetWND.className, className.STR());
-		StrCpy(m_targetWND.exeName, exeName.STR());
-		EnumWindows(DX11CaptureRunner::EnumWindow, reinterpret_cast<LPARAM>(&m_targetWND));
-		if (!IsWindow(m_targetWND.hWND))
+		StrCpy(m_target.className, className.STR());
+		StrCpy(m_target.exeName, exeName.STR());
+		EnumWindows(DX11CaptureRunner::EnumWindow, reinterpret_cast<LPARAM>(&m_target));
+		if (!IsWindow(m_target.hWND))
 		{
-			m_bCapturing = FALSE;
+			m_bActive = FALSE;
 			return FALSE;
 		}
 		TinyProcess process;
-		if (!process.Open(PROCESS_ALL_ACCESS, FALSE, m_targetWND.dwPID))
+		if (!process.Open(PROCESS_ALL_ACCESS, FALSE, m_target.dwPID))
 		{
-			CloseEvents();
-			m_bCapturing = FALSE;
+			m_bActive = FALSE;
 			return FALSE;
 		}
-		if (OpenEvents())
+		if (!AttemptExisting())
 		{
-			m_start.SetEvent();
-			m_bCapturing = TRUE;
-			return m_bCapturing;
+			if (!AttemptDetour(anticheat))
+			{
+				m_bActive = FALSE;
+				return FALSE;
+			}
 		}
-		if (!m_inject.Open(m_targetWND, anticheat))
+		if (!OpenEvents())
 		{
-			CloseEvents();
-			m_bCapturing = FALSE;
+			m_bActive = FALSE;
 			return FALSE;
 		}
-		m_init.SetEvent();
+		m_sourceReady.SetEvent();
 		m_bActive = TRUE;
-		m_bCapturing = Start();
-		return m_bCapturing;
+		return TRUE;
 	}
 	void DX11CaptureRunner::Tick()
 	{
-		if (m_stop.WaitEvent(0))
+		if (m_stop.WaitEvent(0))//停止捕获
 		{
-			Stop();
+			StopCapture();
 		}
-		if (m_bActive && !m_ready && m_targetWND.dwPID > 0)
+		if (m_bActive && !m_targetReady && m_target.dwPID > 0)
 		{
-			OpenEvents();
+			m_targetReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_HOOK_TARGET_READY, m_target.dwPID).c_str());
 		}
-		if (m_inject.Wait(0))
+		if (m_injector.Wait(0))
 		{
-			DWORD code = 0;
-			m_inject.GetExitCode(code);
-			m_inject.Close();
-			if (code == 0)
+			if (m_injector.Close())
 			{
 				if (!m_bCapturing)
 				{
-					Stop();
+					StopCapture();
 				}
 			}
 		}
-		if (m_ready.WaitEvent(0))
+		if (m_targetReady.WaitEvent(0))//服务端准备就系
 		{
-			m_bCapturing = Start();
+			m_bCapturing = StartCapture();
 		}
 		if (!m_bActive)
 		{
@@ -324,13 +327,13 @@ namespace DXFramework
 		}
 		else
 		{
-			if (!IsWindow(m_targetWND.hWND))
+			if (!IsWindow(m_target.hWND))
 			{
-				Stop();
+				StopCapture();
 			}
-			if (m_targetWND.hProcess != NULL && WaitForSingleObject(m_targetWND.hProcess, 0) == WAIT_OBJECT_0)
+			if (m_target.hProcess != NULL && WaitForSingleObject(m_target.hProcess, 0) == WAIT_OBJECT_0)
 			{
-				Stop();
+				StopCapture();
 			}
 		}
 	}
@@ -344,7 +347,7 @@ namespace DXFramework
 				{
 					m_stop.SetEvent();
 				}
-				Stop();
+				StopCapture();
 				break;
 			}
 			Tick();
@@ -352,6 +355,6 @@ namespace DXFramework
 	}
 	WNDINFO	DX11CaptureRunner::GetWNDINFO()
 	{
-		return m_targetWND;
+		return m_target;
 	}
 }

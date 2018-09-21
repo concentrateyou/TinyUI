@@ -10,7 +10,7 @@ namespace MediaSDK
 	public:
 		GameVisual2D(DX11& dx11);
 		virtual ~GameVisual2D();
-		void			Select(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
+		void			Select(const TinyString& className, const TinyString& exeName);
 	public:
 		BOOL			Open() OVERRIDE;
 		BOOL			Tick(INT64& timestamp) OVERRIDE;

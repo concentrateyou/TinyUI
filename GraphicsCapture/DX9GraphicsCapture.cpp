@@ -611,7 +611,7 @@ namespace GraphicsCapture
 		m_textures[0] = ps + sharedTexture->Texture1Offset;
 		m_textures[1] = ps + sharedTexture->Texture2Offset;
 		m_captureTask.Submit(BindCallback(&DX9GraphicsCapture::OnMessagePump, this));
-		m_dx.m_ready.SetEvent();
+		m_dx.m_targetReady.SetEvent();
 		return TRUE;
 	}
 	void DX9GraphicsCapture::OnMessagePump()
@@ -774,7 +774,7 @@ namespace GraphicsCapture
 		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
 		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();
 		sharedTexture->TextureHandle = m_hTextureHandle;
-		m_dx.m_ready.SetEvent();
+		m_dx.m_targetReady.SetEvent();
 		LOG(INFO) << "[DX9GPUHook] ok\n";
 		return TRUE;
 	}

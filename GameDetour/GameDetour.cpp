@@ -64,7 +64,8 @@ namespace GameDetour
 	}
 	void GameDetour::CaptureLoop()
 	{
-		g_dx.m_init.WaitEvent(INFINITE);
+		//等待客户端准备就绪
+		g_dx.m_sourceReady.WaitEvent(INFINITE);
 		while (!Detour())
 			Sleep(40);
 		for (INT i = 0; !m_bStop; i++)

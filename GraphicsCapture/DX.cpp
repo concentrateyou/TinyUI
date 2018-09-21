@@ -27,7 +27,7 @@ namespace GraphicsCapture
 		{
 			g_dx9.Reset();
 			g_dxgi.Reset();
-			g_dx.m_exit.SetEvent();
+			g_dx.m_stop.SetEvent();
 		}
 		return CallNextHookEx(g_dx.m_hhk, code, wParam, lParam);
 	}
@@ -72,9 +72,8 @@ namespace GraphicsCapture
 		m_mutes[1].Close();
 		m_start.Close();
 		m_stop.Close();
-		m_ready.Close();
-		m_exit.Close();
-		m_init.Close();
+		m_targetReady.Close();
+		m_sourceReady.Close();
 	}
 	HookDATA* DX::GetHookDATA()
 	{
@@ -136,22 +135,18 @@ namespace GraphicsCapture
 		{
 			return FALSE;
 		}
-		LOG(INFO) << "CreateEvent:" << StringPrintf("%s%d", EVENT_CAPTURE_START, dwProcessID).c_str();
 		if (!m_stop.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_STOP, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		LOG(INFO) << "CreateEvent:" << StringPrintf("%s%d", EVENT_CAPTURE_STOP, dwProcessID).c_str();
-		if (!m_ready.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", EVENT_HOOK_READY, dwProcessID).c_str()))
+		if (!m_targetReady.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", EVENT_HOOK_TARGET_READY, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		LOG(INFO) << "CreateEvent:" << StringPrintf("%s%d", EVENT_HOOK_READY, dwProcessID).c_str();
-		if (!m_init.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", EVENT_HOOK_INIT, dwProcessID).c_str()))
+		if (!m_sourceReady.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", EVENT_HOOK_SOURCE_READY, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		LOG(INFO) << "CreateEvent:" << StringPrintf("%s%d", EVENT_HOOK_INIT, dwProcessID).c_str();
 		return TRUE;
 	}
 	BOOL DX::SetWindowsHook()

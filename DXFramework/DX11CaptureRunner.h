@@ -14,8 +14,7 @@ namespace DXFramework
 		~GameInject();
 		BOOL Open(const WNDINFO& ws, BOOL anticheat);
 		BOOL Wait(DWORD dwMS);
-		BOOL GetExitCode(DWORD& exit);
-		void Close();
+		BOOL Close();
 	private:
 		TinyProcess	m_process;
 	};
@@ -25,7 +24,7 @@ namespace DXFramework
 	public:
 		DX11CaptureRunner(DX11* pDX11, DX11Image2D& image);
 		virtual ~DX11CaptureRunner();
-		void					SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
+		void					SetConfig(const TinyString& className, const TinyString& exeName);
 		BOOL					Submit();
 		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
 		HookDATA*				GetHookDATA();
@@ -36,8 +35,10 @@ namespace DXFramework
 		void					Tick();
 		void					OnMessagePump();
 		WNDINFO					GetWNDINFO();
-		BOOL					Start();
-		void					Stop();
+		BOOL					StartCapture();
+		void					StopCapture();
+		BOOL					AttemptExisting();
+		BOOL					AttemptDetour(BOOL anticheat);
 		BOOL					Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName, BOOL bSafe = TRUE);
 		BOOL					OpenEvents();
 		void					CloseEvents();
@@ -48,16 +49,16 @@ namespace DXFramework
 		BOOL					m_bActive;
 		DX11*					m_pDX11;
 		TinyLock				m_lock;
-		WNDINFO					m_targetWND;
+		WNDINFO					m_target;
 		TinyEvent				m_start;
 		TinyEvent				m_stop;
-		TinyEvent				m_init;
-		TinyEvent				m_ready;
+		TinyEvent				m_sourceReady;
+		TinyEvent				m_targetReady;
 		TinyEvent				m_close;
 		TinyString				m_szClass;
 		TinyString				m_szEXE;
 		TinyString				m_szDLL;
-		GameInject				m_inject;
+		GameInject				m_injector;
 		DX11Image2D&			m_image2D;
 		TinySharedMemory		m_hookDATA;
 		TinySharedMemory		m_textureDATA;
