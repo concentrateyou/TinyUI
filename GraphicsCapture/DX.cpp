@@ -28,6 +28,7 @@ namespace GraphicsCapture
 			g_dx9.Reset();
 			g_dxgi.Reset();
 			g_dx.m_stop.SetEvent();
+			LOG(INFO) << "[GameCapture] DXCbtFilter Destory";
 		}
 		return CallNextHookEx(g_dx.m_hhk, code, wParam, lParam);
 	}

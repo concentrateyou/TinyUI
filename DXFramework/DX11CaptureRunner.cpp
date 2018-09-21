@@ -63,12 +63,12 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureRunner::Submit()
 	{
-		return TinyThread::Submit(BindCallback(&DX11CaptureRunner::OnMessagePump, this));
+		return TinyWorker::Submit(BindCallback(&DX11CaptureRunner::OnMessagePump, this));
 	}
 	BOOL DX11CaptureRunner::Close(DWORD dwMS)
 	{
 		m_close.SetEvent();
-		return TinyThread::Close(dwMS);
+		return TinyWorker::Close(dwMS);
 	}
 	BOOL DX11CaptureRunner::OpenEvents()
 	{

@@ -9,7 +9,7 @@
 #include "Common/TinyTime.h"
 #include "Common/TinyString.h"
 #include "Render/TinyGDI.h"
-#include "IO/TinyThread.h"
+#include "IO/TinyWorker.h"
 #include "IO/TinySharedMemory.h"
 #include "DXFramework.h"
 

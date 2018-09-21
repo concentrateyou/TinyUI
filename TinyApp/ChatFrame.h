@@ -54,7 +54,7 @@ private:
 private:
 	/*DX9Graphics2D			m_graphics2D;
 	DX9Image2D				m_image2D;*/
-	TinyThread				m_task;
+	TinyWorker				m_task;
 	TinySimpleTaskTimer		m_timer;
 	TinyMFIntelQSVDecode	m_qsv;
 	

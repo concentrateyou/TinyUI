@@ -3,7 +3,7 @@
 #include "../Common/TinyCore.h"
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyEvent.h"
-#include "../IO/TinyThread.h"
+#include "../IO/TinyWorker.h"
 
 namespace TinyFramework
 {

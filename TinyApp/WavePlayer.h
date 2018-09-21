@@ -1,5 +1,5 @@
 #pragma once
-#include "IO/TinyThread.h"
+#include "IO/TinyWorker.h"
 #include "Media/TinyWave.h"
 #include "Media/TinySoundPlayer.h"
 #include "AudioAnalyser.h"
@@ -7,7 +7,7 @@ using namespace TinyFramework;
 using namespace TinyFramework::Media;
 using namespace TinyFramework::IO;
 
-class WavePlayer : public TinyThread
+class WavePlayer : public TinyWorker
 {
 public:
 	WavePlayer();

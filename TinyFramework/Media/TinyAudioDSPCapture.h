@@ -1,6 +1,6 @@
 #pragma once
 #include "TinyWASAPIAudio.h"
-#include "../IO/TinyThread.h"
+#include "../IO/TinyWorker.h"
 #include <dmort.h>
 #pragma comment(lib,"msdmo.lib")
 
@@ -52,7 +52,7 @@ namespace TinyFramework
 			DMO_OUTPUT_DATA_BUFFER		m_dmoBuffer;
 			TinyScopedArray<BYTE>		m_waveFMT;
 			TinyComPtr<IMediaObject>	m_dmo;
-			IO::TinyThread				m_task;
+			IO::TinyWorker				m_task;
 			Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
 		};
 	};

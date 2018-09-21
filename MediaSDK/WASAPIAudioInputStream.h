@@ -39,7 +39,7 @@ namespace MediaSDK
 		UINT32								m_count;
 		UINT64								m_lFrequency;
 		volatile AudioState					m_state;
-		TinyThread							m_runnable;
+		TinyWorker							m_runnable;
 		TinyEvent							m_sampleReady;
 		TinyEvent							m_audioStop;
 		AudioParameters						m_params;

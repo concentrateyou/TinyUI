@@ -3,7 +3,7 @@
 #include "../IO/TinyIO.h"
 #include "../Common/TinyCallback.h"
 #include "../IO/TinyIOCP.h"
-#include "../IO/TinyThread.h"
+#include "../IO/TinyWorker.h"
 #include <WinSock2.h>
 #include <mswsock.h>
 #include <Ws2ipdef.h>

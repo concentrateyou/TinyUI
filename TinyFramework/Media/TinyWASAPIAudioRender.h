@@ -4,7 +4,7 @@
 #include "../Common/TinyString.h"
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyTime.h"
-#include "../IO/TinyThread.h"
+#include "../IO/TinyWorker.h"
 #include "TinyWASAPIAudio.h"
 
 namespace TinyFramework
@@ -53,7 +53,7 @@ namespace TinyFramework
 			AUDCLNT_SHAREMODE						m_shareMode;
 			TinyEvent								m_sampleReady;
 			TinyEvent								m_audioStop;
-			IO::TinyThread							m_task;
+			IO::TinyWorker							m_task;
 			TinyScopedArray<BYTE>					m_waveFMT;
 			TinyComPtr<IAudioClock>					m_audioClock;
 			TinyComPtr<IAudioClient>				m_audioClient;

@@ -29,12 +29,12 @@ namespace TinyFramework
 		/// <summary>
 		/// 线程基类
 		/// </summary>
-		class TinyThread
+		class TinyWorker
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyThread)
+			DISALLOW_COPY_AND_ASSIGN(TinyWorker)
 		public:
-			TinyThread();
-			virtual ~TinyThread();
+			TinyWorker();
+			virtual ~TinyWorker();
 			HANDLE	Handle() const;
 			DWORD	GetID() const;
 			BOOL	IsActive() const;
@@ -70,7 +70,7 @@ namespace TinyFramework
 			BOOL				m_bBreak;
 			LONG				m_delay;
 			Closure				m_callback;
-			TinyThread			m_runner;
+			TinyWorker			m_runner;
 		};
 	};
 }

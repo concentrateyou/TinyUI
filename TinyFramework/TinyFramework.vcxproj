@@ -255,7 +255,7 @@
     <ClInclude Include="IO\TinyRingQueue.h" />
     <ClInclude Include="IO\TinySharedMemory.h" />
     <ClInclude Include="IO\TinyStringReader.h" />
-    <ClInclude Include="IO\TinyThread.h" />
+    <ClInclude Include="IO\TinyWorker.h" />
     <ClInclude Include="IO\TinyThreadPool.h" />
     <ClInclude Include="IO\TinyWin32Threadpool.h" />
     <ClInclude Include="Media\TinyAACFile.h" />
@@ -408,7 +408,7 @@
     <ClCompile Include="IO\TinyRingQueue.cpp" />
     <ClCompile Include="IO\TinySharedMemory.cpp" />
     <ClCompile Include="IO\TinyStringReader.cpp" />
-    <ClCompile Include="IO\TinyThread.cpp" />
+    <ClCompile Include="IO\TinyWorker.cpp" />
     <ClCompile Include="IO\TinyThreadPool.cpp" />
     <ClCompile Include="IO\TinyWin32Threadpool.cpp" />
     <ClCompile Include="Media\TinyAACFile.cpp" />

@@ -44,7 +44,7 @@ namespace MediaSDK
 		AudioParameters					m_params;
 		AUDCLNT_SHAREMODE				m_mode;
 		volatile AudioState				m_state;
-		TinyThread						m_runnable;
+		TinyWorker						m_runnable;
 		TinyEvent						m_sampleReady;
 		TinyEvent						m_audioStop;
 		AudioInputCallback*				m_callback;

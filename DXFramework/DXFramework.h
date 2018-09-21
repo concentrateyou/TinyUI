@@ -21,7 +21,7 @@
 #include "Control/TinyControl.h"
 #include "Common/TinyString.h"
 #include "IO/TinySharedMemory.h"
-#include "IO/TinyThread.h"
+#include "IO/TinyWorker.h"
 #include "IO/TinyRingQueue.h"
 #include "IO/TinyProcess.h"
 #include "Render/TinyGDI.h"

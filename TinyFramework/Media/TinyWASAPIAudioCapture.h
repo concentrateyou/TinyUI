@@ -3,7 +3,7 @@
 #include "../Common/TinyEvent.h"
 #include "../Common/TinyString.h"
 #include "../Common/TinyCallback.h"
-#include "../IO/TinyThread.h"
+#include "../IO/TinyWorker.h"
 #include "TinyWASAPIAudio.h"
 
 namespace TinyFramework
@@ -48,7 +48,7 @@ namespace TinyFramework
 			UINT32								m_count;
 			TinyEvent							m_sampleReady;
 			TinyEvent							m_audioStop;
-			IO::TinyThread						m_task;
+			IO::TinyWorker						m_task;
 			AudioSessionEvents					m_sessionEvents;
 			TinyScopedArray<BYTE>				m_waveFMT;
 			TinyComPtr<IAudioClient>			m_audioClient;

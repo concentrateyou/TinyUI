@@ -1,7 +1,7 @@
 #pragma once
 #include "Common/TinyCommon.h"
 #include "IO/TinySharedMemory.h"
-#include "IO/TinyThread.h"
+#include "IO/TinyWorker.h"
 using namespace TinyFramework;
 
 namespace GameDetour
@@ -33,7 +33,7 @@ namespace GameDetour
 		HWND			m_hWNDD3D;
 		HANDLE			m_hMAIN;
 		HINSTANCE		m_hInstance;
-		IO::TinyThread	m_task;
+		IO::TinyWorker	m_task;
 	};
 }
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "../IO/TinyThread.h"
+#include "../IO/TinyWorker.h"
 
 namespace TinyFramework
 {
@@ -21,7 +21,7 @@ namespace TinyFramework
 		private:
 			void OnMessagePump();
 		private:
-			TinyThread								m_runner;
+			TinyWorker								m_runner;
 			Callback<void(UINT, WPARAM, LPARAM)>	m_callback;
 		};
 	};

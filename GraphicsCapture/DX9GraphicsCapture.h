@@ -35,8 +35,8 @@ namespace GraphicsCapture
 		BYTE*				GetPointer() const;
 		UINT32				GetPitch() const;
 		IDirect3DQuery9*	GetQuery();
-		IDirect3DSurface9*	GetCopySurface();
-		IDirect3DSurface9*	GetRenderTarget();
+		IDirect3DSurface9*	GetCopy2D();
+		IDirect3DSurface9*	GetTexture2D();
 	private:
 		volatile BOOL					m_bCopying;
 		volatile BOOL					m_bIssue;
@@ -45,8 +45,8 @@ namespace GraphicsCapture
 		TinySize						m_size;
 		TinyLock						m_lock;
 		TinyComPtr<IDirect3DQuery9>		m_query;
-		TinyComPtr<IDirect3DSurface9>	m_copySurface;
-		TinyComPtr<IDirect3DSurface9>	m_renderTarget;
+		TinyComPtr<IDirect3DSurface9>	m_copy2D;
+		TinyComPtr<IDirect3DSurface9>	m_texture2D;
 	};
 
 	/// <summary>
@@ -59,39 +59,39 @@ namespace GraphicsCapture
 		DX9GraphicsCapture(DX& dx);
 		~DX9GraphicsCapture();
 		BOOL Initialize(HWND hWND);
-		BOOL Render(IDirect3DDevice9 *device);
+		BOOL Draw(IDirect3DDevice9 *device);
 		void Reset();
 		BOOL Setup(IDirect3DDevice9 *pThis);
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 		BOOL DX9CPUHook(IDirect3DDevice9 *device);
+	public:
+		BOOL hookable();
 	private:
 		void OnMessagePump();
 		void QueryCopy(IDirect3DDevice9 *device);
 	public:
 		DX&								m_dx;
 		BOOL							m_bD3D9EX;
-		BOOL							m_bCapturing;
-		BOOL							m_bTextures;
 		DWORD							m_dwCopy;
+		volatile BOOL					m_bCapturing;
+		volatile BOOL					m_bActive;
 		volatile INT32					m_currentCPUTexture;
 		volatile INT32					m_currentCapture;
 		INT32							m_patchType;
 		LPVOID							m_copyBits;
 		LPBYTE							m_textures[2];
-		HANDLE							m_hTextureHandle;
+		HANDLE							m_handle;
 		HMODULE							m_hD3D9;
 		TinyEvent						m_copy;
 		TinyEvent						m_close;
-		HookDATA						m_captureDATA;
 		LPVOID							m_currentPointer;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
-		IO::TinyThread					m_captureTask;
+		IO::TinyWorker					m_copyTask;
 		DX9CaptureDATA*					m_captures[NUM_BUFFERS];
 		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<ID3D10Texture2D>		m_texture2D;
-		TinyComPtr<IDirect3DSurface9>	m_surface;
-		TinyDetour						m_dX9Release;
+		TinyComPtr<IDirect3DSurface9>	m_copy2D;
 		TinyDetour						m_dX9EndScene;
 		TinyDetour						m_dX9Reset;
 		TinyDetour						m_dX9ResetEx;

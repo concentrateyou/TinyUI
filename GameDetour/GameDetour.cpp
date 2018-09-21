@@ -49,6 +49,7 @@ namespace GameDetour
 	{
 		if (m_task.IsActive())
 		{
+			LOG(INFO) << "[GameCapture] Task Close";
 			m_bStop = TRUE;
 			m_task.Close(500);
 		}
@@ -65,6 +66,7 @@ namespace GameDetour
 	void GameDetour::CaptureLoop()
 	{
 		//等待客户端准备就绪
+		LOG(INFO) << "[GameCapture] CaptureLoop BEGIN";
 		g_dx.m_sourceReady.WaitEvent(INFINITE);
 		while (!Detour())
 			Sleep(40);
@@ -74,6 +76,7 @@ namespace GameDetour
 				Detour();
 			Sleep(40);
 		}
+		LOG(INFO) << "[GameCapture] CaptureLoop END";
 	}
 	BOOL GameDetour::Detour()
 	{
@@ -130,7 +133,7 @@ namespace GameDetour
 			WaitForSingleObject(m_hMAIN, 250);
 			SAFE_CLOSE_HANDLE(m_hMAIN);
 		}
-		TinyThread taskUI;
+		TinyWorker taskUI;
 		taskUI.Submit(BindCallback(&GameDetour::OnMessagePumpUI, this));
 		g_dx.m_start.SetEvent();
 		CaptureLoop();

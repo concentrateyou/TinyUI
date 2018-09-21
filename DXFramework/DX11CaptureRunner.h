@@ -19,7 +19,7 @@ namespace DXFramework
 		TinyProcess	m_process;
 	};
 
-	class DX11CaptureRunner : public TinyThread
+	class DX11CaptureRunner : public TinyWorker
 	{
 	public:
 		DX11CaptureRunner(DX11* pDX11, DX11Image2D& image);

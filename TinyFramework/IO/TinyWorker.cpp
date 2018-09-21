@@ -2,47 +2,47 @@
 #include <process.h>
 #include "../Common/TinyUtility.h"
 #include "../Common/TinyLogging.h"
-#include "TinyThread.h"
+#include "TinyWorker.h"
 
 
 namespace TinyFramework
 {
 	namespace IO
 	{
-		TinyThread::TinyThread()
+		TinyWorker::TinyWorker()
 			:m_handle(NULL)
 		{
 
 		}
 
-		TinyThread::~TinyThread()
+		TinyWorker::~TinyWorker()
 		{
 			SAFE_CLOSE_HANDLE(m_handle);
 		}
-		HANDLE	TinyThread::Handle() const
+		HANDLE	TinyWorker::Handle() const
 		{
 			return m_handle;
 		}
-		DWORD	TinyThread::GetID() const
+		DWORD	TinyWorker::GetID() const
 		{
 			return m_dwID;
 		}
-		INT TinyThread::GetPriority() const
+		INT TinyWorker::GetPriority() const
 		{
 			return ::GetThreadPriority(m_handle);
 		}
-		BOOL TinyThread::SetPriority(INT priority)
+		BOOL TinyWorker::SetPriority(INT priority)
 		{
 			return ::SetThreadPriority(m_handle, priority);
 		}
-		BOOL TinyThread::Submit(Closure&& callback)
+		BOOL TinyWorker::Submit(Closure&& callback)
 		{
 			m_callback = std::move(callback);
 			SAFE_CLOSE_HANDLE(m_handle);
-			m_handle = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyThread::Callback, (LPVOID)this, 0, &m_dwID);
+			m_handle = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyWorker::Callback, (LPVOID)this, 0, &m_dwID);
 			return m_handle != NULL;
 		}
-		BOOL TinyThread::Close(DWORD dwMS)
+		BOOL TinyWorker::Close(DWORD dwMS)
 		{
 			BOOL bRes = FALSE;
 			if (m_handle != NULL)
@@ -53,7 +53,7 @@ namespace TinyFramework
 			return bRes;
 		}
 
-		BOOL TinyThread::IsActive() const
+		BOOL TinyWorker::IsActive() const
 		{
 			if (!m_handle)
 				return FALSE;
@@ -61,27 +61,27 @@ namespace TinyFramework
 			::GetExitCodeThread(m_handle, &code);
 			return code == STILL_ACTIVE;
 		}
-		DWORD TinyThread::Suspend()
+		DWORD TinyWorker::Suspend()
 		{
 			if (!m_handle)
 				return FALSE;
 			return ::SuspendThread(m_handle);
 		}
-		DWORD TinyThread::Resume()
+		DWORD TinyWorker::Resume()
 		{
 			if (!m_handle)
 				return FALSE;
 			return ::ResumeThread(m_handle);
 		}
-		BOOL TinyThread::Terminate(DWORD dwExit)
+		BOOL TinyWorker::Terminate(DWORD dwExit)
 		{
 			if (!m_handle)
 				return FALSE;
 			return ::TerminateThread(m_handle, dwExit);
 		}
-		DWORD WINAPI TinyThread::Callback(LPVOID ps)
+		DWORD WINAPI TinyWorker::Callback(LPVOID ps)
 		{
-			TinyThread* pTask = reinterpret_cast<TinyThread*>(ps);
+			TinyWorker* pTask = reinterpret_cast<TinyWorker*>(ps);
 			if (pTask != NULL)
 			{
 				pTask->SetPriority(THREAD_PRIORITY_NORMAL);

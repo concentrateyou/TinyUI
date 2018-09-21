@@ -1,5 +1,5 @@
 #pragma once
-#include "IO/TinyThread.h"
+#include "IO/TinyWorker.h"
 #include "IO/TinyRingQueue.h"
 #include "IO/TinyIO.h"
 #include "DShowCommon.h"
@@ -7,7 +7,7 @@
 using namespace TinyFramework;
 using namespace TinyFramework::IO;
 
-class RenderTask : public TinyThread
+class RenderTask : public TinyWorker
 {
 public:
 	RenderTask(HWND hWND, DShow::VideoCapture* pVideo, const DShow::VideoCaptureParam& videpParam);

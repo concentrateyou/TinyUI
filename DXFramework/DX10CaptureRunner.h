@@ -6,7 +6,7 @@ using namespace TinyFramework::IO;
 
 namespace DXFramework
 {
-	class DX10CaptureRunner : public TinyThread
+	class DX10CaptureRunner : public TinyWorker
 	{
 	public:
 		DX10CaptureRunner(DX10& dx10, DX10Image2D& image);
