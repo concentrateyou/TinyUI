@@ -85,31 +85,28 @@ namespace GraphicsCapture
 		if (hRes != S_OK)
 			return FALSE;
 		m_dxgiFormat = GetDXTextureFormat(scd.BufferDesc.Format);
-		m_captureDATA.Format = m_dxgiFormat;
-		m_captureDATA.Size.cx = scd.BufferDesc.Width;
-		m_captureDATA.Size.cy = scd.BufferDesc.Height;
-		m_captureDATA.Window = scd.OutputWindow;
-		m_captureDATA.bMultisample = scd.SampleDesc.Count > 1;
-		if (m_captureDATA.bMultisample)
-		{
-			TinyComPtr<ID3D11Texture2D> backBuffer;
-			hRes = swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-			if (hRes != S_OK)
-				return FALSE;
-			D3D11_TEXTURE2D_DESC desc;
-			backBuffer->GetDesc(&desc);
-			desc.MipLevels = 1;
-			desc.ArraySize = 1;
-			desc.Format = scd.BufferDesc.Format;
-			desc.SampleDesc.Count = 1;
-			desc.SampleDesc.Quality = 0;
-			desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-			desc.Usage = D3D11_USAGE_DEFAULT;
-			desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
-			hRes = device->CreateTexture2D(&desc, NULL, &m_copy2D);
-			if (hRes != S_OK)
-				return FALSE;
-		}
+		m_hookDATA.Format = m_dxgiFormat;
+		m_hookDATA.Size.cx = scd.BufferDesc.Width;
+		m_hookDATA.Size.cy = scd.BufferDesc.Height;
+		m_hookDATA.Window = scd.OutputWindow;
+		m_hookDATA.bMultisample = scd.SampleDesc.Count > 1;
+		TinyComPtr<ID3D11Texture2D> backBuffer;
+		hRes = swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
+		if (hRes != S_OK)
+			return FALSE;
+		D3D11_TEXTURE2D_DESC desc;
+		backBuffer->GetDesc(&desc);
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = scd.BufferDesc.Format;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+		hRes = device->CreateTexture2D(&desc, NULL, &m_copy2D);
+		if (hRes != S_OK)
+			return FALSE;
 		m_dx.SetWindowsHook();
 		return TRUE;
 	}
@@ -140,7 +137,7 @@ namespace GraphicsCapture
 				TinyComPtr<ID3D11Texture2D> backBuffer;
 				if (SUCCEEDED(swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer)))
 				{
-					if (m_captureDATA.bMultisample)
+					if (m_hookDATA.bMultisample)
 					{
 						if (m_copy2D != NULL)
 						{
@@ -168,8 +165,8 @@ namespace GraphicsCapture
 		HRESULT hRes = S_OK;
 		D3D11_TEXTURE2D_DESC texGameDesc;
 		ZeroMemory(&texGameDesc, sizeof(texGameDesc));
-		texGameDesc.Width = m_captureDATA.Size.cx;
-		texGameDesc.Height = m_captureDATA.Size.cy;
+		texGameDesc.Width = m_hookDATA.Size.cx;
+		texGameDesc.Height = m_hookDATA.Size.cy;
 		texGameDesc.MipLevels = 1;
 		texGameDesc.ArraySize = 1;
 		texGameDesc.Format = m_dxgiFormat;
@@ -184,11 +181,11 @@ namespace GraphicsCapture
 			return FALSE;
 		if (FAILED(hRes = dxgiResource->GetSharedHandle(&m_handle)))
 			return FALSE;
-		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
-		m_captureDATA.bFlip = FALSE;
-		m_captureDATA.MapSize = sizeof(TextureDATA);
+		m_hookDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
+		m_hookDATA.bFlip = FALSE;
+		m_hookDATA.MapSize = sizeof(TextureDATA);
 		HookDATA* hookDATA = m_dx.GetHookDATA();
-		memcpy(hookDATA, &m_captureDATA, sizeof(m_captureDATA));
+		memcpy(hookDATA, &m_hookDATA, sizeof(m_hookDATA));
 		TextureDATA* textureDATA = m_dx.GetTextureDATA();
 		textureDATA->TextureHandle = m_handle;
 		m_dx.m_targetReady.SetEvent();
