@@ -49,7 +49,6 @@ namespace GraphicsCapture
 	void DX10GraphicsCapture::Reset()
 	{
 		m_bActive = FALSE;
-		m_bCapturing = FALSE;
 		m_handle = NULL;
 		m_copy2D.Release();
 		m_texture2D.Release();
@@ -57,7 +56,8 @@ namespace GraphicsCapture
 	}
 	BOOL DX10GraphicsCapture::Setup(IDXGISwapChain *swap)
 	{
-		LOG(INFO) << "DX10Capture Setup OK\n";
+		HookDATA* hookDATA = m_dx.GetHookDATA();
+		ASSERT(hookDATA);
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Device> device;
 		hRes = swap->GetDevice(__uuidof(ID3D10Device), (void**)&device);
@@ -69,11 +69,11 @@ namespace GraphicsCapture
 		if (hRes != S_OK)
 			return FALSE;
 		m_dxgiFormat = GetDXTextureFormat(scd.BufferDesc.Format);
-		m_hookDATA.Format = (DWORD)m_dxgiFormat;
-		m_hookDATA.Size.cx = scd.BufferDesc.Width;
-		m_hookDATA.Size.cy = scd.BufferDesc.Height;
-		m_hookDATA.Window = scd.OutputWindow;
-		m_hookDATA.bMultisample = scd.SampleDesc.Count > 1;
+		hookDATA->Format = (DWORD)m_dxgiFormat;
+		hookDATA->Size.cx = scd.BufferDesc.Width;
+		hookDATA->Size.cy = scd.BufferDesc.Height;
+		hookDATA->Window = scd.OutputWindow;
+		hookDATA->bMultisample = scd.SampleDesc.Count > 1;
 		TinyComPtr<ID3D10Texture2D> backBuffer;
 		hRes = swap->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**)&backBuffer);
 		if (hRes != S_OK)
@@ -114,16 +114,15 @@ namespace GraphicsCapture
 			if (m_bCapturing && !m_bActive)
 			{
 				m_bActive = DX10GPUHook(device);
-				LOG(INFO) << "DX10Capture::Render DX10GPUHook\n";
-				LOG(INFO) << "DX10Capture::Render  swap->GetDevice m_bCapturing:" << m_bCapturing << " m_bTextures:" << m_bActive << "\n";
-				LOG(INFO) << "------------------------------------------------------------------------------------------------\n";
 			}
 			if (m_bActive)
 			{
 				TinyComPtr<ID3D10Texture2D> backBuffer;
 				if (SUCCEEDED(swap->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**)&backBuffer)))
 				{
-					if (m_hookDATA.bMultisample)
+					HookDATA* hookDATA = m_dx.GetHookDATA();
+					ASSERT(hookDATA);
+					if (hookDATA->bMultisample)
 					{
 						if (m_copy2D != NULL)
 						{
@@ -144,11 +143,13 @@ namespace GraphicsCapture
 	}
 	BOOL DX10GraphicsCapture::DX10GPUHook(ID3D10Device *device)
 	{
+		HookDATA* hookDATA = m_dx.GetHookDATA();
+		ASSERT(hookDATA);
 		HRESULT hRes = S_OK;
 		D3D10_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
-		desc.Width = m_hookDATA.Size.cx;
-		desc.Height = m_hookDATA.Size.cy;
+		desc.Width = hookDATA->Size.cx;
+		desc.Height = hookDATA->Size.cy;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
 		desc.Format = m_dxgiFormat;
@@ -163,11 +164,9 @@ namespace GraphicsCapture
 			return FALSE;
 		if (FAILED(hRes = dxgiResource->GetSharedHandle(&m_handle)))
 			return FALSE;
-		m_hookDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
-		m_hookDATA.bFlip = FALSE;
-		m_hookDATA.MapSize = sizeof(TextureDATA);
-		HookDATA* sharedCapture = m_dx.GetHookDATA();
-		memcpy(sharedCapture, &m_hookDATA, sizeof(m_hookDATA));
+		hookDATA->CaptureType = CAPTURETYPE_SHAREDTEXTURE;
+		hookDATA->bFlip = FALSE;
+		hookDATA->MapSize = sizeof(TextureDATA);
 		TextureDATA* textureDATA = m_dx.GetTextureDATA();
 		textureDATA->TextureHandle = m_handle;
 		m_dx.m_targetReady.SetEvent();

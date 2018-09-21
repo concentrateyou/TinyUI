@@ -21,7 +21,6 @@ namespace GraphicsCapture
 		DXGI_FORMAT						m_dxgiFormat;
 		HANDLE							m_handle;
 		HMODULE							m_hD3D10;
-		HookDATA						m_hookDATA;
 		TinyComPtr<ID3D10Texture2D>		m_copy2D;
 		TinyComPtr<ID3D10Texture2D>		m_texture2D;
 	};
