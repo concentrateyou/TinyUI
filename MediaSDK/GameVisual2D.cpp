@@ -71,14 +71,14 @@ namespace MediaSDK
 		{
 		case CAPTURETYPE_MEMORYTEXTURE:
 		{
-			SharedTextureDATA* pTextureDATA = m_captureRunner.GetSharedTextureDATA(hookDATA->MapSize);
-			if (pTextureDATA != NULL)
+			TextureDATA* textureDATA = m_captureRunner.GetTextureDATA(hookDATA->MapSize);
+			if (textureDATA != NULL)
 			{
-				DWORD dwCurrentID = pTextureDATA->CurrentID;
-				BYTE* pBits = m_captureRunner.GetSharedTexture(hookDATA->MapSize);
-				m_textures[0] = pBits + pTextureDATA->Texture1Offset;
-				m_textures[1] = pBits + pTextureDATA->Texture2Offset;
-				if (pTextureDATA != NULL)
+				DWORD dwCurrentID = textureDATA->CurrentID;
+				BYTE* address = reinterpret_cast<BYTE*>(textureDATA);
+				m_textures[0] = address + textureDATA->Texture1Offset;
+				m_textures[1] = address + textureDATA->Texture2Offset;
+				if (textureDATA != NULL)
 				{
 					do
 					{

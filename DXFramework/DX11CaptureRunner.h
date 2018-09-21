@@ -28,8 +28,7 @@ namespace DXFramework
 		BOOL					Submit();
 		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
 		HookDATA*				GetHookDATA();
-		SharedTextureDATA*		GetSharedTextureDATA(DWORD dwSize);
-		BYTE*					GetSharedTexture(DWORD dwSize);
+		TextureDATA*			GetTextureDATA(DWORD dwSize);
 		BOOL					IsCapturing() const;
 	private:
 		void					Tick();

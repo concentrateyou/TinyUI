@@ -167,11 +167,11 @@ namespace GraphicsCapture
 			return FALSE;
 		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		m_captureDATA.bFlip = FALSE;
-		m_captureDATA.MapSize = sizeof(SharedTextureDATA);
+		m_captureDATA.MapSize = sizeof(TextureDATA);
 		HookDATA* sharedCapture = m_dx.GetHookDATA();
 		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
-		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();
-		sharedTexture->TextureHandle = m_hTextureHandle;
+		TextureDATA* textureDATA = m_dx.GetTextureDATA();
+		textureDATA->TextureHandle = m_hTextureHandle;
 		m_dx.m_targetReady.SetEvent();
 		return TRUE;
 	}

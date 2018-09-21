@@ -77,47 +77,31 @@ namespace DXFramework
 	}
 	HookDATA* DX10CaptureRunner::GetHookDATA()
 	{
-		if (!m_captureMemory.Address())
+		if (!m_hookDATA.Address())
 		{
-			if (!m_captureMemory.Open(SHAREDCAPTURE_MEMORY, FALSE))
+			if (!m_hookDATA.Open(SHAREDCAPTURE_MEMORY, FALSE))
 				return NULL;
-			if (!m_captureMemory.Map(0, sizeof(HookDATA)))
+			if (!m_hookDATA.Map(0, sizeof(HookDATA)))
 				return NULL;
 		}
-		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_captureMemory.Address());
+		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 		return pDATA;
 	}
-	SharedTextureDATA* DX10CaptureRunner::GetSharedTextureDATA(DWORD dwSize)
+	TextureDATA* DX10CaptureRunner::GetTextureDATA(DWORD dwSize)
 	{
-		if (m_textureMemery.GetSize() != dwSize)
+		if (m_textureDATA.GetSize() != dwSize)
 		{
-			m_textureMemery.Unmap();
-			m_textureMemery.Close();
+			m_textureDATA.Unmap();
+			m_textureDATA.Close();
 		}
-		if (!m_textureMemery.Address())
+		if (!m_textureDATA.Address())
 		{
-			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
+			if (!m_textureDATA.Open(TEXTURE_MEMORY, FALSE))
 				return NULL;
-			if (!m_textureMemery.Map(0, dwSize))
-				return NULL;
-		}
-		return reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
-	}
-	BYTE*	DX10CaptureRunner::GetSharedTexture(DWORD dwSize)
-	{
-		if (m_textureMemery.GetSize() != dwSize)
-		{
-			m_textureMemery.Unmap();
-			m_textureMemery.Close();
-		}
-		if (!m_textureMemery.Address())
-		{
-			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
-				return NULL;
-			if (!m_textureMemery.Map(0, dwSize))
+			if (!m_textureDATA.Map(0, dwSize))
 				return NULL;
 		}
-		return reinterpret_cast<LPBYTE>(m_textureMemery.Address());
+		return reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
 	}
 	BOOL CALLBACK DX10CaptureRunner::EnumWindow(HWND hwnd, LPARAM lParam)
 	{
@@ -169,7 +153,7 @@ namespace DXFramework
 			TRACE("BeginCapture GetSharedCaptureDATA-FAIL\n");
 			return FALSE;
 		}
-		SharedTextureDATA* pTextureDATA = GetSharedTextureDATA(hookDATA->MapSize);
+		SharedTextureDATA* pTextureDATA = GetTextureDATA(hookDATA->MapSize);
 		if (!pTextureDATA)
 		{
 			TRACE("BeginCapture GetSharedTextureDATA-FAIL\n");
@@ -224,10 +208,10 @@ namespace DXFramework
 			m_targetWND.hProcess = NULL;
 		}
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
-		m_textureMemery.Unmap();;
-		m_textureMemery.Close();
-		m_captureMemory.Unmap();
-		m_captureMemory.Close();
+		m_textureDATA.Unmap();;
+		m_textureDATA.Close();
+		m_hookDATA.Unmap();
+		m_hookDATA.Close();
 		m_bCapturing = FALSE;
 		m_image.Destory();
 		return TRUE;

@@ -14,10 +14,11 @@ namespace GraphicsCapture
 		BOOL Setup(IDXGISwapChain *swap);
 		BOOL Draw(IDXGISwapChain *swap, UINT flags);
 		BOOL DX11GPUHook(ID3D11Device *swap);
+		BOOL DX11CPUHook(ID3D11Device *swap);
 	public:
 		DX&								m_dx;
+		BOOL							m_bReady;
 		BOOL							m_bCapturing;
-		BOOL							m_bTextures;
 		HANDLE							m_hTextureHandle;
 		HMODULE							m_hD3D11;
 		DXGI_FORMAT						m_dxgiFormat;

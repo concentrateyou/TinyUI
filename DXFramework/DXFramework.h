@@ -127,13 +127,13 @@ namespace DXFramework
 		HWND		Window;
 	}HookDATA;
 
-	typedef struct tagSharedTextureDATA
+	typedef struct tagTextureDATA
 	{
 		HANDLE      TextureHandle;
 		DWORD       Texture1Offset;
 		DWORD		Texture2Offset;
 		DWORD		CurrentID;
-	}SharedTextureDATA;
+	}TextureDATA;
 #pragma pack(pop)
 
 	void WINAPI CHARFORMAT2LOGFONT(const CHARFORMAT& cf, LOGFONT& lf, COLORREF& color);

@@ -243,7 +243,6 @@ namespace GraphicsCapture
 	{
 		if (m_bCopying)
 		{
-			LOG(INFO) << "[DX8CaptureDATA] Destory UnlockRect\n";
 			TinyAutoLock autolock(m_lock);
 			m_surface->UnlockRect();
 			m_bCopying = FALSE;
@@ -468,18 +467,18 @@ namespace GraphicsCapture
 		}
 		DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[0]);
 		m_captureDATA.Pitch = pDATA->GetPitch();
-		UINT size1 = (sizeof(SharedTextureDATA) + 15) & 0xFFFFFFF0;
+		UINT size1 = (sizeof(TextureDATA) + 15) & 0xFFFFFFF0;
 		UINT size2 = (m_captureDATA.Pitch * m_captureDATA.Size.cy + 15) & 0xFFFFFFF0;
 		m_captureDATA.MapSize = size1 + size2 * 2;
-		HookDATA* sharedCapture = m_dx.GetHookDATA();
-		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
-		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
-		sharedTexture->Texture1Offset = size1;
-		sharedTexture->Texture2Offset = size1 + size2;
-		sharedTexture->TextureHandle = NULL;
-		BYTE* ps = m_dx.GetSharedTexture(m_captureDATA.MapSize);
-		m_textures[0] = ps + sharedTexture->Texture1Offset;
-		m_textures[1] = ps + sharedTexture->Texture2Offset;
+		HookDATA* hookDATA = m_dx.GetHookDATA();
+		memcpy(hookDATA, &m_captureDATA, sizeof(m_captureDATA));
+		TextureDATA* textureDATA = m_dx.GetTextureDATA(m_captureDATA.MapSize);
+		textureDATA->Texture1Offset = size1;
+		textureDATA->Texture2Offset = size1 + size2;
+		textureDATA->TextureHandle = NULL;
+		BYTE* address = reinterpret_cast<BYTE*>(textureDATA);
+		m_textures[0] = address + textureDATA->Texture1Offset;
+		m_textures[1] = address + textureDATA->Texture2Offset;
 		m_captureTask.Submit(BindCallback(&DX8GraphicsCapture::OnMessagePump, this));
 		m_dx.m_targetReady.SetEvent();
 		return TRUE;
@@ -508,16 +507,16 @@ namespace GraphicsCapture
 					if (m_dx.m_mutes[dwCurrentID].Lock(0))
 					{
 						ConvertPixelFormat(pDATA->GetPointer(), pDATA->GetPitch(), static_cast<D3DFORMAT>(m_d3dFormat), m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[dwCurrentID]);
-						SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
-						sharedTexture->CurrentID = dwCurrentID;
+						TextureDATA* textureDATA = m_dx.GetTextureDATA(m_captureDATA.MapSize);
+						textureDATA->CurrentID = dwCurrentID;
 						m_dx.m_mutes[dwCurrentID].Unlock();
 						break;
 					}
 					if (m_dx.m_mutes[dwNextID].Lock(0))
 					{
 						ConvertPixelFormat(pDATA->GetPointer(), pDATA->GetPitch(), static_cast<D3DFORMAT>(m_d3dFormat), m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[dwNextID]);
-						SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
-						sharedTexture->CurrentID = dwNextID;
+						TextureDATA* textureDATA = m_dx.GetTextureDATA(m_captureDATA.MapSize);
+						textureDATA->CurrentID = dwNextID;
 						m_dx.m_mutes[dwNextID].Unlock();
 						break;
 					}

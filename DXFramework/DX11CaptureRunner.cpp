@@ -111,7 +111,7 @@ namespace DXFramework
 		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 		return pDATA;
 	}
-	SharedTextureDATA* DX11CaptureRunner::GetSharedTextureDATA(DWORD dwSize)
+	TextureDATA* DX11CaptureRunner::GetTextureDATA(DWORD dwSize)
 	{
 		if (m_textureDATA.GetSize() != dwSize)
 		{
@@ -124,22 +124,7 @@ namespace DXFramework
 			if (!m_textureDATA.Map(0, dwSize))
 				return NULL;
 		}
-		return reinterpret_cast<SharedTextureDATA*>(m_textureDATA.Address());
-	}
-	BYTE*	DX11CaptureRunner::GetSharedTexture(DWORD dwSize)
-	{
-		if (m_textureDATA.GetSize() != dwSize)
-		{
-			m_textureDATA.Close();
-		}
-		if (!m_textureDATA.Address())
-		{
-			if (!m_textureDATA.Open(TEXTURE_MEMORY, FALSE))
-				return NULL;
-			if (!m_textureDATA.Map(0, dwSize))
-				return NULL;
-		}
-		return reinterpret_cast<LPBYTE>(m_textureDATA.Address());
+		return reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
 	}
 	BOOL CALLBACK DX11CaptureRunner::EnumWindow(HWND hwnd, LPARAM lParam)
 	{
@@ -189,7 +174,7 @@ namespace DXFramework
 		{
 			return FALSE;
 		}
-		SharedTextureDATA* pTextureDATA = GetSharedTextureDATA(hookDATA->MapSize);
+		TextureDATA* pTextureDATA = GetTextureDATA(hookDATA->MapSize);
 		if (!pTextureDATA)
 		{
 			return FALSE;

@@ -15,8 +15,7 @@ namespace DXFramework
 		BOOL					Submit();
 		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
 		HookDATA*				GetHookDATA();
-		SharedTextureDATA*		GetSharedTextureDATA(DWORD dwSize);
-		BYTE*					GetSharedTexture(DWORD dwSize);
+		TextureDATA*			GetTextureDATA(DWORD dwSize);
 	private:
 		void					OnMessagePump();
 		WNDINFO					GetWNDINFO();
@@ -43,8 +42,8 @@ namespace DXFramework
 		TinyString				m_exeName;
 		TinyString				m_dllName;
 		DX10Image2D&			m_image;
-		TinySharedMemory		m_captureMemory;
-		TinySharedMemory		m_textureMemery;
+		TinySharedMemory		m_hookDATA;
+		TinySharedMemory		m_textureDATA;
 	};
 }
 

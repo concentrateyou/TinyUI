@@ -90,7 +90,7 @@ namespace GraphicsCapture
 		}
 		return reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 	}
-	SharedTextureDATA* DX::GetSharedTextureDATA(DWORD dwSize)
+	TextureDATA* DX::GetTextureDATA(DWORD dwSize)
 	{
 		if (m_textureDATA.GetSize() != dwSize)
 		{
@@ -107,26 +107,7 @@ namespace GraphicsCapture
 				return NULL;
 			}
 		}
-		return reinterpret_cast<SharedTextureDATA*>(m_textureDATA.Address());
-	}
-	BYTE* DX::GetSharedTexture(DWORD dwSize)
-	{
-		if (m_textureDATA.GetSize() != dwSize)
-		{
-			m_textureDATA.Close();
-		}
-		if (!m_textureDATA.Address())
-		{
-			if (!m_textureDATA.Open(TEXTURE_MEMORY, FALSE) && !m_textureDATA.Create(TEXTURE_MEMORY, dwSize))
-			{
-				return NULL;
-			}
-			if (!m_textureDATA.Map(0, dwSize))
-			{
-				return NULL;
-			}
-		}
-		return reinterpret_cast<BYTE*>(m_textureDATA.Address());
+		return reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
 	}
 	BOOL DX::CreateEvents()
 	{

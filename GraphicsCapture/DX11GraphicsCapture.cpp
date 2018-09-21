@@ -8,7 +8,7 @@ namespace GraphicsCapture
 		:m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_hTextureHandle(NULL),
 		m_bCapturing(FALSE),
-		m_bTextures(FALSE),
+		m_bReady(FALSE),
 		m_dx(dx)
 	{
 	}
@@ -61,12 +61,11 @@ namespace GraphicsCapture
 		D3D_FEATURE_LEVEL level;
 		if (FAILED(hRes = (*d3d11Create)(NULL, D3D_DRIVER_TYPE_NULL, NULL, 0, levels, 6, D3D11_SDK_VERSION, &swapDesc, &swap, &device, &level, &immediateContext)))
 			return FALSE;
-		LOG(INFO) << "DX11Capture::Initialize OK\n";
 		return TRUE;
 	}
 	void DX11GraphicsCapture::Reset()
 	{
-		m_bTextures = FALSE;
+		m_bReady = FALSE;
 		m_hTextureHandle = NULL;
 		m_texture2D.Release();
 		m_copy2D.Release();
@@ -84,7 +83,6 @@ namespace GraphicsCapture
 		hRes = swap->GetDesc(&scd);
 		if (hRes != S_OK)
 			return FALSE;
-		LOG(INFO) << "DX11Capture::Setup Format:" << scd.BufferDesc.Format << " bMultisample:" << scd.SampleDesc.Count << "\n";
 		m_dxgiFormat = GetDX10PlusTextureFormat(scd.BufferDesc.Format);
 		m_captureDATA.Format = m_dxgiFormat;
 		m_captureDATA.Size.cx = scd.BufferDesc.Width;
@@ -119,27 +117,22 @@ namespace GraphicsCapture
 		HRESULT hRes = S_OK;
 		if (m_bCapturing && m_dx.m_stop.WaitEvent(0))
 		{
-			LOG(INFO) << "DX11Capture::Render m_stop - OK\n";
 			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;
 		}
 		if (!m_bCapturing && m_dx.m_start.WaitEvent(0))
 		{
-			LOG(INFO) << "DX11Capture::Render m_start - OK\n";
 			m_bCapturing = TRUE;
 		}
 		TinyComPtr<ID3D11Device> device;
 		if (SUCCEEDED(hRes = swap->GetDevice(__uuidof(ID3D11Device), (void**)&device)))
 		{
-			if (m_bCapturing && !m_bTextures)
+			if (m_bCapturing && !m_bReady)
 			{
-				m_bTextures = DX11GPUHook(device);
-				LOG(INFO) << "DX11Capture::Render DX11GPUHook\n";
-				LOG(INFO) << "DX11Capture::Render  swap->GetDevice m_bCapturing:" << m_bCapturing << " m_bTextures:" << m_bTextures << "\n";
-				LOG(INFO) << "------------------------------------------------------------------------------------------------\n";
+				m_bReady = DX11GPUHook(device);
 			}
-			if (m_bTextures)
+			if (m_bReady)
 			{
 				TinyComPtr<ID3D11DeviceContext> context;
 				device->GetImmediateContext(&context);
@@ -165,7 +158,10 @@ namespace GraphicsCapture
 		}
 		return TRUE;
 	}
-
+	BOOL DX11GraphicsCapture::DX11CPUHook(ID3D11Device *swap)
+	{
+		return TRUE;
+	}
 	BOOL DX11GraphicsCapture::DX11GPUHook(ID3D11Device *device)
 	{
 		HRESULT hRes = S_OK;
@@ -189,11 +185,11 @@ namespace GraphicsCapture
 			return FALSE;
 		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		m_captureDATA.bFlip = FALSE;
-		m_captureDATA.MapSize = sizeof(SharedTextureDATA);
-		HookDATA* sharedCapture = m_dx.GetHookDATA();
-		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
-		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();
-		sharedTexture->TextureHandle = m_hTextureHandle;
+		m_captureDATA.MapSize = sizeof(TextureDATA);
+		HookDATA* hookDATA = m_dx.GetHookDATA();
+		memcpy(hookDATA, &m_captureDATA, sizeof(m_captureDATA));
+		TextureDATA* textureDATA = m_dx.GetTextureDATA();
+		textureDATA->TextureHandle = m_hTextureHandle;
 		m_dx.m_targetReady.SetEvent();
 		return TRUE;
 	}
