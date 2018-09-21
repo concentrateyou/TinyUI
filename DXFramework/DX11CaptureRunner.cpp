@@ -249,6 +249,7 @@ namespace DXFramework
 			m_bActive = FALSE;
 			return FALSE;
 		}
+		TRACE("Detour\n");
 		TinyProcess process;
 		if (!process.Open(PROCESS_ALL_ACCESS, FALSE, m_target.dwPID))
 		{
@@ -257,10 +258,16 @@ namespace DXFramework
 		}
 		if (!AttemptExisting())
 		{
+			TRACE("AttemptExisting FALSE\n");
 			if (!AttemptDetour(anticheat))
 			{
+				TRACE("AttemptDetour FALSE\n");
 				m_bActive = FALSE;
 				return FALSE;
+			}
+			else
+			{
+				TRACE("AttemptExisting TRUE\n");
 			}
 		}
 		if (!OpenEvents())
@@ -276,6 +283,7 @@ namespace DXFramework
 	{
 		if (m_stop.WaitEvent(0))//停止捕获
 		{
+			TRACE("stop event:StopCapture\n");
 			StopCapture();
 		}
 		if (m_bActive && !m_targetReady && m_target.dwPID > 0)
@@ -284,6 +292,7 @@ namespace DXFramework
 		}
 		if (m_injector.Wait(0))
 		{
+			TRACE("injector Wait\n");
 			if (m_injector.Close())
 			{
 				if (!m_bCapturing)
@@ -294,6 +303,7 @@ namespace DXFramework
 		}
 		if (m_targetReady.WaitEvent(0))//服务端准备就系
 		{
+			TRACE("target ready: StartCapture\n");
 			m_bCapturing = StartCapture();
 		}
 		if (!m_bActive)
