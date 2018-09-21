@@ -37,26 +37,28 @@ namespace GameDetour
 		CHAR szName[MAX_PATH];
 		GetModuleFileName(m_hInstance, szName, MAX_PATH);
 		LoadLibrary(szName);
-		if (!m_task.Submit(BindCallback(&GameDetour::OnMessagePump, this)))
+		if (!m_capture.Submit(BindCallback(&GameDetour::OnMessagePump, this)))
 		{
 			SAFE_CLOSE_HANDLE(m_hMAIN);
 			g_dx.Uninitialize();
 			return FALSE;
 		}
+		LOG(INFO) << "[GameCapture] Attach";
 		return TRUE;
 	}
 	BOOL GameDetour::Detach(HMODULE hModule)
 	{
-		if (m_task.IsActive())
+		if (m_capture.IsActive())
 		{
 			LOG(INFO) << "[GameCapture] Task Close";
 			m_bStop = TRUE;
-			m_task.Close(500);
+			m_capture.Close(500);
 		}
 		m_bDX8Detour = m_bDX9Detour = m_bDXGIDetour = FALSE;
 		if (IsWindow(m_hWNDD3D))
 		{
 			::SendMessage(m_hWNDD3D, WM_CLOSE, NULL, NULL);
+			LOG(INFO) << "[GameCapture] WM_CLOSE";
 		}
 		g_dx.Uninitialize();
 		m_hWNDD3D = NULL;
@@ -69,29 +71,43 @@ namespace GameDetour
 		LOG(INFO) << "[GameCapture] CaptureLoop BEGIN";
 		g_dx.m_sourceReady.WaitEvent(INFINITE);
 		while (!Detour())
-			Sleep(40);
+		{
+			Sleep(120);
+		}
 		for (INT i = 0; !m_bStop; i++)
 		{
 			if (i % 100 == 0)
+			{
 				Detour();
-			Sleep(40);
+			}
+			Sleep(120);
 		}
 		LOG(INFO) << "[GameCapture] CaptureLoop END";
 	}
 	BOOL GameDetour::Detour()
 	{
-		do
+		if (!m_bDX9Detour)
 		{
-			if (!m_bDXGIDetour)
-			{
-				m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
-				if (m_bDXGIDetour)
-				{
-					LOG(INFO) << "DXGI Initialize OK\n";
-					return TRUE;
-				}
-			}
-		} while (0);
+			LOG(INFO) << "DX9 Initialize BEGIN";
+			m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
+			LOG(INFO) << "DX9 Initialize END";
+		}
+		if (m_bDX9Detour)
+		{
+			LOG(INFO) << "DX9 Initialize OK";
+			return TRUE;
+		}
+		if (!m_bDXGIDetour)
+		{
+			LOG(INFO) << "DXGI Initialize BEGIN";
+			m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
+			LOG(INFO) << "DXGI Initialize END";
+		}
+		if (m_bDXGIDetour)
+		{
+			LOG(INFO) << "DXGI Initialize OK";
+			return TRUE;
+		}
 		return FALSE;
 	}
 	void GameDetour::OnMessagePumpUI()

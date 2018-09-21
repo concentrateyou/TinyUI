@@ -421,14 +421,14 @@ namespace GraphicsCapture
 		ASSERT(d3d);
 		if (m_bCapturing && m_dx.m_stop.WaitEvent(0))
 		{
-			LOG(INFO) << "DX9Capture m_stop\n";
+			LOG(INFO) << "DX9Capture Stop";
 			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;
 		}
 		if (!m_bCapturing && m_dx.m_start.WaitEvent(0))
 		{
-			LOG(INFO) << "DX9Capture m_start" << " m_bTextures:" << m_bActive;
+			LOG(INFO) << "DX9Capture Start";
 			m_bCapturing = TRUE;
 		}
 		if (m_bCapturing)
@@ -524,7 +524,9 @@ namespace GraphicsCapture
 	}
 	BOOL DX9GraphicsCapture::hookable()
 	{
-		return FALSE;
+		return !m_dX9Present.IsEmpty() &&
+			!m_dX9PresentEx.IsEmpty() &&
+			!m_dX9SwapPresent.IsEmpty();
 	}
 	void DX9GraphicsCapture::Reset()
 	{
@@ -615,6 +617,7 @@ namespace GraphicsCapture
 		m_textures[1] = address + textureDATA->Texture2Offset;
 		m_copyTask.Submit(BindCallback(&DX9GraphicsCapture::OnMessagePump, this));
 		m_dx.m_targetReady.SetEvent();
+		LOG(INFO) << "[DX9CPUHook] OK";
 		return TRUE;
 	}
 	void DX9GraphicsCapture::OnMessagePump()

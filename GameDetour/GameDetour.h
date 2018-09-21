@@ -33,7 +33,7 @@ namespace GameDetour
 		HWND			m_hWNDD3D;
 		HANDLE			m_hMAIN;
 		HINSTANCE		m_hInstance;
-		IO::TinyWorker	m_task;
+		IO::TinyWorker	m_capture;
 	};
 }
 

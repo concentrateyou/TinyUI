@@ -63,6 +63,7 @@ namespace GraphicsCapture
 		{
 			return FALSE;
 		}
+		LOG(INFO) << "DX Initialize";
 		return TRUE;
 	}
 	void DX::Uninitialize()
@@ -75,6 +76,7 @@ namespace GraphicsCapture
 		m_stop.Close();
 		m_targetReady.Close();
 		m_sourceReady.Close();
+		LOG(INFO) << "DX Uninitialize";
 	}
 	HookDATA* DX::GetHookDATA()
 	{
