@@ -118,6 +118,7 @@ namespace DXFramework
 	{
 		BOOL		bFlip;
 		BOOL		bMultisample;
+		BOOL		bCPU;
 		UINT32		CaptureType;
 		DWORD		Format;
 		SIZE		Size;

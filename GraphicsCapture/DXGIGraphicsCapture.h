@@ -14,6 +14,7 @@ namespace GraphicsCapture
 		~DXGIGraphicsCapture();
 		BOOL Initialize(HWND hWND);
 		void Reset();
+	public:
 		BOOL hookable();
 	public:
 		TinyDetour	m_present;

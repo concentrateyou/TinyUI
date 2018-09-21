@@ -44,12 +44,12 @@ namespace DXFramework
 		void					CloseEvents();
 		static BOOL CALLBACK	EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
-		TinySize				m_size;
-		BOOL					m_bCapturing;
-		BOOL					m_bActive;
+		volatile BOOL			m_bCapturing;
+		volatile BOOL			m_bActive;
 		DX11*					m_pDX11;
 		TinyLock				m_lock;
 		WNDINFO					m_target;
+		TinySize				m_size;
 		TinyEvent				m_start;
 		TinyEvent				m_stop;
 		TinyEvent				m_sourceReady;

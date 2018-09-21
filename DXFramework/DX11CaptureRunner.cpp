@@ -184,21 +184,14 @@ namespace DXFramework
 	{
 		ASSERT(m_pDX11);
 		BOOL bRes = S_OK;
-		if (!OpenEvents())
-		{
-			LOG(ERROR) << "[Start] OpenEvents FAIL";
-			return FALSE;
-		}
 		HookDATA* hookDATA = GetHookDATA();
 		if (!hookDATA)
 		{
-			LOG(ERROR) << "[Start] GetHookDATA FAIL";
 			return FALSE;
 		}
 		SharedTextureDATA* pTextureDATA = GetSharedTextureDATA(hookDATA->MapSize);
 		if (!pTextureDATA)
 		{
-			LOG(ERROR) << "[Start] GetSharedTextureDATA FAIL";
 			return FALSE;
 		}
 		do
@@ -207,14 +200,12 @@ namespace DXFramework
 			{
 				if (!pTextureDATA->TextureHandle)
 				{
-					LOG(ERROR) << "[Start] TextureHandle == NULL";
 					return FALSE;
 				}
 				TinyAutoLock autolock(m_lock);
 				m_image2D.Destory();
 				if (!m_image2D.Load(*m_pDX11, pTextureDATA->TextureHandle))
 				{
-					LOG(ERROR) << "[Start] load image FAIL";
 					return FALSE;
 				}
 				break;
@@ -225,7 +216,6 @@ namespace DXFramework
 				m_image2D.Destory();
 				if (!m_image2D.Create(*m_pDX11, hookDATA->Size.cx, hookDATA->Size.cy, NULL, FALSE))
 				{
-					LOG(ERROR) << "[Start] create image FAIL";
 					return FALSE;
 				}
 				m_image2D.SetTranslate(XMFLOAT2(0.0F, 0.0F));

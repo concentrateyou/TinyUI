@@ -112,17 +112,14 @@ namespace GraphicsCapture
 		TinyComPtr<IDXGISwapChain> swap;
 		if (m_dx10.Initialize(hWND, swap))
 		{
-			LOG(INFO) << "m_dx10.Initialize OK\n";
 			goto HOOK_OK;
 		}
 		if (m_dx101.Initialize(hWND, swap))
 		{
-			LOG(INFO) << "m_dx101.Initialize OK\n";
 			goto HOOK_OK;
 		}
 		if (m_dx11.Initialize(hWND, swap))
 		{
-			LOG(INFO) << "m_dx11.Initialize OK\n";
 			goto HOOK_OK;
 		}
 	HOOK_OK:
