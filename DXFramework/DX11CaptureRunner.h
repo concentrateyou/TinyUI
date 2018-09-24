@@ -45,6 +45,7 @@ namespace DXFramework
 	private:
 		volatile BOOL			m_bCapturing;
 		volatile BOOL			m_bActive;
+		BOOL					m_bClose;
 		DX11*					m_pDX11;
 		TinyLock				m_lock;
 		WNDINFO					m_target;
@@ -53,7 +54,6 @@ namespace DXFramework
 		TinyEvent				m_stop;
 		TinyEvent				m_sourceReady;
 		TinyEvent				m_targetReady;
-		TinyEvent				m_close;
 		TinyString				m_szClass;
 		TinyString				m_szEXE;
 		TinyString				m_szDLL;

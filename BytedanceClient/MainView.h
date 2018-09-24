@@ -91,5 +91,6 @@ namespace Bytedance
 	private:
 		CanvasView				m_view;
 		CanvasController		m_controller;
+		GameVisual2D*			m_visual2D;
 	};
 }

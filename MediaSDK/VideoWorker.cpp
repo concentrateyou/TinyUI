@@ -178,6 +178,7 @@ namespace MediaSDK
 				totalFPSFrames = 0;
 			}
 		}
+		TRACE("VideoWorker Finish\n");
 	}
 	void VideoWorker::OnDisplay()
 	{

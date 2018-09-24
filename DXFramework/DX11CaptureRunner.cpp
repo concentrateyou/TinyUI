@@ -46,11 +46,11 @@ namespace DXFramework
 	DX11CaptureRunner::DX11CaptureRunner(DX11* pDX11, DX11Image2D& image)
 		: m_bCapturing(FALSE),
 		m_bActive(FALSE),
+		m_bClose(FALSE),
 		m_pDX11(pDX11),
 		m_image2D(image)
 	{
 		ZeroMemory(&m_target, sizeof(m_target));
-		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	}
 	DX11CaptureRunner::~DX11CaptureRunner()
 	{
@@ -63,11 +63,12 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureRunner::Submit()
 	{
+		m_bClose = FALSE;
 		return TinyWorker::Submit(BindCallback(&DX11CaptureRunner::OnMessagePump, this));
 	}
 	BOOL DX11CaptureRunner::Close(DWORD dwMS)
 	{
-		m_close.SetEvent();
+		m_bClose = TRUE;
 		return TinyWorker::Close(dwMS);
 	}
 	BOOL DX11CaptureRunner::OpenEvents()
@@ -97,7 +98,6 @@ namespace DXFramework
 		m_stop.Close();
 		m_targetReady.Close();
 		m_sourceReady.Close();
-		m_close.Close();
 	}
 	HookDATA* DX11CaptureRunner::GetHookDATA()
 	{
@@ -283,7 +283,6 @@ namespace DXFramework
 	{
 		if (m_stop.WaitEvent(0))//停止捕获
 		{
-			TRACE("stop event:StopCapture\n");
 			StopCapture();
 		}
 		if (m_bActive && !m_targetReady && m_target.dwPID > 0)
@@ -292,7 +291,6 @@ namespace DXFramework
 		}
 		if (m_injector.Wait(0))
 		{
-			TRACE("injector Wait\n");
 			if (m_injector.Close())
 			{
 				if (!m_bCapturing)
@@ -303,7 +301,6 @@ namespace DXFramework
 		}
 		if (m_targetReady.WaitEvent(0))//服务端准备就系
 		{
-			TRACE("target ready: StartCapture\n");
 			m_bCapturing = StartCapture();
 		}
 		if (!m_bActive)
@@ -326,12 +323,8 @@ namespace DXFramework
 	{
 		for (;;)
 		{
-			if (m_close.WaitEvent(5))
+			if (m_bClose)
 			{
-				if (m_stop)
-				{
-					m_stop.SetEvent();
-				}
 				StopCapture();
 				break;
 			}
