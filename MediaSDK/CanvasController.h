@@ -8,7 +8,7 @@ namespace MediaSDK
 	{
 		DISALLOW_COPY_AND_ASSIGN(CanvasController)
 	public:
-		CanvasController(CanvasView& view);
+		CanvasController(CanvasView& view, TinyScopedReferencePtr<TinyTaskRunner> runner);
 		~CanvasController();
 		BOOL			Initialize(const TinySize& size);
 		VideoWorker&	GetVideoWorker();
@@ -23,7 +23,6 @@ namespace MediaSDK
 		CanvasView&					m_view;
 		IVisual2D*					m_current;
 		TinyArray<IVisual2D*>		m_visuals;
-		TinyTaskManeger				m_works;
 		VideoWorker					m_videoWorker;
 	};
 }

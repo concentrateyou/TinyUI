@@ -3,8 +3,8 @@
 
 namespace MediaSDK
 {
-	VideoWorker::VideoWorker(TinyTaskManeger& manager)
-		:m_manager(manager),
+	VideoWorker::VideoWorker(TinyScopedReferencePtr<TinyTaskRunner> runner)
+		:m_runner(runner),
 		m_display(m_dx11),
 		m_stop(FALSE),
 		m_texture(0),
@@ -63,11 +63,11 @@ namespace MediaSDK
 	}
 	BOOL VideoWorker::Start()
 	{
+		ASSERT(m_runner);
 		m_stop = FALSE;
-		m_videoTask = m_manager.PostTask(BindCallback(&VideoWorker::OnMessagePump, this), 0);
-		if (!m_videoTask)
-			return FALSE;
-		return TRUE;
+		m_videoTask = m_runner->CreateTask(BindCallback(&VideoWorker::OnMessagePump, this), 0);
+		ASSERT(m_videoTask);
+		return m_runner->PostTask(m_videoTask);
 	}
 
 	void VideoWorker::Stop()
@@ -75,7 +75,7 @@ namespace MediaSDK
 		m_stop = TRUE;
 		if (m_videoTask != NULL)
 			m_videoTask->Close();
-		m_videoTask.Release();
+		m_videoTask = NULL;
 	}
 	void VideoWorker::Add(IVisual2D* visual)
 	{

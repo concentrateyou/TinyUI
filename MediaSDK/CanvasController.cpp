@@ -3,10 +3,10 @@
 
 namespace MediaSDK
 {
-	CanvasController::CanvasController(CanvasView& view)
+	CanvasController::CanvasController(CanvasView& view, TinyScopedReferencePtr<TinyTaskRunner> runner)
 		:m_view(view),
 		m_current(NULL),
-		m_videoWorker(m_works)
+		m_videoWorker(runner)
 	{
 
 	}

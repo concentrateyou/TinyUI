@@ -8,7 +8,7 @@ namespace Bytedance
 	IMPLEMENT_DYNAMIC(MainView, TinyVisualWindowless);
 
 	MainView::MainView()
-		:m_controller(m_view)
+		:m_controller(m_view, m_scheduler.CreateTaskRunner())
 	{
 		m_visual2D = NULL;
 	}

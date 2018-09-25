@@ -92,5 +92,6 @@ namespace Bytedance
 		CanvasView				m_view;
 		CanvasController		m_controller;
 		GameVisual2D*			m_visual2D;
+		TaskScheduler			m_scheduler;
 	};
 }

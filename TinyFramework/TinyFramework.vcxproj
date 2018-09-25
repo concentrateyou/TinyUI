@@ -257,7 +257,6 @@
     <ClInclude Include="IO\TinyStringReader.h" />
     <ClInclude Include="IO\TinyWorker.h" />
     <ClInclude Include="IO\TinyThreadPool.h" />
-    <ClInclude Include="IO\TinyWin32Threadpool.h" />
     <ClInclude Include="Media\TinyAACFile.h" />
     <ClInclude Include="Media\TinyMFAACDecode.h" />
     <ClInclude Include="Media\TinyMFAACEncode.h" />
@@ -410,7 +409,6 @@
     <ClCompile Include="IO\TinyStringReader.cpp" />
     <ClCompile Include="IO\TinyWorker.cpp" />
     <ClCompile Include="IO\TinyThreadPool.cpp" />
-    <ClCompile Include="IO\TinyWin32Threadpool.cpp" />
     <ClCompile Include="Media\TinyAACFile.cpp" />
     <ClCompile Include="Media\TinyMFAACDecode.cpp" />
     <ClCompile Include="Media\TinyMFAACEncode.cpp" />
