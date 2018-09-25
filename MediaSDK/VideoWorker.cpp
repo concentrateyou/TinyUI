@@ -15,11 +15,7 @@ namespace MediaSDK
 
 	VideoWorker::~VideoWorker()
 	{
-		for (INT i = 0; i < NUM_TEXTURES; i++)
-		{
-			m_videos[i]->Destory();
-			SAFE_DELETE(m_videos[i]);
-		}
+		Uninitialize();
 	}
 
 	DX11& VideoWorker::GetDX11()
@@ -77,6 +73,21 @@ namespace MediaSDK
 			m_videoTask->Close();
 		m_videoTask = NULL;
 	}
+	void VideoWorker::Uninitialize()
+	{
+		if (!m_stop)
+		{
+			Stop();
+		}
+		RemoveAll();
+		m_display.Destory();
+		for (INT32 i = 0; i < NUM_TEXTURES; i++)
+		{
+			if (m_videos[i] != NULL)
+				m_videos[i]->Destory();
+			SAFE_DELETE(m_videos[i]);
+		}
+	}
 	void VideoWorker::Add(IVisual2D* visual)
 	{
 		TinyAutoLock autolock(m_lock);
@@ -86,12 +97,21 @@ namespace MediaSDK
 	void VideoWorker::Remove(IVisual2D* visual)
 	{
 		TinyAutoLock autolock(m_lock);
+		if (visual != NULL)
+		{
+			visual->Close();
+		}
 		m_visuals.Remove(visual);
 	}
 
 	void VideoWorker::RemoveAll()
 	{
 		TinyAutoLock autolock(m_lock);
+		for (INT32 i = 0; i < m_visuals.GetSize(); i++)
+		{
+			m_visuals[i]->Close();
+			SAFE_DELETE(m_visuals[i]);
+		}
 		m_visuals.RemoveAll();
 	}
 

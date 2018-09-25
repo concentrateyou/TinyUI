@@ -10,7 +10,28 @@ namespace TinyFramework
 {
 	namespace IO
 	{
-		
+		class TinyAsync
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyAsync)
+		private:
+			class TaskItem
+			{
+				DISALLOW_COPY_AND_ASSIGN(TaskItem)
+			public:
+				TaskItem(void*	context, Closure&& task, Closure&& complete);
+				~TaskItem();
+				void operator()();
+			private:
+				void*	m_context;
+				Closure	m_task;
+				Closure m_complete;
+			};
+		public:
+			TinyAsync();
+			BOOL PostTask(void*	context, Closure&& task, Closure&& complete);
+		private:
+			static DWORD CALLBACK TaskItemCallback(void* param);
+		};
 	};
 }
 

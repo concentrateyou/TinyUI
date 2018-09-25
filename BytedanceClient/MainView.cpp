@@ -207,7 +207,7 @@ namespace Bytedance
 	}
 	void MainView::OnCloseClick(TinyVisual*, EventArgs& args)
 	{
-		m_controller.GetVideoWorker().Stop();
+		m_controller.GetVideoWorker().Uninitialize();
 		TRACE("OnCloseClick\n");
 		m_document.ReleaseCapture();
 		::SendMessage(m_hWND, WM_SYSCOMMAND, SC_CLOSE, NULL);

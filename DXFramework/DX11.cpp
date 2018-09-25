@@ -249,4 +249,15 @@ namespace DXFramework
 		m_immediateContext->RSSetViewports(1, &vp);
 		return TRUE;
 	}
+	BOOL DX11::ReportLiveObjects()
+	{
+		TinyComPtr<ID3D11Debug> m_debug;
+		HRESULT hRes = m_d3d->QueryInterface(&m_debug);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = m_debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+		if (FAILED(hRes))
+			return FALSE;
+		return TRUE;
+	}
 }

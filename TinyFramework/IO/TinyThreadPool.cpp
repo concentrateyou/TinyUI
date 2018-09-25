@@ -321,11 +321,13 @@ namespace TinyFramework
 		{
 			if (m_delay > 0)
 			{
+				m_waiter.Wait(TRUE);
 				m_waiter.Close();
 				SAFE_CLOSE_HANDLE(m_handle);
 			}
 			else
 			{
+				m_worker.Wait(TRUE);
 				m_worker.Close();
 			}
 		}

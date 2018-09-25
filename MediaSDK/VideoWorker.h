@@ -21,6 +21,7 @@ namespace MediaSDK
 		BOOL		Resize(const TinySize& size);
 		BOOL		Start();
 		void		Stop();
+		void		Uninitialize();
 	public:
 		void		Add(IVisual2D* visual);
 		void		Remove(IVisual2D* visual);
