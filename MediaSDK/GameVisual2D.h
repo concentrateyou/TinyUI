@@ -10,19 +10,19 @@ namespace MediaSDK
 	public:
 		GameVisual2D(DX11& dx11);
 		virtual ~GameVisual2D();
-		void			Select(const TinyString& className, const TinyString& exeName);
+		void				Select(const TinyString& className, const TinyString& exeName);
 	public:
-		BOOL			Open() OVERRIDE;
-		BOOL			Tick(INT64& timestamp) OVERRIDE;
-		BOOL			Draw(DX11Graphics2D& g) OVERRIDE;
-		void			Close() OVERRIDE;
-		LPCSTR			GetName() OVERRIDE;
-		XMFLOAT2		GetTranslate() OVERRIDE;
-		XMFLOAT2		GetScale() OVERRIDE;
-		XMFLOAT2		GetSize() OVERRIDE;
-		void			SetName(LPCSTR pzName) OVERRIDE;
-		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
-		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
+		BOOL				Open() OVERRIDE;
+		BOOL				Tick(INT64& timestamp) OVERRIDE;
+		BOOL				Draw(DX11Graphics2D& g) OVERRIDE;
+		void				Close() OVERRIDE;
+		LPCSTR				GetName() OVERRIDE;
+		XMFLOAT2			GetTranslate() OVERRIDE;
+		XMFLOAT2			GetScale() OVERRIDE;
+		XMFLOAT2			GetSize() OVERRIDE;
+		void				SetName(LPCSTR pzName) OVERRIDE;
+		void				SetScale(const XMFLOAT2& pos) OVERRIDE;
+		void				SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 	private:
 		DX11&				m_dx11;
 		DX11Image2D			m_visual2D;

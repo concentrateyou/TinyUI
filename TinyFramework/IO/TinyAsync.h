@@ -46,27 +46,26 @@ namespace TinyFramework
 		class TinyTaskManeger
 		{
 		public:
-			class TinyTask
+			class TinyTask : public TinyReference<TinyTask>
 			{
 				friend class TinyTaskManeger;
 			public:
-				void Close();
-			private:
 				TinyTask();
 				~TinyTask();
 				BOOL Execute();
 				void OnTask();
+				void Close();
 			private:
-				INT					m_delay;
-				HANDLE				m_event;
-				Closure				m_callback;
-				TinyWin32Worker*	m_worker;
-				TinyWin32Waiter*	m_waiter;
+				INT32									m_delay;
+				HANDLE									m_event;
+				Closure									m_callback;
+				TinyScopedReferencePtr<TinyWin32Worker> m_worker;
+				TinyScopedReferencePtr<TinyWin32Waiter> m_waiter;
 			};
 		public:
 			TinyTaskManeger(INT iMax = 12);
 			~TinyTaskManeger();
-			TinyTask* PostTask(Closure&& callback, INT delay);
+			TinyScopedReferencePtr<TinyTask> PostTask(Closure&& callback, INT delay);
 		private:
 			TinyWin32Threadpool		m_pool;
 		};

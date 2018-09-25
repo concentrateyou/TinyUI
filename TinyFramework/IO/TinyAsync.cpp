@@ -102,17 +102,15 @@ namespace TinyFramework
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyTaskManeger::TinyTask::TinyTask()
-			:m_worker(NULL),
-			m_waiter(NULL),
-			m_event(NULL),
+			:m_event(NULL),
 			m_delay(0)
 		{
 
 		}
 		TinyTaskManeger::TinyTask::~TinyTask()
 		{
-			SAFE_DELETE(m_waiter);
-			SAFE_DELETE(m_worker);
+			m_waiter = NULL;
+			m_worker = NULL;
 			SAFE_CLOSE_HANDLE(m_event);
 		}
 		void TinyTaskManeger::TinyTask::Close()
@@ -122,12 +120,13 @@ namespace TinyFramework
 				m_waiter->Wait(FALSE);
 				m_waiter->Close();
 			}
+			m_waiter = NULL;
 			if (m_worker != NULL)
 			{
 				m_worker->Wait(FALSE);
 				m_worker->Close();
 			}
-			delete this;
+			m_worker = NULL;
 		}
 		BOOL TinyTaskManeger::TinyTask::Execute()
 		{
@@ -167,40 +166,28 @@ namespace TinyFramework
 			m_pool.Cancel();
 			m_pool.Close();
 		}
-		TinyTaskManeger::TinyTask* TinyTaskManeger::PostTask(Closure&& callback, INT delay)
+
+		TinyScopedReferencePtr<TinyTaskManeger::TinyTask> TinyTaskManeger::PostTask(Closure&& callback, INT delay)
 		{
-			TinyTask* task = NULL;
+			TinyScopedReferencePtr<TinyTaskManeger::TinyTask> task(new TinyTask());
+			ASSERT(task);
 			if (delay > 0)
 			{
-				task = new TinyTask();
-				if (!task)
-				{
-					TRACE("[TinyTaskManeger] Create TinyTask FAIL\n");
-					return NULL;
-				}
 				task->m_waiter = new TinyWin32Waiter(&m_pool);
-				ASSERT(task->m_waiter);
 				task->m_callback = std::move(callback);
 				if (!task->Execute())
 				{
-					SAFE_DELETE(task);
+					task = NULL;
 					return task;
 				}
 			}
 			else
 			{
-				task = new TinyTask();
-				if (!task)
-				{
-					TRACE("[TinyTaskManeger] Create TinyTask FAIL\n");
-					return NULL;
-				}
 				task->m_worker = new TinyWin32Worker(&m_pool);
-				ASSERT(task->m_worker);
 				task->m_callback = std::move(callback);
 				if (!task->Execute())
 				{
-					SAFE_DELETE(task);
+					task = NULL;
 					return task;
 				}
 			}

@@ -10,7 +10,6 @@ namespace MediaSDK
 		m_mutes[0].Create(FALSE, MUTEX_TEXTURE1, NULL);
 		m_mutes[1].Create(FALSE, MUTEX_TEXTURE2, NULL);
 	}
-
 	GameVisual2D::~GameVisual2D()
 	{
 	}
@@ -18,17 +17,14 @@ namespace MediaSDK
 	{
 		m_captureRunner.SetConfig(className, exeName);
 	}
-
 	XMFLOAT2 GameVisual2D::GetTranslate()
 	{
 		return m_visual2D.GetTranslate();
 	}
-
 	XMFLOAT2 GameVisual2D::GetScale()
 	{
 		return m_visual2D.GetScale();
 	}
-
 	XMFLOAT2 GameVisual2D::GetSize()
 	{
 		return m_visual2D.GetSize();
@@ -45,7 +41,6 @@ namespace MediaSDK
 	{
 		m_visual2D.SetTranslate(pos);
 	}
-
 	PCSTR GameVisual2D::GetName()
 	{
 		return m_szname.CSTR();
@@ -61,9 +56,7 @@ namespace MediaSDK
 	BOOL GameVisual2D::Tick(INT64& timestamp)
 	{
 		if (!m_captureRunner.IsCapturing())
-		{
 			return FALSE;
-		}
 		HookDATA* hookDATA = m_captureRunner.GetHookDATA();
 		if (!hookDATA)
 			return FALSE;
@@ -91,13 +84,13 @@ namespace MediaSDK
 								XMFLOAT2 size = m_visual2D.GetSize();
 								if (hookDATA->Pitch == ms.RowPitch)
 								{
-									memcpy(ms.pData, m_textures[dwCurrentID], hookDATA->Pitch * static_cast<INT>(size.y));
+									memcpy(ms.pData, m_textures[dwCurrentID], hookDATA->Pitch * static_cast<INT32>(size.y));
 								}
 								else
 								{
-									UINT bestPitch = std::min<UINT>(hookDATA->Pitch, ms.RowPitch);
+									UINT32 bestPitch = std::min<UINT32>(hookDATA->Pitch, ms.RowPitch);
 									LPBYTE input = m_textures[dwCurrentID];
-									for (INT y = 0; y < static_cast<INT>(size.y); y++)
+									for (INT32 y = 0; y < static_cast<INT32>(size.y); y++)
 									{
 										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch*y);
 										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);
@@ -117,13 +110,13 @@ namespace MediaSDK
 								XMFLOAT2 size = m_visual2D.GetSize();
 								if (hookDATA->Pitch == ms.RowPitch)
 								{
-									memcpy(ms.pData, m_textures[dwNextID], hookDATA->Pitch * static_cast<INT>(size.y));
+									memcpy(ms.pData, m_textures[dwNextID], hookDATA->Pitch * static_cast<INT32>(size.y));
 								}
 								else
 								{
-									UINT bestPitch = std::min<UINT>(hookDATA->Pitch, ms.RowPitch);
+									UINT32 bestPitch = std::min<UINT32>(hookDATA->Pitch, ms.RowPitch);
 									LPBYTE input = m_textures[dwNextID];
-									for (INT y = 0; y < static_cast<INT>(size.y); y++)
+									for (INT32 y = 0; y < static_cast<INT32>(size.y); y++)
 									{
 										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch * y);
 										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);

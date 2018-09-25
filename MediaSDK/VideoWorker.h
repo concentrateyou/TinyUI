@@ -35,15 +35,15 @@ namespace MediaSDK
 		void		OnSleep(UINT64& time, UINT64 intervalNS);
 	private:
 		BOOL						m_stop;
-		DOUBLE                      m_videoFPS;//ʵʱFPS
+		DOUBLE                      m_videoFPS;//FPS
 		UINT32						m_texture;
-		TinyLock					m_lock;
 		DX11						m_dx11;
 		DX11Graphics2D				m_display;
 		DX11Graphics2D*				m_videos[NUM_TEXTURES];
+		TinyLock					m_lock;
 		TinyArray<IVisual2D*>		m_visuals;
-		TinyTaskManeger::TinyTask*  m_videoTask;
 		TinyTaskManeger&			m_manager;
+		TinyScopedReferencePtr<TinyTaskManeger::TinyTask>	m_videoTask;
 	};
 }
 

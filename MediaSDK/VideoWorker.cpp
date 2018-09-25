@@ -15,7 +15,11 @@ namespace MediaSDK
 
 	VideoWorker::~VideoWorker()
 	{
-
+		for (INT i = 0; i < NUM_TEXTURES; i++)
+		{
+			m_videos[i]->Destory();
+			SAFE_DELETE(m_videos[i]);
+		}
 	}
 
 	DX11& VideoWorker::GetDX11()
@@ -70,10 +74,8 @@ namespace MediaSDK
 	{
 		m_stop = TRUE;
 		if (m_videoTask != NULL)
-		{
 			m_videoTask->Close();
-			m_videoTask = NULL;
-		}
+		m_videoTask.Release();
 	}
 	void VideoWorker::Add(IVisual2D* visual)
 	{

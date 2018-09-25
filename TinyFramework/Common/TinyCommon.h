@@ -934,13 +934,26 @@ private:\
 	public:
 		TinyScopedReferencePtr();
 		TinyScopedReferencePtr(T* myP);
+		TinyScopedReferencePtr(TinyScopedReferencePtr&& s) noexcept : m_myP(s.m_myP) { s.m_myP = NULL; }
 		TinyScopedReferencePtr(const TinyScopedReferencePtr<T>& s);
 		TinyScopedReferencePtr<T>& operator=(const TinyScopedReferencePtr<T>& s);
 		TinyScopedReferencePtr<T>& operator=(TinyScopedReferencePtr<T>&& s);
+		template <typename U,
+			typename = typename std::enable_if<
+			std::is_convertible<U*, T*>::value>::type>
+			TinyScopedReferencePtr(TinyScopedReferencePtr<U>&& s) noexcept : m_myP(s.m_myP)
+		{
+			s.m_myP = NULL;
+		}
 		~TinyScopedReferencePtr();
 		T* Ptr() const;
 		operator T*() const;
+		T& operator*() const;
 		T* operator->() const;
+		explicit operator BOOL() const 
+		{
+			return m_myP != NULL; 
+		}
 		TinyScopedReferencePtr<T>& operator=(T* ps);
 		template<typename U>
 		TinyScopedReferencePtr(const TinyScopedReferencePtr<U>& s) : m_myP(s.Ptr())
@@ -962,10 +975,19 @@ private:\
 			return *this;
 		}
 		template <typename U>
-		TinyScopedReferencePtr(TinyScopedReferencePtr<U>&& s)
-			: m_myP(s.m_myP)
+		BOOL operator==(const TinyScopedReferencePtr<U>& s) const
 		{
-			s.m_myP = NULL;
+			return m_myP == s.Ptr();
+		}
+		template <typename U>
+		BOOL operator!=(const TinyScopedReferencePtr<U>& s) const
+		{
+			return !operator==(s);
+		}
+		template <typename U>
+		BOOL operator<(const TinyScopedReferencePtr<U>& s) const
+		{
+			return m_myP < s.Ptr();
 		}
 	private:
 		void swap(T** pp);
@@ -1019,6 +1041,12 @@ private:\
 	T* TinyScopedReferencePtr<T>::operator->() const
 	{
 		return m_myP;
+	}
+	template<class T>
+	T& TinyScopedReferencePtr<T>::operator*() const
+	{
+		ASSERT(m_myP);
+		return *m_myP;
 	}
 	template<class T>
 	TinyScopedReferencePtr<T>& TinyScopedReferencePtr<T>::operator=(T* ps)

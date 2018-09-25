@@ -37,9 +37,8 @@ namespace TinyFramework
 		/// </summary>
 		class TinyWin32Worker : public TinyReference < TinyWin32Worker >
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyWin32Worker)
 		public:
-			TinyWin32Worker(TinyWin32Threadpool* pThreadpool = NULL);
+			explicit TinyWin32Worker(TinyWin32Threadpool* pool);
 			virtual ~TinyWin32Worker();
 			BOOL Submit(Closure&& callback);
 			BOOL Wait(BOOL fCancelPendingCallbacks);
@@ -54,11 +53,10 @@ namespace TinyFramework
 		/// <summary>
 		/// Win32定时任务
 		/// </summary>
-		class TinyWin32Timer
+		class TinyWin32Timer : public TinyReference<TinyWin32Timer>
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyWin32Timer)
 		public:
-			TinyWin32Timer(TinyWin32Threadpool* pTaskPool = NULL);
+			explicit TinyWin32Timer(TinyWin32Threadpool* pool);
 			virtual ~TinyWin32Timer();
 			BOOL Submit(DWORD msDelay, DWORD msPeriod, Closure&& callback);
 			BOOL Wait(BOOL fCancelPendingCallbacks);
@@ -73,11 +71,11 @@ namespace TinyFramework
 		/// <summary>
 		/// Win32等待任务
 		/// </summary>
-		class TinyWin32Waiter
+		class TinyWin32Waiter : public TinyReference<TinyWin32Waiter>
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyWin32Waiter)
 		public:
-			TinyWin32Waiter(TinyWin32Threadpool* pTaskPool = NULL);
+			explicit TinyWin32Waiter(TinyWin32Threadpool* pool);
 			virtual ~TinyWin32Waiter();
 			BOOL Submit(HANDLE handle, DWORD msDelay, Closure&& callback);
 			BOOL Wait(BOOL fCancelPendingCallbacks);

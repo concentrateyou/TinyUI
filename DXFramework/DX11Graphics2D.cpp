@@ -12,6 +12,7 @@ namespace DXFramework
 
 	DX11Graphics2D::~DX11Graphics2D()
 	{
+
 	}
 	BOOL DX11Graphics2D::IsEmpty() const
 	{
