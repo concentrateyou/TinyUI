@@ -18,20 +18,19 @@ namespace GraphicsCapture
 
 	class DX9CaptureDATA
 	{
+		DISALLOW_COPY_AND_ASSIGN(DX9CaptureDATA)
 	public:
 		DX9CaptureDATA();
 		~DX9CaptureDATA();
 	public:
 		BOOL				Create(IDirect3DDevice9* pThis, INT cx, INT cy, D3DFORMAT format);
 		void				Destory();
-		BOOL				Update();
 		BOOL				Enter();
 		void				Leave();
 		void				SetCopying(BOOL bCopy);
 		BOOL				IsCopying() const;
 		void				SetIssue(BOOL bIssue);
 		BOOL				IsIssue() const;
-		BYTE*				GetPointer() const;
 		UINT32				GetPitch() const;
 		IDirect3DQuery9*	GetQuery();
 		IDirect3DSurface9*	GetCopy2D();
@@ -40,7 +39,6 @@ namespace GraphicsCapture
 		volatile	BOOL				m_bCopying;
 		volatile	BOOL				m_bIssue;
 		UINT32							m_pitch;
-		BYTE*							m_bits;
 		TinySize						m_size;
 		TinyLock						m_lock;
 		TinyComPtr<IDirect3DQuery9>		m_query;
@@ -82,7 +80,7 @@ namespace GraphicsCapture
 		LPVOID							m_currentPointer;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
-		IO::TinyWorker					m_captureTask;
+		TinyWorker						m_captureTask;
 		DX9CaptureDATA*					m_captures[NUM_BUFFERS];
 		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<ID3D10Texture2D>		m_texture2D;

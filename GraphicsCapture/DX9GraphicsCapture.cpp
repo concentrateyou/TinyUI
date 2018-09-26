@@ -189,7 +189,6 @@ namespace GraphicsCapture
 	//////////////////////////////////////////////////////////////////////////
 	DX9CaptureDATA::DX9CaptureDATA()
 		:m_bCopying(FALSE),
-		m_bits(NULL),
 		m_bIssue(FALSE),
 		m_pitch(0)
 	{
@@ -245,12 +244,7 @@ namespace GraphicsCapture
 		m_query.Release();
 		m_copy2D.Release();
 		m_texture2D.Release();
-		SAFE_DELETE_ARRAY(m_bits);
 		m_pitch = 0;
-	}
-	BOOL DX9CaptureDATA::Update()
-	{
-		return TRUE;
 	}
 	BOOL DX9CaptureDATA::Enter()
 	{
@@ -275,10 +269,6 @@ namespace GraphicsCapture
 	BOOL DX9CaptureDATA::IsIssue() const
 	{
 		return m_bIssue;
-	}
-	BYTE* DX9CaptureDATA::GetPointer() const
-	{
-		return m_bits;
 	}
 	UINT32 DX9CaptureDATA::GetPitch() const
 	{

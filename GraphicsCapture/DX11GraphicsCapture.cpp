@@ -67,7 +67,6 @@ namespace GraphicsCapture
 	{
 		m_bActive = FALSE;
 		m_handle = NULL;
-		m_copy2D.Release();
 		m_texture2D.Release();
 		m_dx.m_textureDATA.Close();
 	}
@@ -93,19 +92,6 @@ namespace GraphicsCapture
 		hookDATA->bMultisample = scd.SampleDesc.Count > 1;
 		TinyComPtr<ID3D11Texture2D> backBuffer;
 		hRes = swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-		if (hRes != S_OK)
-			return FALSE;
-		D3D11_TEXTURE2D_DESC desc;
-		backBuffer->GetDesc(&desc);
-		desc.MipLevels = 1;
-		desc.ArraySize = 1;
-		desc.Format = scd.BufferDesc.Format;
-		desc.SampleDesc.Count = 1;
-		desc.SampleDesc.Quality = 0;
-		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		desc.Usage = D3D11_USAGE_DEFAULT;
-		desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
-		hRes = device->CreateTexture2D(&desc, NULL, &m_copy2D);
 		if (hRes != S_OK)
 			return FALSE;
 		m_dx.SetWindowsHook();
@@ -142,13 +128,7 @@ namespace GraphicsCapture
 					ASSERT(hookDATA);
 					if (hookDATA->bMultisample)
 					{
-						if (m_copy2D != NULL)
-						{
-							D3D11_TEXTURE2D_DESC desc;
-							backBuffer->GetDesc(&desc);
-							context->ResolveSubresource(m_copy2D, 0, backBuffer, 0, desc.Format);
-							context->CopyResource(m_texture2D, m_copy2D);
-						}
+						context->ResolveSubresource(m_texture2D, 0, backBuffer, 0, m_dxgiFormat);
 					}
 					else
 					{

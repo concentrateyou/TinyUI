@@ -22,7 +22,6 @@ namespace GraphicsCapture
 		HANDLE							m_handle;
 		HMODULE							m_hD3D11;
 		DXGI_FORMAT						m_dxgiFormat;
-		TinyComPtr<ID3D11Texture2D>		m_copy2D;
 		TinyComPtr<ID3D11Texture2D>		m_texture2D;
 	};
 	SELECTANY extern DX11GraphicsCapture g_dx11(g_dx);
