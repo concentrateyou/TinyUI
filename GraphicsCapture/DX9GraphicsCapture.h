@@ -64,8 +64,6 @@ namespace GraphicsCapture
 		BOOL Setup(IDirect3DDevice9 *pThis);
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 		BOOL DX9CPUHook(IDirect3DDevice9 *device);
-	public:
-		BOOL hookable();
 	private:
 		void OnMessagePump();
 		void QueryCopy(IDirect3DDevice9 *device);
@@ -76,14 +74,12 @@ namespace GraphicsCapture
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
 		volatile INT32					m_currentCPUTexture;
-		volatile INT32					m_currentCapture;
+		volatile INT32					m_current;
 		INT32							m_patchType;
 		LPVOID							m_copyBits;
 		LPBYTE							m_textures[2];
 		HANDLE							m_handle;
 		HMODULE							m_hD3D9;
-		TinyEvent						m_copy;
-		TinyEvent						m_close;
 		LPVOID							m_currentPointer;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
@@ -92,6 +88,8 @@ namespace GraphicsCapture
 		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<ID3D10Texture2D>		m_texture2D;
 		TinyComPtr<IDirect3DSurface9>	m_copy2D;
+		TinyEvent						m_copy;
+		TinyEvent						m_close;
 		TinyDetour						m_dX9EndScene;
 		TinyDetour						m_dX9Reset;
 		TinyDetour						m_dX9ResetEx;

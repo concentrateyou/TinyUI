@@ -22,15 +22,14 @@ namespace GraphicsCapture
 		void OnMessagePump();
 	public:
 		LPVOID							m_currentPointer;
-		HookDATA						m_captureDATA;
-		BOOL							m_bCapturing;
-		BOOL							m_bTextures;
+		volatile BOOL					m_bCapturing;
+		volatile BOOL					m_bActive;
+		volatile INT32					m_current;
 		DWORD							m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
-		IO::TinyWorker					m_captureTask;
 		LPBYTE							m_textures[2];
 		LPVOID							m_captures[NUM_BUFFERS];
-		UINT							m_currentCapture;
+		TinyWorker						m_captureTask;
 		TinyEvent						m_copy;
 		TinyEvent						m_close;
 		TinyDetour						m_dX8EndScene;

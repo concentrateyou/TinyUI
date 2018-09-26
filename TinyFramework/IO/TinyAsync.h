@@ -18,17 +18,17 @@ namespace TinyFramework
 			{
 				DISALLOW_COPY_AND_ASSIGN(TaskItem)
 			public:
-				TaskItem(void*	context, Closure&& task, Closure&& complete);
+				TaskItem(void*	context, Closure&& callback, Closure&& complete);
 				~TaskItem();
 				void operator()();
 			private:
 				void*	m_context;
-				Closure	m_task;
+				Closure	m_callback;
 				Closure m_complete;
 			};
 		public:
 			TinyAsync();
-			BOOL PostTask(void*	context, Closure&& task, Closure&& complete);
+			BOOL PostTask(void*	context, Closure&& callback, Closure&& complete);
 		private:
 			static DWORD CALLBACK TaskItemCallback(void* param);
 		};

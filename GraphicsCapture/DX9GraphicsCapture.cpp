@@ -301,7 +301,7 @@ namespace GraphicsCapture
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_handle(NULL),
 		m_currentPointer(NULL),
-		m_currentCapture(0),
+		m_current(0),
 		m_currentCPUTexture(0),
 		m_dwCopy(0),
 		m_bCapturing(FALSE),
@@ -481,8 +481,8 @@ namespace GraphicsCapture
 				else
 				{
 					QueryCopy(d3d);
-					INT32 nextCapture = (m_currentCapture == NUM_BUFFERS - 1) ? 0 : (m_currentCapture + 1);
-					DX9CaptureDATA* pDATA1 = m_captures[m_currentCapture];
+					INT32 nextCapture = (m_current == NUM_BUFFERS - 1) ? 0 : (m_current + 1);
+					DX9CaptureDATA* pDATA1 = m_captures[m_current];
 					IDirect3DSurface9 *copy = pDATA1->GetTexture2D();
 					TinyComPtr<IDirect3DSurface9> backBuffer;
 					if (FAILED(d3d->GetRenderTarget(0, &backBuffer)))
@@ -516,17 +516,11 @@ namespace GraphicsCapture
 						pDATA2->GetQuery()->Issue(D3DISSUE_END);
 						pDATA2->SetIssue(TRUE);
 					}
-					m_currentCapture = nextCapture;
+					m_current = nextCapture;
 				}
 			}
 		}
 		return TRUE;
-	}
-	BOOL DX9GraphicsCapture::hookable()
-	{
-		return !m_dX9Present.IsEmpty() &&
-			!m_dX9PresentEx.IsEmpty() &&
-			!m_dX9SwapPresent.IsEmpty();
 	}
 	void DX9GraphicsCapture::Reset()
 	{

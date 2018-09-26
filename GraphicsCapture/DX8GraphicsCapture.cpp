@@ -96,36 +96,36 @@ namespace GraphicsCapture
 	}
 	typedef IDirect3D8* (WINAPI*D3D8CREATEPROC)(UINT);
 	//////////////////////////////////////////////////////////////////////////
-	HRESULT STDMETHODCALLTYPE DX8EndScene(IDirect3DDevice8 *pThis)
+	HRESULT STDMETHODCALLTYPE DX8EndScene(IDirect3DDevice8 *device)
 	{
 		g_dx8.m_dX8EndScene.EndDetour();
 		if (g_dx8.m_currentPointer == NULL)
 		{
-			g_dx8.m_currentPointer = g_dx8.Setup(pThis) ? pThis : NULL;
+			g_dx8.m_currentPointer = g_dx8.Setup(device) ? device : NULL;
 		}
-		HRESULT hRes = pThis->EndScene();
+		HRESULT hRes = device->EndScene();
 		g_dx8.m_dX8EndScene.BeginDetour();
 		return hRes;
 	}
-	HRESULT STDMETHODCALLTYPE DX8Present(IDirect3DDevice8* pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
+	HRESULT STDMETHODCALLTYPE DX8Present(IDirect3DDevice8* device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
 		g_dx8.m_dX8Present.EndDetour();
-		if (g_dx8.m_currentPointer == pThis)
+		if (g_dx8.m_currentPointer == device)
 		{
-			g_dx8.Render(pThis);
+			g_dx8.Render(device);
 		}
-		HRESULT hRes = pThis->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
+		HRESULT hRes = device->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 		g_dx8.m_dX8Present.BeginDetour();
 		return hRes;
 	}
-	HRESULT STDMETHODCALLTYPE DX8Reset(IDirect3DDevice8* pThis, D3DPRESENT_PARAMETERS* pPresentationParameters)
+	HRESULT STDMETHODCALLTYPE DX8Reset(IDirect3DDevice8* device, D3DPRESENT_PARAMETERS* pPresentationParameters)
 	{
 		g_dx8.m_dX8Reset.EndDetour();
-		if (g_dx8.m_currentPointer == pThis)
+		if (g_dx8.m_currentPointer == device)
 		{
 			g_dx8.Reset();
 		}
-		HRESULT hRes = pThis->Reset(pPresentationParameters);
+		HRESULT hRes = device->Reset(pPresentationParameters);
 		g_dx8.m_dX8Reset.BeginDetour();
 		return hRes;
 	}
@@ -147,7 +147,7 @@ namespace GraphicsCapture
 	public:
 		DX8CaptureDATA();
 		~DX8CaptureDATA();
-		BOOL				Create(IDirect3DDevice8* pThis, INT cx, INT cy, D3DFORMAT format);
+		BOOL				Create(IDirect3DDevice8* device, INT cx, INT cy, D3DFORMAT format);
 		void				Destory();
 		BOOL				Update();
 		BOOL				Enter();
@@ -196,10 +196,10 @@ namespace GraphicsCapture
 	{
 		return m_pitch;
 	}
-	BOOL DX8CaptureDATA::Create(IDirect3DDevice8* pThis, INT cx, INT cy, D3DFORMAT format)
+	BOOL DX8CaptureDATA::Create(IDirect3DDevice8* device, INT cx, INT cy, D3DFORMAT format)
 	{
 		Destory();
-		if (SUCCEEDED(pThis->CreateImageSurface(cx, cy, format, &m_surface)))
+		if (SUCCEEDED(device->CreateImageSurface(cx, cy, format, &m_surface)))
 		{
 			D3DLOCKED_RECT lr;
 			if (SUCCEEDED(m_surface->LockRect(&lr, NULL, D3DLOCK_READONLY)))
@@ -263,7 +263,7 @@ namespace GraphicsCapture
 	DX8GraphicsCapture::DX8GraphicsCapture(DX& dx)
 		:m_dx(dx),
 		m_currentPointer(NULL),
-		m_currentCapture(0)
+		m_current(0)
 	{
 		m_textures[0] = m_textures[1] = NULL;
 		m_copy.CreateEvent();
@@ -346,7 +346,7 @@ namespace GraphicsCapture
 		}
 		if (m_bCapturing)
 		{
-			if (!m_bTextures)
+			if (!m_bActive)
 			{
 				TinyComPtr<IDirect3DSurface8> backBuffer;
 				if (SUCCEEDED(d3d->GetRenderTarget(&backBuffer)))
@@ -355,21 +355,22 @@ namespace GraphicsCapture
 					::ZeroMemory(&sd, sizeof(sd));
 					if (SUCCEEDED(backBuffer->GetDesc(&sd)))
 					{
-						m_captureDATA.Format = sd.Format;
-						m_captureDATA.Size.cx = sd.Width;
-						m_captureDATA.Size.cy = sd.Height;
-						m_bTextures = DX8CPUHook(d3d);
+						HookDATA* hookDATA = m_dx.GetHookDATA();
+						ASSERT(hookDATA);
+						hookDATA->Format = sd.Format;
+						hookDATA->Size.cx = sd.Width;
+						hookDATA->Size.cy = sd.Height;
+						m_bActive = DX8CPUHook(d3d);
 					}
 				}
 			}
-			if (m_bTextures)
+			if (m_bActive)
 			{
 				HRESULT hRes = S_OK;
 				TinyComPtr<IDirect3DSurface8> backBuffer;
 				hRes = d3d->GetRenderTarget(&backBuffer);
 				if (hRes != S_OK)
 					return FALSE;
-
 				for (INT i = 0; i < NUM_BUFFERS; i++)
 				{
 					DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[i]);
@@ -380,7 +381,7 @@ namespace GraphicsCapture
 							return FALSE;
 						if (!pDATA->Update())
 							return FALSE;
-						m_currentCapture = i;
+						m_current = i;
 						m_copy.SetEvent();
 					}
 				}
@@ -390,7 +391,7 @@ namespace GraphicsCapture
 	}
 	void DX8GraphicsCapture::Reset()
 	{
-		m_bTextures = FALSE;
+		m_bActive = FALSE;
 		m_copy.SetEvent();
 		m_close.SetEvent();
 		m_captureTask.Close(INFINITE);
@@ -404,12 +405,14 @@ namespace GraphicsCapture
 	}
 	BOOL DX8GraphicsCapture::Setup(LPVOID pThis)
 	{
+		HookDATA* hookDATA = m_dx.GetHookDATA();
+		ASSERT(hookDATA);
 		IDirect3DDevice8 *d3d = reinterpret_cast<IDirect3DDevice8*>(pThis);
 		ASSERT(d3d);
 		D3DDEVICE_CREATION_PARAMETERS parameters;
 		if (SUCCEEDED(d3d->GetCreationParameters(&parameters)))
 		{
-			m_captureDATA.Window = parameters.hFocusWindow;
+			hookDATA->Window = parameters.hFocusWindow;
 		}
 		TinyComPtr<IDirect3DSurface8> backBuffer;
 		if (SUCCEEDED(d3d->GetRenderTarget(&backBuffer)))
@@ -429,11 +432,11 @@ namespace GraphicsCapture
 				{
 					m_d3dFormat = static_cast<DWORD>(desc.Format);
 					m_dxgiFormat = GetDXGIFormat8(desc.Format);
-					m_captureDATA.CaptureType = CAPTURETYPE_MEMORYTEXTURE;
-					m_captureDATA.Format = desc.Format;
-					m_captureDATA.Size.cx = desc.Width;
-					m_captureDATA.Size.cy = desc.Height;
-					m_captureDATA.Pitch = 4 * desc.Width;
+					hookDATA->CaptureType = CAPTURETYPE_MEMORYTEXTURE;
+					hookDATA->Format = desc.Format;
+					hookDATA->Size.cx = desc.Width;
+					hookDATA->Size.cy = desc.Height;
+					hookDATA->Pitch = 4 * desc.Width;
 					m_dx.SetWindowsHook();
 					TinyComPtr<IDirect3D8> d3d8;
 					if (SUCCEEDED(d3d->GetDirect3D(&d3d8)))
@@ -454,25 +457,25 @@ namespace GraphicsCapture
 	}
 	BOOL DX8GraphicsCapture::DX8CPUHook(LPVOID pThis)
 	{
+		HookDATA* hookDATA = m_dx.GetHookDATA();
+		ASSERT(hookDATA);
 		IDirect3DDevice8 *d3d = reinterpret_cast<IDirect3DDevice8*>(pThis);
 		ASSERT(d3d);
 		HRESULT hRes = S_OK;
-		m_captureDATA.CaptureType = CAPTURETYPE_MEMORYTEXTURE;
-		m_captureDATA.bFlip = FALSE;
+		hookDATA->CaptureType = CAPTURETYPE_MEMORYTEXTURE;
+		hookDATA->bFlip = FALSE;
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[i]);
-			if (!pDATA->Create(d3d, m_captureDATA.Size.cx, m_captureDATA.Size.cy, (D3DFORMAT)m_captureDATA.Format))
+			if (!pDATA->Create(d3d, hookDATA->Size.cx, hookDATA->Size.cy, (D3DFORMAT)hookDATA->Format))
 				return FALSE;
 		}
 		DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[0]);
-		m_captureDATA.Pitch = pDATA->GetPitch();
+		hookDATA->Pitch = pDATA->GetPitch();
 		UINT size1 = (sizeof(TextureDATA) + 15) & 0xFFFFFFF0;
-		UINT size2 = (m_captureDATA.Pitch * m_captureDATA.Size.cy + 15) & 0xFFFFFFF0;
-		m_captureDATA.MapSize = size1 + size2 * 2;
-		HookDATA* hookDATA = m_dx.GetHookDATA();
-		memcpy(hookDATA, &m_captureDATA, sizeof(m_captureDATA));
-		TextureDATA* textureDATA = m_dx.GetTextureDATA(m_captureDATA.MapSize);
+		UINT size2 = (hookDATA->Pitch * hookDATA->Size.cy + 15) & 0xFFFFFFF0;
+		hookDATA->MapSize = size1 + size2 * 2;
+		TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
 		textureDATA->Texture1Offset = size1;
 		textureDATA->Texture2Offset = size1 + size2;
 		textureDATA->TextureHandle = NULL;
@@ -496,26 +499,28 @@ namespace GraphicsCapture
 			{
 				break;
 			}
-			currentCapture = m_currentCapture;
+			currentCapture = m_current;
 			DWORD dwNextID = dwCurrentID == 0 ? 1 : 0;
 			DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[currentCapture]);
 			if (currentCapture < NUM_BUFFERS && pDATA->GetPointer())
 			{
+				HookDATA* hookDATA = m_dx.GetHookDATA();
+				ASSERT(hookDATA);
 				pDATA->Enter();
 				do
 				{
 					if (m_dx.m_mutes[dwCurrentID].Lock(0))
 					{
-						ConvertPixelFormat(pDATA->GetPointer(), pDATA->GetPitch(), static_cast<D3DFORMAT>(m_d3dFormat), m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[dwCurrentID]);
-						TextureDATA* textureDATA = m_dx.GetTextureDATA(m_captureDATA.MapSize);
+						ConvertPixelFormat(pDATA->GetPointer(), pDATA->GetPitch(), static_cast<D3DFORMAT>(m_d3dFormat), hookDATA->Size.cx, hookDATA->Size.cy, m_textures[dwCurrentID]);
+						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
 						textureDATA->CurrentID = dwCurrentID;
 						m_dx.m_mutes[dwCurrentID].Unlock();
 						break;
 					}
 					if (m_dx.m_mutes[dwNextID].Lock(0))
 					{
-						ConvertPixelFormat(pDATA->GetPointer(), pDATA->GetPitch(), static_cast<D3DFORMAT>(m_d3dFormat), m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[dwNextID]);
-						TextureDATA* textureDATA = m_dx.GetTextureDATA(m_captureDATA.MapSize);
+						ConvertPixelFormat(pDATA->GetPointer(), pDATA->GetPitch(), static_cast<D3DFORMAT>(m_d3dFormat), hookDATA->Size.cx, hookDATA->Size.cy, m_textures[dwNextID]);
+						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
 						textureDATA->CurrentID = dwNextID;
 						m_dx.m_mutes[dwNextID].Unlock();
 						break;

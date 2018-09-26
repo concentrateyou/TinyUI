@@ -5,9 +5,9 @@ namespace TinyFramework
 {
 	namespace IO
 	{
-		TinyAsync::TaskItem::TaskItem(void* context, Closure&& task, Closure&& complete)
+		TinyAsync::TaskItem::TaskItem(void* context, Closure&& callback, Closure&& complete)
 			:m_context(context),
-			m_task(std::move(task)),
+			m_callback(std::move(callback)),
 			m_complete(std::move(complete))
 		{
 
@@ -18,9 +18,9 @@ namespace TinyFramework
 		}
 		void TinyAsync::TaskItem::operator()()
 		{
-			if (!m_task.IsNull())
+			if (!m_callback.IsNull())
 			{
-				m_task();
+				m_callback();
 			}
 			if (!m_complete.IsNull())
 			{
@@ -39,9 +39,9 @@ namespace TinyFramework
 			SAFE_DELETE(ps);
 			return 0;
 		}
-		BOOL TinyAsync::PostTask(void* context, Closure&& task, Closure&& complete)
+		BOOL TinyAsync::PostTask(void* context, Closure&& callback, Closure&& complete)
 		{
-			TaskItem* ps = new TaskItem(context, std::move(task), std::move(complete));
+			TaskItem* ps = new TaskItem(context, std::move(callback), std::move(complete));
 			if (!QueueUserWorkItem(TaskItemCallback, ps, WT_EXECUTEDEFAULT))
 			{
 				SAFE_DELETE(ps);
