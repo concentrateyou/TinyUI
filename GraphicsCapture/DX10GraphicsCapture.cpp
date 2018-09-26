@@ -34,7 +34,6 @@ namespace GraphicsCapture
 			return FALSE;
 		m_pitch = map.RowPitch;
 		m_copy2D->Unmap(0);
-
 		desc.Format = dxgiFormat;
 		desc.SampleDesc.Count = 1;
 		desc.Usage = D3D10_USAGE_DEFAULT;
@@ -213,15 +212,39 @@ namespace GraphicsCapture
 						DX10CaptureDATA* pDATA1 = m_captures[m_current];
 						if (hookDATA->bMultisample)
 						{
-							D3D10_TEXTURE2D_DESC desc;
-							backBuffer->GetDesc(&desc);
-							device->ResolveSubresource(pDATA1->GetCopy2D(), 0, backBuffer, 0, desc.Format);
-							device->CopyResource(pDATA1->GetTexture2D(), pDATA1->GetCopy2D());
+							device->ResolveSubresource(pDATA1->GetTexture2D(), 0, backBuffer, 0, m_dxgiFormat);
 						}
 						else
 						{
 							device->CopyResource(pDATA1->GetTexture2D(), backBuffer);
 						}
+						if (m_dwCopy < NUM_BUFFERS - 1)
+						{
+							m_dwCopy++;
+						}
+						else
+						{
+							DX10CaptureDATA* pDATA2 = m_captures[next];
+							ID3D10Texture2D *src = pDATA2->GetTexture2D();
+							ID3D10Texture2D *dst = pDATA2->GetCopy2D();
+							if (pDATA2->IsCopying())
+							{
+								pDATA2->Enter();
+								dst->Unmap(0);
+								pDATA2->SetCopying(FALSE);
+								pDATA2->Leave();
+							}
+							if (hookDATA->bMultisample)
+							{
+								device->ResolveSubresource(dst, 0, src, 0, m_dxgiFormat);
+							}
+							else
+							{
+								device->CopyResource(dst, src);
+							}
+							pDATA2->SetIssue(TRUE);
+						}
+						m_current = next;
 					}
 					else
 					{

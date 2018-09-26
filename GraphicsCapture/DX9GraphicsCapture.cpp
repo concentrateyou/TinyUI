@@ -500,14 +500,13 @@ namespace GraphicsCapture
 						DX9CaptureDATA* pDATA2 = m_captures[next];
 						IDirect3DSurface9 *src = pDATA2->GetTexture2D();
 						IDirect3DSurface9 *dst = pDATA2->GetCopy2D();
-						g_dx.Enter();
 						if (pDATA2->IsCopying())
 						{
+							pDATA2->Enter();
 							dst->UnlockRect();
 							pDATA2->SetCopying(FALSE);
+							pDATA2->Leave();
 						}
-						g_dx.Leave();
-						pDATA2->Leave();
 						d3d->GetRenderTargetData(src, dst);
 						pDATA2->GetQuery()->Issue(D3DISSUE_END);
 						pDATA2->SetIssue(TRUE);
