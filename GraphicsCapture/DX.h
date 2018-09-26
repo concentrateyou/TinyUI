@@ -15,16 +15,19 @@ namespace GraphicsCapture
 	public:
 		DX();
 		virtual ~DX();
-		BOOL Initialize();
-		void Uninitialize();
-		BOOL SetWindowsHook();
-		void UnhookWindowsHook();
+		BOOL			Initialize();
+		void			Uninitialize();
+		BOOL			SetWindowsHook();
+		void			UnhookWindowsHook();
 		HookDATA*		GetHookDATA();
 		TextureDATA*	GetTextureDATA(DWORD dwSize = sizeof(TextureDATA));
+		void			Enter();
+		void			Leave();
 	private:
-		BOOL CreateEvents();
+		BOOL			CreateEvents();
 	public:
 		HHOOK					m_hhk;
+		TinyLock				m_lock;
 		TinyMutex				m_mutes[2];
 		TinyEvent				m_sourceReady;
 		TinyEvent				m_start;

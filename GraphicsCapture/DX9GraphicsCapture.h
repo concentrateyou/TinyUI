@@ -4,7 +4,6 @@
 
 namespace GraphicsCapture
 {
-#define NUM_BUFFERS 3
 	typedef IDirect3D9* (WINAPI*D3D9CREATEPROC)(UINT);
 	typedef HRESULT(WINAPI*D3D9CREATEEXPROC)(UINT, IDirect3D9Ex**);
 
@@ -38,8 +37,8 @@ namespace GraphicsCapture
 		IDirect3DSurface9*	GetCopy2D();
 		IDirect3DSurface9*	GetTexture2D();
 	private:
-		volatile BOOL					m_bCopying;
-		volatile BOOL					m_bIssue;
+		volatile	BOOL				m_bCopying;
+		volatile	BOOL				m_bIssue;
 		UINT32							m_pitch;
 		BYTE*							m_bits;
 		TinySize						m_size;
@@ -73,17 +72,17 @@ namespace GraphicsCapture
 		DWORD							m_dwCopy;
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
-		volatile INT32					m_currentCPUTexture;
 		volatile INT32					m_current;
+		volatile INT32					m_currentCopy;
+		volatile LPVOID					m_bits;
 		INT32							m_patchType;
-		LPVOID							m_copyBits;
 		LPBYTE							m_textures[2];
 		HANDLE							m_handle;
 		HMODULE							m_hD3D9;
 		LPVOID							m_currentPointer;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
-		IO::TinyWorker					m_copyTask;
+		IO::TinyWorker					m_captureTask;
 		DX9CaptureDATA*					m_captures[NUM_BUFFERS];
 		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<ID3D10Texture2D>		m_texture2D;

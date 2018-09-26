@@ -199,11 +199,11 @@ namespace GraphicsCapture
 	{
 		Destory();
 	}
-	BOOL DX9CaptureDATA::Create(IDirect3DDevice9* pThis, INT cx, INT cy, D3DFORMAT format)
+	BOOL DX9CaptureDATA::Create(IDirect3DDevice9* device, INT cx, INT cy, D3DFORMAT format)
 	{
 		Destory();
 		HRESULT hRes = S_OK;
-		hRes = pThis->CreateOffscreenPlainSurface(cx, cy, (D3DFORMAT)format, D3DPOOL_SYSTEMMEM, &m_copy2D, NULL);
+		hRes = device->CreateOffscreenPlainSurface(cx, cy, (D3DFORMAT)format, D3DPOOL_SYSTEMMEM, &m_copy2D, NULL);
 		if (FAILED(hRes))
 		{
 			LOG(INFO) << "[DX9CaptureDATA] CreateOffscreenPlainSurface FAIL\n";
@@ -218,13 +218,13 @@ namespace GraphicsCapture
 		}
 		m_pitch = lockedRect.Pitch;
 		m_copy2D->UnlockRect();
-		hRes = pThis->CreateRenderTarget(cx, cy, (D3DFORMAT)format, D3DMULTISAMPLE_NONE, 0, FALSE, &m_texture2D, NULL);
+		hRes = device->CreateRenderTarget(cx, cy, (D3DFORMAT)format, D3DMULTISAMPLE_NONE, 0, FALSE, &m_texture2D, NULL);
 		if (FAILED(hRes))
 		{
 			LOG(INFO) << "[DX9CaptureDATA] CreateRenderTarget FAIL\n";
 			return FALSE;
 		}
-		hRes = pThis->CreateQuery(D3DQUERYTYPE_EVENT, &m_query);
+		hRes = device->CreateQuery(D3DQUERYTYPE_EVENT, &m_query);
 		if (FAILED(hRes))
 		{
 			LOG(INFO) << "[DX9CaptureDATA] CreateQuery FAIL\n";
@@ -234,13 +234,14 @@ namespace GraphicsCapture
 	}
 	void DX9CaptureDATA::Destory()
 	{
+		g_dx.Enter();
 		if (m_bCopying)
 		{
 			LOG(INFO) << "[DX9CaptureDATA] Destory UnlockRect\n";
-			TinyAutoLock autolock(m_lock);
 			m_texture2D->UnlockRect();
 			m_bCopying = FALSE;
 		}
+		g_dx.Leave();
 		m_query.Release();
 		m_copy2D.Release();
 		m_texture2D.Release();
@@ -302,11 +303,11 @@ namespace GraphicsCapture
 		m_handle(NULL),
 		m_currentPointer(NULL),
 		m_current(0),
-		m_currentCPUTexture(0),
+		m_currentCopy(0),
 		m_dwCopy(0),
 		m_bCapturing(FALSE),
 		m_bActive(FALSE),
-		m_copyBits(NULL),
+		m_bits(NULL),
 		m_patchType(0),
 		m_hD3D9(NULL),
 		m_dx(dx)
@@ -404,13 +405,15 @@ namespace GraphicsCapture
 				continue;
 			pDATA->SetIssue(FALSE);
 			IDirect3DSurface9 *copy = pDATA->GetCopy2D();
-			D3DLOCKED_RECT lockedRect;
-			hRes = copy->LockRect(&lockedRect, NULL, D3DLOCK_READONLY);
+			D3DLOCKED_RECT s = { 0 };
+			hRes = copy->LockRect(&s, NULL, D3DLOCK_READONLY);
 			if (SUCCEEDED(hRes))
 			{
+				g_dx.Enter();
 				pDATA->SetCopying(TRUE);
-				m_copyBits = lockedRect.pBits;
-				m_currentCPUTexture = i;
+				m_bits = s.pBits;
+				m_currentCopy = i;
+				g_dx.Leave();
 				m_copy.SetEvent();
 			}
 			break;
@@ -463,7 +466,9 @@ namespace GraphicsCapture
 			}
 			if (m_bActive)
 			{
-				if (m_bD3D9EX)
+				HookDATA* hookDATA = m_dx.GetHookDATA();
+				ASSERT(hookDATA);
+				if (m_bD3D9EX && !hookDATA->bCPU)
 				{
 					TinyComPtr<IDirect3DSurface9> backBuffer;
 					if (FAILED(d3d->GetRenderTarget(0, &backBuffer)))
@@ -481,9 +486,9 @@ namespace GraphicsCapture
 				else
 				{
 					QueryCopy(d3d);
-					INT32 nextCapture = (m_current == NUM_BUFFERS - 1) ? 0 : (m_current + 1);
+					INT32 next = (m_current == NUM_BUFFERS - 1) ? 0 : (m_current + 1);
 					DX9CaptureDATA* pDATA1 = m_captures[m_current];
-					IDirect3DSurface9 *copy = pDATA1->GetTexture2D();
+					IDirect3DSurface9 *copy2D = pDATA1->GetTexture2D();
 					TinyComPtr<IDirect3DSurface9> backBuffer;
 					if (FAILED(d3d->GetRenderTarget(0, &backBuffer)))
 					{
@@ -492,7 +497,7 @@ namespace GraphicsCapture
 							return FALSE;
 						}
 					}
-					if (!backBuffer || FAILED(d3d->StretchRect(backBuffer, NULL, copy, NULL, D3DTEXF_NONE)))
+					if (!backBuffer || FAILED(d3d->StretchRect(backBuffer, NULL, copy2D, NULL, D3DTEXF_NONE)))
 					{
 						return FALSE;
 					}
@@ -502,21 +507,22 @@ namespace GraphicsCapture
 					}
 					else
 					{
-						DX9CaptureDATA* pDATA2 = m_captures[nextCapture];
+						DX9CaptureDATA* pDATA2 = m_captures[next];
 						IDirect3DSurface9 *src = pDATA2->GetTexture2D();
 						IDirect3DSurface9 *dst = pDATA2->GetCopy2D();
-						pDATA2->Enter();
+						g_dx.Enter();
 						if (pDATA2->IsCopying())
 						{
 							dst->UnlockRect();
 							pDATA2->SetCopying(FALSE);
 						}
+						g_dx.Leave();
 						pDATA2->Leave();
 						d3d->GetRenderTargetData(src, dst);
 						pDATA2->GetQuery()->Issue(D3DISSUE_END);
 						pDATA2->SetIssue(TRUE);
 					}
-					m_current = nextCapture;
+					m_current = next;
 				}
 			}
 		}
@@ -531,7 +537,7 @@ namespace GraphicsCapture
 		m_d3d10.Release();
 		m_copy.SetEvent();
 		m_close.SetEvent();
-		m_copyTask.Close(500);
+		m_captureTask.Close(500);
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			DX9CaptureDATA* pDATA = m_captures[i];
@@ -609,7 +615,7 @@ namespace GraphicsCapture
 		BYTE* address = reinterpret_cast<BYTE*>(textureDATA);
 		m_textures[0] = address + textureDATA->Texture1Offset;
 		m_textures[1] = address + textureDATA->Texture2Offset;
-		m_copyTask.Submit(BindCallback(&DX9GraphicsCapture::OnMessagePump, this));
+		m_captureTask.Submit(BindCallback(&DX9GraphicsCapture::OnMessagePump, this));
 		m_dx.m_targetReady.SetEvent();
 		LOG(INFO) << "[DX9CPUHook] OK";
 		return TRUE;
@@ -617,25 +623,28 @@ namespace GraphicsCapture
 	void DX9GraphicsCapture::OnMessagePump()
 	{
 		HRESULT hRes = S_OK;
-		HANDLE events[] = { m_copy,m_close };
+		HANDLE events[] = { m_copy, m_close };
 		DWORD dwCurrentID = 0;
 		for (;;)
 		{
-			UINT32 currentCPUTexture = 0;
+			INT32 currentCopy = 0;
+			LPVOID bits = NULL;
 			hRes = WaitForMultipleObjects(2, events, FALSE, INFINITE);
 			if (hRes != WAIT_OBJECT_0)
 			{
 				break;
 			}
-			DWORD dwNextID = dwCurrentID == 0 ? 1 : 0;
-			currentCPUTexture = m_currentCPUTexture;
-			LPVOID bits = m_copyBits;
-			if (currentCPUTexture < NUM_BUFFERS && !!bits)
+			g_dx.Enter();
+			currentCopy = m_currentCopy;
+			bits = m_bits;
+			g_dx.Leave();
+			if (currentCopy < NUM_BUFFERS && !!bits)
 			{
-				DX9CaptureDATA* pDATA = m_captures[currentCPUTexture];
+				DX9CaptureDATA* pDATA = m_captures[currentCopy];
 				pDATA->Enter();
 				do
 				{
+					DWORD dwNextID = dwCurrentID == 0 ? 1 : 0;
 					HookDATA* hookDATA = m_dx.GetHookDATA();
 					ASSERT(hookDATA);
 					if (m_dx.m_mutes[dwCurrentID].Lock(0))
@@ -644,6 +653,7 @@ namespace GraphicsCapture
 						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
 						textureDATA->CurrentID = dwCurrentID;
 						m_dx.m_mutes[dwCurrentID].Unlock();
+						dwCurrentID = dwCurrentID == 0 ? 1 : 0;
 						break;
 					}
 					if (m_dx.m_mutes[dwNextID].Lock(0))
@@ -652,11 +662,11 @@ namespace GraphicsCapture
 						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
 						textureDATA->CurrentID = dwNextID;
 						m_dx.m_mutes[dwNextID].Unlock();
+						dwCurrentID = dwNextID == 0 ? 1 : 0;
 						break;
 					}
 				} while (0);
 				pDATA->Leave();
-				dwCurrentID = dwNextID;
 			}
 		}
 	}

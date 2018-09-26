@@ -3,7 +3,6 @@
 
 namespace GraphicsCapture
 {
-#define NUM_BUFFERS 3
 	/// <summary>
 	/// XX8纹理数据捕获
 	/// </summary>
@@ -14,7 +13,7 @@ namespace GraphicsCapture
 		DX8GraphicsCapture(DX& dx);
 		~DX8GraphicsCapture();
 		BOOL Initialize(HWND hWND);
-		BOOL Render(LPVOID pThis);
+		BOOL Draw(LPVOID pThis);
 		BOOL Setup(LPVOID pThis);
 		BOOL DX8CPUHook(LPVOID pThis);
 		void Reset();
@@ -25,6 +24,7 @@ namespace GraphicsCapture
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
 		volatile INT32					m_current;
+		DWORD							m_dwCopy;
 		DWORD							m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
 		LPBYTE							m_textures[2];

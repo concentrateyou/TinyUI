@@ -147,4 +147,12 @@ namespace GraphicsCapture
 			m_hhk = NULL;
 		}
 	}
+	void DX::Enter()
+	{
+		m_lock.Lock();
+	}
+	void DX::Leave()
+	{
+		m_lock.Unlock();
+	}
 }
