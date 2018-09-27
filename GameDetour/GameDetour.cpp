@@ -62,7 +62,7 @@ namespace GameDetour
 		if (IsWindow(m_hWNDD3D))
 		{
 			::SendMessage(m_hWNDD3D, WM_CLOSE, NULL, NULL);
-			LOG(INFO) << "[GameCapture] WM_CLOSE";
+			LOG(INFO) << "[GameCapture] SendMessage WM_CLOSE";
 		}
 		g_dx.Uninitialize();
 		m_hWNDD3D = NULL;
@@ -71,7 +71,6 @@ namespace GameDetour
 	}
 	void GameDetour::CaptureLoop()
 	{
-		//等待客户端准备就绪
 		LOG(INFO) << "[GameCapture] CaptureLoop BEGIN";
 		g_dx.m_sourceReady.WaitEvent(INFINITE);
 		while (!Detour())
@@ -92,12 +91,11 @@ namespace GameDetour
 	{
 		if (!m_bDX9Detour)
 		{
-			LOG(INFO) << "DX9 Initialize BEGIN";
 			m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
-			LOG(INFO) << "DX9 Initialize END";
 		}
 		if (m_bDX9Detour)
 		{
+			LOG(INFO) << "DX9 Initialize OK";
 			if (!m_bDX9Hookable)
 			{
 				m_bDX9Hookable = g_dx9.hookable();
@@ -114,12 +112,11 @@ namespace GameDetour
 	{
 		if (!m_bDX8Detour)
 		{
-			LOG(INFO) << "DX8 Initialize BEGIN";
 			m_bDX8Detour = g_dx8.Initialize(m_hWNDD3D);
-			LOG(INFO) << "DX8 Initialize END";
 		}
-		if (m_bDX8Hookable)
+		if (m_bDX8Detour)
 		{
+			LOG(INFO) << "DX8 Initialize OK";
 			if (!m_bDX8Hookable)
 			{
 				m_bDX8Hookable = g_dx8.hookable();
@@ -136,12 +133,11 @@ namespace GameDetour
 	{
 		if (!m_bDXGIDetour)
 		{
-			LOG(INFO) << "DXGI Initialize BEGIN";
 			m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
-			LOG(INFO) << "DXGI Initialize END";
 		}
 		if (m_bDXGIDetour)
 		{
+			LOG(INFO) << "DXGI Initialize OK";
 			if (!m_bDXGIHookable)
 			{
 				m_bDXGIHookable = g_dxgi.hookable();
