@@ -46,10 +46,12 @@ namespace DXFramework
 	DX11CaptureRunner::DX11CaptureRunner(DX11* pDX11, DX11Image2D& image)
 		: m_bCapturing(FALSE),
 		m_bActive(FALSE),
-		m_bClose(FALSE),
 		m_pDX11(pDX11),
 		m_image2D(image)
 	{
+		m_mutes[0].Create(FALSE, MUTEX_TEXTURE1, NULL);
+		m_mutes[1].Create(FALSE, MUTEX_TEXTURE2, NULL);
+		m_textures[0] = m_textures[1] = NULL;
 		ZeroMemory(&m_target, sizeof(m_target));
 	}
 	DX11CaptureRunner::~DX11CaptureRunner()
@@ -60,16 +62,6 @@ namespace DXFramework
 	{
 		m_szClass = std::move(className);
 		m_szEXE = std::move(exeName);
-	}
-	BOOL DX11CaptureRunner::Submit()
-	{
-		m_bClose = FALSE;
-		return TinyWorker::Submit(BindCallback(&DX11CaptureRunner::OnMessagePump, this));
-	}
-	BOOL DX11CaptureRunner::Close(DWORD dwMS)
-	{
-		m_bClose = TRUE;
-		return TinyWorker::Close(dwMS);
 	}
 	BOOL DX11CaptureRunner::OpenEvents()
 	{
@@ -101,30 +93,13 @@ namespace DXFramework
 	}
 	HookDATA* DX11CaptureRunner::GetHookDATA()
 	{
-		if (!m_hookDATA.Address())
-		{
-			if (!m_hookDATA.Open(SHAREDCAPTURE_MEMORY, FALSE))
-				return NULL;
-			if (!m_hookDATA.Map(0, sizeof(HookDATA)))
-				return NULL;
-		}
 		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 		return pDATA;
 	}
-	TextureDATA* DX11CaptureRunner::GetTextureDATA(DWORD dwSize)
+	TextureDATA* DX11CaptureRunner::GetTextureDATA()
 	{
-		if (m_textureDATA.GetSize() != dwSize)
-		{
-			m_textureDATA.Close();
-		}
-		if (!m_textureDATA.Address())
-		{
-			if (!m_textureDATA.Open(TEXTURE_MEMORY, FALSE))
-				return NULL;
-			if (!m_textureDATA.Map(0, dwSize))
-				return NULL;
-		}
-		return reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
+		TextureDATA* pDATA = reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
+		return pDATA;
 	}
 	BOOL CALLBACK DX11CaptureRunner::EnumWindow(HWND hwnd, LPARAM lParam)
 	{
@@ -169,27 +144,30 @@ namespace DXFramework
 	{
 		ASSERT(m_pDX11);
 		BOOL bRes = S_OK;
+		if (!InitializeDATA())
+			return FALSE;
 		HookDATA* hookDATA = GetHookDATA();
 		if (!hookDATA)
 		{
+			TRACE("[StartCapture] GetHookDATA = NULL\n");
 			return FALSE;
 		}
-		TextureDATA* pTextureDATA = GetTextureDATA(hookDATA->MapSize);
-		if (!pTextureDATA)
+		TextureDATA* textureDATA = GetTextureDATA();
+		if (!textureDATA)
 		{
+			TRACE("[StartCapture] GetTextureDATA = NULL\n");
 			return FALSE;
 		}
 		do
 		{
 			if (hookDATA->CaptureType == CAPTURETYPE_SHAREDTEXTURE)
 			{
-				if (!pTextureDATA->TextureHandle)
+				if (!textureDATA->TextureHandle)
 				{
 					return FALSE;
 				}
-				TinyAutoLock autolock(m_lock);
 				m_image2D.Destory();
-				if (!m_image2D.Load(*m_pDX11, pTextureDATA->TextureHandle))
+				if (!m_image2D.Load(*m_pDX11, textureDATA->TextureHandle))
 				{
 					return FALSE;
 				}
@@ -197,7 +175,6 @@ namespace DXFramework
 			}
 			if (hookDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
-				TinyAutoLock autolock(m_lock);
 				m_image2D.Destory();
 				if (!m_image2D.Create(*m_pDX11, hookDATA->Size.cx, hookDATA->Size.cy, NULL, FALSE))
 				{
@@ -225,6 +202,92 @@ namespace DXFramework
 		m_bCapturing = FALSE;
 		m_bActive = FALSE;
 		m_image2D.Destory();
+	}
+	BOOL DX11CaptureRunner::CopyCPU()
+	{
+		HookDATA* hookDATA = GetHookDATA();
+		if (!hookDATA)
+			return FALSE;
+		TextureDATA* textureDATA = GetTextureDATA();
+		if (!textureDATA)
+			return FALSE;
+		switch (hookDATA->CaptureType)
+		{
+		case CAPTURETYPE_MEMORYTEXTURE:
+		{
+			if (textureDATA != NULL)
+			{
+				DWORD dwCurrentID = textureDATA->CurrentID;
+				BYTE* address = reinterpret_cast<BYTE*>(textureDATA);
+				m_textures[0] = address + textureDATA->Texture1Offset;
+				m_textures[1] = address + textureDATA->Texture2Offset;
+				if (textureDATA != NULL)
+				{
+					do
+					{
+						DWORD dwNextID = (dwCurrentID == 1) ? 0 : 1;
+						if (m_mutes[dwCurrentID].Lock(0))
+						{
+							D3D11_MAPPED_SUBRESOURCE ms = { 0 };
+							if (m_image2D.Map(*m_pDX11, ms, FALSE))
+							{
+								XMFLOAT2 size = m_image2D.GetSize();
+								if (hookDATA->Pitch == ms.RowPitch)
+								{
+									memcpy(ms.pData, m_textures[dwCurrentID], hookDATA->Pitch * static_cast<INT32>(size.y));
+								}
+								else
+								{
+									UINT32 bestPitch = std::min<UINT32>(hookDATA->Pitch, ms.RowPitch);
+									LPBYTE input = m_textures[dwCurrentID];
+									for (INT32 y = 0; y < static_cast<INT32>(size.y); y++)
+									{
+										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch*y);
+										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);
+										memcpy(curOutput, curInput, bestPitch);
+									}
+								}
+								m_image2D.Unmap(*m_pDX11);
+							}
+							m_mutes[dwCurrentID].Unlock();
+							break;
+						}
+						if (m_mutes[dwNextID].Lock(0))
+						{
+							D3D11_MAPPED_SUBRESOURCE ms = { 0 };
+							if (m_image2D.Map(*m_pDX11, ms, FALSE))
+							{
+								XMFLOAT2 size = m_image2D.GetSize();
+								if (hookDATA->Pitch == ms.RowPitch)
+								{
+									memcpy(ms.pData, m_textures[dwNextID], hookDATA->Pitch * static_cast<INT32>(size.y));
+								}
+								else
+								{
+									UINT32 bestPitch = std::min<UINT32>(hookDATA->Pitch, ms.RowPitch);
+									LPBYTE input = m_textures[dwNextID];
+									for (INT32 y = 0; y < static_cast<INT32>(size.y); y++)
+									{
+										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch * y);
+										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);
+										memcpy(curOutput, curInput, bestPitch);
+									}
+								}
+								m_image2D.Unmap(*m_pDX11);
+							}
+							m_mutes[dwNextID].Unlock();
+							break;
+						}
+					} while (0);
+				}
+				return TRUE;
+			}
+		}
+		break;
+		case CAPTURETYPE_SHAREDTEXTURE:
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL DX11CaptureRunner::AttemptExisting()
 	{
@@ -279,7 +342,7 @@ namespace DXFramework
 		m_bActive = TRUE;
 		return TRUE;
 	}
-	void DX11CaptureRunner::Tick()
+	BOOL DX11CaptureRunner::Tick(INT64& timestamp)
 	{
 		if (m_stop.WaitEvent(0))//停止捕获
 		{
@@ -299,7 +362,7 @@ namespace DXFramework
 				}
 			}
 		}
-		if (m_targetReady.WaitEvent(0))//服务端准备就系
+		if (m_targetReady.WaitEvent(0))//目标进程准备就绪
 		{
 			m_bCapturing = StartCapture();
 		}
@@ -317,22 +380,29 @@ namespace DXFramework
 			{
 				StopCapture();
 			}
+			return CopyCPU();
 		}
+		return FALSE;
 	}
-	void DX11CaptureRunner::OnMessagePump()
+	void DX11CaptureRunner::Close()
 	{
-		for (;;)
-		{
-			if (m_bClose)
-			{
-				StopCapture();
-				break;
-			}
-			Tick();
-		}
+		StopCapture();
 	}
 	WNDINFO	DX11CaptureRunner::GetWNDINFO()
 	{
 		return m_target;
+	}
+	BOOL DX11CaptureRunner::InitializeDATA()
+	{
+		if (!m_hookDATA.Open(SHAREDCAPTURE_MEMORY, FALSE))
+			return FALSE;
+		if (!m_hookDATA.Map(0, sizeof(HookDATA)))
+			return FALSE;
+		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
+		if (!m_textureDATA.Open(StringPrintf("%s%d", TEXTURE_MEMORY, pDATA->MapID), FALSE))
+			return FALSE;
+		if (!m_textureDATA.Map(0, pDATA->MapSize))
+			return FALSE;
+		return TRUE;
 	}
 }

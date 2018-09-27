@@ -70,7 +70,7 @@ namespace GraphicsCapture
 		DWORD							m_dwCopy;
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
-		volatile INT32					m_current;
+		volatile INT32					m_currentIndex;
 		volatile INT32					m_currentCopy;
 		volatile LPVOID					m_bits;
 		INT32							m_patchType;
@@ -85,8 +85,9 @@ namespace GraphicsCapture
 		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<ID3D10Texture2D>		m_texture2D;
 		TinyComPtr<IDirect3DSurface9>	m_copy2D;
+		TinyLock						m_lock;
 		TinyEvent						m_copy;
-		TinyEvent						m_close;
+		TinyEvent						m_stop;
 		TinyDetour						m_dX9EndScene;
 		TinyDetour						m_dX9Reset;
 		TinyDetour						m_dX9ResetEx;

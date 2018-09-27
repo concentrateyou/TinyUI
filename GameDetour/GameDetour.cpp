@@ -95,19 +95,19 @@ namespace GameDetour
 		if (m_bDX9Detour)
 		{
 			LOG(INFO) << "DX9 Initialize OK";
-			//return TRUE;
+			return TRUE;
 		}
-		if (!m_bDXGIDetour)
-		{
-			LOG(INFO) << "DXGI Initialize BEGIN";
-			m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
-			LOG(INFO) << "DXGI Initialize END";
-		}
-		if (m_bDXGIDetour)
-		{
-			LOG(INFO) << "DXGI Initialize OK";
-			//return TRUE;
-		}
+		//if (!m_bDXGIDetour)
+		//{
+		//	LOG(INFO) << "DXGI Initialize BEGIN";
+		//	m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
+		//	LOG(INFO) << "DXGI Initialize END";
+		//}
+		//if (m_bDXGIDetour)
+		//{
+		//	LOG(INFO) << "DXGI Initialize OK";
+		//	//return TRUE;
+		//}
 		return FALSE;
 	}
 	void GameDetour::OnMessagePumpUI()

@@ -2,6 +2,7 @@
 #include <process.h>
 #include "../Common/TinyUtility.h"
 #include "TinySharedMemory.h"
+#include "../Common/TinyLogging.h"
 
 namespace TinyFramework
 {
@@ -104,6 +105,8 @@ namespace TinyFramework
 		}
 		void TinySharedMemory::Close()
 		{
+			m_dwSize = 0;
+			m_dwMapSize = 0;
 			Unmap();
 			SAFE_CLOSE_HANDLE(m_hFileMap);
 		}
@@ -112,9 +115,12 @@ namespace TinyFramework
 			if (!m_hFileMap)
 				return FALSE;
 			Unmap();
-			m_address = MapViewOfFile(m_hFileMap, m_bReadonly ? FILE_MAP_READ : FILE_MAP_READ | FILE_MAP_WRITE, static_cast<ULONGLONG>(offset) >> 32, static_cast<DWORD>(offset), dwBytes);
+			m_address = MapViewOfFile(m_hFileMap, m_bReadonly ? FILE_MAP_READ : FILE_MAP_ALL_ACCESS, static_cast<ULONGLONG>(offset) >> 32, static_cast<DWORD>(offset), dwBytes);
 			if (!m_address)
+			{
+				LOG(ERROR) << "MapViewOfFile Error: " << GetLastError();
 				return FALSE;
+			}
 			m_dwMapSize = dwBytes;
 			return TRUE;
 		}
@@ -123,8 +129,8 @@ namespace TinyFramework
 			if (m_address != NULL)
 			{
 				UnmapViewOfFile(m_address);
-				m_address = NULL;
 			}
+			m_address = NULL;
 		}
 		void* TinySharedMemory::Address() const
 		{

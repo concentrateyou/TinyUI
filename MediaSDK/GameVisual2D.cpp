@@ -7,8 +7,7 @@ namespace MediaSDK
 		:m_dx11(dx11),
 		m_captureRunner(&dx11, m_visual2D)
 	{
-		m_mutes[0].Create(FALSE, MUTEX_TEXTURE1, NULL);
-		m_mutes[1].Create(FALSE, MUTEX_TEXTURE2, NULL);
+
 	}
 	GameVisual2D::~GameVisual2D()
 	{
@@ -47,7 +46,8 @@ namespace MediaSDK
 	}
 	BOOL GameVisual2D::Open()
 	{
-		return m_captureRunner.Submit();
+		INT64 timestamp = 0;
+		return Tick(timestamp);
 	}
 	void GameVisual2D::Close()
 	{
@@ -55,89 +55,7 @@ namespace MediaSDK
 	}
 	BOOL GameVisual2D::Tick(INT64& timestamp)
 	{
-		if (!m_captureRunner.IsCapturing())
-			return FALSE;
-		HookDATA* hookDATA = m_captureRunner.GetHookDATA();
-		if (!hookDATA)
-			return FALSE;
-		switch (hookDATA->CaptureType)
-		{
-		case CAPTURETYPE_MEMORYTEXTURE:
-		{
-			TextureDATA* textureDATA = m_captureRunner.GetTextureDATA(hookDATA->MapSize);
-			if (textureDATA != NULL)
-			{
-				DWORD dwCurrentID = textureDATA->CurrentID;
-				BYTE* address = reinterpret_cast<BYTE*>(textureDATA);
-				m_textures[0] = address + textureDATA->Texture1Offset;
-				m_textures[1] = address + textureDATA->Texture2Offset;
-				if (textureDATA != NULL)
-				{
-					do
-					{
-						DWORD dwNextID = (dwCurrentID == 1) ? 0 : 1;
-						if (m_mutes[dwCurrentID].Lock(0))
-						{
-							D3D11_MAPPED_SUBRESOURCE ms;
-							if (m_visual2D.Map(m_dx11, ms, FALSE))
-							{
-								XMFLOAT2 size = m_visual2D.GetSize();
-								if (hookDATA->Pitch == ms.RowPitch)
-								{
-									memcpy(ms.pData, m_textures[dwCurrentID], hookDATA->Pitch * static_cast<INT32>(size.y));
-								}
-								else
-								{
-									UINT32 bestPitch = std::min<UINT32>(hookDATA->Pitch, ms.RowPitch);
-									LPBYTE input = m_textures[dwCurrentID];
-									for (INT32 y = 0; y < static_cast<INT32>(size.y); y++)
-									{
-										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch*y);
-										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);
-										memcpy(curOutput, curInput, bestPitch);
-									}
-								}
-								m_visual2D.Unmap(m_dx11);
-							}
-							m_mutes[dwCurrentID].Unlock();
-							break;
-						}
-						if (m_mutes[dwNextID].Lock(0))
-						{
-							D3D11_MAPPED_SUBRESOURCE ms;
-							if (m_visual2D.Map(m_dx11, ms, FALSE))
-							{
-								XMFLOAT2 size = m_visual2D.GetSize();
-								if (hookDATA->Pitch == ms.RowPitch)
-								{
-									memcpy(ms.pData, m_textures[dwNextID], hookDATA->Pitch * static_cast<INT32>(size.y));
-								}
-								else
-								{
-									UINT32 bestPitch = std::min<UINT32>(hookDATA->Pitch, ms.RowPitch);
-									LPBYTE input = m_textures[dwNextID];
-									for (INT32 y = 0; y < static_cast<INT32>(size.y); y++)
-									{
-										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch * y);
-										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);
-										memcpy(curOutput, curInput, bestPitch);
-									}
-								}
-								m_visual2D.Unmap(m_dx11);
-							}
-							m_mutes[dwNextID].Unlock();
-							break;
-						}
-					} while (0);
-				}
-				return TRUE;
-			}
-		}
-		break;
-		case CAPTURETYPE_SHAREDTEXTURE:
-			return TRUE;
-		}
-		return FALSE;
+		return	m_captureRunner.Tick(timestamp);
 	}
 	BOOL GameVisual2D::Draw(DX11Graphics2D& g)
 	{

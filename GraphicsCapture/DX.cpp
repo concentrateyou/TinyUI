@@ -80,9 +80,10 @@ namespace GraphicsCapture
 	}
 	HookDATA* DX::GetHookDATA()
 	{
-		if (!m_hookDATA.Address())
+		if (NULL == m_hookDATA.Address())
 		{
-			if (!m_hookDATA.Open(SHAREDCAPTURE_MEMORY) && !m_hookDATA.Create(SHAREDCAPTURE_MEMORY, sizeof(HookDATA)))
+			m_textureDATA.Close();
+			if (!m_hookDATA.Create(SHAREDCAPTURE_MEMORY, sizeof(HookDATA)))
 			{
 				return NULL;
 			}
@@ -93,24 +94,25 @@ namespace GraphicsCapture
 		}
 		return reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 	}
-	TextureDATA* DX::GetTextureDATA(DWORD dwSize)
+	TextureDATA* DX::GetTextureDATA(DWORD dwMapID, DWORD dwSize)
 	{
-		if (m_textureDATA.GetSize() != dwSize)
+		if (NULL == m_textureDATA.Address())
 		{
+			LOG(INFO) << "Map Name:" << dwMapID;
 			m_textureDATA.Close();
-		}
-		if (!m_textureDATA.Address())
-		{
-			if (!m_textureDATA.Open(TEXTURE_MEMORY, FALSE) && !m_textureDATA.Create(TEXTURE_MEMORY, dwSize))
+			if (!m_textureDATA.Create(StringPrintf("%s%d", TEXTURE_MEMORY, dwMapID).c_str(), dwSize))
 			{
+				LOG(ERROR) << "TEXTURE_MEMORY Create FAIL";
 				return NULL;
 			}
 			if (!m_textureDATA.Map(0, dwSize))
 			{
+				LOG(ERROR) << "TEXTURE_MEMORY Map FAIL";
 				return NULL;
 			}
 		}
-		return reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
+		TextureDATA* pDATA = reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
+		return pDATA;
 	}
 	BOOL DX::CreateEvents()
 	{

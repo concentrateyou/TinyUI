@@ -124,6 +124,7 @@ namespace DXFramework
 		DWORD		Format;
 		SIZE		Size;
 		UINT32		Pitch;
+		DWORD		MapID;
 		DWORD		MapSize;
 		HWND		Window;
 	}HookDATA;

@@ -28,8 +28,6 @@ namespace MediaSDK
 		DX11Image2D			m_visual2D;
 		DX11CaptureRunner	m_captureRunner;
 		TinyString			m_szname;
-		TinyMutex			m_mutes[2];
-		BYTE*				m_textures[2];
 	};
 }
 

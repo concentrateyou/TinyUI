@@ -169,7 +169,7 @@ namespace GraphicsCapture
 		hookDATA->CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		hookDATA->bFlip = FALSE;
 		hookDATA->MapSize = sizeof(TextureDATA);
-		TextureDATA* textureDATA = m_dx.GetTextureDATA();
+		TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapID, hookDATA->MapSize);
 		textureDATA->TextureHandle = m_handle;
 		m_dx.m_targetReady.SetEvent();
 		return TRUE;

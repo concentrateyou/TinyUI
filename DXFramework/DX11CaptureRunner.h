@@ -19,23 +19,23 @@ namespace DXFramework
 		TinyProcess	m_process;
 	};
 
-	class DX11CaptureRunner : public TinyWorker
+	class DX11CaptureRunner
 	{
 	public:
 		DX11CaptureRunner(DX11* pDX11, DX11Image2D& image);
 		virtual ~DX11CaptureRunner();
 		void					SetConfig(const TinyString& className, const TinyString& exeName);
-		BOOL					Submit();
-		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
 		HookDATA*				GetHookDATA();
-		TextureDATA*			GetTextureDATA(DWORD dwSize);
+		TextureDATA*			GetTextureDATA();
 		BOOL					IsCapturing() const;
+		BOOL					Tick(INT64& timestamp);
+		void					Close();
 	private:
-		void					Tick();
-		void					OnMessagePump();
+		BOOL					InitializeDATA();
 		WNDINFO					GetWNDINFO();
 		BOOL					StartCapture();
 		void					StopCapture();
+		BOOL					CopyCPU();
 		BOOL					AttemptExisting();
 		BOOL					AttemptDetour(BOOL anticheat);
 		BOOL					Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName, BOOL bSafe = TRUE);
@@ -45,7 +45,6 @@ namespace DXFramework
 	private:
 		volatile BOOL			m_bCapturing;
 		volatile BOOL			m_bActive;
-		BOOL					m_bClose;
 		DX11*					m_pDX11;
 		TinyLock				m_lock;
 		WNDINFO					m_target;
@@ -58,6 +57,8 @@ namespace DXFramework
 		TinyString				m_szEXE;
 		TinyString				m_szDLL;
 		GameInject				m_injector;
+		BYTE*					m_textures[2];
+		TinyMutex				m_mutes[2];
 		DX11Image2D&			m_image2D;
 		TinySharedMemory		m_hookDATA;
 		TinySharedMemory		m_textureDATA;

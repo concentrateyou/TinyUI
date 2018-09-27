@@ -20,7 +20,7 @@ namespace GraphicsCapture
 		BOOL			SetWindowsHook();
 		void			UnhookWindowsHook();
 		HookDATA*		GetHookDATA();
-		TextureDATA*	GetTextureDATA(DWORD dwSize = sizeof(TextureDATA));
+		TextureDATA*	GetTextureDATA(DWORD dwMapID, DWORD dwSize = sizeof(TextureDATA));
 		void			Enter();
 		void			Leave();
 	private:
