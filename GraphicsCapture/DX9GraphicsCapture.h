@@ -61,6 +61,8 @@ namespace GraphicsCapture
 		BOOL Setup(IDirect3DDevice9 *pThis);
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 		BOOL DX9CPUHook(IDirect3DDevice9 *device);
+	public:
+		BOOL hookable();
 	private:
 		void OnMessagePump();
 		void QueryCopy(IDirect3DDevice9 *device);

@@ -157,6 +157,8 @@ namespace GraphicsCapture
 		BYTE*				GetPointer() const;
 		UINT32				GetPitch() const;
 		IDirect3DSurface8*	GetTexture2D();
+	public:
+		BOOL				hookable();
 	private:
 		BOOL							m_bCopying;
 		UINT32							m_pitch;
@@ -405,8 +407,11 @@ namespace GraphicsCapture
 			DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[i]);
 			pDATA->Destory();
 		}
-		m_dx.m_textureDATA.Unmap();
 		m_dx.m_textureDATA.Close();
+	}
+	BOOL DX8GraphicsCapture::hookable()
+	{
+		return !m_dX8Present.IsEmpty() && !m_dX8Reset.IsEmpty();
 	}
 	BOOL DX8GraphicsCapture::Setup(LPVOID pThis)
 	{

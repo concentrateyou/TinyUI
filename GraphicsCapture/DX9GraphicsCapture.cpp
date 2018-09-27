@@ -779,4 +779,10 @@ namespace GraphicsCapture
 		LOG(INFO) << "[DX9GPUHook] OK";
 		return TRUE;
 	}
+	BOOL DX9GraphicsCapture::hookable()
+	{
+		return !m_dX9Present.IsEmpty() &&
+			!m_dX9PresentEx.IsEmpty() &&
+			!m_dX9SwapPresent.IsEmpty();
+	}
 }

@@ -14,8 +14,11 @@ namespace GameDetour
 	GameDetour::GameDetour()
 		:m_hWNDD3D(NULL),
 		m_bDX8Detour(FALSE),
-		m_bDX9Detour(FALSE),
+		m_bDX9Hookable(FALSE),
 		m_bDXGIDetour(FALSE),
+		m_bDX8Hookable(FALSE),
+		m_bDX9Detour(FALSE),
+		m_bDXGIHookable(FALSE),
 		m_bStop(FALSE),
 		m_hInstance(NULL),
 		m_hMAIN(NULL)
@@ -55,6 +58,7 @@ namespace GameDetour
 			m_capture.Close(500);
 		}
 		m_bDX8Detour = m_bDX9Detour = m_bDXGIDetour = FALSE;
+		m_bDX8Hookable = m_bDX9Hookable = m_bDXGIHookable = FALSE;
 		if (IsWindow(m_hWNDD3D))
 		{
 			::SendMessage(m_hWNDD3D, WM_CLOSE, NULL, NULL);
@@ -84,7 +88,7 @@ namespace GameDetour
 		}
 		LOG(INFO) << "[GameCapture] CaptureLoop END";
 	}
-	BOOL GameDetour::Detour()
+	BOOL GameDetour::DetourDX9()
 	{
 		if (!m_bDX9Detour)
 		{
@@ -94,21 +98,71 @@ namespace GameDetour
 		}
 		if (m_bDX9Detour)
 		{
-			LOG(INFO) << "DX9 Initialize OK";
-			return TRUE;
+			if (!m_bDX9Hookable)
+			{
+				m_bDX9Hookable = g_dx9.hookable();
+			}
+			if (m_bDX9Hookable)
+			{
+				LOG(INFO) << "DX9 Hookable OK";
+				return TRUE;
+			}
 		}
-		//if (!m_bDXGIDetour)
-		//{
-		//	LOG(INFO) << "DXGI Initialize BEGIN";
-		//	m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
-		//	LOG(INFO) << "DXGI Initialize END";
-		//}
-		//if (m_bDXGIDetour)
-		//{
-		//	LOG(INFO) << "DXGI Initialize OK";
-		//	//return TRUE;
-		//}
 		return FALSE;
+	}
+	BOOL GameDetour::DetourDX8()
+	{
+		if (!m_bDX8Detour)
+		{
+			LOG(INFO) << "DX8 Initialize BEGIN";
+			m_bDX8Detour = g_dx8.Initialize(m_hWNDD3D);
+			LOG(INFO) << "DX8 Initialize END";
+		}
+		if (m_bDX8Hookable)
+		{
+			if (!m_bDX8Hookable)
+			{
+				m_bDX8Hookable = g_dx8.hookable();
+			}
+			if (m_bDX8Hookable)
+			{
+				LOG(INFO) << "DX8 Hookable OK";
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+	BOOL GameDetour::DetourDXGI()
+	{
+		if (!m_bDXGIDetour)
+		{
+			LOG(INFO) << "DXGI Initialize BEGIN";
+			m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
+			LOG(INFO) << "DXGI Initialize END";
+		}
+		if (m_bDXGIDetour)
+		{
+			if (!m_bDXGIHookable)
+			{
+				m_bDXGIHookable = g_dxgi.hookable();
+			}
+			if (m_bDXGIHookable)
+			{
+				LOG(INFO) << "DXGI Hookable OK";
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+	BOOL GameDetour::Detour()
+	{
+		if (!DetourDX9())
+			return FALSE;
+		if (!DetourDXGI())
+			return FALSE;
+		if (!DetourDX8())
+			return FALSE;
+		return TRUE;
 	}
 	void GameDetour::OnMessagePumpUI()
 	{

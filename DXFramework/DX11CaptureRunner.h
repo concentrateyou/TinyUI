@@ -35,7 +35,7 @@ namespace DXFramework
 		WNDINFO					GetWNDINFO();
 		BOOL					StartCapture();
 		void					StopCapture();
-		BOOL					CopyCPU();
+		BOOL					CopyTextureDATA();
 		BOOL					AttemptExisting();
 		BOOL					AttemptDetour(BOOL anticheat);
 		BOOL					Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName, BOOL bSafe = TRUE);

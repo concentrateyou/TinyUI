@@ -203,7 +203,7 @@ namespace DXFramework
 		m_bActive = FALSE;
 		m_image2D.Destory();
 	}
-	BOOL DX11CaptureRunner::CopyCPU()
+	BOOL DX11CaptureRunner::CopyTextureDATA()
 	{
 		HookDATA* hookDATA = GetHookDATA();
 		if (!hookDATA)
@@ -380,7 +380,7 @@ namespace DXFramework
 			{
 				StopCapture();
 			}
-			return CopyCPU();
+			return CopyTextureDATA();
 		}
 		return FALSE;
 	}

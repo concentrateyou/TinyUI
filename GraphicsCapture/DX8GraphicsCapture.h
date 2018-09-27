@@ -17,6 +17,8 @@ namespace GraphicsCapture
 		BOOL Setup(LPVOID pThis);
 		BOOL DX8CPUHook(LPVOID pThis);
 		void Reset();
+	public:
+		BOOL hookable();
 	private:
 		void OnMessagePump();
 	public:

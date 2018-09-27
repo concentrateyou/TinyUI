@@ -20,12 +20,18 @@ namespace GameDetour
 		BOOL Detach(HMODULE hModule);
 	private:
 		BOOL Detour();
+		BOOL DetourDX9();
+		BOOL DetourDX8();
+		BOOL DetourDXGI();
 		void CaptureLoop();
 		void OnMessagePump();
 		void OnMessagePumpUI();
 	private:
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
+		BOOL			m_bDX8Hookable;
+		BOOL			m_bDX9Hookable;
+		BOOL			m_bDXGIHookable;
 		BOOL			m_bDX8Detour;
 		BOOL			m_bDX9Detour;
 		BOOL			m_bDXGIDetour;
