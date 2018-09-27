@@ -49,7 +49,7 @@ namespace GraphicsCapture
 		DX&								m_dx;
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
-		volatile INT32					m_current;
+		volatile INT32					m_currentIndex;
 		volatile INT32					m_currentCopy;
 		volatile LPVOID					m_bits;
 		DXGI_FORMAT						m_dxgiFormat;
@@ -57,6 +57,7 @@ namespace GraphicsCapture
 		HMODULE							m_hD3D10;
 		DWORD							m_dwCopy;
 		LPBYTE							m_textures[2];
+		TinyLock						m_lock;
 		TinyEvent						m_copy;
 		TinyEvent						m_close;
 		TinyWorker						m_captureTask;

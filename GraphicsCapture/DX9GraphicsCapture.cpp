@@ -239,6 +239,8 @@ namespace GraphicsCapture
 			m_texture2D->UnlockRect();
 			m_bCopying = FALSE;
 		}
+		m_bIssue = FALSE;
+		m_size.SetSize(0, 0);
 		m_query.Release();
 		m_copy2D.Release();
 		m_texture2D.Release();

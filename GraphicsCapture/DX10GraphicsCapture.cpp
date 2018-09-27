@@ -44,6 +44,14 @@ namespace GraphicsCapture
 	}
 	void DX10CaptureDATA::Destory()
 	{
+		if (m_bCopying)
+		{
+			LOG(INFO) << "[DX10CaptureDATA] Destory Unmap";
+			m_texture2D->Unmap(0);
+			m_bCopying = FALSE;
+		}
+		m_bIssue = FALSE;
+		m_size.SetSize(0, 0);
 		m_copy2D.Release();
 		m_texture2D.Release();
 	}
@@ -91,7 +99,7 @@ namespace GraphicsCapture
 		m_bActive(FALSE),
 		m_hD3D10(NULL),
 		m_dx(dx),
-		m_current(0),
+		m_currentIndex(0),
 		m_currentCopy(0),
 		m_bits(NULL),
 		m_dwCopy(0)
@@ -208,8 +216,8 @@ namespace GraphicsCapture
 					if (hookDATA->bCPU)
 					{
 						QueryCopy(device);
-						INT32 next = (m_current == NUM_BUFFERS - 1) ? 0 : (m_current + 1);
-						DX10CaptureDATA* pDATA1 = m_captures[m_current];
+						INT32 next = (m_currentIndex == NUM_BUFFERS - 1) ? 0 : (m_currentIndex + 1);
+						DX10CaptureDATA* pDATA1 = m_captures[m_currentIndex];
 						if (hookDATA->bMultisample)
 						{
 							device->ResolveSubresource(pDATA1->GetTexture2D(), 0, backBuffer, 0, m_dxgiFormat);
@@ -227,13 +235,13 @@ namespace GraphicsCapture
 							DX10CaptureDATA* pDATA2 = m_captures[next];
 							ID3D10Texture2D *src = pDATA2->GetTexture2D();
 							ID3D10Texture2D *dst = pDATA2->GetCopy2D();
+							pDATA2->Enter();
 							if (pDATA2->IsCopying())
 							{
-								pDATA2->Enter();
 								dst->Unmap(0);
 								pDATA2->SetCopying(FALSE);
-								pDATA2->Leave();
 							}
+							pDATA2->Leave();
 							if (hookDATA->bMultisample)
 							{
 								device->ResolveSubresource(dst, 0, src, 0, m_dxgiFormat);
@@ -244,7 +252,7 @@ namespace GraphicsCapture
 							}
 							pDATA2->SetIssue(TRUE);
 						}
-						m_current = next;
+						m_currentIndex = next;
 					}
 					else
 					{
