@@ -106,7 +106,7 @@ namespace GraphicsCapture
 	{
 		m_textures[0] = m_textures[1] = NULL;
 		m_copy.CreateEvent();
-		m_close.CreateEvent();
+		m_stop.CreateEvent();
 	}
 	DX10GraphicsCapture::~DX10GraphicsCapture()
 	{
@@ -143,10 +143,23 @@ namespace GraphicsCapture
 	}
 	void DX10GraphicsCapture::Reset()
 	{
+		m_stop.SetEvent();
+		m_captureTask.Close(500);
+		for (INT i = 0; i < NUM_BUFFERS; i++)
+		{
+			DX10CaptureDATA* pDATA = m_captures[i];
+			pDATA->Destory();
+		}
+		m_dx.m_textureDATA.Close();
 		m_bActive = FALSE;
 		m_handle = NULL;
+		m_bits = NULL;
+		m_textures[0] = m_textures[1] = NULL;
+		m_currentIndex = 0;
+		m_currentCopy = 0;
+		m_bCapturing = FALSE;
+		g_dx.m_start.SetEvent();
 		m_texture2D.Release();
-		m_dx.m_textureDATA.Close();
 	}
 	BOOL DX10GraphicsCapture::Setup(IDXGISwapChain *swap)
 	{
@@ -314,11 +327,11 @@ namespace GraphicsCapture
 			hRes = pDATA->GetCopy2D()->Map(0, D3D10_MAP_READ, 0, &map);
 			if (SUCCEEDED(hRes))
 			{
-				g_dx.Enter();
 				pDATA->SetCopying(TRUE);
+				m_lock.Lock();
 				m_bits = map.pData;
 				m_currentCopy = i;
-				g_dx.Leave();
+				m_lock.Unlock();
 				m_copy.SetEvent();
 			}
 			break;
@@ -355,7 +368,7 @@ namespace GraphicsCapture
 	void DX10GraphicsCapture::OnMessagePump()
 	{
 		HRESULT hRes = S_OK;
-		HANDLE events[] = { m_copy, m_close };
+		HANDLE events[] = { m_copy, m_stop };
 		DWORD dwCurrentID = 0;
 		for (;;)
 		{
@@ -366,10 +379,10 @@ namespace GraphicsCapture
 			{
 				break;
 			}
-			g_dx.Enter();
+			m_lock.Lock();
 			currentCopy = m_currentCopy;
 			bits = m_bits;
-			g_dx.Leave();
+			m_lock.Unlock();
 			if (currentCopy < NUM_BUFFERS && !!bits)
 			{
 				DX10CaptureDATA* pDATA = m_captures[currentCopy];

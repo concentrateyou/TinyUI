@@ -49,18 +49,22 @@ namespace GraphicsCapture
 		}
 		if (!m_mutes[0].Create(FALSE, MUTEX_TEXTURE1, NULL))
 		{
+			LOG(ERROR) << "[MUTEX_TEXTURE1] Create FAIL: " << GetLastError();
 			return FALSE;
 		}
 		if (!m_mutes[1].Create(FALSE, MUTEX_TEXTURE2, NULL))
 		{
+			LOG(ERROR) << "[MUTEX_TEXTURE2] Create FAIL: " << GetLastError();
 			return FALSE;
 		}
 		if (!m_hookDATA.Create(SHAREDCAPTURE_MEMORY, sizeof(HookDATA)))
 		{
+			LOG(ERROR) << "[HookDATA] Create FAIL: " << GetLastError();
 			return FALSE;
 		}
 		if (!m_hookDATA.Map(0, 0))
 		{
+			LOG(ERROR) << "[HookDATA] Map FAIL: " << GetLastError();
 			return FALSE;
 		}
 		LOG(INFO) << "DX Initialize";
@@ -80,18 +84,6 @@ namespace GraphicsCapture
 	}
 	HookDATA* DX::GetHookDATA()
 	{
-		if (NULL == m_hookDATA.Address())
-		{
-			m_textureDATA.Close();
-			if (!m_hookDATA.Create(SHAREDCAPTURE_MEMORY, sizeof(HookDATA)))
-			{
-				return NULL;
-			}
-			if (!m_hookDATA.Map(0, 0))
-			{
-				return NULL;
-			}
-		}
 		return reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 	}
 	TextureDATA* DX::GetTextureDATA(DWORD dwMapID, DWORD dwSize)
@@ -102,12 +94,12 @@ namespace GraphicsCapture
 			m_textureDATA.Close();
 			if (!m_textureDATA.Create(StringPrintf("%s%d", TEXTURE_MEMORY, dwMapID).c_str(), dwSize))
 			{
-				LOG(ERROR) << "TEXTURE_MEMORY Create FAIL";
+				LOG(ERROR) << "TextureDATA Create FAIL:" << GetLastError();
 				return NULL;
 			}
 			if (!m_textureDATA.Map(0, dwSize))
 			{
-				LOG(ERROR) << "TEXTURE_MEMORY Map FAIL";
+				LOG(ERROR) << "TextureDATA Map FAIL:" << GetLastError();
 				return NULL;
 			}
 		}
@@ -148,13 +140,5 @@ namespace GraphicsCapture
 			UnhookWindowsHookEx(m_hhk);
 			m_hhk = NULL;
 		}
-	}
-	void DX::Enter()
-	{
-		m_lock.Lock();
-	}
-	void DX::Leave()
-	{
-		m_lock.Unlock();
 	}
 }

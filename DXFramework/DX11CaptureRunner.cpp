@@ -93,13 +93,11 @@ namespace DXFramework
 	}
 	HookDATA* DX11CaptureRunner::GetHookDATA()
 	{
-		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
-		return pDATA;
+		return reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 	}
 	TextureDATA* DX11CaptureRunner::GetTextureDATA()
 	{
-		TextureDATA* pDATA = reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
-		return pDATA;
+		return reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
 	}
 	BOOL CALLBACK DX11CaptureRunner::EnumWindow(HWND hwnd, LPARAM lParam)
 	{
@@ -145,7 +143,11 @@ namespace DXFramework
 		ASSERT(m_pDX11);
 		BOOL bRes = S_OK;
 		if (!InitializeDATA())
+		{
+			TRACE("[InitializeDATA] FAIL\n");
+			StopCapture();
 			return FALSE;
+		}
 		HookDATA* hookDATA = GetHookDATA();
 		if (!hookDATA)
 		{
@@ -176,6 +178,7 @@ namespace DXFramework
 			if (hookDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
 				m_image2D.Destory();
+				TRACE("Image2D: %d,%d\n", hookDATA->Size.cx, hookDATA->Size.cy);
 				if (!m_image2D.Create(*m_pDX11, hookDATA->Size.cx, hookDATA->Size.cy, NULL, FALSE))
 				{
 					return FALSE;
@@ -213,6 +216,8 @@ namespace DXFramework
 			return FALSE;
 		switch (hookDATA->CaptureType)
 		{
+		case CAPTURETYPE_SHAREDTEXTURE:
+			return TRUE;
 		case CAPTURETYPE_MEMORYTEXTURE:
 		{
 			if (textureDATA != NULL)
@@ -221,9 +226,15 @@ namespace DXFramework
 				BYTE* address = reinterpret_cast<BYTE*>(textureDATA);
 				m_textures[0] = address + textureDATA->Texture1Offset;
 				m_textures[1] = address + textureDATA->Texture2Offset;
-				if (textureDATA != NULL)
+				do
 				{
-					do
+					XMFLOAT2 size = m_image2D.GetSize();
+					if (static_cast<INT32>(size.x) != hookDATA->Size.cx || static_cast<INT32>(size.y) != hookDATA->Size.cy)
+					{
+						TRACE("ImageSize: %f,%f, NewSize:%d,%d\n", size.x, size.y, hookDATA->Size.cx, hookDATA->Size.cy);
+						return FALSE;
+					}
+					else
 					{
 						DWORD dwNextID = (dwCurrentID == 1) ? 0 : 1;
 						if (m_mutes[dwCurrentID].Lock(0))
@@ -231,7 +242,6 @@ namespace DXFramework
 							D3D11_MAPPED_SUBRESOURCE ms = { 0 };
 							if (m_image2D.Map(*m_pDX11, ms, FALSE))
 							{
-								XMFLOAT2 size = m_image2D.GetSize();
 								if (hookDATA->Pitch == ms.RowPitch)
 								{
 									memcpy(ms.pData, m_textures[dwCurrentID], hookDATA->Pitch * static_cast<INT32>(size.y));
@@ -278,14 +288,13 @@ namespace DXFramework
 							m_mutes[dwNextID].Unlock();
 							break;
 						}
-					} while (0);
-				}
+					}
+				} while (0);
 				return TRUE;
 			}
 		}
 		break;
-		case CAPTURETYPE_SHAREDTEXTURE:
-			return TRUE;
+
 		}
 		return FALSE;
 	}
@@ -394,15 +403,30 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureRunner::InitializeDATA()
 	{
+		m_hookDATA.Close();
 		if (!m_hookDATA.Open(SHAREDCAPTURE_MEMORY, FALSE))
+		{
+			TRACE("[HookDATA] Open FAIL: %d\n", GetLastError());
 			return FALSE;
+		}
 		if (!m_hookDATA.Map(0, sizeof(HookDATA)))
+		{
+			TRACE("[HookDATA] Map FAIL: %d\n", GetLastError());
 			return FALSE;
+		}
 		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
+		m_textureDATA.Close();
+		TRACE("[InitializeDATA] New MapID:%d\n", pDATA->MapID);
 		if (!m_textureDATA.Open(StringPrintf("%s%d", TEXTURE_MEMORY, pDATA->MapID), FALSE))
+		{
+			TRACE("[TextureDATA] Open %d FAIL: %d\n", pDATA->MapID, GetLastError());
 			return FALSE;
+		}
 		if (!m_textureDATA.Map(0, pDATA->MapSize))
+		{
+			TRACE("[TextureDATA] Map %d FAIL: %d\n", pDATA->MapSize, GetLastError());
 			return FALSE;
+		}
 		return TRUE;
 	}
 }

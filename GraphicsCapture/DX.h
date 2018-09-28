@@ -21,13 +21,10 @@ namespace GraphicsCapture
 		void			UnhookWindowsHook();
 		HookDATA*		GetHookDATA();
 		TextureDATA*	GetTextureDATA(DWORD dwMapID, DWORD dwSize = sizeof(TextureDATA));
-		void			Enter();
-		void			Leave();
 	private:
 		BOOL			CreateEvents();
 	public:
 		HHOOK					m_hhk;
-		TinyLock				m_lock;
 		TinyMutex				m_mutes[2];
 		TinyEvent				m_sourceReady;
 		TinyEvent				m_start;

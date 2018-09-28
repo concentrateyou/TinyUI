@@ -59,7 +59,7 @@ namespace GraphicsCapture
 		LPBYTE							m_textures[2];
 		TinyLock						m_lock;
 		TinyEvent						m_copy;
-		TinyEvent						m_close;
+		TinyEvent						m_stop;
 		TinyWorker						m_captureTask;
 		DX10CaptureDATA*				m_captures[NUM_BUFFERS];
 		TinyComPtr<ID3D10Texture2D>		m_texture2D;

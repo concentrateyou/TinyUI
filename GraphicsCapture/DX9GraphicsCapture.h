@@ -69,7 +69,7 @@ namespace GraphicsCapture
 	public:
 		DX&								m_dx;
 		BOOL							m_bD3D9EX;
-		DWORD							m_dwCopy;
+		DWORD							m_dwWait;
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
 		volatile INT32					m_currentIndex;

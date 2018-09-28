@@ -294,7 +294,7 @@ namespace GraphicsCapture
 		m_currentPointer(NULL),
 		m_currentIndex(0),
 		m_currentCopy(0),
-		m_dwCopy(0),
+		m_dwWait(0),
 		m_bCapturing(FALSE),
 		m_bActive(FALSE),
 		m_bits(NULL),
@@ -439,10 +439,10 @@ namespace GraphicsCapture
 						m_d3dFormat = sd.Format;
 						m_dxgiFormat = GetDXGIFormat9(sd.Format);
 						HookDATA* hookDATA = m_dx.GetHookDATA();
-						ASSERT(hookDATA);
 						hookDATA->Format = sd.Format;
 						hookDATA->Size.cx = sd.Width;
 						hookDATA->Size.cy = sd.Height;
+						LOG(INFO) << "New Size : " << hookDATA->Size.cx << " " << hookDATA->Size.cy;
 						if (m_bD3D9EX && !hookDATA->bCPU)
 						{
 							m_bActive = DX9GPUHook(d3d);
@@ -457,7 +457,6 @@ namespace GraphicsCapture
 			if (m_bActive)
 			{
 				HookDATA* hookDATA = m_dx.GetHookDATA();
-				ASSERT(hookDATA);
 				if (m_bD3D9EX && !hookDATA->bCPU)
 				{
 					TinyComPtr<IDirect3DSurface9> backBuffer;
@@ -476,7 +475,7 @@ namespace GraphicsCapture
 				else
 				{
 					QueryCopy(d3d);
-					INT32 next = (m_currentIndex == NUM_BUFFERS - 1) ? 0 : (m_currentIndex + 1);
+					INT32 index = (m_currentIndex == NUM_BUFFERS - 1) ? 0 : (m_currentIndex + 1);
 					DX9CaptureDATA* pDATA1 = m_captures[m_currentIndex];
 					IDirect3DSurface9 *copy2D = pDATA1->GetTexture2D();
 					TinyComPtr<IDirect3DSurface9> backBuffer;
@@ -491,27 +490,27 @@ namespace GraphicsCapture
 					{
 						return FALSE;
 					}
-					if (m_dwCopy < NUM_BUFFERS - 1)
+					if (m_dwWait < NUM_BUFFERS - 1)
 					{
-						m_dwCopy++;
+						m_dwWait++;
 					}
 					else
 					{
-						DX9CaptureDATA* pDATA2 = m_captures[next];
+						DX9CaptureDATA* pDATA2 = m_captures[index];
 						IDirect3DSurface9 *src = pDATA2->GetTexture2D();
 						IDirect3DSurface9 *dst = pDATA2->GetCopy2D();
-						pDATA2->Enter();
 						if (pDATA2->IsCopying())
 						{
+							pDATA2->Enter();
 							dst->UnlockRect();
+							pDATA2->Leave();
 							pDATA2->SetCopying(FALSE);
 						}
-						pDATA2->Leave();
 						d3d->GetRenderTargetData(src, dst);
 						pDATA2->GetQuery()->Issue(D3DISSUE_END);
 						pDATA2->SetIssue(TRUE);
 					}
-					m_currentIndex = next;
+					m_currentIndex = index;
 				}
 			}
 		}
@@ -521,21 +520,21 @@ namespace GraphicsCapture
 	{
 		m_stop.SetEvent();
 		m_captureTask.Close(500);
+		m_textures[0] = m_textures[1] = NULL;
+		m_currentIndex = 0;
+		m_dwWait = 0;
+		m_bits = NULL;
+		m_currentCopy = 0;
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			DX9CaptureDATA* pDATA = m_captures[i];
 			pDATA->Destory();
 		}
-		m_dx.m_textureDATA.Close();
-		m_dwCopy = 0;
-		m_bits = NULL;
-		m_textures[0] = m_textures[1] = NULL;
-		m_currentIndex = 0;
-		m_currentCopy = 0;
-		m_bCapturing = FALSE;
-		m_bActive = FALSE;
-		m_handle = NULL;
 		g_dx.m_start.SetEvent();
+		m_handle = NULL;
+		m_bActive = FALSE;
+		m_bCapturing = FALSE;
+		m_dx.m_textureDATA.Close();
 		m_copy2D.Release();
 		m_texture2D.Release();
 		m_d3d10.Release();
@@ -558,7 +557,6 @@ namespace GraphicsCapture
 			if (SUCCEEDED(swapChain->GetPresentParameters(&pp)))
 			{
 				HookDATA* hookDATA = m_dx.GetHookDATA();
-				ASSERT(hookDATA);
 				hookDATA->CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 				hookDATA->Format = pp.BackBufferFormat;
 				hookDATA->Size.cx = pp.BackBufferWidth;
@@ -589,7 +587,6 @@ namespace GraphicsCapture
 	BOOL DX9GraphicsCapture::DX9CPUHook(IDirect3DDevice9 *device)
 	{
 		HookDATA* hookDATA = m_dx.GetHookDATA();
-		ASSERT(hookDATA);
 		hookDATA->CaptureType = CAPTURETYPE_MEMORYTEXTURE;
 		hookDATA->bFlip = FALSE;
 		hookDATA->MapID++;
@@ -644,7 +641,6 @@ namespace GraphicsCapture
 				do
 				{
 					HookDATA* hookDATA = m_dx.GetHookDATA();
-					ASSERT(hookDATA);
 					if (m_dx.m_mutes[dwCurrentID].Lock(0))
 					{
 						memcpy(m_textures[dwCurrentID], bits, hookDATA->Pitch * hookDATA->Size.cy);
@@ -673,7 +669,6 @@ namespace GraphicsCapture
 	{
 		ASSERT(m_hD3D9);
 		HookDATA* hookDATA = m_dx.GetHookDATA();
-		ASSERT(hookDATA);
 		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)m_d3d10_1.GetFunctionPointer(TEXT("D3D10CreateDevice1"));
 		if (!d3d10CreateDevice1)
 		{
