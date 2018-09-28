@@ -309,7 +309,9 @@ namespace GraphicsCapture
 		hookDATA->CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		hookDATA->bFlip = FALSE;
 		hookDATA->MapSize = sizeof(TextureDATA);
-		TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapID, hookDATA->MapSize);
+		if (!g_dx.CreateTextureDATA(hookDATA->MapID, hookDATA->MapSize))
+			return FALSE;
+		TextureDATA* textureDATA = m_dx.GetTextureDATA();
 		textureDATA->TextureHandle = m_handle;
 		m_dx.m_targetReady.SetEvent();
 		LOG(INFO) << "[DX10GPUHook] OK";
@@ -343,6 +345,7 @@ namespace GraphicsCapture
 		ASSERT(hookDATA);
 		hookDATA->CaptureType = CAPTURETYPE_MEMORYTEXTURE;
 		hookDATA->bFlip = FALSE;
+		hookDATA->MapID++;
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			DX10CaptureDATA* pDATA = m_captures[i];
@@ -353,7 +356,9 @@ namespace GraphicsCapture
 		UINT size1 = (sizeof(TextureDATA) + 15) & 0xFFFFFFF0;
 		UINT size2 = (hookDATA->Pitch * hookDATA->Size.cy + 15) & 0xFFFFFFF0;
 		hookDATA->MapSize = size1 + size2 * 2;
-		TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
+		if (!g_dx.CreateTextureDATA(hookDATA->MapID, hookDATA->MapSize))
+			return FALSE;
+		TextureDATA* textureDATA = m_dx.GetTextureDATA();
 		textureDATA->Texture1Offset = size1;
 		textureDATA->Texture2Offset = size1 + size2;
 		textureDATA->TextureHandle = NULL;
@@ -395,7 +400,7 @@ namespace GraphicsCapture
 					if (m_dx.m_mutes[dwCurrentID].Lock(0))
 					{
 						memcpy(m_textures[dwCurrentID], bits, hookDATA->Pitch * hookDATA->Size.cy);
-						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
+						TextureDATA* textureDATA = m_dx.GetTextureDATA();
 						textureDATA->CurrentID = dwCurrentID;
 						m_dx.m_mutes[dwCurrentID].Unlock();
 						dwCurrentID = dwCurrentID == 0 ? 1 : 0;
@@ -404,7 +409,7 @@ namespace GraphicsCapture
 					if (m_dx.m_mutes[dwNextID].Lock(0))
 					{
 						memcpy(m_textures[dwNextID], bits, hookDATA->Pitch * hookDATA->Size.cy);
-						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
+						TextureDATA* textureDATA = m_dx.GetTextureDATA();
 						textureDATA->CurrentID = dwNextID;
 						m_dx.m_mutes[dwNextID].Unlock();
 						dwCurrentID = dwNextID == 0 ? 1 : 0;

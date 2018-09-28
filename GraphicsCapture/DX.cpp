@@ -86,25 +86,25 @@ namespace GraphicsCapture
 	{
 		return reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 	}
-	TextureDATA* DX::GetTextureDATA(DWORD dwMapID, DWORD dwSize)
+	BOOL DX::CreateTextureDATA(DWORD dwMapID, DWORD dwSize)
 	{
-		if (NULL == m_textureDATA.Address())
+		LOG(INFO) << "Map Name:" << dwMapID;
+		m_textureDATA.Close();
+		if (!m_textureDATA.Create(StringPrintf("%s%d", TEXTURE_MEMORY, dwMapID).c_str(), dwSize))
 		{
-			LOG(INFO) << "Map Name:" << dwMapID;
-			m_textureDATA.Close();
-			if (!m_textureDATA.Create(StringPrintf("%s%d", TEXTURE_MEMORY, dwMapID).c_str(), dwSize))
-			{
-				LOG(ERROR) << "TextureDATA Create FAIL:" << GetLastError();
-				return NULL;
-			}
-			if (!m_textureDATA.Map(0, dwSize))
-			{
-				LOG(ERROR) << "TextureDATA Map FAIL:" << GetLastError();
-				return NULL;
-			}
+			LOG(ERROR) << "TextureDATA Create FAIL:" << GetLastError();
+			return FALSE;
 		}
-		TextureDATA* pDATA = reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
-		return pDATA;
+		if (!m_textureDATA.Map(0, dwSize))
+		{
+			LOG(ERROR) << "TextureDATA Map FAIL:" << GetLastError();
+			return FALSE;
+		}
+		return TRUE;
+	}
+	TextureDATA* DX::GetTextureDATA()
+	{
+		return reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
 	}
 	BOOL DX::CreateEvents()
 	{

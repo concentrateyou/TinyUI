@@ -474,6 +474,7 @@ namespace GraphicsCapture
 		HRESULT hRes = S_OK;
 		hookDATA->CaptureType = CAPTURETYPE_MEMORYTEXTURE;
 		hookDATA->bFlip = FALSE;
+		hookDATA->MapID++;
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			DX8CaptureDATA* pDATA = reinterpret_cast<DX8CaptureDATA*>(m_captures[i]);
@@ -485,7 +486,9 @@ namespace GraphicsCapture
 		UINT size1 = (sizeof(TextureDATA) + 15) & 0xFFFFFFF0;
 		UINT size2 = (hookDATA->Pitch * hookDATA->Size.cy + 15) & 0xFFFFFFF0;
 		hookDATA->MapSize = size1 + size2 * 2;
-		TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
+		if (!g_dx.CreateTextureDATA(hookDATA->MapID, hookDATA->MapSize))
+			return FALSE;
+		TextureDATA* textureDATA = m_dx.GetTextureDATA();
 		textureDATA->Texture1Offset = size1;
 		textureDATA->Texture2Offset = size1 + size2;
 		textureDATA->TextureHandle = NULL;
@@ -523,7 +526,7 @@ namespace GraphicsCapture
 					if (m_dx.m_mutes[dwCurrentID].Lock(0))
 					{
 						ConvertPixelFormat(pDATA->GetPointer(), pDATA->GetPitch(), static_cast<D3DFORMAT>(m_d3dFormat), hookDATA->Size.cx, hookDATA->Size.cy, m_textures[dwCurrentID]);
-						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
+						TextureDATA* textureDATA = m_dx.GetTextureDATA();
 						textureDATA->CurrentID = dwCurrentID;
 						m_dx.m_mutes[dwCurrentID].Unlock();
 						break;
@@ -531,7 +534,7 @@ namespace GraphicsCapture
 					if (m_dx.m_mutes[dwNextID].Lock(0))
 					{
 						ConvertPixelFormat(pDATA->GetPointer(), pDATA->GetPitch(), static_cast<D3DFORMAT>(m_d3dFormat), hookDATA->Size.cx, hookDATA->Size.cy, m_textures[dwNextID]);
-						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
+						TextureDATA* textureDATA = m_dx.GetTextureDATA();
 						textureDATA->CurrentID = dwNextID;
 						m_dx.m_mutes[dwNextID].Unlock();
 						break;

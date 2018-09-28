@@ -400,10 +400,11 @@ namespace GraphicsCapture
 			if (SUCCEEDED(hRes))
 			{
 				pDATA->SetCopying(TRUE);
-				m_lock.Lock();
-				m_bits = s.pBits;
-				m_currentCopy = i;
-				m_lock.Unlock();
+				{
+					TinyAutoLock autolock(m_lock);
+					m_bits = s.pBits;
+					m_currentCopy = i;
+				}
 				m_copy.SetEvent();
 			}
 			break;
@@ -601,9 +602,9 @@ namespace GraphicsCapture
 		UINT size1 = (sizeof(TextureDATA) + 15) & 0xFFFFFFF0;
 		UINT size2 = (hookDATA->Pitch * hookDATA->Size.cy + 15) & 0xFFFFFFF0;
 		hookDATA->MapSize = size1 + size2 * 2;
-		TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapID, hookDATA->MapSize);
-		if (!textureDATA)
+		if (!m_dx.CreateTextureDATA(hookDATA->MapID, hookDATA->MapSize))
 			return FALSE;
+		TextureDATA* textureDATA = g_dx.GetTextureDATA();
 		textureDATA->Texture1Offset = size1;
 		textureDATA->Texture2Offset = size1 + size2;
 		textureDATA->TextureHandle = NULL;
@@ -620,6 +621,9 @@ namespace GraphicsCapture
 		HRESULT hRes = S_OK;
 		HANDLE events[] = { m_copy, m_stop };
 		DWORD dwCurrentID = 0;
+		HookDATA* hookDATA = m_dx.GetHookDATA();
+		INT32 cy = hookDATA->Size.cy;
+		INT32 pitch = hookDATA->Pitch;
 		for (;;)
 		{
 			INT32 currentCopy = 0;
@@ -629,10 +633,11 @@ namespace GraphicsCapture
 			{
 				break;
 			}
-			m_lock.Lock();
-			currentCopy = m_currentCopy;
-			bits = m_bits;
-			m_lock.Unlock();
+			{
+				TinyAutoLock autolok(m_lock);
+				currentCopy = m_currentCopy;
+				bits = m_bits;
+			}
 			if (currentCopy < NUM_BUFFERS && !!bits)
 			{
 				DWORD dwNextID = dwCurrentID == 0 ? 1 : 0;
@@ -640,28 +645,26 @@ namespace GraphicsCapture
 				pDATA->Enter();
 				do
 				{
-					HookDATA* hookDATA = m_dx.GetHookDATA();
 					if (m_dx.m_mutes[dwCurrentID].Lock(0))
 					{
-						memcpy(m_textures[dwCurrentID], bits, hookDATA->Pitch * hookDATA->Size.cy);
-						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
+						memcpy(m_textures[dwCurrentID], bits, pitch * cy);
+						TextureDATA* textureDATA = m_dx.GetTextureDATA();
 						textureDATA->CurrentID = dwCurrentID;
-						dwCurrentID = dwCurrentID == 0 ? 1 : 0;
+						dwCurrentID = (dwCurrentID == 0 ? 1 : 0);
 						m_dx.m_mutes[dwCurrentID].Unlock();
 						break;
 					}
 					if (m_dx.m_mutes[dwNextID].Lock(0))
 					{
-						memcpy(m_textures[dwNextID], bits, hookDATA->Pitch * hookDATA->Size.cy);
-						TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapSize);
+						memcpy(m_textures[dwNextID], bits, pitch * cy);
+						TextureDATA* textureDATA = m_dx.GetTextureDATA();
 						textureDATA->CurrentID = dwNextID;
-						dwCurrentID = dwNextID == 0 ? 1 : 0;;
+						dwCurrentID = (dwNextID == 0 ? 1 : 0);
 						m_dx.m_mutes[dwNextID].Unlock();
 						break;
 					}
 				} while (0);
 				pDATA->Leave();
-
 			}
 		}
 	}
@@ -768,7 +771,9 @@ namespace GraphicsCapture
 		hookDATA->CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		hookDATA->bFlip = FALSE;
 		hookDATA->MapSize = sizeof(TextureDATA);
-		TextureDATA* textureDATA = m_dx.GetTextureDATA(hookDATA->MapID, hookDATA->MapSize);
+		if (!g_dx.CreateTextureDATA(hookDATA->MapID, hookDATA->MapSize))
+			return FALSE;
+		TextureDATA* textureDATA = g_dx.GetTextureDATA();
 		if (!textureDATA)
 			return FALSE;
 		textureDATA->TextureHandle = m_handle;
