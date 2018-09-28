@@ -55,7 +55,7 @@ namespace GraphicsCapture
 		DXGI_FORMAT						m_dxgiFormat;
 		HANDLE							m_handle;
 		HMODULE							m_hD3D10;
-		DWORD							m_dwCopy;
+		DWORD							m_dwWait;
 		LPBYTE							m_textures[2];
 		TinyLock						m_lock;
 		TinyEvent						m_copy;

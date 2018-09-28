@@ -293,7 +293,7 @@ namespace GraphicsCapture
 		m_handle(NULL),
 		m_currentPointer(NULL),
 		m_currentIndex(0),
-		m_currentCopy(0),
+		m_currentMap(0),
 		m_dwWait(0),
 		m_bCapturing(FALSE),
 		m_bActive(FALSE),
@@ -403,7 +403,7 @@ namespace GraphicsCapture
 				{
 					TinyAutoLock autolock(m_lock);
 					m_bits = s.pBits;
-					m_currentCopy = i;
+					m_currentMap = i;
 				}
 				m_copy.SetEvent();
 			}
@@ -525,7 +525,7 @@ namespace GraphicsCapture
 		m_currentIndex = 0;
 		m_dwWait = 0;
 		m_bits = NULL;
-		m_currentCopy = 0;
+		m_currentMap = 0;
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			DX9CaptureDATA* pDATA = m_captures[i];
@@ -616,32 +616,37 @@ namespace GraphicsCapture
 		LOG(INFO) << "[DX9CPUHook] OK";
 		return TRUE;
 	}
+	DX9CaptureDATA* DX9GraphicsCapture::GetDX9CaptureDATA(LPVOID& bits)
+	{
+		TinyAutoLock autolock(m_lock);
+		DX9CaptureDATA* pDATA = NULL;
+		if (m_currentMap < NUM_BUFFERS)
+		{
+			pDATA = m_captures[m_currentMap];
+			bits = m_bits;
+		}
+		return pDATA;
+	}
 	void DX9GraphicsCapture::OnMessagePump()
 	{
 		HRESULT hRes = S_OK;
 		HANDLE events[] = { m_copy, m_stop };
-		DWORD dwCurrentID = 0;
 		HookDATA* hookDATA = m_dx.GetHookDATA();
 		INT32 cy = hookDATA->Size.cy;
 		INT32 pitch = hookDATA->Pitch;
+		DWORD dwCurrentID = 0;
 		for (;;)
 		{
-			INT32 currentCopy = 0;
 			LPVOID bits = NULL;
 			hRes = WaitForMultipleObjects(2, events, FALSE, INFINITE);
 			if (hRes != WAIT_OBJECT_0)
 			{
 				break;
 			}
-			{
-				TinyAutoLock autolok(m_lock);
-				currentCopy = m_currentCopy;
-				bits = m_bits;
-			}
-			if (currentCopy < NUM_BUFFERS && !!bits)
+			DX9CaptureDATA* pDATA = GetDX9CaptureDATA(bits);
+			if (pDATA != NULL && !!bits)
 			{
 				DWORD dwNextID = dwCurrentID == 0 ? 1 : 0;
-				DX9CaptureDATA* pDATA = m_captures[currentCopy];
 				pDATA->Enter();
 				do
 				{
