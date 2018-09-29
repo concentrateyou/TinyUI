@@ -129,12 +129,12 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly)
+	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy, DXGI_FORMAT dxgiFormat, const BYTE* bits, BOOL bReadoly)
 	{
 		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
-		if (DX11Texture2D::Create(dx11, cx, cy, bits, bReadoly))
+		if (DX11Texture2D::Create(dx11, cx, cy, dxgiFormat, bits, bReadoly))
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
@@ -144,12 +144,12 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy)
+	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy, DXGI_FORMAT dxgiFormat)
 	{
 		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
-		if (DX11Texture2D::Create(dx11, cx, cy))
+		if (DX11Texture2D::Create(dx11, cx, cy, dxgiFormat))
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);

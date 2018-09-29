@@ -52,6 +52,7 @@ namespace GraphicsCapture
 		volatile INT32					m_currentIndex;
 		volatile INT32					m_currentCopy;
 		volatile LPVOID					m_bits;
+		BOOL							m_bGPU;
 		DXGI_FORMAT						m_dxgiFormat;
 		HANDLE							m_handle;
 		HMODULE							m_hD3D10;

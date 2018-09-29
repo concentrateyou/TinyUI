@@ -61,7 +61,7 @@ namespace MediaSDK
 			return FALSE;
 		const LAVVideoFormat& vF = m_player.GetVideoFormat();
 		TinySize sizeT = vF.GetSize();
-		if (!m_visual2D.Create(m_dx11, sizeT.cx, sizeT.cy, NULL, FALSE))
+		if (!m_visual2D.Create(m_dx11, sizeT.cx, sizeT.cy, DXGI_FORMAT_B8G8R8A8_UNORM, NULL, FALSE))
 			goto _ERROR;
 		m_visual2D.SetFlipV(TRUE);
 		if (!m_player.Play())

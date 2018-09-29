@@ -68,6 +68,10 @@ namespace DXFramework
 	{
 		m_interval = interval;
 	}
+	void DX11CaptureRunner::SetFocusCPU(BOOL bFocusCPU)
+	{
+		m_bFocusCPU = bFocusCPU;
+	}
 	BOOL DX11CaptureRunner::OpenEvents()
 	{
 		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_START, m_target.dwPID).c_str()))
@@ -184,7 +188,7 @@ namespace DXFramework
 			{
 				m_image2D.Destory();
 				TRACE("Image2D: %d,%d\n", hookDATA->Size.cx, hookDATA->Size.cy);
-				if (!m_image2D.Create(*m_pDX11, hookDATA->Size.cx, hookDATA->Size.cy, NULL, FALSE))
+				if (!m_image2D.Create(*m_pDX11, hookDATA->Size.cx, hookDATA->Size.cy, (DXGI_FORMAT)hookDATA->Format, NULL, FALSE))
 				{
 					return FALSE;
 				}
@@ -419,6 +423,7 @@ namespace DXFramework
 		}
 		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 		pDATA->Interval = m_interval / 2;
+		pDATA->bCPU = FALSE;
 		m_textureDATA.Close();
 		TRACE("[InitializeDATA] New MapID:%d\n", pDATA->MapID);
 		if (!m_textureDATA.Open(StringPrintf("%s%d", TEXTURE_MEMORY, pDATA->MapID), FALSE))

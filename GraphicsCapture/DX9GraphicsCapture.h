@@ -70,6 +70,7 @@ namespace GraphicsCapture
 	public:
 		DX&								m_dx;
 		BOOL							m_bD3D9EX;
+		BOOL							m_bGPU;
 		DWORD							m_dwWait;
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;

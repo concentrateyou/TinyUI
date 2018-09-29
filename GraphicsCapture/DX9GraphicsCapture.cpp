@@ -300,7 +300,8 @@ namespace GraphicsCapture
 		m_bits(NULL),
 		m_patchType(0),
 		m_hD3D9(NULL),
-		m_dx(dx)
+		m_dx(dx),
+		m_bGPU(FALSE)
 	{
 		m_textures[0] = m_textures[1] = NULL;
 		m_copy.CreateEvent();
@@ -443,8 +444,8 @@ namespace GraphicsCapture
 						hookDATA->Format = sd.Format;
 						hookDATA->Size.cx = sd.Width;
 						hookDATA->Size.cy = sd.Height;
-						LOG(INFO) << "New Size : " << hookDATA->Size.cx << " " << hookDATA->Size.cy;
-						if (m_bD3D9EX && !hookDATA->bCPU)
+						m_bGPU = m_bD3D9EX && !hookDATA->bCPU;
+						if (m_bGPU)
 						{
 							m_bActive = DX9GPUHook(d3d);
 						}
@@ -457,7 +458,7 @@ namespace GraphicsCapture
 			}
 			if (m_bActive && g_dx.IsFrameReady(hookDATA->Interval))
 			{
-				if (m_bD3D9EX && !hookDATA->bCPU)
+				if (m_bGPU)
 				{
 					TinyComPtr<IDirect3DSurface9> backBuffer;
 					if (FAILED(d3d->GetRenderTarget(0, &backBuffer)))
@@ -525,10 +526,13 @@ namespace GraphicsCapture
 		m_dwWait = 0;
 		m_bits = NULL;
 		m_currentMap = 0;
-		for (INT i = 0; i < NUM_BUFFERS; i++)
+		if (!m_bGPU)
 		{
-			DX9CaptureDATA* pDATA = m_captures[i];
-			pDATA->Destory();
+			for (INT i = 0; i < NUM_BUFFERS; i++)
+			{
+				DX9CaptureDATA* pDATA = m_captures[i];
+				pDATA->Destory();
+			}
 		}
 		g_dx.m_start.SetEvent();
 		m_handle = NULL;

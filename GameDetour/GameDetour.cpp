@@ -71,7 +71,6 @@ namespace GameDetour
 	}
 	void GameDetour::CaptureLoop()
 	{
-		LOG(INFO) << "[GameCapture] CaptureLoop BEGIN";
 		g_dx.m_sourceReady.WaitEvent(INFINITE);
 		while (!Detour())
 		{
@@ -85,7 +84,6 @@ namespace GameDetour
 			}
 			Sleep(120);
 		}
-		LOG(INFO) << "[GameCapture] CaptureLoop END";
 	}
 	BOOL GameDetour::DetourDX9()
 	{
@@ -95,7 +93,6 @@ namespace GameDetour
 		}
 		if (m_bDX9Detour)
 		{
-			LOG(INFO) << "DX9 Initialize OK";
 			if (!m_bDX9Hookable)
 			{
 				m_bDX9Hookable = g_dx9.hookable();
@@ -116,7 +113,6 @@ namespace GameDetour
 		}
 		if (m_bDX8Detour)
 		{
-			LOG(INFO) << "DX8 Initialize OK";
 			if (!m_bDX8Hookable)
 			{
 				m_bDX8Hookable = g_dx8.hookable();
@@ -137,7 +133,6 @@ namespace GameDetour
 		}
 		if (m_bDXGIDetour)
 		{
-			LOG(INFO) << "DXGI Initialize OK";
 			if (!m_bDXGIHookable)
 			{
 				m_bDXGIHookable = g_dxgi.hookable();
@@ -152,13 +147,13 @@ namespace GameDetour
 	}
 	BOOL GameDetour::Detour()
 	{
-		if (!DetourDX9())
-			return FALSE;
-		if (!DetourDXGI())
-			return FALSE;
-		if (!DetourDX8())
-			return FALSE;
-		return TRUE;
+		if (DetourDX9())
+			return TRUE;
+		if (DetourDXGI())
+			return TRUE;
+		if (DetourDX8())
+			return TRUE;
+		return FALSE;
 	}
 	void GameDetour::OnMessagePumpUI()
 	{

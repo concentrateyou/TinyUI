@@ -98,7 +98,7 @@ namespace DXFramework
 		SIZE size = { 0 };
 		if (!GetCursor(hICON, size))
 			return FALSE;
-		if (!DX11Image2D::Create(dx11, size.cx, size.cy, NULL, FALSE))
+		if (!DX11Image2D::Create(dx11, size.cx, size.cy, DXGI_FORMAT_B8G8R8A8_UNORM, NULL, FALSE))
 			return FALSE;
 		if (!UpdateCursor(dx11, hICON, size))
 			return FALSE;

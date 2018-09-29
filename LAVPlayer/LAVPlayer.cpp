@@ -142,7 +142,7 @@ namespace LAV
 				if (!m_graphics.InitializeShaders())
 					return FALSE;
 				m_image.Destory();
-				if (!m_image.Create(m_dx11, vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL, FALSE))
+				if (!m_image.Create(m_dx11, vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, DXGI_FORMAT_B8G8R8A8_UNORM, NULL, FALSE))
 					return FALSE;
 				m_image.SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(s)) / m_image.GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image.GetSize().y));
 			}

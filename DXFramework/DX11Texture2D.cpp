@@ -13,7 +13,7 @@ namespace DXFramework
 	{
 		return m_texture2D;
 	}
-	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy)
+	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, DXGI_FORMAT dxgiFormat)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -23,7 +23,7 @@ namespace DXFramework
 		desc.Height = cy;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
-		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.Format = dxgiFormat;
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
@@ -88,7 +88,7 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
-	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly)
+	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, DXGI_FORMAT dxgiFormat, const BYTE* bits, BOOL bReadoly)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -98,7 +98,7 @@ namespace DXFramework
 		desc.Height = cy;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
-		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.Format = dxgiFormat;
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.BindFlags = bReadoly ? 0 : D3D11_BIND_SHADER_RESOURCE;
