@@ -29,7 +29,7 @@ namespace GraphicsCapture
 		void				Leave();
 		void				Lock();
 		void				Unlock();
-		BOOL				IsCopying() const;
+		BOOL				IsLock() const;
 		void				SetIssue(BOOL bIssue);
 		BOOL				IsIssue() const;
 		UINT32				GetPitch() const;

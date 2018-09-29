@@ -261,7 +261,7 @@ namespace GraphicsCapture
 	{
 		m_bLock = FALSE;
 	}
-	BOOL DX9CaptureDATA::IsCopying() const
+	BOOL DX9CaptureDATA::IsLock() const
 	{
 		return m_bLock;
 	}
