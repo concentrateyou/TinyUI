@@ -121,7 +121,7 @@ namespace DXFramework
 		BOOL		bMultisample;
 		BOOL		bCPU;
 		UINT32		CaptureType;
-		DWORD		Format;
+		DXGI_FORMAT	Format;
 		SIZE		Size;
 		UINT32		Pitch;
 		DWORD		MapID;

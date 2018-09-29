@@ -59,7 +59,7 @@ namespace GraphicsCapture
 		TinyComPtr<ID3D11Device> device;
 		TinyComPtr<ID3D11DeviceContext>	immediateContext;
 		D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_9_3;
-		if (FAILED(hRes = (*d3d11Create)(NULL, D3D_DRIVER_TYPE_NULL, NULL, 0, levels, 6, D3D11_SDK_VERSION, &desc, &swap, &device, &level, &immediateContext)))
+		if (FAILED(hRes = (*d3d11Create)(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, levels, 6, D3D11_SDK_VERSION, &desc, &swap, &device, &level, &immediateContext)))
 			return FALSE;
 		return TRUE;
 	}

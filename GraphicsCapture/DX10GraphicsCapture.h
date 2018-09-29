@@ -43,13 +43,14 @@ namespace GraphicsCapture
 		BOOL DX10GPUHook(ID3D10Device *device);
 		BOOL DX10CPUHook(ID3D10Device *device);
 	private:
+		DX10CaptureDATA* GetDX10CaptureDATA(LPVOID& bits);
 		void OnMessagePump();
 		void QueryCopy(ID3D10Device *device);
 	public:
 		DX&								m_dx;
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
-		volatile INT32					m_currentIndex;
+		volatile INT32					m_currentMap;
 		volatile INT32					m_currentCopy;
 		volatile LPVOID					m_bits;
 		BOOL							m_bGPU;

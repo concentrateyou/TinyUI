@@ -111,7 +111,6 @@ namespace GraphicsCapture
 		case D3DFMT_A1R5G5B5:       return DXGI_FORMAT_B5G5R5A1_UNORM;
 		case D3DFMT_R5G6B5:         return DXGI_FORMAT_B5G6R5_UNORM;
 		}
-
 		return DXGI_FORMAT_UNKNOWN;
 	}
 #define MAX_FUNC_SCAN_BYTES 200
@@ -335,10 +334,10 @@ namespace GraphicsCapture
 			LOG(ERROR) << "GetModuleHandle d3d9 FAIL";
 			return FALSE;
 		}
-		m_d3d10_1.Reset(TEXT("d3d10_1.dll"));
-		if (!m_d3d10_1.IsValid())
+		m_d3d11.Reset(TEXT("d3d11.dll"));
+		if (!m_d3d11.IsValid())
 		{
-			LOG(ERROR) << "LoadLibrary d3d10_1 FAIL";
+			LOG(ERROR) << "LoadLibrary d3d11 FAIL";
 			return FALSE;
 		}
 		m_dxgi.Reset(TEXT("dxgi.dll"));
@@ -441,7 +440,7 @@ namespace GraphicsCapture
 					{
 						m_d3dFormat = sd.Format;
 						m_dxgiFormat = GetDXGIFormat9(sd.Format);
-						hookDATA->Format = sd.Format;
+						hookDATA->Format = (DXGI_FORMAT)m_dxgiFormat;
 						hookDATA->Size.cx = sd.Width;
 						hookDATA->Size.cy = sd.Height;
 						m_bGPU = m_bD3D9EX && !hookDATA->bCPU;
@@ -541,7 +540,7 @@ namespace GraphicsCapture
 		m_dx.m_textureDATA.Close();
 		m_copy2D.Release();
 		m_texture2D.Release();
-		m_d3d10.Release();
+		m_device.Release();
 	}
 	BOOL DX9GraphicsCapture::Setup(IDirect3DDevice9 *pThis)
 	{
@@ -562,7 +561,9 @@ namespace GraphicsCapture
 			{
 				HookDATA* hookDATA = m_dx.GetHookDATA();
 				hookDATA->CaptureType = CAPTURETYPE_SHAREDTEXTURE;
-				hookDATA->Format = pp.BackBufferFormat;
+				m_d3dFormat = pp.BackBufferFormat;
+				m_dxgiFormat = GetDXGIFormat9(pp.BackBufferFormat);
+				hookDATA->Format = m_dxgiFormat;
 				hookDATA->Size.cx = pp.BackBufferWidth;
 				hookDATA->Size.cy = pp.BackBufferHeight;
 				hookDATA->Window = pp.hDeviceWindow;
@@ -597,7 +598,7 @@ namespace GraphicsCapture
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
 			DX9CaptureDATA* pDATA = m_captures[i];
-			if (!pDATA->Create(device, hookDATA->Size.cx, hookDATA->Size.cy, (D3DFORMAT)hookDATA->Format))
+			if (!pDATA->Create(device, hookDATA->Size.cx, hookDATA->Size.cy, m_d3dFormat))
 				return FALSE;
 		}
 		hookDATA->Pitch = m_captures[0]->GetPitch();
@@ -680,10 +681,10 @@ namespace GraphicsCapture
 	{
 		ASSERT(m_hD3D9);
 		HookDATA* hookDATA = m_dx.GetHookDATA();
-		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)m_d3d10_1.GetFunctionPointer(TEXT("D3D10CreateDevice1"));
-		if (!d3d10CreateDevice1)
+		PFN_D3D11_CREATE_DEVICE d3d11CreateDevice = (PFN_D3D11_CREATE_DEVICE)m_d3d11.GetFunctionPointer(TEXT("D3D11CreateDevice"));
+		if (!d3d11CreateDevice)
 		{
-			LOG(ERROR) << "[DX9GPUHook] D3D10CreateDevice1 FAIL";
+			LOG(ERROR) << "[DX9GPUHook] D3D11CreateDevice FAIL";
 			return FALSE;
 		}
 		CREATEDXGIFACTORY1PROC createDXGIFactory1 = (CREATEDXGIFACTORY1PROC)m_dxgi.GetFunctionPointer(TEXT("CreateDXGIFactory1"));
@@ -698,21 +699,22 @@ namespace GraphicsCapture
 			LOG(ERROR) << "[DX9GPUHook] IDXGIFactory1 FAIL";
 			return FALSE;
 		}
-		TinyComPtr<IDXGIAdapter1> adapter;
-		if (FAILED(factory->EnumAdapters1(0, &adapter)))
+		TinyComPtr<IDXGIAdapter> adapter;
+		if (FAILED(factory->EnumAdapters(0, &adapter)))
 		{
 			LOG(ERROR) << "[DX9GPUHook] EnumAdapters1 FAIL";
 			return FALSE;
 		}
-		if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &m_d3d10)))
+		D3D_FEATURE_LEVEL level;
+		if (FAILED((*d3d11CreateDevice)(adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr,
+			0, FeatureLevels,
+			sizeof(FeatureLevels) / sizeof(D3D_FEATURE_LEVEL),
+			D3D11_SDK_VERSION, &m_device, &level, NULL)))
 		{
-			if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_9_3, D3D10_1_SDK_VERSION, &m_d3d10)))
-			{
-				LOG(ERROR) << "[DX9GPUHook] d3d10CreateDevice1 FAIL";
-				return FALSE;
-			}
+			LOG(ERROR) << "[DX9GPUHook] D3D11CreateDevice FAIL";
+			return FALSE;
 		}
-		D3D10_TEXTURE2D_DESC desc;
+		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Width = hookDATA->Size.cx;
 		desc.Height = hookDATA->Size.cy;
@@ -720,10 +722,10 @@ namespace GraphicsCapture
 		desc.ArraySize = 1;
 		desc.Format = m_dxgiFormat;
 		desc.SampleDesc.Count = 1;
-		desc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
-		desc.Usage = D3D10_USAGE_DEFAULT;
-		desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
-		HRESULT hRes = m_d3d10->CreateTexture2D(&desc, NULL, &m_texture2D);
+		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+		HRESULT hRes = m_device->CreateTexture2D(&desc, NULL, &m_texture2D);
 		if (hRes != S_OK)
 		{
 			LOG(ERROR) << "[DX9GPUHook] CreateTexture2D FAIL";
@@ -759,7 +761,7 @@ namespace GraphicsCapture
 			memcpy(patchAddress, patch[m_patchType - 1].patchData, patchSize);
 		}
 		TinyComPtr<IDirect3DTexture9> texture2D;
-		hRes = pThis->CreateTexture(hookDATA->Size.cx, hookDATA->Size.cy, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &texture2D, &m_handle);
+		hRes = pThis->CreateTexture(hookDATA->Size.cx, hookDATA->Size.cy, 1, D3DUSAGE_RENDERTARGET, m_d3dFormat, D3DPOOL_DEFAULT, &texture2D, &m_handle);
 		if (hRes != S_OK)
 		{
 			LOG(ERROR) << "[DX9GPUHook] CreateTexture FAIL";

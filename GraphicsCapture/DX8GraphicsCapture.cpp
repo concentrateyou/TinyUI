@@ -357,8 +357,9 @@ namespace GraphicsCapture
 					if (SUCCEEDED(backBuffer->GetDesc(&sd)))
 					{
 						HookDATA* hookDATA = m_dx.GetHookDATA();
-						ASSERT(hookDATA);
-						hookDATA->Format = sd.Format;
+						m_d3dFormat = static_cast<DWORD>(sd.Format);
+						m_dxgiFormat = GetDXGIFormat8(sd.Format);
+						hookDATA->Format = m_dxgiFormat;
 						hookDATA->Size.cx = sd.Width;
 						hookDATA->Size.cy = sd.Height;
 						m_bActive = DX8CPUHook(d3d);
@@ -443,7 +444,7 @@ namespace GraphicsCapture
 					m_d3dFormat = static_cast<DWORD>(desc.Format);
 					m_dxgiFormat = GetDXGIFormat8(desc.Format);
 					hookDATA->CaptureType = CAPTURETYPE_MEMORYTEXTURE;
-					hookDATA->Format = desc.Format;
+					hookDATA->Format = m_dxgiFormat;
 					hookDATA->Size.cx = desc.Width;
 					hookDATA->Size.cy = desc.Height;
 					hookDATA->Pitch = 4 * desc.Width;

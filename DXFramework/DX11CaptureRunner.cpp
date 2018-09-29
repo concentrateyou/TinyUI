@@ -187,7 +187,6 @@ namespace DXFramework
 			if (hookDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
 				m_image2D.Destory();
-				TRACE("Image2D: %d,%d\n", hookDATA->Size.cx, hookDATA->Size.cy);
 				if (!m_image2D.Create(*m_pDX11, hookDATA->Size.cx, hookDATA->Size.cy, (DXGI_FORMAT)hookDATA->Format, NULL, FALSE))
 				{
 					return FALSE;

@@ -86,8 +86,8 @@ namespace GraphicsCapture
 		DXGI_FORMAT						m_dxgiFormat;
 		TinyWorker						m_captureTask;
 		DX9CaptureDATA*					m_captures[NUM_BUFFERS];
-		TinyComPtr<ID3D10Device1>		m_d3d10;
-		TinyComPtr<ID3D10Texture2D>		m_texture2D;
+		TinyComPtr<ID3D11Device>		m_device;
+		TinyComPtr<ID3D11Texture2D>		m_texture2D;
 		TinyComPtr<IDirect3DSurface9>	m_copy2D;
 		TinyLock						m_lock;
 		TinyEvent						m_copy;
@@ -98,7 +98,7 @@ namespace GraphicsCapture
 		TinyDetour						m_dX9Present;
 		TinyDetour						m_dX9PresentEx;
 		TinyDetour						m_dX9SwapPresent;
-		TinyScopedLibrary				m_d3d10_1;
+		TinyScopedLibrary				m_d3d11;
 		TinyScopedLibrary				m_dxgi;
 	};
 	SELECTANY extern DX9GraphicsCapture g_dx9(g_dx);

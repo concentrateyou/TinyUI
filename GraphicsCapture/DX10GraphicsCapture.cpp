@@ -106,7 +106,7 @@ namespace GraphicsCapture
 		m_bGPU(FALSE),
 		m_hD3D10(NULL),
 		m_dx(dx),
-		m_currentIndex(0),
+		m_currentMap(0),
 		m_currentCopy(0),
 		m_bits(NULL),
 		m_dwWait(0)
@@ -152,7 +152,7 @@ namespace GraphicsCapture
 		desc.SampleDesc.Count = 1;
 		desc.Windowed = TRUE;
 		TinyComPtr<ID3D10Device> device;
-		if (FAILED(hRes = (*d3d10Create)(NULL, D3D10_DRIVER_TYPE_NULL, NULL, 0, D3D10_SDK_VERSION, &desc, &swap, &device)))
+		if (FAILED(hRes = (*d3d10Create)(NULL, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_SDK_VERSION, &desc, &swap, &device)))
 			return FALSE;
 		LOG(INFO) << "[DX10GraphicsCapture] Initialize OK";
 		return TRUE;
@@ -163,7 +163,7 @@ namespace GraphicsCapture
 		m_captureTask.Close(500);
 		m_bits = NULL;
 		m_textures[0] = m_textures[1] = NULL;
-		m_currentIndex = 0;
+		m_currentMap = 0;
 		m_currentCopy = 0;
 		if (!m_bGPU)
 		{
@@ -194,7 +194,7 @@ namespace GraphicsCapture
 		if (FAILED(hRes))
 			return FALSE;
 		m_dxgiFormat = GetDXTextureFormat(scd.BufferDesc.Format);
-		hookDATA->Format = (DWORD)m_dxgiFormat;
+		hookDATA->Format = m_dxgiFormat;
 		hookDATA->Size.cx = scd.BufferDesc.Width;
 		hookDATA->Size.cy = scd.BufferDesc.Height;
 		hookDATA->Window = scd.OutputWindow;
@@ -255,8 +255,8 @@ namespace GraphicsCapture
 					else
 					{
 						QueryCopy(device);
-						INT32 next = (m_currentIndex == NUM_BUFFERS - 1) ? 0 : (m_currentIndex + 1);
-						DX10CaptureDATA* pDATA1 = m_captures[m_currentIndex];
+						INT32 index = (m_currentMap == NUM_BUFFERS - 1) ? 0 : (m_currentMap + 1);
+						DX10CaptureDATA* pDATA1 = m_captures[m_currentMap];
 						if (hookDATA->bMultisample)
 						{
 							device->ResolveSubresource(pDATA1->GetTexture2D(), 0, backBuffer, 0, m_dxgiFormat);
@@ -271,7 +271,7 @@ namespace GraphicsCapture
 						}
 						else
 						{
-							DX10CaptureDATA* pDATA2 = m_captures[next];
+							DX10CaptureDATA* pDATA2 = m_captures[index];
 							ID3D10Texture2D *src = pDATA2->GetTexture2D();
 							ID3D10Texture2D *dst = pDATA2->GetCopy2D();
 							if (pDATA2->IsCopying())
@@ -291,7 +291,7 @@ namespace GraphicsCapture
 							}
 							pDATA2->SetIssue(TRUE);
 						}
-						m_currentIndex = next;
+						m_currentMap = index;
 					}
 				}
 			}
@@ -344,10 +344,11 @@ namespace GraphicsCapture
 			if (SUCCEEDED(hRes))
 			{
 				pDATA->SetCopying(TRUE);
-				m_lock.Lock();
-				m_bits = map.pData;
-				m_currentCopy = i;
-				m_lock.Unlock();
+				{
+					TinyAutoLock autolock(m_lock);
+					m_bits = map.pData;
+					m_currentCopy = i;
+				}
 				m_copy.SetEvent();
 			}
 			break;
@@ -383,6 +384,17 @@ namespace GraphicsCapture
 		LOG(INFO) << "[DX10CPUHook] OK";
 		return TRUE;
 	}
+	DX10CaptureDATA* DX10GraphicsCapture::GetDX10CaptureDATA(LPVOID& bits)
+	{
+		TinyAutoLock autolock(m_lock);
+		DX10CaptureDATA* pDATA = NULL;
+		if (m_currentMap < NUM_BUFFERS)
+		{
+			pDATA = m_captures[m_currentMap];
+			bits = m_bits;
+		}
+		return pDATA;
+	}
 	void DX10GraphicsCapture::OnMessagePump()
 	{
 		HRESULT hRes = S_OK;
@@ -400,18 +412,13 @@ namespace GraphicsCapture
 			{
 				break;
 			}
-			m_lock.Lock();
-			currentCopy = m_currentCopy;
-			bits = m_bits;
-			m_lock.Unlock();
-			if (currentCopy < NUM_BUFFERS && !!bits)
+			DX10CaptureDATA* pDATA = GetDX10CaptureDATA(bits);
+			if (pDATA != NULL && !!bits)
 			{
-				DX10CaptureDATA* pDATA = m_captures[currentCopy];
+				DWORD dwNextID = dwCurrentID == 0 ? 1 : 0;
 				pDATA->Enter();
 				do
 				{
-					DWORD dwNextID = dwCurrentID == 0 ? 1 : 0;
-					HookDATA* hookDATA = m_dx.GetHookDATA();
 					if (m_dx.m_mutes[dwCurrentID].Lock(0))
 					{
 						memcpy(m_textures[dwCurrentID], bits, pitch * cy);
