@@ -11,7 +11,7 @@ namespace GraphicsCapture
 
 	struct TLS
 	{
-		volatile BOOL		m_maps[NUM_BUFFERS];
+		volatile BOOL		m_map[NUM_BUFFERS];
 		volatile INT32		m_current;
 		volatile LPVOID		m_bits;
 		LPBYTE				m_textures[2];

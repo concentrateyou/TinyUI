@@ -27,7 +27,8 @@ namespace GraphicsCapture
 		void				Destory();
 		BOOL				Enter();
 		void				Leave();
-		void				SetCopying(BOOL bCopy);
+		void				Lock();
+		void				Unlock();
 		BOOL				IsCopying() const;
 		void				SetIssue(BOOL bIssue);
 		BOOL				IsIssue() const;
@@ -36,7 +37,8 @@ namespace GraphicsCapture
 		IDirect3DSurface9*	GetCopy2D();
 		IDirect3DSurface9*	GetTexture2D();
 	private:
-		volatile	BOOL				m_bCopying;
+		volatile	INT32				m_iFlag;
+		volatile	BOOL				m_bLock;
 		volatile	BOOL				m_bIssue;
 		UINT32							m_pitch;
 		TinySize						m_size;
@@ -64,8 +66,6 @@ namespace GraphicsCapture
 	public:
 		BOOL hookable();
 	private:
-		BOOL IsMap(INT32 index);
-		void SetMap(INT32 index, BOOL bMap);
 		DX9CaptureDATA* GetDX9CaptureDATA(LPVOID& bits);
 		void OnMessagePump();
 		void QueryCopy(IDirect3DDevice9 *device);
@@ -75,7 +75,7 @@ namespace GraphicsCapture
 		BOOL							m_bGPU;
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
-		volatile INT32					m_currentMap;
+		volatile INT32					m_currentCopy;
 		TLS								m_tls;
 		INT32							m_patchType;
 		HANDLE							m_handle;

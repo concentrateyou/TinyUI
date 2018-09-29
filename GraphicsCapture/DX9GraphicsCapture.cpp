@@ -187,7 +187,7 @@ namespace GraphicsCapture
 	}
 	//////////////////////////////////////////////////////////////////////////
 	DX9CaptureDATA::DX9CaptureDATA()
-		:m_bCopying(FALSE),
+		:m_bLock(FALSE),
 		m_bIssue(FALSE),
 		m_pitch(0)
 	{
@@ -232,11 +232,11 @@ namespace GraphicsCapture
 	}
 	void DX9CaptureDATA::Destory()
 	{
-		if (m_bCopying)
+		if (m_bLock)
 		{
 			LOG(INFO) << "[DX9CaptureDATA] Destory UnlockRect";
 			m_texture2D->UnlockRect();
-			m_bCopying = FALSE;
+			m_bLock = FALSE;
 		}
 		m_bIssue = FALSE;
 		m_size.SetSize(0, 0);
@@ -253,13 +253,17 @@ namespace GraphicsCapture
 	{
 		m_lock.Unlock();
 	}
-	void DX9CaptureDATA::SetCopying(BOOL bCopying)
+	void DX9CaptureDATA::Lock()
 	{
-		m_bCopying = bCopying;
+		m_bLock = TRUE;
+	}
+	void DX9CaptureDATA::Unlock()
+	{
+		m_bLock = FALSE;
 	}
 	BOOL DX9CaptureDATA::IsCopying() const
 	{
-		return m_bCopying;
+		return m_bLock;
 	}
 	void DX9CaptureDATA::SetIssue(BOOL bIssue)
 	{
@@ -291,7 +295,7 @@ namespace GraphicsCapture
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_handle(NULL),
 		m_currentPointer(NULL),
-		m_currentMap(0),
+		m_currentCopy(0),
 		m_bCapturing(FALSE),
 		m_bActive(FALSE),
 		m_patchType(0),
@@ -396,12 +400,12 @@ namespace GraphicsCapture
 			hRes = copy->LockRect(&s, NULL, D3DLOCK_READONLY);
 			if (SUCCEEDED(hRes))
 			{
-				pDATA->SetCopying(TRUE);
+				pDATA->Lock();
 				{
 					TinyAutoLock autolock(m_lock);
 					m_tls.m_bits = s.pBits;
 					m_tls.m_current = index;
-					m_tls.m_maps[index] = TRUE;
+					m_tls.m_map[index] = TRUE;
 				}
 				m_copy.SetEvent();
 			}
@@ -473,8 +477,8 @@ namespace GraphicsCapture
 				else
 				{
 					QueryCopy(d3d);
-					INT32 nextMap = (m_currentMap == NUM_BUFFERS - 1) ? 0 : (m_currentMap + 1);
-					DX9CaptureDATA* pDATA1 = m_captures[m_currentMap];
+					INT32 nextCopy = (m_currentCopy == NUM_BUFFERS - 1) ? 0 : (m_currentCopy + 1);
+					DX9CaptureDATA* pDATA1 = m_captures[m_currentCopy];
 					IDirect3DSurface9 *copy2D = pDATA1->GetTexture2D();
 					TinyComPtr<IDirect3DSurface9> backBuffer;
 					if (FAILED(d3d->GetRenderTarget(0, &backBuffer)))
@@ -494,22 +498,30 @@ namespace GraphicsCapture
 					}
 					else
 					{
-						DX9CaptureDATA* pDATA2 = m_captures[nextMap];
+						DX9CaptureDATA* pDATA2 = m_captures[nextCopy];
 						IDirect3DSurface9 *src = pDATA2->GetTexture2D();
 						IDirect3DSurface9 *dst = pDATA2->GetCopy2D();
-						if (IsMap(nextMap))
+						BOOL bMap = FALSE;
+						{
+							TinyAutoLock autolock(m_lock);
+							bMap = m_tls.m_map[nextCopy];
+						}
+						if (bMap)
 						{
 							pDATA2->Enter();
 							dst->UnlockRect();
+							pDATA2->Unlock();
+							{
+								TinyAutoLock autolock(m_lock);
+								m_tls.m_map[nextCopy] = FALSE;
+							}
 							pDATA2->Leave();
-							pDATA2->SetCopying(FALSE);
-							SetMap(nextMap, FALSE);
 						}
 						d3d->GetRenderTargetData(src, dst);
 						pDATA2->GetQuery()->Issue(D3DISSUE_END);
 						pDATA2->SetIssue(TRUE);
 					}
-					m_currentMap = nextMap;
+					m_currentCopy = nextCopy;
 				}
 			}
 		}
@@ -520,7 +532,7 @@ namespace GraphicsCapture
 		m_stop.SetEvent();
 		m_captureTask.Close(500);
 		ZeroMemory(&m_tls, sizeof(m_tls));
-		m_currentMap = 0;
+		m_currentCopy = 0;
 		if (!m_bGPU)
 		{
 			for (INT i = 0; i < NUM_BUFFERS; i++)
@@ -626,16 +638,6 @@ namespace GraphicsCapture
 			bits = m_tls.m_bits;
 		}
 		return pDATA;
-	}
-	BOOL DX9GraphicsCapture::IsMap(INT32 index)
-	{
-		TinyAutoLock autolock(m_lock);
-		return m_tls.m_maps[index];
-	}
-	void DX9GraphicsCapture::SetMap(INT32 index, BOOL bMap)
-	{
-		TinyAutoLock autolock(m_lock);
-		m_tls.m_maps[index] = bMap;
 	}
 	void DX9GraphicsCapture::OnMessagePump()
 	{
