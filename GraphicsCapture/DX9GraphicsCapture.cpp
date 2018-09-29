@@ -291,18 +291,15 @@ namespace GraphicsCapture
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_handle(NULL),
 		m_currentPointer(NULL),
-		m_currentIndex(0),
 		m_currentMap(0),
-		m_dwWait(0),
 		m_bCapturing(FALSE),
 		m_bActive(FALSE),
-		m_bits(NULL),
 		m_patchType(0),
 		m_hD3D9(NULL),
 		m_dx(dx),
 		m_bGPU(FALSE)
 	{
-		m_textures[0] = m_textures[1] = NULL;
+		ZeroMemory(&m_tls, sizeof(m_tls));
 		m_copy.CreateEvent();
 		m_stop.CreateEvent();
 		for (INT i = 0; i < NUM_BUFFERS; i++)
@@ -385,9 +382,9 @@ namespace GraphicsCapture
 	void DX9GraphicsCapture::QueryCopy(IDirect3DDevice9 *device)
 	{
 		HRESULT hRes = S_OK;
-		for (UINT i = 0; i < NUM_BUFFERS; i++)
+		for (INT32 index = 0; index < NUM_BUFFERS; index++)
 		{
-			DX9CaptureDATA* pDATA = m_captures[i];
+			DX9CaptureDATA* pDATA = m_captures[index];
 			if (!pDATA->IsIssue())
 				continue;
 			hRes = pDATA->GetQuery()->GetData(0, 0, 0);
@@ -402,8 +399,9 @@ namespace GraphicsCapture
 				pDATA->SetCopying(TRUE);
 				{
 					TinyAutoLock autolock(m_lock);
-					m_bits = s.pBits;
-					m_currentMap = i;
+					m_tls.m_bits = s.pBits;
+					m_tls.m_current = index;
+					m_tls.m_maps[index] = TRUE;
 				}
 				m_copy.SetEvent();
 			}
@@ -475,8 +473,8 @@ namespace GraphicsCapture
 				else
 				{
 					QueryCopy(d3d);
-					INT32 index = (m_currentIndex == NUM_BUFFERS - 1) ? 0 : (m_currentIndex + 1);
-					DX9CaptureDATA* pDATA1 = m_captures[m_currentIndex];
+					INT32 nextMap = (m_currentMap == NUM_BUFFERS - 1) ? 0 : (m_currentMap + 1);
+					DX9CaptureDATA* pDATA1 = m_captures[m_currentMap];
 					IDirect3DSurface9 *copy2D = pDATA1->GetTexture2D();
 					TinyComPtr<IDirect3DSurface9> backBuffer;
 					if (FAILED(d3d->GetRenderTarget(0, &backBuffer)))
@@ -490,27 +488,28 @@ namespace GraphicsCapture
 					{
 						return FALSE;
 					}
-					if (m_dwWait < NUM_BUFFERS - 1)
+					if (m_tls.m_wait < NUM_BUFFERS - 1)
 					{
-						m_dwWait++;
+						m_tls.m_wait++;
 					}
 					else
 					{
-						DX9CaptureDATA* pDATA2 = m_captures[index];
+						DX9CaptureDATA* pDATA2 = m_captures[nextMap];
 						IDirect3DSurface9 *src = pDATA2->GetTexture2D();
 						IDirect3DSurface9 *dst = pDATA2->GetCopy2D();
-						if (pDATA2->IsCopying())
+						if (IsMap(nextMap))
 						{
 							pDATA2->Enter();
 							dst->UnlockRect();
 							pDATA2->Leave();
 							pDATA2->SetCopying(FALSE);
+							SetMap(nextMap, FALSE);
 						}
 						d3d->GetRenderTargetData(src, dst);
 						pDATA2->GetQuery()->Issue(D3DISSUE_END);
 						pDATA2->SetIssue(TRUE);
 					}
-					m_currentIndex = index;
+					m_currentMap = nextMap;
 				}
 			}
 		}
@@ -520,10 +519,7 @@ namespace GraphicsCapture
 	{
 		m_stop.SetEvent();
 		m_captureTask.Close(500);
-		m_textures[0] = m_textures[1] = NULL;
-		m_currentIndex = 0;
-		m_dwWait = 0;
-		m_bits = NULL;
+		ZeroMemory(&m_tls, sizeof(m_tls));
 		m_currentMap = 0;
 		if (!m_bGPU)
 		{
@@ -613,8 +609,8 @@ namespace GraphicsCapture
 		textureDATA->Texture2Offset = size1 + size2;
 		textureDATA->TextureHandle = NULL;
 		BYTE* address = reinterpret_cast<BYTE*>(textureDATA);
-		m_textures[0] = address + textureDATA->Texture1Offset;
-		m_textures[1] = address + textureDATA->Texture2Offset;
+		m_tls.m_textures[0] = address + textureDATA->Texture1Offset;
+		m_tls.m_textures[1] = address + textureDATA->Texture2Offset;
 		m_captureTask.Submit(BindCallback(&DX9GraphicsCapture::OnMessagePump, this));
 		m_dx.m_targetReady.SetEvent();
 		LOG(INFO) << "[DX9CPUHook] OK";
@@ -624,12 +620,22 @@ namespace GraphicsCapture
 	{
 		TinyAutoLock autolock(m_lock);
 		DX9CaptureDATA* pDATA = NULL;
-		if (m_currentMap < NUM_BUFFERS)
+		if (m_tls.m_current < NUM_BUFFERS)
 		{
-			pDATA = m_captures[m_currentMap];
-			bits = m_bits;
+			pDATA = m_captures[m_tls.m_current];
+			bits = m_tls.m_bits;
 		}
 		return pDATA;
+	}
+	BOOL DX9GraphicsCapture::IsMap(INT32 index)
+	{
+		TinyAutoLock autolock(m_lock);
+		return m_tls.m_maps[index];
+	}
+	void DX9GraphicsCapture::SetMap(INT32 index, BOOL bMap)
+	{
+		TinyAutoLock autolock(m_lock);
+		m_tls.m_maps[index] = bMap;
 	}
 	void DX9GraphicsCapture::OnMessagePump()
 	{
@@ -656,7 +662,7 @@ namespace GraphicsCapture
 				{
 					if (m_dx.m_mutes[dwCurrentID].Lock(0))
 					{
-						memcpy(m_textures[dwCurrentID], bits, pitch * cy);
+						memcpy(m_tls.m_textures[dwCurrentID], bits, pitch * cy);
 						TextureDATA* textureDATA = m_dx.GetTextureDATA();
 						textureDATA->CurrentID = dwCurrentID;
 						dwCurrentID = (dwCurrentID == 0 ? 1 : 0);
@@ -665,7 +671,7 @@ namespace GraphicsCapture
 					}
 					if (m_dx.m_mutes[dwNextID].Lock(0))
 					{
-						memcpy(m_textures[dwNextID], bits, pitch * cy);
+						memcpy(m_tls.m_textures[dwNextID], bits, pitch * cy);
 						TextureDATA* textureDATA = m_dx.GetTextureDATA();
 						textureDATA->CurrentID = dwNextID;
 						dwCurrentID = (dwNextID == 0 ? 1 : 0);

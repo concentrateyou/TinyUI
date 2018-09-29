@@ -64,6 +64,8 @@ namespace GraphicsCapture
 	public:
 		BOOL hookable();
 	private:
+		BOOL IsMap(INT32 index);
+		void SetMap(INT32 index, BOOL bMap);
 		DX9CaptureDATA* GetDX9CaptureDATA(LPVOID& bits);
 		void OnMessagePump();
 		void QueryCopy(IDirect3DDevice9 *device);
@@ -71,14 +73,11 @@ namespace GraphicsCapture
 		DX&								m_dx;
 		BOOL							m_bD3D9EX;
 		BOOL							m_bGPU;
-		DWORD							m_dwWait;
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
-		volatile INT32					m_currentIndex;
 		volatile INT32					m_currentMap;
-		volatile LPVOID					m_bits;
+		TLS								m_tls;
 		INT32							m_patchType;
-		LPBYTE							m_textures[2];
 		HANDLE							m_handle;
 		HMODULE							m_hD3D9;
 		LPVOID							m_currentPointer;

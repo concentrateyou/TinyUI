@@ -137,7 +137,9 @@ namespace GraphicsCapture
 		time = TinyTime::Now();
 		elapse = time - lastTime;
 		if (elapse < interval)
+		{
 			return FALSE;
+		}
 		lastTime = (elapse > interval * 2) ? time : lastTime + interval;
 		return TRUE;
 	}

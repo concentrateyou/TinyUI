@@ -9,6 +9,15 @@ namespace GraphicsCapture
 	HRESULT STDMETHODCALLTYPE DX_DXGISwapPresent(IDXGISwapChain *swap, UINT syncInterval, UINT flags);
 	HRESULT STDMETHODCALLTYPE DX_DXGISwapResizeBuffers(IDXGISwapChain *swap, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags);
 
+	struct TLS
+	{
+		volatile BOOL		m_maps[NUM_BUFFERS];
+		volatile INT32		m_current;
+		volatile LPVOID		m_bits;
+		LPBYTE				m_textures[2];
+		INT32				m_wait;
+	};
+
 	class DX
 	{
 		DISALLOW_COPY_AND_ASSIGN(DX)
@@ -28,6 +37,7 @@ namespace GraphicsCapture
 	public:
 		HHOOK					m_hhk;
 		TinyMutex				m_mutes[2];
+		TinyLock				m_lock;
 		TinyEvent				m_sourceReady;
 		TinyEvent				m_start;
 		TinyEvent				m_stop;

@@ -43,6 +43,8 @@ namespace GraphicsCapture
 		BOOL DX10GPUHook(ID3D10Device *device);
 		BOOL DX10CPUHook(ID3D10Device *device);
 	private:
+		BOOL IsMap(INT32 index);
+		void SetMap(INT32 index, BOOL bMap);
 		DX10CaptureDATA* GetDX10CaptureDATA(LPVOID& bits);
 		void OnMessagePump();
 		void QueryCopy(ID3D10Device *device);
@@ -51,14 +53,11 @@ namespace GraphicsCapture
 		volatile BOOL					m_bCapturing;
 		volatile BOOL					m_bActive;
 		volatile INT32					m_currentMap;
-		volatile INT32					m_currentCopy;
-		volatile LPVOID					m_bits;
+		TLS								m_tls;
 		BOOL							m_bGPU;
 		DXGI_FORMAT						m_dxgiFormat;
 		HANDLE							m_handle;
 		HMODULE							m_hD3D10;
-		DWORD							m_dwWait;
-		LPBYTE							m_textures[2];
 		TinyLock						m_lock;
 		TinyEvent						m_copy;
 		TinyEvent						m_stop;
