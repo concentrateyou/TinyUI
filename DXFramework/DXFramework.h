@@ -127,6 +127,7 @@ namespace DXFramework
 		DWORD		MapID;
 		DWORD		MapSize;
 		HWND		Window;
+		UINT64		Interval;
 	}HookDATA;
 
 	typedef struct tagTextureDATA

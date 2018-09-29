@@ -25,6 +25,7 @@ namespace DXFramework
 		DX11CaptureRunner(DX11* pDX11, DX11Image2D& image);
 		virtual ~DX11CaptureRunner();
 		void					SetConfig(const TinyString& className, const TinyString& exeName);
+		void					SetInterval(UINT64 interval);
 		HookDATA*				GetHookDATA();
 		TextureDATA*			GetTextureDATA();
 		BOOL					IsCapturing() const;
@@ -45,9 +46,14 @@ namespace DXFramework
 	private:
 		volatile BOOL			m_bCapturing;
 		volatile BOOL			m_bActive;
+		UINT64					m_interval;
 		DX11*					m_pDX11;
 		TinyLock				m_lock;
 		WNDINFO					m_target;
+		GameInject				m_injector;
+		BYTE*					m_textures[2];
+		DX11Image2D&			m_image2D;
+		TinyMutex				m_mutes[2];
 		TinySize				m_size;
 		TinyEvent				m_start;
 		TinyEvent				m_stop;
@@ -56,10 +62,6 @@ namespace DXFramework
 		TinyString				m_szClass;
 		TinyString				m_szEXE;
 		TinyString				m_szDLL;
-		GameInject				m_injector;
-		BYTE*					m_textures[2];
-		TinyMutex				m_mutes[2];
-		DX11Image2D&			m_image2D;
 		TinySharedMemory		m_hookDATA;
 		TinySharedMemory		m_textureDATA;
 	};

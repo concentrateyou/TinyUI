@@ -427,6 +427,7 @@ namespace GraphicsCapture
 		}
 		if (m_bCapturing)
 		{
+			HookDATA* hookDATA = m_dx.GetHookDATA();
 			if (!m_bActive)
 			{
 				m_patchType = GetDX9PatchType(m_hD3D9);
@@ -439,7 +440,6 @@ namespace GraphicsCapture
 					{
 						m_d3dFormat = sd.Format;
 						m_dxgiFormat = GetDXGIFormat9(sd.Format);
-						HookDATA* hookDATA = m_dx.GetHookDATA();
 						hookDATA->Format = sd.Format;
 						hookDATA->Size.cx = sd.Width;
 						hookDATA->Size.cy = sd.Height;
@@ -455,9 +455,8 @@ namespace GraphicsCapture
 					}
 				}
 			}
-			if (m_bActive)
+			if (m_bActive && g_dx.IsFrameReady(hookDATA->Interval))
 			{
-				HookDATA* hookDATA = m_dx.GetHookDATA();
 				if (m_bD3D9EX && !hookDATA->bCPU)
 				{
 					TinyComPtr<IDirect3DSurface9> backBuffer;

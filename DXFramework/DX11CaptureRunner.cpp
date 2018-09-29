@@ -47,7 +47,8 @@ namespace DXFramework
 		: m_bCapturing(FALSE),
 		m_bActive(FALSE),
 		m_pDX11(pDX11),
-		m_image2D(image)
+		m_image2D(image),
+		m_interval(0)
 	{
 		m_mutes[0].Create(FALSE, MUTEX_TEXTURE1, NULL);
 		m_mutes[1].Create(FALSE, MUTEX_TEXTURE2, NULL);
@@ -62,6 +63,10 @@ namespace DXFramework
 	{
 		m_szClass = std::move(className);
 		m_szEXE = std::move(exeName);
+	}
+	void DX11CaptureRunner::SetInterval(UINT64 interval)
+	{
+		m_interval = interval;
 	}
 	BOOL DX11CaptureRunner::OpenEvents()
 	{
@@ -183,8 +188,6 @@ namespace DXFramework
 				{
 					return FALSE;
 				}
-				m_image2D.SetTranslate(XMFLOAT2(0.0F, 0.0F));
-				m_image2D.SetScale(XMFLOAT2(1.0F, 1.0F));
 				break;
 			}
 		} while (0);
@@ -415,6 +418,7 @@ namespace DXFramework
 			return FALSE;
 		}
 		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
+		pDATA->Interval = m_interval / 2;
 		m_textureDATA.Close();
 		TRACE("[InitializeDATA] New MapID:%d\n", pDATA->MapID);
 		if (!m_textureDATA.Open(StringPrintf("%s%d", TEXTURE_MEMORY, pDATA->MapID), FALSE))

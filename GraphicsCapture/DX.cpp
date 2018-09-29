@@ -127,6 +127,20 @@ namespace GraphicsCapture
 		}
 		return TRUE;
 	}
+	BOOL DX::IsFrameReady(UINT64 interval)
+	{
+		static UINT64 lastTime = 0;
+		UINT64	elapse = 0;
+		UINT64	time = 0;
+		if (!interval)
+			return TRUE;
+		time = TinyTime::Now();
+		elapse = time - lastTime;
+		if (elapse < interval)
+			return FALSE;
+		lastTime = (elapse > interval * 2) ? time : lastTime + interval;
+		return TRUE;
+	}
 	BOOL DX::SetWindowsHook()
 	{
 		UnhookWindowsHook();

@@ -15,6 +15,8 @@ namespace MediaSDK
 	void GameVisual2D::Select(const TinyString& className, const TinyString& exeName)
 	{
 		m_captureRunner.SetConfig(className, exeName);
+		UINT64 interval = 1000000000ULL / 60;
+		m_captureRunner.SetInterval(interval);
 	}
 	XMFLOAT2 GameVisual2D::GetTranslate()
 	{
