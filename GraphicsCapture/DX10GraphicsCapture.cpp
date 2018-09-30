@@ -99,7 +99,6 @@ namespace GraphicsCapture
 		m_bCapturing(FALSE),
 		m_bActive(FALSE),
 		m_bGPU(FALSE),
-		m_hD3D10(NULL),
 		m_dx(dx),
 		m_currentCopy(0)
 	{
@@ -127,10 +126,10 @@ namespace GraphicsCapture
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
 			return FALSE;
 		strcat_s(szD3DPath, MAX_PATH, TEXT("\\d3d10.dll"));
-		m_hD3D10 = GetModuleHandle(szD3DPath);
-		if (m_hD3D10 == NULL)
+		HMODULE hInstance = GetModuleHandle(szD3DPath);
+		if (hInstance == NULL)
 			return FALSE;
-		D3D10CREATEPROC d3d10Create = (D3D10CREATEPROC)GetProcAddress(m_hD3D10, TEXT("D3D10CreateDeviceAndSwapChain"));
+		D3D10CREATEPROC d3d10Create = (D3D10CREATEPROC)GetProcAddress(hInstance, TEXT("D3D10CreateDeviceAndSwapChain"));
 		if (!d3d10Create)
 			return FALSE;
 		DXGI_SWAP_CHAIN_DESC desc;

@@ -135,10 +135,10 @@ namespace GraphicsCapture
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
 			return FALSE;
 		strcat_s(szD3DPath, MAX_PATH, TEXT("\\d3d11.dll"));
-		m_hD3D11 = GetModuleHandle(szD3DPath);
-		if (m_hD3D11 == NULL)
+		HMODULE hInstance = GetModuleHandle(szD3DPath);
+		if (hInstance == NULL)
 			return FALSE;
-		D3D11CREATEPROC d3d11Create = (D3D11CREATEPROC)GetProcAddress(m_hD3D11, TEXT("D3D11CreateDeviceAndSwapChain"));
+		D3D11CREATEPROC d3d11Create = (D3D11CREATEPROC)GetProcAddress(hInstance, TEXT("D3D11CreateDeviceAndSwapChain"));
 		if (!d3d11Create)
 			return FALSE;
 		D3D_FEATURE_LEVEL levels[6] =

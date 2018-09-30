@@ -53,7 +53,6 @@ namespace GraphicsCapture
 		BOOL							m_bGPU;
 		DXGI_FORMAT						m_dxgiFormat;
 		HANDLE							m_handle;
-		HMODULE							m_hD3D11;
 		TinyLock						m_lock;
 		TinyEvent						m_copy;
 		TinyEvent						m_stop;

@@ -53,7 +53,6 @@ namespace GraphicsCapture
 		DXGI_FORMAT						m_dxgiFormat;
 		TLS								m_tls;
 		HANDLE							m_handle;
-		HMODULE							m_hD3D101;
 		TinyLock						m_lock;
 		TinyEvent						m_copy;
 		TinyEvent						m_stop;
