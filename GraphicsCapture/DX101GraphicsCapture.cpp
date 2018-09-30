@@ -52,7 +52,7 @@ namespace GraphicsCapture
 		if (TestF(DX_LOCK_STATE))
 		{
 			LOG(INFO) << "[DX101CaptureDATA] Destory Unmap";
-			m_texture2D->Unmap(0);
+			m_copy2D->Unmap(0);
 		}
 		m_iFlag = 0;
 		m_linesize = 0;
