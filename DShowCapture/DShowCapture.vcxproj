@@ -108,7 +108,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>Strmiids.lib;Quartz.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\x64\Debug;</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

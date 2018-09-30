@@ -115,140 +115,140 @@ _ERROR:
 	return SUCCEEDED(hRes);
 }
 
-BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL)
-{
-	if (!hProcess || !pszDLL)
-		return FALSE;
-	HMODULE hInstance = NULL;
-	HANDLE	hTask = NULL;
-	FARPROC	address = NULL;
-	hInstance = GetModuleHandle(TEXT("KERNEL32"));
-	if (!hInstance)
-		return FALSE;
-	CREATEREMOTETHREAD pCREATEREMOTETHREAD = (CREATEREMOTETHREAD)GetProcAddress(hInstance, TEXT("CreateRemoteThread"));
-	if (!pCREATEREMOTETHREAD)
-		return FALSE;
-#if defined(_WIN64)
-	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, GetProcessId(hProcess));
-	if (hSnapshot == INVALID_HANDLE_VALUE)
-		return FALSE;
-	MODULEENTRY32 me;
-	ZeroMemory(&me, sizeof(MODULEENTRY32));
-	me.dwSize = sizeof(MODULEENTRY32);
-	if (!Module32First(hSnapshot, &me))
-		return FALSE;
-	BOOL bRes = TRUE;
-	do
-	{
-		if (strncasecmp(pszDLL, me.szExePath, strlen(pszDLL)) == 0)
-		{
-			bRes = TRUE;
-			break;
-		}
-	} while (Module32Next(hSnapshot, &me));
-	if (!bRes)
-	{
-		goto _ERROR;
-	}
-	address = (FARPROC)GetProcAddress(hInstance, TEXT("FreeLibrary"));
-	if (!address)
-	{
-		bRes = FALSE;
-		goto _ERROR;
-	}
-	hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), (LPVOID)me.modBaseAddr, 0, 0);
-	if (!hTask)
-	{
-		bRes = FALSE;
-		goto _ERROR;
-	}
-	if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
-	{
-		DWORD dw;
-		GetExitCodeThread(hTask, &dw);
-		bRes = dw != 0;
-	}
-_ERROR:
-	if (hTask != NULL)
-	{
-		CloseHandle(hTask);
-		hTask = NULL;
-	}
-	TRACE("UninjectLibrary\n");
-	return bRes;
-#else
-	WRITEPROCESSMEMORY pWRITEPROCESSMEMORY = (WRITEPROCESSMEMORY)GetProcAddress(hInstance, TEXT("WriteProcessMemory"));
-	if (!pWRITEPROCESSMEMORY)
-		return FALSE;
-	VIRTUALALLOCEX pVIRTUALALLOCEX = (VIRTUALALLOCEX)GetProcAddress(hInstance, TEXT("VirtualAllocEx"));
-	if (!pVIRTUALALLOCEX)
-		return FALSE;
-	VIRTUALFREEEX pVIRTUALFREEEX = (VIRTUALFREEEX)GetProcAddress(hInstance, TEXT("VirtualFreeEx"));
-	if (!pVIRTUALFREEEX)
-		return FALSE;
-	DWORD dwSize = (strlen(pszDLL) + 1) * sizeof(CHAR);
-	LPVOID pAlloc = (LPVOID)(*pVIRTUALALLOCEX)(hProcess, NULL, dwSize, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-	if (!pAlloc)
-		return FALSE;
-	SIZE_T size = 0;
-	BOOL bRes = (*pWRITEPROCESSMEMORY)(hProcess, pAlloc, (LPVOID)pszDLL, dwSize, &size);
-	if (!bRes)
-		goto _ERROR;
-	address = (FARPROC)GetProcAddress(hInstance, TEXT("GetModuleHandleA"));
-	if (!address)
-	{
-		bRes = FALSE;
-		goto _ERROR;
-	}
-	hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), pAlloc, 0, 0);
-	if (!hTask)
-	{
-		bRes = FALSE;
-		goto _ERROR;
-	}
-	DWORD dwHandle = 0;
-	if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
-	{
-		GetExitCodeThread(hTask, &dwHandle);
-		if (dwHandle == 0)
-		{
-			bRes = FALSE;
-			goto _ERROR;
-		}
-	}
-	address = (FARPROC)GetProcAddress(hInstance, TEXT("FreeLibrary"));
-	if (!address)
-	{
-		bRes = FALSE;
-		goto _ERROR;
-	}
-	hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), (LPVOID)dwHandle, 0, 0);
-	if (!hTask)
-	{
-		bRes = FALSE;
-		goto _ERROR;
-	}
-	if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
-	{
-		DWORD dw;
-		GetExitCodeThread(hTask, &dw);
-		bRes = dw != 0;
-	}
-_ERROR:
-	if (hTask != NULL)
-	{
-		CloseHandle(hTask);
-		hTask = NULL;
-	}
-	if (pAlloc != NULL)
-	{
-		(*pVIRTUALFREEEX)(hProcess, pAlloc, 0, MEM_RELEASE);
-		pAlloc = NULL;
-	}
-	TRACE("UninjectLibrary\n");
-	return bRes;
-#endif
-}
+//BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL)
+//{
+//	if (!hProcess || !pszDLL)
+//		return FALSE;
+//	HMODULE hInstance = NULL;
+//	HANDLE	hTask = NULL;
+//	FARPROC	address = NULL;
+//	hInstance = GetModuleHandle(TEXT("KERNEL32"));
+//	if (!hInstance)
+//		return FALSE;
+//	CREATEREMOTETHREAD pCREATEREMOTETHREAD = (CREATEREMOTETHREAD)GetProcAddress(hInstance, TEXT("CreateRemoteThread"));
+//	if (!pCREATEREMOTETHREAD)
+//		return FALSE;
+//#if defined(_WIN64)
+//	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, GetProcessId(hProcess));
+//	if (hSnapshot == INVALID_HANDLE_VALUE)
+//		return FALSE;
+//	MODULEENTRY32 me;
+//	ZeroMemory(&me, sizeof(MODULEENTRY32));
+//	me.dwSize = sizeof(MODULEENTRY32);
+//	if (!Module32First(hSnapshot, &me))
+//		return FALSE;
+//	BOOL bRes = TRUE;
+//	do
+//	{
+//		if (strncasecmp(pszDLL, me.szExePath, strlen(pszDLL)) == 0)
+//		{
+//			bRes = TRUE;
+//			break;
+//		}
+//	} while (Module32Next(hSnapshot, &me));
+//	if (!bRes)
+//	{
+//		goto _ERROR;
+//	}
+//	address = (FARPROC)GetProcAddress(hInstance, TEXT("FreeLibrary"));
+//	if (!address)
+//	{
+//		bRes = FALSE;
+//		goto _ERROR;
+//	}
+//	hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), (LPVOID)me.modBaseAddr, 0, 0);
+//	if (!hTask)
+//	{
+//		bRes = FALSE;
+//		goto _ERROR;
+//	}
+//	if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
+//	{
+//		DWORD dw;
+//		GetExitCodeThread(hTask, &dw);
+//		bRes = dw != 0;
+//	}
+//_ERROR:
+//	if (hTask != NULL)
+//	{
+//		CloseHandle(hTask);
+//		hTask = NULL;
+//	}
+//	TRACE("UninjectLibrary\n");
+//	return bRes;
+//#else
+//	WRITEPROCESSMEMORY pWRITEPROCESSMEMORY = (WRITEPROCESSMEMORY)GetProcAddress(hInstance, TEXT("WriteProcessMemory"));
+//	if (!pWRITEPROCESSMEMORY)
+//		return FALSE;
+//	VIRTUALALLOCEX pVIRTUALALLOCEX = (VIRTUALALLOCEX)GetProcAddress(hInstance, TEXT("VirtualAllocEx"));
+//	if (!pVIRTUALALLOCEX)
+//		return FALSE;
+//	VIRTUALFREEEX pVIRTUALFREEEX = (VIRTUALFREEEX)GetProcAddress(hInstance, TEXT("VirtualFreeEx"));
+//	if (!pVIRTUALFREEEX)
+//		return FALSE;
+//	DWORD dwSize = (strlen(pszDLL) + 1) * sizeof(CHAR);
+//	LPVOID pAlloc = (LPVOID)(*pVIRTUALALLOCEX)(hProcess, NULL, dwSize, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+//	if (!pAlloc)
+//		return FALSE;
+//	SIZE_T size = 0;
+//	BOOL bRes = (*pWRITEPROCESSMEMORY)(hProcess, pAlloc, (LPVOID)pszDLL, dwSize, &size);
+//	if (!bRes)
+//		goto _ERROR;
+//	address = (FARPROC)GetProcAddress(hInstance, TEXT("GetModuleHandleA"));
+//	if (!address)
+//	{
+//		bRes = FALSE;
+//		goto _ERROR;
+//	}
+//	hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), pAlloc, 0, 0);
+//	if (!hTask)
+//	{
+//		bRes = FALSE;
+//		goto _ERROR;
+//	}
+//	DWORD dwHandle = 0;
+//	if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
+//	{
+//		GetExitCodeThread(hTask, &dwHandle);
+//		if (dwHandle == 0)
+//		{
+//			bRes = FALSE;
+//			goto _ERROR;
+//		}
+//	}
+//	address = (FARPROC)GetProcAddress(hInstance, TEXT("FreeLibrary"));
+//	if (!address)
+//	{
+//		bRes = FALSE;
+//		goto _ERROR;
+//	}
+//	hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), (LPVOID)dwHandle, 0, 0);
+//	if (!hTask)
+//	{
+//		bRes = FALSE;
+//		goto _ERROR;
+//	}
+//	if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
+//	{
+//		DWORD dw;
+//		GetExitCodeThread(hTask, &dw);
+//		bRes = dw != 0;
+//	}
+//_ERROR:
+//	if (hTask != NULL)
+//	{
+//		CloseHandle(hTask);
+//		hTask = NULL;
+//	}
+//	if (pAlloc != NULL)
+//	{
+//		(*pVIRTUALFREEEX)(hProcess, pAlloc, 0, MEM_RELEASE);
+//		pAlloc = NULL;
+//	}
+//	TRACE("UninjectLibrary\n");
+//	return bRes;
+//#endif
+//}
 
 static BOOL InjectLibrarySafe(DWORD dwID, const WCHAR* dll)
 {

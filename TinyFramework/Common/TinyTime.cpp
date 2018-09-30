@@ -1,8 +1,5 @@
 #include "../stdafx.h"
-#include <algorithm>
-#include <limits>
 #include "TinyTime.h"
-#pragma comment(lib, "comsupp.lib") 
 
 namespace TinyFramework
 {

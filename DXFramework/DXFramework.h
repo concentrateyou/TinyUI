@@ -146,6 +146,6 @@ namespace DXFramework
 
 	BOOL WINAPI ProcessExists(const TinyString& exeName, PROCESSINFO& ps);
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
-	BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
+	//BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 	BOOL WINAPI InjectLibrarySafe(DWORD threadID, const CHAR *pszDLL);
 }
