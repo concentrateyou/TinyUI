@@ -111,7 +111,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;DXFRAMEWORK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyFramework;..\DShowCapture;$(DXSDK_DIR)\Include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyFramework;..\DShowCapture;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,7 +119,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x64;..\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3d9.lib;dxgi.lib;D2d1.lib;D3DCompiler.lib;TinyUI.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3d9.lib;dxgi.lib;D2d1.lib;D3DCompiler.lib;TinyFramework.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
