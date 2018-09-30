@@ -240,7 +240,7 @@ namespace GraphicsCapture
 			HookDATA* hookDATA = m_dx.GetHookDATA();
 			if (m_bCapturing && !m_bActive)
 			{
-				m_bGPU = hookDATA->bCPU;
+				m_bGPU = !hookDATA->bCPU;
 				if (m_bGPU)
 				{
 					m_bActive = DX11GPUHook(device);
