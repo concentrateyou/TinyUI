@@ -40,7 +40,7 @@ namespace DXFramework
 		BOOL					CopyTextureDATA();
 		BOOL					AttemptExisting();
 		BOOL					AttemptDetour(BOOL anticheat);
-		BOOL					Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName, BOOL bSafe = TRUE);
+		BOOL					Detour(const TinyString& className, const TinyString& exeName, BOOL bSafe = TRUE);
 		BOOL					OpenEvents();
 		void					CloseEvents();
 		static BOOL CALLBACK	EnumWindow(HWND hwnd, LPARAM lParam);
@@ -63,7 +63,6 @@ namespace DXFramework
 		TinyEvent				m_targetReady;
 		TinyString				m_szClass;
 		TinyString				m_szEXE;
-		TinyString				m_szDLL;
 		TinySharedMemory		m_hookDATA;
 		TinySharedMemory		m_textureDATA;
 	};

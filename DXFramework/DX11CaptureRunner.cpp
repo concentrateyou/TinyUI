@@ -317,7 +317,7 @@ namespace DXFramework
 	{
 		return m_injector.Open(m_target, anticheat);
 	}
-	BOOL DX11CaptureRunner::Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName, BOOL anticheat)
+	BOOL DX11CaptureRunner::Detour(const TinyString& className, const TinyString& exeName, BOOL anticheat)
 	{
 		StrCpy(m_target.className, className.STR());
 		StrCpy(m_target.exeName, exeName.STR());
@@ -383,7 +383,7 @@ namespace DXFramework
 		}
 		if (!m_bActive)
 		{
-			Detour(m_szClass, m_szEXE, m_szDLL);
+			Detour(m_szClass, m_szEXE);
 		}
 		else
 		{
