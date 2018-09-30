@@ -431,7 +431,7 @@ namespace GraphicsCapture
 			DX101CaptureDATA* pDATA = m_captures[index];
 			if (!pDATA->TestF(DX_ISSUE_STATE))
 				continue;
-			pDATA->SetF(DX_ISSUE_STATE);
+			pDATA->CrlF(DX_ISSUE_STATE);
 			D3D10_MAPPED_TEXTURE2D map;
 			hRes = pDATA->GetCopy2D()->Map(0, D3D10_MAP_READ, 0, &map);
 			if (SUCCEEDED(hRes))

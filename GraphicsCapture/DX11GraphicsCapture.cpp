@@ -241,7 +241,7 @@ namespace GraphicsCapture
 			HookDATA* hookDATA = m_dx.GetHookDATA();
 			if (m_bCapturing && !m_bActive)
 			{
-				m_bGPU = !hookDATA->bCPU;
+				m_bGPU = hookDATA->bCPU;
 				if (m_bGPU)
 				{
 					m_bActive = DX11GPUHook(device);
@@ -291,12 +291,12 @@ namespace GraphicsCapture
 							DX11CaptureDATA* pDATA2 = m_captures[nextCopy];
 							ID3D11Texture2D *src = pDATA2->GetTexture2D();
 							ID3D11Texture2D *dst = pDATA2->GetCopy2D();
-							BOOL bMap = FALSE;
+							BOOL map = FALSE;
 							{
 								TinyAutoLock autolock(m_lock);
-								bMap = m_tls.m_map[nextCopy];
+								map = m_tls.m_map[nextCopy];
 							}
-							if (bMap)
+							if (map)
 							{
 								pDATA2->Enter();
 								context->Unmap(dst, 0);
@@ -384,6 +384,7 @@ namespace GraphicsCapture
 		TextureDATA* textureDATA = m_dx.GetTextureDATA();
 		textureDATA->TextureHandle = m_handle;
 		m_dx.m_targetReady.SetEvent();
+		LOG(INFO) << "[DX11GPUHook] OK";
 		return TRUE;
 	}
 	DX11CaptureDATA* DX11GraphicsCapture::GetDX11CaptureDATA(LPVOID& bits)
@@ -452,7 +453,7 @@ namespace GraphicsCapture
 			DX11CaptureDATA* pDATA = m_captures[index];
 			if (!pDATA->TestF(DX_ISSUE_STATE))
 				continue;
-			pDATA->SetF(DX_ISSUE_STATE);
+			pDATA->CrlF(DX_ISSUE_STATE);
 			D3D11_MAPPED_SUBRESOURCE map;
 			hRes = context->Map(pDATA->GetCopy2D(), 0, D3D11_MAP_READ, 0, &map);
 			if (SUCCEEDED(hRes))
