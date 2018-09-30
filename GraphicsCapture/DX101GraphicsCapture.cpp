@@ -412,14 +412,14 @@ namespace GraphicsCapture
 			}
 		}
 	}
-	DX101CaptureDATA* DX101GraphicsCapture::GetDX101CaptureDATA(LPVOID& bits)
+	DX101CaptureDATA* DX101GraphicsCapture::GetDX101CaptureDATA(LPVOID& data)
 	{
 		TinyAutoLock autolock(m_lock);
 		DX101CaptureDATA* pDATA = NULL;
 		if (m_tls.m_current < NUM_BUFFERS)
 		{
 			pDATA = m_captures[m_tls.m_current];
-			bits = m_tls.m_bits;
+			data = m_tls.m_data;
 		}
 		return pDATA;
 	}
@@ -439,7 +439,7 @@ namespace GraphicsCapture
 				pDATA->SetF(DX_LOCK_STATE);
 				{
 					TinyAutoLock autolock(m_lock);
-					m_tls.m_bits = map.pData;
+					m_tls.m_data = map.pData;
 					m_tls.m_current = index;
 					m_tls.m_map[index] = TRUE;
 				}

@@ -346,7 +346,7 @@ namespace GraphicsCapture
 				pDATA->SetF(DX_LOCK_STATE);
 				{
 					TinyAutoLock autolock(m_lock);
-					m_tls.m_bits = map.pData;
+					m_tls.m_data = map.pData;
 					m_tls.m_current = index;
 					m_tls.m_map[index] = TRUE;
 				}
@@ -385,14 +385,14 @@ namespace GraphicsCapture
 		LOG(INFO) << "[DX10CPUHook] OK";
 		return TRUE;
 	}
-	DX10CaptureDATA* DX10GraphicsCapture::GetDX10CaptureDATA(LPVOID& bits)
+	DX10CaptureDATA* DX10GraphicsCapture::GetDX10CaptureDATA(LPVOID& data)
 	{
 		TinyAutoLock autolock(m_lock);
 		DX10CaptureDATA* pDATA = NULL;
 		if (m_tls.m_current < NUM_BUFFERS)
 		{
 			pDATA = m_captures[m_tls.m_current];
-			bits = m_tls.m_bits;
+			data = m_tls.m_data;
 		}
 		return pDATA;
 	}

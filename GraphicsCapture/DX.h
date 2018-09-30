@@ -13,7 +13,7 @@ namespace GraphicsCapture
 	{
 		volatile BOOL		m_map[NUM_BUFFERS];
 		volatile INT32		m_current;
-		volatile LPVOID		m_bits;
+		volatile LPVOID		m_data;
 		LPBYTE				m_textures[2];
 		INT32				m_wait;
 	};

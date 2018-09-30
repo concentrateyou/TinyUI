@@ -234,7 +234,7 @@ namespace Bytedance
 		SAFE_DELETE(m_visual2D);
 		m_visual2D = new GameVisual2D(m_controller.GetVideoWorker().GetDX11());
 		//m_visual2D->Select("Warcraft III", "War3.exe");
-		m_visual2D->Select("Direct3DWindowClass", "BasicHLSL11.exe");
+		m_visual2D->Select("Direct3DWindowClass", "SubD11.exe");
 		//m_visual2D->Select("Direct3DWindowClass", "BasicHLSL.exe");
 		m_visual2D->Open();
 		TinyRectangle client;

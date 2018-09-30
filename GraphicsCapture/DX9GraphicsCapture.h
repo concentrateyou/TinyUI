@@ -62,7 +62,7 @@ namespace GraphicsCapture
 	public:
 		BOOL hookable();
 	private:
-		DX9CaptureDATA* GetDX9CaptureDATA(LPVOID& bits);
+		DX9CaptureDATA* GetDX9CaptureDATA(LPVOID& data);
 		void OnMessagePump();
 		void QueryCopy(IDirect3DDevice9 *device);
 	public:

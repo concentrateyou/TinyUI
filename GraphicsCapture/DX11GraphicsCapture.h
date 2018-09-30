@@ -41,7 +41,7 @@ namespace GraphicsCapture
 		BOOL DX11GPUHook(ID3D11Device *swap);
 		BOOL DX11CPUHook(ID3D11Device *swap);
 	private:
-		DX11CaptureDATA* GetDX11CaptureDATA(LPVOID& bits);
+		DX11CaptureDATA* GetDX11CaptureDATA(LPVOID& data);
 		void OnMessagePump();
 		void QueryCopy(ID3D11DeviceContext *context);
 	public:

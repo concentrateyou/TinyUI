@@ -198,7 +198,6 @@ namespace GraphicsCapture
 	BOOL DX11GraphicsCapture::Setup(IDXGISwapChain *swap)
 	{
 		HookDATA* hookDATA = m_dx.GetHookDATA();
-		ASSERT(hookDATA);
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D11Device> device;
 		hRes = swap->GetDevice(__uuidof(ID3D11Device), (void**)&device);
@@ -291,12 +290,12 @@ namespace GraphicsCapture
 							DX11CaptureDATA* pDATA2 = m_captures[nextCopy];
 							ID3D11Texture2D *src = pDATA2->GetTexture2D();
 							ID3D11Texture2D *dst = pDATA2->GetCopy2D();
-							BOOL map = FALSE;
+							BOOL bMap = FALSE;
 							{
 								TinyAutoLock autolock(m_lock);
-								map = m_tls.m_map[nextCopy];
+								bMap = m_tls.m_map[nextCopy];
 							}
-							if (map)
+							if (bMap)
 							{
 								pDATA2->Enter();
 								context->Unmap(dst, 0);
@@ -387,14 +386,14 @@ namespace GraphicsCapture
 		LOG(INFO) << "[DX11GPUHook] OK";
 		return TRUE;
 	}
-	DX11CaptureDATA* DX11GraphicsCapture::GetDX11CaptureDATA(LPVOID& bits)
+	DX11CaptureDATA* DX11GraphicsCapture::GetDX11CaptureDATA(LPVOID& data)
 	{
 		TinyAutoLock autolock(m_lock);
 		DX11CaptureDATA* pDATA = NULL;
 		if (m_tls.m_current < NUM_BUFFERS)
 		{
 			pDATA = m_captures[m_tls.m_current];
-			bits = m_tls.m_bits;
+			data = m_tls.m_data;
 		}
 		return pDATA;
 	}
@@ -461,7 +460,7 @@ namespace GraphicsCapture
 				pDATA->SetF(DX_LOCK_STATE);
 				{
 					TinyAutoLock autolock(m_lock);
-					m_tls.m_bits = map.pData;
+					m_tls.m_data = map.pData;
 					m_tls.m_current = index;
 					m_tls.m_map[index] = TRUE;
 				}
