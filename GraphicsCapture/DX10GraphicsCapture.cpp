@@ -4,9 +4,8 @@
 namespace GraphicsCapture
 {
 	DX10CaptureDATA::DX10CaptureDATA()
-		:m_bLock(FALSE),
-		m_bIssue(FALSE),
-		m_pitch(0)
+		:m_iFlag(0),
+		m_linesize(0)
 	{
 	}
 	DX10CaptureDATA::~DX10CaptureDATA()
@@ -31,7 +30,7 @@ namespace GraphicsCapture
 		hRes = m_copy2D->Map(0, D3D10_MAP_READ, 0, &map);
 		if (FAILED(hRes))
 			return FALSE;
-		m_pitch = map.RowPitch;
+		m_linesize = map.RowPitch;
 		m_copy2D->Unmap(0);
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Width = cx;
@@ -50,13 +49,13 @@ namespace GraphicsCapture
 	}
 	void DX10CaptureDATA::Destory()
 	{
-		if (m_bLock)
+		if (TestF(DX_LOCK_STATE))
 		{
 			LOG(INFO) << "[DX10CaptureDATA] Destory Unmap";
 			m_texture2D->Unmap(0);
-			m_bLock = FALSE;
 		}
-		m_bIssue = FALSE;
+		m_iFlag = FALSE;
+		m_linesize = 0;
 		m_size.SetSize(0, 0);
 		m_copy2D.Release();
 		m_texture2D.Release();
@@ -69,29 +68,21 @@ namespace GraphicsCapture
 	{
 		m_lock.Unlock();
 	}
-	void DX10CaptureDATA::SetIssue(BOOL bIssue)
+	BOOL DX10CaptureDATA::TestF(INT32 val) const
 	{
-		m_bIssue = bIssue;
+		return ((m_iFlag & val) != 0);
 	}
-	BOOL DX10CaptureDATA::IsIssue() const
+	void DX10CaptureDATA::SetF(INT32 val)
 	{
-		return m_bIssue;
+		m_iFlag |= val;
 	}
-	void DX10CaptureDATA::Lock()
+	void DX10CaptureDATA::CrlF(INT32 val)
 	{
-		m_bLock = TRUE;
-	}
-	void DX10CaptureDATA::Unlock()
-	{
-		m_bLock = FALSE;
-	}
-	BOOL DX10CaptureDATA::IsLock() const
-	{
-		return m_bLock;
+		m_iFlag &= ~val;
 	}
 	UINT32 DX10CaptureDATA::GetPitch() const
 	{
-		return m_pitch;
+		return m_linesize;
 	}
 	ID3D10Texture2D* DX10CaptureDATA::GetCopy2D()
 	{
@@ -282,7 +273,7 @@ namespace GraphicsCapture
 							{
 								pDATA2->Enter();
 								dst->Unmap(0);
-								pDATA2->Unlock();
+								pDATA2->CrlF(DX_LOCK_STATE);
 								{
 									TinyAutoLock autolock(m_lock);
 									m_tls.m_map[nextCopy] = FALSE;
@@ -297,7 +288,7 @@ namespace GraphicsCapture
 							{
 								device->CopyResource(dst, src);
 							}
-							pDATA2->SetIssue(TRUE);
+							pDATA2->SetF(DX_ISSUE_STATE);
 						}
 						m_currentCopy = nextCopy;
 					}
@@ -345,14 +336,14 @@ namespace GraphicsCapture
 		for (INT index = 0; index < NUM_BUFFERS; index++)
 		{
 			DX10CaptureDATA* pDATA = m_captures[index];
-			if (!pDATA->IsIssue())
+			if (!pDATA->TestF(DX_ISSUE_STATE))
 				continue;
-			pDATA->SetIssue(FALSE);
+			pDATA->SetF(DX_ISSUE_STATE);
 			D3D10_MAPPED_TEXTURE2D map;
 			hRes = pDATA->GetCopy2D()->Map(0, D3D10_MAP_READ, 0, &map);
 			if (SUCCEEDED(hRes))
 			{
-				pDATA->Lock();
+				pDATA->SetF(DX_LOCK_STATE);
 				{
 					TinyAutoLock autolock(m_lock);
 					m_tls.m_bits = map.pData;

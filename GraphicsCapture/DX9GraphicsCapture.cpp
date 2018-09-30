@@ -187,9 +187,8 @@ namespace GraphicsCapture
 	}
 	//////////////////////////////////////////////////////////////////////////
 	DX9CaptureDATA::DX9CaptureDATA()
-		:m_bLock(FALSE),
-		m_bIssue(FALSE),
-		m_pitch(0)
+		:m_iFlag(0),
+		m_linesize(0)
 	{
 
 	}
@@ -214,7 +213,7 @@ namespace GraphicsCapture
 			LOG(ERROR) << "[DX9CaptureDATA] LockRect FAIL";
 			return FALSE;
 		}
-		m_pitch = lockedRect.Pitch;
+		m_linesize = lockedRect.Pitch;
 		m_copy2D->UnlockRect();
 		hRes = device->CreateRenderTarget(cx, cy, (D3DFORMAT)format, D3DMULTISAMPLE_NONE, 0, FALSE, &m_texture2D, NULL);
 		if (FAILED(hRes))
@@ -232,18 +231,17 @@ namespace GraphicsCapture
 	}
 	void DX9CaptureDATA::Destory()
 	{
-		if (m_bLock)
+		if (TestF(DX_LOCK_STATE))
 		{
 			LOG(INFO) << "[DX9CaptureDATA] Destory UnlockRect";
 			m_texture2D->UnlockRect();
-			m_bLock = FALSE;
 		}
-		m_bIssue = FALSE;
+		m_iFlag = 0;
+		m_linesize = 0;
 		m_size.SetSize(0, 0);
 		m_query.Release();
 		m_copy2D.Release();
 		m_texture2D.Release();
-		m_pitch = 0;
 	}
 	BOOL DX9CaptureDATA::Enter()
 	{
@@ -253,29 +251,21 @@ namespace GraphicsCapture
 	{
 		m_lock.Unlock();
 	}
-	void DX9CaptureDATA::Lock()
+	BOOL DX9CaptureDATA::TestF(INT32 val) const
 	{
-		m_bLock = TRUE;
+		return ((m_iFlag & val) != 0);
 	}
-	void DX9CaptureDATA::Unlock()
+	void DX9CaptureDATA::SetF(INT32 val)
 	{
-		m_bLock = FALSE;
+		m_iFlag |= val;
 	}
-	BOOL DX9CaptureDATA::IsLock() const
+	void DX9CaptureDATA::CrlF(INT32 val)
 	{
-		return m_bLock;
-	}
-	void DX9CaptureDATA::SetIssue(BOOL bIssue)
-	{
-		m_bIssue = bIssue;
-	}
-	BOOL DX9CaptureDATA::IsIssue() const
-	{
-		return m_bIssue;
+		m_iFlag &= ~val;
 	}
 	UINT32 DX9CaptureDATA::GetPitch() const
 	{
-		return m_pitch;
+		return m_linesize;
 	}
 	IDirect3DSurface9*	DX9CaptureDATA::GetTexture2D()
 	{
@@ -389,18 +379,18 @@ namespace GraphicsCapture
 		for (INT32 index = 0; index < NUM_BUFFERS; index++)
 		{
 			DX9CaptureDATA* pDATA = m_captures[index];
-			if (!pDATA->IsIssue())
+			if (!pDATA->TestF(DX_ISSUE_STATE))
 				continue;
 			hRes = pDATA->GetQuery()->GetData(0, 0, 0);
 			if (FAILED(hRes))
 				continue;
-			pDATA->SetIssue(FALSE);
+			pDATA->CrlF(DX_ISSUE_STATE);
 			IDirect3DSurface9 *copy = pDATA->GetCopy2D();
 			D3DLOCKED_RECT s = { 0 };
 			hRes = copy->LockRect(&s, NULL, D3DLOCK_READONLY);
 			if (SUCCEEDED(hRes))
 			{
-				pDATA->Lock();
+				pDATA->SetF(DX_LOCK_STATE);
 				{
 					TinyAutoLock autolock(m_lock);
 					m_tls.m_bits = s.pBits;
@@ -510,7 +500,7 @@ namespace GraphicsCapture
 						{
 							pDATA2->Enter();
 							dst->UnlockRect();
-							pDATA2->Unlock();
+							pDATA2->CrlF(DX_LOCK_STATE);
 							{
 								TinyAutoLock autolock(m_lock);
 								m_tls.m_map[nextCopy] = FALSE;
@@ -519,7 +509,7 @@ namespace GraphicsCapture
 						}
 						d3d->GetRenderTargetData(src, dst);
 						pDATA2->GetQuery()->Issue(D3DISSUE_END);
-						pDATA2->SetIssue(TRUE);
+						pDATA2->SetF(DX_ISSUE_STATE);
 					}
 					m_currentCopy = nextCopy;
 				}

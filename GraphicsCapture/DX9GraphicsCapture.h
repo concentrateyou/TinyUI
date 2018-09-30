@@ -27,20 +27,16 @@ namespace GraphicsCapture
 		void				Destory();
 		BOOL				Enter();
 		void				Leave();
-		void				Lock();
-		void				Unlock();
-		BOOL				IsLock() const;
-		void				SetIssue(BOOL bIssue);
-		BOOL				IsIssue() const;
+		BOOL				TestF(INT32 val) const;
+		void				SetF(INT32 val);
+		void				CrlF(INT32 val);
 		UINT32				GetPitch() const;
 		IDirect3DQuery9*	GetQuery();
 		IDirect3DSurface9*	GetCopy2D();
 		IDirect3DSurface9*	GetTexture2D();
 	private:
 		volatile	INT32				m_iFlag;
-		volatile	BOOL				m_bLock;
-		volatile	BOOL				m_bIssue;
-		UINT32							m_pitch;
+		UINT32							m_linesize;
 		TinySize						m_size;
 		TinyLock						m_lock;
 		TinyComPtr<IDirect3DQuery9>		m_query;

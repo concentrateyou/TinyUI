@@ -13,18 +13,15 @@ namespace GraphicsCapture
 		void				Destory();
 		BOOL				Enter();
 		void				Leave();
-		void				Lock();
-		void				Unlock();
-		BOOL				IsLock() const;
-		void				SetIssue(BOOL bIssue);
-		BOOL				IsIssue() const;
+		BOOL				TestF(INT32 val) const;
+		void				SetF(INT32 val);
+		void				CrlF(INT32 val);
 		UINT32				GetPitch() const;
 		ID3D10Texture2D*	GetCopy2D();
 		ID3D10Texture2D*	GetTexture2D();
 	private:
-		volatile BOOL				m_bLock;
-		volatile BOOL				m_bIssue;
-		UINT32						m_pitch;
+		volatile INT32				m_iFlag;
+		UINT32						m_linesize;
 		TinySize					m_size;
 		TinyLock					m_lock;
 		TinyComPtr<ID3D10Texture2D>	m_copy2D;
