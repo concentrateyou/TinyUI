@@ -54,7 +54,7 @@ namespace GraphicsCapture
 			LOG(INFO) << "[DX10CaptureDATA] Destory Unmap";
 			m_texture2D->Unmap(0);
 		}
-		m_iFlag = FALSE;
+		m_iFlag = 0;
 		m_linesize = 0;
 		m_size.SetSize(0, 0);
 		m_copy2D.Release();
@@ -201,7 +201,7 @@ namespace GraphicsCapture
 		HRESULT hRes = S_OK;
 		if (m_bCapturing && m_dx.m_stop.WaitEvent(0))
 		{
-			LOG(INFO) << "DX10Capture::Render m_stop OK\n";
+			LOG(INFO) << "[Draw] Stop OK\n";
 			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;
@@ -216,7 +216,7 @@ namespace GraphicsCapture
 			HookDATA* hookDATA = m_dx.GetHookDATA();
 			if (m_bCapturing && !m_bActive)
 			{
-				m_bGPU = hookDATA->bCPU;
+				m_bGPU = !hookDATA->bCPU;
 				if (m_bGPU)
 				{
 					m_bActive = DX10GPUHook(device);
@@ -392,7 +392,6 @@ namespace GraphicsCapture
 		if (m_tls.m_current < NUM_BUFFERS)
 		{
 			pDATA = m_captures[m_tls.m_current];
-			LOG(INFO) << "[GetDX10CaptureDATA] m_tls.m_current: " << m_tls.m_current;
 			bits = m_tls.m_bits;
 		}
 		return pDATA;
