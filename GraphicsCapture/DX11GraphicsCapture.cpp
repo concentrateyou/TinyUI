@@ -250,7 +250,7 @@ namespace GraphicsCapture
 					m_bActive = DX11CPUHook(device);
 				}
 			}
-			if (m_bActive)
+			if (m_bActive && g_dx.IsFrameReady(hookDATA->Interval))
 			{
 				TinyComPtr<ID3D11DeviceContext> context;
 				device->GetImmediateContext(&context);
