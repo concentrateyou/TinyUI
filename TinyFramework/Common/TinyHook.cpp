@@ -254,6 +254,91 @@ namespace TinyFramework
 		return !m_bInstall;
 	}
 	//////////////////////////////////////////////////////////////////////////
+
+#if defined(_WIN64)
+	static LPVOID FindLowRegion(LPVOID pAddress, LPVOID pMinAddr, DWORD dwAllocationGranularity)
+	{
+		ULONG_PTR tryAddr = (ULONG_PTR)pAddress;
+		tryAddr -= tryAddr % dwAllocationGranularity;
+		tryAddr -= dwAllocationGranularity;
+
+		while (tryAddr >= (ULONG_PTR)pMinAddr)
+		{
+			MEMORY_BASIC_INFORMATION mbi;
+			if (VirtualQuery((LPVOID)tryAddr, &mbi, sizeof(mbi)) == 0)
+				break;
+			if (mbi.State == MEM_FREE)
+				return (LPVOID)tryAddr;
+			if ((ULONG_PTR)mbi.AllocationBase < dwAllocationGranularity)
+				break;
+			tryAddr = (ULONG_PTR)mbi.AllocationBase - dwAllocationGranularity;
+		}
+		return NULL;
+	}
+	static LPVOID FindHighRegion(LPVOID pAddress, LPVOID pMaxAddr, DWORD dwAllocationGranularity)
+	{
+		ULONG_PTR tryAddr = (ULONG_PTR)pAddress;
+		tryAddr -= tryAddr % dwAllocationGranularity;
+		tryAddr += dwAllocationGranularity;
+		while (tryAddr <= (ULONG_PTR)pMaxAddr)
+		{
+			MEMORY_BASIC_INFORMATION mbi;
+			if (VirtualQuery((LPVOID)tryAddr, &mbi, sizeof(mbi)) == 0)
+				break;
+			if (mbi.State == MEM_FREE)
+				return (LPVOID)tryAddr;
+			tryAddr = (ULONG_PTR)mbi.BaseAddress + mbi.RegionSize;
+			tryAddr += dwAllocationGranularity - 1;
+			tryAddr -= tryAddr % dwAllocationGranularity;
+		}
+		return NULL;
+	}
+#endif
+
+	static LPVOID GetMemory(LPVOID lpSRC)
+	{
+		LPVOID pointer = NULL;
+#if defined(_WIN64)
+		ULONG_PTR minAddr;
+		ULONG_PTR maxAddr;
+		SYSTEM_INFO si;
+		GetSystemInfo(&si);
+		minAddr = (ULONG_PTR)si.lpMinimumApplicationAddress;
+		maxAddr = (ULONG_PTR)si.lpMaximumApplicationAddress;
+		if ((ULONG_PTR)lpSRC > MAX_MEMORY_RANGE && minAddr < (ULONG_PTR)lpSRC - MAX_MEMORY_RANGE)
+			minAddr = (ULONG_PTR)lpSRC - MAX_MEMORY_RANGE;
+		if (maxAddr > (ULONG_PTR)lpSRC + MAX_MEMORY_RANGE)
+			maxAddr = (ULONG_PTR)lpSRC + MAX_MEMORY_RANGE;
+		maxAddr -= MEMORY_BLOCK_SIZE - 1;
+		LPVOID pAlloc = lpSRC;
+		while ((ULONG_PTR)pAlloc >= minAddr)
+		{
+			pAlloc = FindLowRegion(pAlloc, (LPVOID)minAddr, si.dwAllocationGranularity);
+			if (pAlloc == NULL)
+				break;
+			pointer = VirtualAlloc(pAlloc, MEMORY_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+			if (pointer != NULL)
+				break;
+		}
+		if (pointer == NULL)
+		{
+			LPVOID pAlloc = lpSRC;
+			while ((ULONG_PTR)pAlloc <= maxAddr)
+			{
+				pAlloc = FindHighRegion(pAlloc, (LPVOID)maxAddr, si.dwAllocationGranularity);
+				if (pAlloc == NULL)
+					break;
+				pointer = VirtualAlloc(pAlloc, MEMORY_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+				if (pointer != NULL)
+					break;
+			}
+		}
+#else
+		pointer = VirtualAlloc(NULL, MEMORY_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+#endif
+		return pointer;
+	}
+
 	TinyDetour::TinyDetour()
 		:m_lpSRC(NULL),
 		m_lpDST(NULL),
@@ -277,6 +362,7 @@ namespace TinyFramework
 		}
 		return bRes;
 	}
+
 	BOOL TinyDetour::Initialize(LPVOID lpSRC, LPVOID lpDST)
 	{
 		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
@@ -319,7 +405,7 @@ namespace TinyFramework
 			0x00000000
 		};
 #endif
-		m_pTrampoline = VirtualAlloc(NULL, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+		m_pTrampoline = GetMemory(lpSRC);
 		if (!m_pTrampoline)
 		{
 			return FALSE;

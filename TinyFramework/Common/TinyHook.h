@@ -138,6 +138,13 @@ namespace TinyFramework
 		static PVOID        m_pMaximumApplicationAddress;
 	};
 	SELECTANY PVOID TinyIATFunction::m_pMaximumApplicationAddress = NULL;
+#if defined(_WIN64)
+#define MEMORY_SIZE 64
+#else
+#define MEMORY_SIZE 32
+#endif
+#define MEMORY_BLOCK_SIZE	0x1000
+#define MAX_MEMORY_RANGE	0x40000000
 	/// <summary>
 	/// ÄÚÁªHook(²Î¿¼mini hook)
 	/// </summary>

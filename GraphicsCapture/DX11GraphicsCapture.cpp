@@ -54,14 +54,14 @@ namespace GraphicsCapture
 	}
 	void DX11CaptureDATA::Destory()
 	{
-		TinyComPtr<ID3D11Device> device;
-		m_copy2D->GetDevice(&device);
-		TinyComPtr<ID3D11DeviceContext> context;
-		device->GetImmediateContext(&context);
-		ASSERT(context);
 		if (TestF(DX_LOCK_STATE))
 		{
 			LOG(INFO) << "[DX11CaptureDATA] Destory Unmap";
+			TinyComPtr<ID3D11Device> device;
+			m_copy2D->GetDevice(&device);
+			TinyComPtr<ID3D11DeviceContext> context;
+			device->GetImmediateContext(&context);
+			ASSERT(context);
 			context->Unmap(m_copy2D, 0);
 		}
 		m_iFlag = 0;
