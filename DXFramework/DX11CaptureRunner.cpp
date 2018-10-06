@@ -17,7 +17,8 @@ namespace DXFramework
 		inject.resize(MAX_PATH);
 		GetModuleFileName(NULL, &inject[0], MAX_PATH);
 		inject = inject.substr(0, inject.find_last_of("\\", string::npos, 1));
-		inject += ws.bX86 ? "\\Inject32.exe" : "\\Inject64.exe";
+		inject = inject.substr(0, inject.find_last_of("\\", string::npos, 1));
+		inject += ws.bX86 ? "\\Debug\\Inject32.exe" : "\\x64\\Debug\\Inject64.exe";
 		if (!PathFileExists(inject.c_str()))
 			return  FALSE;
 		string dll;

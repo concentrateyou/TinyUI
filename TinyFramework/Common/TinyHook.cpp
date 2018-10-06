@@ -256,46 +256,46 @@ namespace TinyFramework
 	//////////////////////////////////////////////////////////////////////////
 
 #if defined(_WIN64)
-	static LPVOID FindLowRegion(LPVOID pAddress, LPVOID pMinAddr, DWORD dwAllocationGranularity)
+	static LPVOID FindLowRegion(LPVOID pAddress, LPVOID pMin, DWORD dwAllocationGranularity)
 	{
-		ULONG_PTR tryAddr = (ULONG_PTR)pAddress;
-		tryAddr -= tryAddr % dwAllocationGranularity;
-		tryAddr -= dwAllocationGranularity;
+		ULONG_PTR address = (ULONG_PTR)pAddress;
+		address -= address % dwAllocationGranularity;
+		address -= dwAllocationGranularity;
 
-		while (tryAddr >= (ULONG_PTR)pMinAddr)
+		while (address >= (ULONG_PTR)pMin)
 		{
 			MEMORY_BASIC_INFORMATION mbi;
-			if (VirtualQuery((LPVOID)tryAddr, &mbi, sizeof(mbi)) == 0)
+			if (VirtualQuery((LPVOID)address, &mbi, sizeof(mbi)) == 0)
 				break;
 			if (mbi.State == MEM_FREE)
-				return (LPVOID)tryAddr;
+				return (LPVOID)address;
 			if ((ULONG_PTR)mbi.AllocationBase < dwAllocationGranularity)
 				break;
-			tryAddr = (ULONG_PTR)mbi.AllocationBase - dwAllocationGranularity;
+			address = (ULONG_PTR)mbi.AllocationBase - dwAllocationGranularity;
 		}
 		return NULL;
 	}
-	static LPVOID FindHighRegion(LPVOID pAddress, LPVOID pMaxAddr, DWORD dwAllocationGranularity)
+	static LPVOID FindHighRegion(LPVOID pAddress, LPVOID pMax, DWORD dwAllocationGranularity)
 	{
-		ULONG_PTR tryAddr = (ULONG_PTR)pAddress;
-		tryAddr -= tryAddr % dwAllocationGranularity;
-		tryAddr += dwAllocationGranularity;
-		while (tryAddr <= (ULONG_PTR)pMaxAddr)
+		ULONG_PTR address = (ULONG_PTR)pAddress;
+		address -= address % dwAllocationGranularity;
+		address += dwAllocationGranularity;
+		while (address <= (ULONG_PTR)pMax)
 		{
 			MEMORY_BASIC_INFORMATION mbi;
-			if (VirtualQuery((LPVOID)tryAddr, &mbi, sizeof(mbi)) == 0)
+			if (VirtualQuery((LPVOID)address, &mbi, sizeof(mbi)) == 0)
 				break;
 			if (mbi.State == MEM_FREE)
-				return (LPVOID)tryAddr;
-			tryAddr = (ULONG_PTR)mbi.BaseAddress + mbi.RegionSize;
-			tryAddr += dwAllocationGranularity - 1;
-			tryAddr -= tryAddr % dwAllocationGranularity;
+				return (LPVOID)address;
+			address = (ULONG_PTR)mbi.BaseAddress + mbi.RegionSize;
+			address += dwAllocationGranularity - 1;
+			address -= address % dwAllocationGranularity;
 		}
 		return NULL;
 	}
 #endif
 
-	static LPVOID GetMemory(LPVOID lpSRC)
+	static LPVOID GetVirtualMemory(LPVOID lpSRC)
 	{
 		LPVOID pointer = NULL;
 #if defined(_WIN64)
@@ -405,7 +405,7 @@ namespace TinyFramework
 			0x00000000
 		};
 #endif
-		m_pTrampoline = GetMemory(lpSRC);
+		m_pTrampoline = GetVirtualMemory(lpSRC);
 		if (!m_pTrampoline)
 		{
 			return FALSE;
