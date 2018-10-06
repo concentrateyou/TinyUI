@@ -281,7 +281,7 @@ namespace TinyFramework
 	{
 		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
 		{
-			LOG(INFO) << "!IsExecutableAddress: || !IsExecutableAddress FAIL\n";
+			LOG(INFO) << "!IsExecutableAddress: || !IsExecutableAddress FAIL";
 			return FALSE;
 		}
 #if defined(_WIN64)
@@ -319,7 +319,7 @@ namespace TinyFramework
 			0x00000000
 		};
 #endif
-		m_pTrampoline = VirtualAlloc(NULL, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);//64字节足够了
+		m_pTrampoline = VirtualAlloc(NULL, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 		if (!m_pTrampoline)
 		{
 			return FALSE;
@@ -327,6 +327,9 @@ namespace TinyFramework
 		UINT8 srcPos = 0;
 		UINT8 dstPos = 0;
 		ULONG_PTR destJMP = 0;
+#if defined(_WIN64)
+		UINT8     inst[16];
+#endif
 		BOOL bBreak = FALSE;
 		for (;;)
 		{
@@ -359,6 +362,25 @@ namespace TinyFramework
 					bBreak = TRUE;
 					break;
 				}
+#if defined(_WIN64)
+				else if ((hs.modrm & 0xC7) == 0x05)
+				{
+					PUINT32 pRelAddr;
+#ifndef _MSC_VER
+					memcpy(inst, (LPBYTE)src, copySize);
+#else
+					__movsb(inst, (LPBYTE)src, copySize);
+#endif
+					pCopy = inst;
+					pRelAddr = (PUINT32)(inst + hs.len - ((hs.flags & 0x3C) >> 2) - 4);
+					*pRelAddr = (UINT32)((src + hs.len + (INT32)hs.disp.disp32) - (dst + hs.len));
+					if (hs.opcode == 0xFF && hs.modrm_reg == 4)
+					{
+						bBreak = TRUE;
+						break;
+					}
+				}
+#endif
 				if (hs.opcode == 0xE8)	//CALL
 				{
 					ULONG_PTR dest = src + hs.len + (INT32)hs.imm.imm32;
@@ -415,7 +437,7 @@ namespace TinyFramework
 					else if ((hs.opcode & 0xFC) == 0xE0)
 					{
 						// LOOPNZ/LOOPZ/LOOP/JCXZ/JECXZ 不支持
-						LOG(INFO) << "LOOPNZ/LOOPZ/LOOP/JCXZ/JECXZ 不支持\n";
+						LOG(INFO) << "LOOPNZ/LOOPZ/LOOP/JCXZ/JECXZ 不支持";
 						return FALSE;
 					}
 					else
@@ -442,7 +464,7 @@ namespace TinyFramework
 					break;
 				}
 			} while (0);
-			if (dst < destJMP && copySize != hs.len)
+			if (src < destJMP && copySize != hs.len)
 			{
 				return FALSE;
 			}
@@ -470,6 +492,7 @@ namespace TinyFramework
 			{
 				return FALSE;
 			}
+			m_bAbove = TRUE;
 			memcpy(m_backup, (LPBYTE)m_lpSRC - sizeof(JMP_REL), sizeof(JMP_REL) + sizeof(JMP_REL_SHORT));
 		}
 		else
@@ -499,7 +522,7 @@ namespace TinyFramework
 		{
 			pSRC -= sizeof(JMP_REL);
 			size += sizeof(JMP_REL_SHORT);
-	}
+		}
 		DWORD dwOldProtect = 0;
 		if (!VirtualProtect(pSRC, size, PAGE_EXECUTE_READWRITE, &dwOldProtect))
 			return FALSE;

@@ -318,7 +318,7 @@ namespace GraphicsCapture
 		{
 			return FALSE;
 		}
-		ULONG *vtable = *(ULONG**)d3dDevice.Ptr();
+		ULONG_PTR *vtable = *(ULONG_PTR**)d3dDevice.Ptr();
 		if (m_dX8EndScene.Initialize((FARPROC)*(vtable + 35), (FARPROC)DX8EndScene))
 		{
 			if (m_dX8EndScene.BeginDetour())

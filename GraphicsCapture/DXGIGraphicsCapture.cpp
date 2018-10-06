@@ -125,7 +125,7 @@ namespace GraphicsCapture
 	HOOK_OK:
 		if (swap != NULL)
 		{
-			ULONG *vtable = *(ULONG**)swap.Ptr();
+			ULONG_PTR *vtable = *(ULONG_PTR**)swap.Ptr();
 			if (!m_present.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DX_DXGISwapPresent))
 				return FALSE;
 			if (!m_resize.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DX_DXGISwapResizeBuffers))

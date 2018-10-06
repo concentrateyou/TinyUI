@@ -363,7 +363,7 @@ namespace GraphicsCapture
 			LOG(ERROR) << "Call CreateDeviceEx FAIL";
 			return FALSE;
 		}
-		ULONG *vtable = *(ULONG**)d3dDevice.Ptr();
+		ULONG_PTR *vtable = *(ULONG_PTR**)d3dDevice.Ptr();
 		if (m_dX9EndScene.Initialize((FARPROC)*(vtable + 42), (FARPROC)DX9EndScene))
 		{
 			if (m_dX9EndScene.BeginDetour())
