@@ -14,7 +14,6 @@ namespace MediaSDK
 	public:
 		void			SetCompatible(BOOL bCompatibility);
 		void			Select(const TinyString& className, const TinyString& exeName);
-		DX11Image2D&	GetCursor();
 	public:
 		BOOL			Open() OVERRIDE;
 		BOOL			Tick(INT64& timestamp) OVERRIDE;

@@ -83,6 +83,10 @@ namespace MediaSDK
 			return FALSE;
 		SIZE size = { m_cursor2D.GetSize().x,m_cursor2D.GetSize().y };
 		HICON hICON = CopyIcon(ci.hCursor);
+		ICONINFO ii;
+		ZeroMemory(&ii, sizeof(ii));
+		if (!GetIconInfo(hICON, &ii))
+			return FALSE;
 		BOOL bRes = m_cursor2D.UpdateCursor(m_dx11, hICON, size);
 		DestroyIcon(hICON);
 		hICON = NULL;
@@ -91,6 +95,8 @@ namespace MediaSDK
 		m_cursor2D.SetRotate(m_visual2D.GetRotate());
 		m_cursor2D.SetScale(m_visual2D.GetScale());
 		POINT pos = ci.ptScreenPos;
+		pos.x -= static_cast<LONG>(ii.xHotspot);
+		pos.y -= static_cast<LONG>(ii.yHotspot);
 		XMFLOAT2 scale = m_visual2D.GetScale();
 		XMFLOAT2 translate = m_visual2D.GetTranslate();
 		m_cursor2D.SetTranslate(XMFLOAT2(translate.x + static_cast<FLOAT>(pos.x) * scale.x, translate.y + static_cast<FLOAT>(pos.y) * scale.y));
