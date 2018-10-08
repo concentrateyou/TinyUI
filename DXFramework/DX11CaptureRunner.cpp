@@ -19,10 +19,11 @@ namespace DXFramework
 	{
 
 	}
-	void DX11CaptureRunner::SetConfig(const TinyString& className, const TinyString& exeName)
+	void DX11CaptureRunner::SetConfig(const TinyString& className, const TinyString& exeName, Closure&& callback)
 	{
 		m_szClass = std::move(className);
 		m_szEXE = std::move(exeName);
+		m_callback = std::move(callback);
 	}
 	void DX11CaptureRunner::SetInterval(UINT64 interval)
 	{
@@ -142,6 +143,10 @@ namespace DXFramework
 				{
 					return FALSE;
 				}
+				if (!m_callback.IsNull())
+				{
+					m_callback();
+				}
 				break;
 			}
 			if (hookDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
@@ -150,6 +155,10 @@ namespace DXFramework
 				if (!m_image2D.Create(*m_pDX11, hookDATA->Size.cx, hookDATA->Size.cy, (DXGI_FORMAT)hookDATA->Format, NULL, FALSE))
 				{
 					return FALSE;
+				}
+				if (!m_callback.IsNull())
+				{
+					m_callback();
 				}
 				break;
 			}

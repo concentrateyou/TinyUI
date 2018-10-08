@@ -27,6 +27,7 @@ namespace MediaSDK
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
+		void			UpdateRectangle(const XMFLOAT2& pos, const XMFLOAT2& size);
 		static BOOL CALLBACK	EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
 		BOOL			m_bCompatibility;

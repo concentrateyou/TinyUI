@@ -54,7 +54,13 @@ namespace MediaSDK
 		StrCpy(m_target.className, className.STR());
 		StrCpy(m_target.exeName, exeName.STR());
 	}
-
+	void WindowVisual2D::UpdateRectangle(const XMFLOAT2& pos, const XMFLOAT2& size)
+	{
+		TinyRectangle s;
+		s.SetRect(TinyPoint(static_cast<LONG>(pos.x), static_cast<LONG>(pos.y)), TinySize(static_cast<LONG>(size.x), static_cast<LONG>(size.y)));
+		SetTrackerRect(s);
+		OnChangedRect(&s);
+	}
 	BOOL WindowVisual2D::Open()
 	{
 		Close();
@@ -84,6 +90,7 @@ namespace MediaSDK
 		}
 		if (!m_visual2D.Create(m_dx11, m_size.cx, m_size.cy))
 			goto _ERROR;
+		UpdateRectangle(m_visual2D.GetTranslate(), m_visual2D.GetSize());
 		CURSORINFO ci;
 		ZeroMemory(&ci, sizeof(ci));
 		ci.cbSize = sizeof(ci);
@@ -112,6 +119,7 @@ namespace MediaSDK
 			m_visual2D.Destory();
 			if (!m_visual2D.Create(m_dx11, m_size.cx, m_size.cy, DXGI_FORMAT_B8G8R8A8_UNORM))
 				return FALSE;
+			UpdateRectangle(m_visual2D.GetTranslate(), m_visual2D.GetSize());
 		}
 		HDC hDC = GetDC(m_target.hWND);
 		if (hDC != NULL)

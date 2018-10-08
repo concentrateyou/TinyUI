@@ -346,12 +346,6 @@ namespace Bytedance
 		WindowVisual2D*	visual2D = new WindowVisual2D(m_controller.GetVideoWorker().GetDX11());
 		visual2D->Select("Direct3DWindowClass", "BasicHLSL10.exe");
 		visual2D->Open();
-		TinyRectangle client;
-		::GetClientRect(m_view.Handle(), &client);
-		XMFLOAT2 size = visual2D->GetSize();
-		visual2D->SetTranslate(XMFLOAT2(0.0F, 0.0F));
-		visual2D->SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(client)) / size.x, static_cast<FLOAT>(TO_CY(client)) / size.y));
-		visual2D->SetTrackerRect(client);
 		m_controller.GetVideoWorker().Add(visual2D);
 	}
 }

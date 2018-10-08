@@ -14,9 +14,20 @@ namespace MediaSDK
 	}
 	void GameVisual2D::Select(const TinyString& className, const TinyString& exeName, FLOAT fFPS)
 	{
-		m_captureRunner.SetConfig(className, exeName);
+		m_captureRunner.SetConfig(className, exeName, BindCallback(&GameVisual2D::OnCallback, this));
 		UINT64 interval = static_cast<UINT64>(1000000000ULL / (fFPS * 2));
 		m_captureRunner.SetInterval(interval);
+	}
+	void GameVisual2D::OnCallback()
+	{
+		UpdateRectangle(m_visual2D.GetTranslate(), m_visual2D.GetSize());
+	}
+	void GameVisual2D::UpdateRectangle(const XMFLOAT2& pos, const XMFLOAT2& size)
+	{
+		TinyRectangle s;
+		s.SetRect(TinyPoint(static_cast<LONG>(pos.x), static_cast<LONG>(pos.y)), TinySize(static_cast<LONG>(size.x), static_cast<LONG>(size.y)));
+		SetTrackerRect(s);
+		OnChangedRect(&s);
 	}
 	XMFLOAT2 GameVisual2D::GetTranslate()
 	{

@@ -81,7 +81,7 @@ namespace MediaSDK
 		ci.cbSize = sizeof(ci);
 		if (!GetCursorInfo(&ci))
 			return FALSE;
-		SIZE size = { m_cursor2D.GetSize().x,m_cursor2D.GetSize().y };
+		TinySize size(static_cast<LONG>(m_cursor2D.GetSize().x), static_cast<LONG>(m_cursor2D.GetSize().y));
 		HICON hICON = CopyIcon(ci.hCursor);
 		ICONINFO ii;
 		ZeroMemory(&ii, sizeof(ii));
@@ -108,7 +108,15 @@ namespace MediaSDK
 		m_dx11.AllowBlend(TRUE, blendFactor);
 		if (g.DrawImage(m_visual2D))
 		{
-			return g.DrawImage(m_cursor2D);
+			CURSORINFO ci;
+			ZeroMemory(&ci, sizeof(ci));
+			ci.cbSize = sizeof(ci);
+			if (!GetCursorInfo(&ci))
+				return FALSE;
+			if (ci.flags & CURSOR_SHOWING)
+			{
+				return g.DrawImage(m_cursor2D);
+			}
 		}
 		return FALSE;
 	}

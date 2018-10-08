@@ -24,6 +24,9 @@ namespace MediaSDK
 		void				SetScale(const XMFLOAT2& pos) OVERRIDE;
 		void				SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 	private:
+		void				UpdateRectangle(const XMFLOAT2& pos, const XMFLOAT2& size);
+		void				OnCallback();
+	private:
 		DX11&				m_dx11;
 		DX11Image2D			m_visual2D;
 		DX11CaptureRunner	m_captureRunner;

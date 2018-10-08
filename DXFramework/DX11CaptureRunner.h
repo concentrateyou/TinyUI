@@ -12,7 +12,7 @@ namespace DXFramework
 	public:
 		DX11CaptureRunner(DX11* pDX11, DX11Image2D& image);
 		virtual ~DX11CaptureRunner();
-		void					SetConfig(const TinyString& className, const TinyString& exeName);
+		void					SetConfig(const TinyString& className, const TinyString& exeName, Closure&& callback);
 		void					SetInterval(UINT64 interval);
 		void					SetFocusCPU(BOOL bFocusCPU);
 		HookDATA*				GetHookDATA();
@@ -53,6 +53,7 @@ namespace DXFramework
 		TinyString				m_szEXE;
 		TinySharedMemory		m_hookDATA;
 		TinySharedMemory		m_textureDATA;
+		Closure					m_callback;
 	};
 }
 
