@@ -75,14 +75,6 @@ namespace MediaSDK
 
 	BOOL StreamVisual2D::Tick(INT64& timestamp)
 	{
-		/*TinyAutoLock autolock(m_lock);
-		DWORD dwSize = m_ringBuffer.Read(m_buffer, 1);
-		if (dwSize > 0)
-		{
-			if (!m_visual2D.Copy(m_dx11, m_buffer, m_linesize))
-				return FALSE;
-			return TRUE;
-		}*/
 		return TRUE;
 	}
 	BOOL StreamVisual2D::Draw(DX11Graphics2D& g)

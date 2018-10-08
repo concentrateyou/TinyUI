@@ -16,28 +16,32 @@ namespace DXFramework
 
 	BOOL DX11Cursor2D::GetCursor(HICON hICON, SIZE& size)
 	{
+		BOOL bRes = TRUE;
 		BITMAP bitmap;
 		ICONINFO ii;
 		ZeroMemory(&ii, sizeof(ii));
 		if (!GetIconInfo(hICON, &ii))
+		{
+			bRes = FALSE;
 			goto _ERROR;
+		}
 		if (!::GetObject(ii.hbmMask, sizeof(bitmap), &bitmap))
+		{
+			bRes = FALSE;
 			goto _ERROR;
+		}
 		size.cx = bitmap.bmWidth;
 		size.cy = bitmap.bmHeight / (ii.hbmColor ? 1 : 2);
-		SAFE_DELETE_OBJECT(ii.hbmColor);
-		SAFE_DELETE_OBJECT(ii.hbmMask);
-		return TRUE;
 	_ERROR:
 		SAFE_DELETE_OBJECT(ii.hbmColor);
 		SAFE_DELETE_OBJECT(ii.hbmMask);
-		return FALSE;
+		return bRes;
 	}
 	BOOL DX11Cursor2D::AlphaPixels(const UINT32* pixels, UINT32 count)
 	{
 		for (const UINT32* ps = pixels + count; pixels != ps; ++pixels)
 		{
-			if ((*pixels & 0xff000000) != 0)
+			if ((*pixels & 0xFF000000) != 0)
 				return TRUE;
 		}
 		return FALSE;

@@ -10,7 +10,7 @@ namespace MediaSDK
 	public:
 		GameVisual2D(DX11& dx11);
 		virtual ~GameVisual2D();
-		void				Select(const TinyString& className, const TinyString& exeName);
+		void				Select(const TinyString& className, const TinyString& exeName, FLOAT fFPS = 30.0F);
 	public:
 		BOOL				Open() OVERRIDE;
 		BOOL				Tick(INT64& timestamp) OVERRIDE;
@@ -27,7 +27,7 @@ namespace MediaSDK
 		DX11&				m_dx11;
 		DX11Image2D			m_visual2D;
 		DX11CaptureRunner	m_captureRunner;
-		TinyString			m_szname;
+		TinyString			m_szNAME;
 	};
 }
 

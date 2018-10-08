@@ -126,6 +126,9 @@
     <ClInclude Include="VideoWorker.h">
       <Filter>头文件\Video</Filter>
     </ClInclude>
+    <ClInclude Include="WindowVisual2D.h">
+      <Filter>头文件\Visual</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -214,6 +217,9 @@
     </ClCompile>
     <ClCompile Include="VideoWorker.cpp">
       <Filter>源文件\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowVisual2D.cpp">
+      <Filter>源文件\Visual</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

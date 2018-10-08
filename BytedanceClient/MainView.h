@@ -34,6 +34,7 @@
 #include "MonitorVisual2D.h"
 #include "GameVisual2D.h"
 #include "StreamVisual2D.h"
+#include "WindowVisual2D.h"
 
 #include "FLVParser.h"
 
@@ -72,6 +73,7 @@ namespace Bytedance
 		void OnCameraClick(TinyVisual*, EventArgs& args);
 		void OnImageClick(TinyVisual*, EventArgs& args);
 		void OnMediaClick(TinyVisual*, EventArgs& args);
+		void OnWindowClick(TinyVisual*, EventArgs& args);
 	private:
 		//UI元素
 		//标题栏
@@ -88,6 +90,7 @@ namespace Bytedance
 		TinyVisualButton*		m_camera;//摄像头
 		TinyVisualButton*		m_image;//图片
 		TinyVisualButton*		m_media;//多媒体
+		TinyVisualButton*		m_window;//窗口
 	private:
 		CanvasView				m_view;
 		CanvasController		m_controller;

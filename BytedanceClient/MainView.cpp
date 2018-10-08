@@ -153,6 +153,18 @@ namespace Bytedance
 		m_media->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
 		m_media->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMediaClick);
 
+		m_window = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
+		ASSERT(m_window);
+		m_window->SetName("btnWindow");
+		m_window->SetText("´°¿Ú²¶»ñ");
+		m_window->SetSize(TinySize(69, 23));
+		m_window->SetTextColor(RGB(0, 0, 0));
+		m_window->SetTextAlian(DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+		m_window->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["btn_normal"]);
+		m_window->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["btn_highlight"]);
+		m_window->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["btn_down"]);
+		m_window->EVENT_CLICK += Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnWindowClick);
+
 		m_native = static_cast<TinyVisualNative*>(m_document.Create(TinyVisualTag::NATIVE, window));
 		ASSERT(m_native);
 		m_native->SetName("native");
@@ -184,6 +196,7 @@ namespace Bytedance
 			m_camera->SetPosition({ 168,550 });
 			m_image->SetPosition({ 248,550 });
 			m_media->SetPosition({ 328,550 });
+			m_window->SetPosition({ 408,550 });
 
 			if (IsWindow(m_view))
 			{
@@ -319,6 +332,19 @@ namespace Bytedance
 	{
 		ImageVisual2D*	visual2D = new ImageVisual2D(m_controller.GetVideoWorker().GetDX11());
 		visual2D->SetFile("D:\\timg.jpg");
+		visual2D->Open();
+		TinyRectangle client;
+		::GetClientRect(m_view.Handle(), &client);
+		XMFLOAT2 size = visual2D->GetSize();
+		visual2D->SetTranslate(XMFLOAT2(0.0F, 0.0F));
+		visual2D->SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(client)) / size.x, static_cast<FLOAT>(TO_CY(client)) / size.y));
+		visual2D->SetTrackerRect(client);
+		m_controller.GetVideoWorker().Add(visual2D);
+	}
+	void MainView::OnWindowClick(TinyVisual*, EventArgs& args)
+	{
+		WindowVisual2D*	visual2D = new WindowVisual2D(m_controller.GetVideoWorker().GetDX11());
+		visual2D->Select("Direct3DWindowClass", "BasicHLSL10.exe");
 		visual2D->Open();
 		TinyRectangle client;
 		::GetClientRect(m_view.Handle(), &client);

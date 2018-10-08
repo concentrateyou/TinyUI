@@ -12,10 +12,10 @@ namespace MediaSDK
 	GameVisual2D::~GameVisual2D()
 	{
 	}
-	void GameVisual2D::Select(const TinyString& className, const TinyString& exeName)
+	void GameVisual2D::Select(const TinyString& className, const TinyString& exeName, FLOAT fFPS)
 	{
 		m_captureRunner.SetConfig(className, exeName);
-		UINT64 interval = 1000000000ULL / 60;
+		UINT64 interval = 1000000000ULL / (fFPS * 2);
 		m_captureRunner.SetInterval(interval);
 	}
 	XMFLOAT2 GameVisual2D::GetTranslate()
@@ -32,7 +32,7 @@ namespace MediaSDK
 	}
 	void GameVisual2D::SetName(LPCSTR pzName)
 	{
-		m_szname = pzName;
+		m_szNAME = pzName;
 	}
 	void GameVisual2D::SetScale(const XMFLOAT2& pos)
 	{
@@ -44,7 +44,7 @@ namespace MediaSDK
 	}
 	PCSTR GameVisual2D::GetName()
 	{
-		return m_szname.CSTR();
+		return m_szNAME.CSTR();
 	}
 	BOOL GameVisual2D::Open()
 	{

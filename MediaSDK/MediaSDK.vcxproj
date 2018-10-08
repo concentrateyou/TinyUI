@@ -165,6 +165,7 @@
     <ClInclude Include="WASAPIAudioOutputStream.h" />
     <ClInclude Include="WaveAudioInputStream.h" />
     <ClInclude Include="WaveAudioOutputStream.h" />
+    <ClInclude Include="WindowVisual2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
@@ -201,6 +202,7 @@
     <ClCompile Include="WASAPIAudioOutputStream.cpp" />
     <ClCompile Include="WaveAudioInputStream.cpp" />
     <ClCompile Include="WaveAudioOutputStream.cpp" />
+    <ClCompile Include="WindowVisual2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LAVPlayer\LAVPlayer.vcxproj">

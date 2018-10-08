@@ -42,10 +42,6 @@ namespace MediaSDK
 	{
 		m_visual2D.SetScale(pos);
 	}
-	DX11Image2D& MonitorVisual2D::GetCursor()
-	{
-		return m_cursor2D;
-	}
 	UINT MonitorVisual2D::GetOutputCount() const
 	{
 		return m_duplicator.GetOutputCount(m_dx11);
@@ -114,6 +110,7 @@ namespace MediaSDK
 	{
 		m_duplicator.Close();
 		m_visual2D.Destory();
+		m_cursor2D.Destory();
 	}
 	LPCSTR	MonitorVisual2D::GetName()
 	{
