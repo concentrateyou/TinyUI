@@ -13,7 +13,7 @@ namespace DXFramework
 	{
 		return m_texture2D;
 	}
-	BOOL DX10Texture2D::Create(DX10& dx10, INT cx, INT cy)
+	BOOL DX10Texture2D::Create(DX10& dx10, INT cx, INT cy, DXGI_FORMAT dxgiFormat)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -23,7 +23,7 @@ namespace DXFramework
 		desc.Height = cy;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
-		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.Format = dxgiFormat;
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.BindFlags = D3D10_BIND_SHADER_RESOURCE | D3D10_BIND_RENDER_TARGET;
@@ -88,7 +88,7 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
-	BOOL DX10Texture2D::Create(DX10& dx10, INT cx, INT cy, const BYTE* bits, BOOL bReadoly)
+	BOOL DX10Texture2D::Create(DX10& dx10, INT cx, INT cy, DXGI_FORMAT dxgiFormat, const BYTE* bits, BOOL bReadoly)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -98,7 +98,7 @@ namespace DXFramework
 		desc.Height = cy;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
-		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.Format = dxgiFormat;
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.BindFlags = bReadoly ? 0 : D3D10_BIND_SHADER_RESOURCE;
@@ -158,13 +158,20 @@ namespace DXFramework
 	}
 	BOOL DX10Texture2D::Map(D3D10_MAPPED_TEXTURE2D& ms, BOOL bReadoly)
 	{
-		HRESULT hRes = m_texture2D->Map(D3D10CalcSubresource(0, 0, 1), bReadoly ? D3D10_MAP_READ : D3D10_MAP_WRITE_DISCARD, 0, &ms);
-		return SUCCEEDED(hRes);
+		if (m_texture2D != NULL)
+		{
+			HRESULT hRes = m_texture2D->Map(D3D10CalcSubresource(0, 0, 1), bReadoly ? D3D10_MAP_READ : D3D10_MAP_WRITE_DISCARD, 0, &ms);
+			return SUCCEEDED(hRes);
+		}
+		return FALSE;
 	}
 	void DX10Texture2D::Unmap()
 	{
-		ASSERT(m_texture2D);
-		m_texture2D->Unmap(0);
+		if (m_texture2D != NULL)
+		{
+			m_texture2D->Unmap(0);
+		}
+
 	}
 	BOOL DX10Texture2D::SaveAs(DX10& dx10, const CHAR* pzFile, IMAGE_FILE_FORMAT format)
 	{

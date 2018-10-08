@@ -3,47 +3,6 @@
 
 namespace DXFramework
 {
-	GameInject::GameInject()
-	{
-
-	}
-	GameInject::~GameInject()
-	{
-
-	}
-	BOOL GameInject::Open(const WNDINFO& ws, BOOL anticheat)
-	{
-		string inject;
-		inject.resize(MAX_PATH);
-		GetModuleFileName(NULL, &inject[0], MAX_PATH);
-		inject = inject.substr(0, inject.find_last_of("\\", string::npos, 1));
-		inject = inject.substr(0, inject.find_last_of("\\", string::npos, 1));
-		inject += ws.bX86 ? "\\Debug\\Inject32.exe" : "\\x64\\Debug\\Inject64.exe";
-		if (!PathFileExists(inject.c_str()))
-			return  FALSE;
-		string dll;
-		dll = ws.bX86 ? "GameDetour32.dll" : "GameDetour64.dll";
-		vector<string> args;
-		args.push_back(dll);
-		args.push_back(std::to_string(anticheat));
-		args.push_back(std::to_string(ws.dwTID));
-		args.push_back(std::to_string(ws.dwPID));
-		if (!m_process.Create(inject, args))
-			return FALSE;
-		return TRUE;
-	}
-	BOOL GameInject::Wait(DWORD dwMS)
-	{
-		return m_process.Wait(dwMS);
-	}
-	BOOL GameInject::Close()
-	{
-		DWORD exit = 0;
-		::GetExitCodeProcess(m_process, &exit);
-		m_process.Close();
-		return exit == 0;
-	}
-	//////////////////////////////////////////////////////////////////////////
 	DX11CaptureRunner::DX11CaptureRunner(DX11* pDX11, DX11Image2D& image)
 		: m_bCapturing(FALSE),
 		m_bActive(FALSE),

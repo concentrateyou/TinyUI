@@ -23,8 +23,8 @@ namespace DXFramework
 	public:
 		BOOL		Create(DX10& dx10, D3D10_TEXTURE2D_DESC& desc) OVERRIDE;
 		BOOL		Create(DX10& dx10, ID3D10Texture2D* texture2D) OVERRIDE;
-		BOOL		Create(DX10& dx10, INT cx, INT cy, const BYTE* bits, BOOL bReadoly) OVERRIDE;
-		BOOL		Create(DX10& dx10, INT cx, INT cy) OVERRIDE;
+		BOOL		Create(DX10& dx10, INT cx, INT cy, DXGI_FORMAT dxgiFormat, const BYTE* bits, BOOL bReadoly) OVERRIDE;
+		BOOL		Create(DX10& dx10, INT cx, INT cy, DXGI_FORMAT dxgiFormat = DXGI_FORMAT_B8G8R8A8_UNORM) OVERRIDE;
 		BOOL		Load(DX10& dx10, const BYTE* bits, LONG dwSize) OVERRIDE;
 		BOOL		Load(DX10& dx10, HANDLE hResource) OVERRIDE;
 		BOOL		Load(DX10& dx10, const CHAR* pzFile) OVERRIDE;

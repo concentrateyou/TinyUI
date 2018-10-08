@@ -18,8 +18,8 @@ namespace DXFramework
 	public:
 		virtual BOOL Create(DX10& dx10, D3D10_TEXTURE2D_DESC& desc);
 		virtual BOOL Create(DX10& dx10, ID3D10Texture2D* texture2D);
-		virtual BOOL Create(DX10& dx10, INT cx, INT cy, const BYTE* bits, BOOL bReadoly);//B8G8R8A8
-		virtual BOOL Create(DX10& dx10, INT cx, INT cy);//B8G8R8A8
+		virtual BOOL Create(DX10& dx10, INT cx, INT cy, DXGI_FORMAT dxgiFormat, const BYTE* bits, BOOL bReadoly);//B8G8R8A8
+		virtual BOOL Create(DX10& dx10, INT cx, INT cy, DXGI_FORMAT dxgiFormat = DXGI_FORMAT_B8G8R8A8_UNORM);//B8G8R8A8
 		virtual BOOL Load(DX10& dx10, const BYTE* bits, LONG size);
 		virtual BOOL Load(DX10& dx10, HANDLE hResource);
 		virtual BOOL Load(DX10& dx10, const CHAR* pzFile);

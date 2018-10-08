@@ -139,6 +139,19 @@ namespace DXFramework
 	}TextureDATA;
 #pragma pack(pop)
 
+	class GameInject
+	{
+		DISALLOW_COPY_AND_ASSIGN(GameInject)
+	public:
+		GameInject();
+		~GameInject();
+		BOOL Open(const WNDINFO& ws, BOOL anticheat);
+		BOOL Wait(DWORD dwMS);
+		BOOL Close();
+	private:
+		TinyProcess	m_process;
+	};
+
 	void WINAPI CHARFORMAT2LOGFONT(const CHARFORMAT& cf, LOGFONT& lf, COLORREF& color);
 	void WINAPI LOGFONT2CHARFORMAT(const LOGFONT& lf, CHARFORMAT& cf, const COLORREF& color);
 	Gdiplus::RectF WINAPI MeasureString(const wstring& str, const Gdiplus::Font* font);
@@ -146,6 +159,5 @@ namespace DXFramework
 
 	BOOL WINAPI ProcessExists(const TinyString& exeName, PROCESSINFO& ps);
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
-	//BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 	BOOL WINAPI InjectLibrarySafe(DWORD threadID, const CHAR *pszDLL);
 }

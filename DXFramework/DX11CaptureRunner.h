@@ -6,21 +6,9 @@ using namespace TinyFramework::IO;
 
 namespace DXFramework
 {
-	class GameInject
-	{
-		DISALLOW_COPY_AND_ASSIGN(GameInject)
-	public:
-		GameInject();
-		~GameInject();
-		BOOL Open(const WNDINFO& ws, BOOL anticheat);
-		BOOL Wait(DWORD dwMS);
-		BOOL Close();
-	private:
-		TinyProcess	m_process;
-	};
-
 	class DX11CaptureRunner
 	{
+		DISALLOW_COPY_AND_ASSIGN(DX11CaptureRunner)
 	public:
 		DX11CaptureRunner(DX11* pDX11, DX11Image2D& image);
 		virtual ~DX11CaptureRunner();

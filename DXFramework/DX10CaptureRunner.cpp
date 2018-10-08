@@ -3,104 +3,69 @@
 
 namespace DXFramework
 {
-	DX10CaptureRunner::DX10CaptureRunner(DX10& dx10, DX10Image2D& image)
-		:m_bCapturing(FALSE),
-		m_dx10(dx10),
-		m_image(image)
+	DX10CaptureRunner::DX10CaptureRunner(DX10* pDX10, DX10Image2D& image)
+		: m_bCapturing(FALSE),
+		m_bActive(FALSE),
+		m_pDX10(pDX10),
+		m_image2D(image),
+		m_interval(0)
 	{
-		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
-		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
+		m_mutes[0].Create(FALSE, MUTEX_TEXTURE1, NULL);
+		m_mutes[1].Create(FALSE, MUTEX_TEXTURE2, NULL);
+		m_textures[0] = m_textures[1] = NULL;
+		ZeroMemory(&m_target, sizeof(m_target));
 	}
 	DX10CaptureRunner::~DX10CaptureRunner()
 	{
 
 	}
-	void DX10CaptureRunner::SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	void DX10CaptureRunner::SetConfig(const TinyString& className, const TinyString& exeName)
 	{
-		m_className = std::move(className);
-		m_exeName = std::move(exeName);
-		m_dllName = std::move(dllName);
+		m_szClass = std::move(className);
+		m_szEXE = std::move(exeName);
 	}
-	BOOL DX10CaptureRunner::Submit()
+	void DX10CaptureRunner::SetInterval(UINT64 interval)
 	{
-		return TinyThread::Submit(BindCallback(&DX10CaptureRunner::OnMessagePump, this));
+		m_interval = interval;
 	}
-	BOOL DX10CaptureRunner::Close(DWORD dwMS)
+	void DX10CaptureRunner::SetFocusCPU(BOOL bFocusCPU)
 	{
-		m_close.SetEvent();
-		return TinyThread::Close(dwMS);
+		m_bFocusCPU = bFocusCPU;
 	}
 	BOOL DX10CaptureRunner::OpenEvents()
 	{
-		string name = std::move(StringPrintf("%s%d", EVENT_CAPTURE_START, m_targetWND.dwPID));
-		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_START, m_target.dwPID).c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", EVENT_CAPTURE_STOP, m_targetWND.dwPID));
-		if (!m_stop.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		if (!m_stop.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_STOP, m_target.dwPID).c_str()))
 		{
 			return FALSE;
 		}
-		name = std::move(StringPrintf("%s%d", EVENT_HOOK_TARGET_READY, m_targetWND.dwPID));
-		if (!m_ready.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		if (!m_targetReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_HOOK_TARGET_READY, m_target.dwPID).c_str()))
 		{
 			return FALSE;
 		}
-		return TRUE;
-	}
-	BOOL DX10CaptureRunner::CreateEvents()
-	{
-		string name = std::move(StringPrintf("%s%d", EVENT_CAPTURE_START, m_targetWND.dwPID));
-		if (!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
-		{
-			return FALSE;
-		}
-		name = std::move(StringPrintf("%s%d", EVENT_CAPTURE_STOP, m_targetWND.dwPID));
-		if (!m_stop.CreateEvent(FALSE, FALSE, name.c_str()))
-		{
-			return FALSE;
-		}
-		name = std::move(StringPrintf("%s%d", EVENT_HOOK_TARGET_READY, m_targetWND.dwPID));
-		if (!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
+		if (!m_sourceReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_HOOK_SOURCE_READY, m_target.dwPID).c_str()))
 		{
 			return FALSE;
 		}
 		return TRUE;
 	}
+
 	void DX10CaptureRunner::CloseEvents()
 	{
 		m_start.Close();
 		m_stop.Close();
-		m_ready.Close();
-		m_exit.Close();
+		m_targetReady.Close();
+		m_sourceReady.Close();
 	}
 	HookDATA* DX10CaptureRunner::GetHookDATA()
 	{
-		if (!m_hookDATA.Address())
-		{
-			if (!m_hookDATA.Open(SHAREDCAPTURE_MEMORY, FALSE))
-				return NULL;
-			if (!m_hookDATA.Map(0, sizeof(HookDATA)))
-				return NULL;
-		}
-		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
-		return pDATA;
+		return reinterpret_cast<HookDATA*>(m_hookDATA.Address());
 	}
-	TextureDATA* DX10CaptureRunner::GetTextureDATA(DWORD dwSize)
+	TextureDATA* DX10CaptureRunner::GetTextureDATA()
 	{
-		if (m_textureDATA.GetSize() != dwSize)
-		{
-			m_textureDATA.Unmap();
-			m_textureDATA.Close();
-		}
-		if (!m_textureDATA.Address())
-		{
-			if (!m_textureDATA.Open(TEXTURE_MEMORY, FALSE))
-				return NULL;
-			if (!m_textureDATA.Map(0, dwSize))
-				return NULL;
-		}
 		return reinterpret_cast<TextureDATA*>(m_textureDATA.Address());
 	}
 	BOOL CALLBACK DX10CaptureRunner::EnumWindow(HWND hwnd, LPARAM lParam)
@@ -108,217 +73,328 @@ namespace DXFramework
 		LPWNDINFO ws = reinterpret_cast<LPWNDINFO>(lParam);
 		if (!IsWindowVisible(hwnd))
 			return TRUE;
-		TCHAR windowClass[MAX_PATH];
-		TCHAR windowExecutable[MAX_PATH];
-		if (GetClassName(hwnd, windowClass, MAX_PATH))
+		TCHAR szClass[MAX_PATH];
+		TCHAR szExecutable[MAX_PATH];
+		if (GetClassName(hwnd, szClass, MAX_PATH))
 		{
-			if (strncasecmp(windowClass, ws->className, strlen(ws->className)) == 0)
+			if (strncasecmp(szClass, ws->className, strlen(ws->className)) == 0)
 			{
-				DWORD processID = 0;
-				DWORD dwThreadID = GetWindowThreadProcessId(hwnd, &processID);
-				if (HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID))
+				DWORD dwPID = 0;
+				DWORD dwTID = GetWindowThreadProcessId(hwnd, &dwPID);
+				TinyProcess process;
+				if (process.Open(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, dwPID))
 				{
 					DWORD size = MAX_PATH;
-					if (QueryFullProcessImageName(hProcess, 0, windowExecutable, &size))
+					if (QueryFullProcessImageName(process, 0, szExecutable, &size))
 					{
-						CHAR* pzName = PathFindFileName(windowExecutable);
+						CHAR* pzName = PathFindFileName(szExecutable);
 						if (strncasecmp(pzName, ws->exeName, strlen(pzName)) == 0)
 						{
 							ws->hWND = hwnd;
-							ws->dwPID = processID;
-							ws->dwTID = dwThreadID;
-							CloseHandle(hProcess);
-							hProcess = NULL;
+							ws->dwPID = dwPID;
+							ws->dwTID = dwTID;
+							IsWow64Process(process, &ws->bX86);
+							ws->hProcess = process.Duplicate();
 							return FALSE;
 						}
 					}
-					CloseHandle(hProcess);
-					hProcess = NULL;
 				}
 			}
 		}
 		return TRUE;
 	}
-	BOOL DX10CaptureRunner::BeginCapture()
+	BOOL DX10CaptureRunner::IsCapturing() const
 	{
+		return m_bCapturing;
+	}
+	BOOL DX10CaptureRunner::StartCapture()
+	{
+		ASSERT(m_pDX10);
 		BOOL bRes = S_OK;
-		if (!CreateEvents())
+		if (!InitializeDATA())
 		{
-			TRACE("BeginCapture BuildEvents-FAIL\n");
+			TRACE("[InitializeDATA] FAIL\n");
+			StopCapture();
 			return FALSE;
 		}
 		HookDATA* hookDATA = GetHookDATA();
 		if (!hookDATA)
 		{
-			TRACE("BeginCapture GetSharedCaptureDATA-FAIL\n");
+			TRACE("[StartCapture] GetHookDATA = NULL\n");
 			return FALSE;
 		}
-		SharedTextureDATA* pTextureDATA = GetTextureDATA(hookDATA->MapSize);
-		if (!pTextureDATA)
+		TextureDATA* textureDATA = GetTextureDATA();
+		if (!textureDATA)
 		{
-			TRACE("BeginCapture GetSharedTextureDATA-FAIL\n");
+			TRACE("[StartCapture] GetTextureDATA = NULL\n");
 			return FALSE;
 		}
 		do
 		{
 			if (hookDATA->CaptureType == CAPTURETYPE_SHAREDTEXTURE)
 			{
-				if (!pTextureDATA->TextureHandle)
+				if (!textureDATA->TextureHandle)
 				{
-					TRACE("BeginCapture GetSharedTextureDATA-TextureHandle==NULL-FAIL\n");
 					return FALSE;
 				}
-				TinyAutoLock lock(m_lock);
-				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
-				m_image.Destory();
-				if (!m_image.Load(m_dx10, pTextureDATA->TextureHandle))
+				m_image2D.Destory();
+				if (!m_image2D.Load(*m_pDX10, textureDATA->TextureHandle))
 				{
-					TRACE("BeginCapture m_image.Load-FAIL\n");
 					return FALSE;
 				}
-				m_image.SetSize(XMFLOAT2(static_cast<FLOAT>(vp.Width()), static_cast<FLOAT>(vp.Height())));
 				break;
 			}
 			if (hookDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
-				TinyAutoLock lock(m_lock);
-				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
-				m_image.Destory();
-				if (!m_image.Create(m_dx10, hookDATA->Size.cx, hookDATA->Size.cy, NULL, FALSE))
+				m_image2D.Destory();
+				if (!m_image2D.Create(*m_pDX10, hookDATA->Size.cx, hookDATA->Size.cy, (DXGI_FORMAT)hookDATA->Format, NULL, FALSE))
 				{
-					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;
 				}
-				m_image.SetSize(XMFLOAT2(static_cast<FLOAT>(vp.Width()), static_cast<FLOAT>(vp.Height())));
 				break;
 			}
 		} while (0);
 		return TRUE;
 	}
-	BOOL DX10CaptureRunner::EndCapture()
+	void DX10CaptureRunner::StopCapture()
 	{
-		TRACE("EndCapture\n");
+		m_stop.SetEvent();
+		m_textureDATA.Close();
+		m_hookDATA.Close();
 		m_start.Close();
 		m_stop.Close();
-		m_ready.Close();
-		m_exit.Close();
-		if (m_targetWND.hProcess)
-		{
-			CloseHandle(m_targetWND.hProcess);
-			m_targetWND.hProcess = NULL;
-		}
-		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
-		m_textureDATA.Unmap();;
-		m_textureDATA.Close();
-		m_hookDATA.Unmap();
-		m_hookDATA.Close();
+		m_targetReady.Close();
+		m_sourceReady.Close();
+		m_injector.Close();
+		SAFE_CLOSE_HANDLE(m_target.hProcess);
+		ZeroMemory(&m_target, sizeof(m_target));
 		m_bCapturing = FALSE;
-		m_image.Destory();
-		return TRUE;
+		m_bActive = FALSE;
+		m_image2D.Destory();
 	}
-	BOOL DX10CaptureRunner::Detour(const TinyString& className, const TinyString& exeName, const TinyString& dllName, BOOL bSafe)
+	BOOL DX10CaptureRunner::CopyTextureDATA()
 	{
-		StrCpy(m_targetWND.className, className.STR());
-		StrCpy(m_targetWND.exeName, exeName.STR());
-		EnumWindows(DX10CaptureRunner::EnumWindow, reinterpret_cast<LPARAM>(&m_targetWND));
-		if (IsWindow(m_targetWND.hWND))
+		HookDATA* hookDATA = GetHookDATA();
+		if (!hookDATA)
+			return FALSE;
+		TextureDATA* textureDATA = GetTextureDATA();
+		if (!textureDATA)
+			return FALSE;
+		switch (hookDATA->CaptureType)
 		{
-			if (!m_targetWND.dwTID || !m_targetWND.dwPID)
+		case CAPTURETYPE_SHAREDTEXTURE:
+			return TRUE;
+		case CAPTURETYPE_MEMORYTEXTURE:
+		{
+			if (textureDATA != NULL)
 			{
-				m_bCapturing = FALSE;
-				return FALSE;
+				DWORD dwCurrentID = textureDATA->CurrentID;
+				BYTE* address = reinterpret_cast<BYTE*>(textureDATA);
+				m_textures[0] = address + textureDATA->Texture1Offset;
+				m_textures[1] = address + textureDATA->Texture2Offset;
+				do
+				{
+					XMFLOAT2 size = m_image2D.GetSize();
+					if (static_cast<INT32>(size.x) != hookDATA->Size.cx || static_cast<INT32>(size.y) != hookDATA->Size.cy)
+					{
+						TRACE("ImageSize: %f,%f, NewSize:%d,%d\n", size.x, size.y, hookDATA->Size.cx, hookDATA->Size.cy);
+						return FALSE;
+					}
+					else
+					{
+						DWORD dwNextID = (dwCurrentID == 1) ? 0 : 1;
+						if (m_mutes[dwCurrentID].Lock(0))
+						{
+							D3D10_MAPPED_TEXTURE2D ms = { 0 };
+							if (m_image2D.Map(ms, FALSE))
+							{
+								if (hookDATA->Pitch == ms.RowPitch)
+								{
+									memcpy(ms.pData, m_textures[dwCurrentID], hookDATA->Pitch * static_cast<INT32>(size.y));
+								}
+								else
+								{
+									UINT32 bestPitch = std::min<UINT32>(hookDATA->Pitch, ms.RowPitch);
+									LPBYTE input = m_textures[dwCurrentID];
+									for (INT32 y = 0; y < static_cast<INT32>(size.y); y++)
+									{
+										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch*y);
+										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);
+										memcpy(curOutput, curInput, bestPitch);
+									}
+								}
+								m_image2D.Unmap();
+							}
+							m_mutes[dwCurrentID].Unlock();
+							break;
+						}
+						if (m_mutes[dwNextID].Lock(0))
+						{
+							D3D10_MAPPED_TEXTURE2D ms = { 0 };
+							if (m_image2D.Map(ms, FALSE))
+							{
+								XMFLOAT2 size = m_image2D.GetSize();
+								if (hookDATA->Pitch == ms.RowPitch)
+								{
+									memcpy(ms.pData, m_textures[dwNextID], hookDATA->Pitch * static_cast<INT32>(size.y));
+								}
+								else
+								{
+									UINT32 bestPitch = std::min<UINT32>(hookDATA->Pitch, ms.RowPitch);
+									LPBYTE input = m_textures[dwNextID];
+									for (INT32 y = 0; y < static_cast<INT32>(size.y); y++)
+									{
+										LPBYTE curInput = ((LPBYTE)input) + (hookDATA->Pitch * y);
+										LPBYTE curOutput = ((LPBYTE)ms.pData) + (ms.RowPitch*y);
+										memcpy(curOutput, curInput, bestPitch);
+									}
+								}
+								m_image2D.Unmap();
+							}
+							m_mutes[dwNextID].Unlock();
+							break;
+						}
+					}
+				} while (0);
+				return TRUE;
 			}
 		}
-		else
+		break;
+
+		}
+		return FALSE;
+	}
+	BOOL DX10CaptureRunner::AttemptExisting()
+	{
+		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_CAPTURE_START, m_target.dwPID).c_str()))
 		{
-			m_bCapturing = FALSE;
 			return FALSE;
 		}
-		if (OpenEvents())
+		m_start.SetEvent();
+		return TRUE;
+	}
+	BOOL DX10CaptureRunner::AttemptDetour(BOOL anticheat)
+	{
+		return m_injector.Open(m_target, anticheat);
+	}
+	BOOL DX10CaptureRunner::Detour(const TinyString& className, const TinyString& exeName, BOOL anticheat)
+	{
+		StrCpy(m_target.className, className.STR());
+		StrCpy(m_target.exeName, exeName.STR());
+		EnumWindows(DX10CaptureRunner::EnumWindow, reinterpret_cast<LPARAM>(&m_target));
+		if (!IsWindow(m_target.hWND))
 		{
-			m_start.SetEvent();
-			m_bCapturing = TRUE;
-			return m_bCapturing;
+			m_bActive = FALSE;
+			return FALSE;
 		}
-		else
+		TRACE("Detour\n");
+		TinyProcess process;
+		if (!process.Open(PROCESS_ALL_ACCESS, FALSE, m_target.dwPID))
 		{
-			if (!CreateEvents())
+			m_bActive = FALSE;
+			return FALSE;
+		}
+		if (!AttemptExisting())
+		{
+			TRACE("AttemptExisting FALSE\n");
+			if (!AttemptDetour(anticheat))
 			{
+				TRACE("AttemptDetour FALSE\n");
+				m_bActive = FALSE;
 				return FALSE;
 			}
+			else
+			{
+				TRACE("AttemptExisting TRUE\n");
+			}
 		}
-		TinyProcess process;
-		if (!process.Open(PROCESS_ALL_ACCESS, FALSE, m_targetWND.dwPID))
+		if (!OpenEvents())
 		{
-			CloseEvents();
+			m_bActive = FALSE;
+			return FALSE;
 		}
-		if (!InjectLibrary(process, dllName.STR()))
-		{
-			TRACE("InjectLibrary - FALSE\n");
-			CloseEvents();
-		}
-		if (!process.Duplicate(m_targetWND.hProcess))
-		{
-			CloseEvents();
-		}
-		m_start.SetEvent();
-		Sleep(500);
-		m_bCapturing = BeginCapture();
-		return m_bCapturing;
+		m_sourceReady.SetEvent();
+		m_bActive = TRUE;
+		return TRUE;
 	}
-	void DX10CaptureRunner::Tick()
+	BOOL DX10CaptureRunner::Tick(INT64& timestamp)
 	{
-		if (m_exit && m_exit.WaitEvent(0))
+		if (m_stop.WaitEvent(0))//停止捕获
 		{
-			TRACE("Tick - EndCapture\n");
-			EndCapture();
+			StopCapture();
 		}
-		if (m_bCapturing && !m_ready && m_targetWND.dwPID)
+		if (m_bActive && !m_targetReady && m_target.dwPID > 0)
 		{
-			TRACE("Tick - CreateEvents\n");
-			CreateEvents();
+			m_targetReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, StringPrintf("%s%d", EVENT_HOOK_TARGET_READY, m_target.dwPID).c_str());
 		}
-		if (m_ready && m_ready.WaitEvent(0))
+		if (m_injector.Wait(0))
 		{
-			TRACE("Tick - BeginCapture\n");
-			BeginCapture();
+			if (m_injector.Close())
+			{
+				if (!m_bCapturing)
+				{
+					StopCapture();
+				}
+			}
 		}
-		if (!m_bCapturing)
+		if (m_targetReady.WaitEvent(0))//目标进程准备就绪
 		{
-			Detour(m_className, m_exeName, m_dllName);
+			m_bCapturing = StartCapture();
+		}
+		if (!m_bActive)
+		{
+			Detour(m_szClass, m_szEXE);
 		}
 		else
 		{
-			if (!IsWindow(m_targetWND.hWND))
+			if (!IsWindow(m_target.hWND))
 			{
-				TRACE("!IsWindow(m_targetWND.hWND)\n");
-				EndCapture();
+				StopCapture();
 			}
-			if (m_targetWND.hProcess && WaitForSingleObject(m_targetWND.hProcess, 0) == WAIT_OBJECT_0)
+			if (m_target.hProcess != NULL && WaitForSingleObject(m_target.hProcess, 0) == WAIT_OBJECT_0)
 			{
-				TRACE("m_targetWND.hProcess && WaitForSingleObject(m_targetWND.hProcess, 0) == WAIT_OBJECT_0\n");
-				EndCapture();
+				StopCapture();
 			}
+			return CopyTextureDATA();
 		}
+		return FALSE;
 	}
-	void DX10CaptureRunner::OnMessagePump()
+	void DX10CaptureRunner::Close()
 	{
-		for (;;)
-		{
-			if (m_close.WaitEvent(5))
-			{
-				if (m_stop)
-				{
-					m_stop.SetEvent();
-				}
-				EndCapture();
-				break;
-			}
-			Tick();
-		}
+		StopCapture();
 	}
 	WNDINFO	DX10CaptureRunner::GetWNDINFO()
 	{
-		return m_targetWND;
+		return m_target;
+	}
+	BOOL DX10CaptureRunner::InitializeDATA()
+	{
+		m_hookDATA.Close();
+		if (!m_hookDATA.Open(SHAREDCAPTURE_MEMORY, FALSE))
+		{
+			TRACE("[HookDATA] Open FAIL: %d\n", GetLastError());
+			return FALSE;
+		}
+		if (!m_hookDATA.Map(0, sizeof(HookDATA)))
+		{
+			TRACE("[HookDATA] Map FAIL: %d\n", GetLastError());
+			return FALSE;
+		}
+		HookDATA* pDATA = reinterpret_cast<HookDATA*>(m_hookDATA.Address());
+		pDATA->Interval = m_interval / 2;
+		pDATA->bCPU = FALSE;
+		m_textureDATA.Close();
+		TRACE("[InitializeDATA] New MapID:%d\n", pDATA->MapID);
+		if (!m_textureDATA.Open(StringPrintf("%s%d", TEXTURE_MEMORY, pDATA->MapID), FALSE))
+		{
+			TRACE("[TextureDATA] Open %d FAIL: %d\n", pDATA->MapID, GetLastError());
+			return FALSE;
+		}
+		if (!m_textureDATA.Map(0, pDATA->MapSize))
+		{
+			TRACE("[TextureDATA] Map %d FAIL: %d\n", pDATA->MapSize, GetLastError());
+			return FALSE;
+		}
+		return TRUE;
 	}
 }
