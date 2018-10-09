@@ -340,7 +340,7 @@ namespace QSV
 		do
 		{
 			mfxFrameSurface1* pVPPIN = m_mfxVPPSurfaces[index];
-			this->LoadRGB32(pVPPIN, tag.bits, tag.size, tag.samplePTS);
+			this->LoadRGB32(pVPPIN, tag.bits, tag.size, tag.pts);
 			status = m_mfxVideoVPP->RunFrameVPPAsync(m_mfxVPPSurfaces[index], m_mfxSurfaces[index1], NULL, &syncpVPP);
 			if (MFX_ERR_MORE_SURFACE == status)
 			{

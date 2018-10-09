@@ -271,31 +271,18 @@ namespace TinyFramework
 		typedef struct tagSampleTag
 		{
 			INT64	sample;
-			INT64	sampleDTS;
-			INT64	samplePTS;
+			INT64	dts;
+			INT64	pts;
 			INT64	timestamp;
 			INT64	duration;
 			BYTE	sampleType;
 			BYTE*	bits;
 			LONG	size;
-			INT		linesize;
-			INT		x;
-			INT		y;
-			INT		cx;
-			INT		cy;
+			INT32	linesize[8];
+			INT32	x;
+			INT32	y;
+			INT32	cx;
+			INT32	cy;
 		}SampleTag;
-
-		typedef struct tagAVPakcet
-		{
-			INT64	pts;
-			INT64	dts;
-			INT64	timestamp;
-			BYTE*	bits[8];
-			LONG	linesize[8];
-			UINT	x;
-			UINT	y;
-			UINT	cx;
-			UINT	cy;
-		}AVPakcet;
 	};
 }

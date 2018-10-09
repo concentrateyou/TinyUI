@@ -3,12 +3,5 @@
 
 namespace MediaSDK
 {
-	VideoPacket::VideoPacket()
-	{
-	}
-
-	VideoPacket::~VideoPacket()
-	{
-	}
 }
 

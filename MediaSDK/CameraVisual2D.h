@@ -27,8 +27,8 @@ namespace MediaSDK
 		void			SetTranslate(const XMFLOAT2& pos) OVERRIDE;
 		void			SetScale(const XMFLOAT2& pos) OVERRIDE;
 	private:
-		BOOL			Copy(VideoSample& sample, INT64& timestamp);
-		BOOL			Pop(VideoSample& sample);
+		BOOL			Copy(VideoPacket& package, INT64& timestamp);
+		BOOL			Pop(VideoPacket& package);
 		void			Push(BYTE* bits, LONG size, REFERENCE_TIME timestamp);
 		void			OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*);
 	private:
@@ -37,11 +37,11 @@ namespace MediaSDK
 		TinyString					m_szname;
 		TinyLock					m_lock;
 		TinyMemoryPool				m_pool;
-		TinyLinkList<VideoSample>	m_samples;
+		TinyLinkList<VideoPacket>	m_packages;
 		VideoCapture				m_capture;
 		VideoCaptureParam			m_requestParam;
 		VideoCaptureFormat			m_current;
-		VideoSample					m_sample;
+		VideoPacket					m_package;
 	};
 }
 

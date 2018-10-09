@@ -105,7 +105,7 @@ namespace QSV
 				SampleTag& sampleTag = m_tags.GetAt(s);
 				m_tags.RemoveAt(s);
 				memset(&mfxStream, 0, sizeof(mfxStream));
-				mfxStream.TimeStamp = sampleTag.samplePTS;
+				mfxStream.TimeStamp = sampleTag.pts;
 				INT32 newsize = sampleTag.size + m_mfxResidial.DataLength;
 				mfxStream.MaxLength = mfxStream.DataLength = (mfxU32)newsize;
 				mfxStream.Data = m_streamBits[0];
@@ -164,7 +164,7 @@ namespace QSV
 			ITERATOR s = m_outputs.First();
 			mfxFrameSurface1*& surface = m_outputs.GetAt(s);
 			m_outputs.RemoveAt(s);
-			tag.samplePTS = tag.sampleDTS = surface->Data.TimeStamp;
+			tag.pts = tag.dts = surface->Data.TimeStamp;
 			video = surface;
 			return TRUE;
 		}

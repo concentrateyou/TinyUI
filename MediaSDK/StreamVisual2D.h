@@ -39,7 +39,7 @@ namespace MediaSDK
 		DX11Image2D					m_visual2D;
 		LAVWindowlessPlayer			m_player;
 		TinyMemoryPool				m_pool;
-		TinyLinkList<VideoSample>	m_samples;
+		TinyLinkList<VideoPacket>	m_samples;
 	};
 }
 

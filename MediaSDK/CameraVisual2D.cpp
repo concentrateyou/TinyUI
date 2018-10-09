@@ -8,7 +8,7 @@ namespace MediaSDK
 	CameraVisual2D::CameraVisual2D(DX11& dx11)
 		:m_dx11(dx11)
 	{
-		ZeroMemory(&m_sample, sizeof(m_sample));
+		ZeroMemory(&m_package, sizeof(m_package));
 	}
 	CameraVisual2D::~CameraVisual2D()
 	{
@@ -86,14 +86,14 @@ namespace MediaSDK
 		if (state != State_Running)
 			return FALSE;
 		BOOL bRes = FALSE;
-		if (Pop(m_sample))
+		if (Pop(m_package))
 		{
-			bRes = Copy(m_sample, timestamp);
-			m_pool.Free(m_sample.data[0]);
+			bRes = Copy(m_package, timestamp);
+			m_pool.Free(m_package.data[0]);
 		}
 		else
 		{
-			bRes = Copy(m_sample, timestamp);
+			bRes = Copy(m_package, timestamp);
 		}
 		return bRes;
 	}
@@ -109,32 +109,32 @@ namespace MediaSDK
 		m_capture.Deallocate();
 		m_visual2D.Destory();
 	}
-	BOOL CameraVisual2D::Copy(VideoSample& sample, INT64& timestamp)
+	BOOL CameraVisual2D::Copy(VideoPacket& package, INT64& timestamp)
 	{
-		switch (sample.iFormat)
+		switch (package.format)
 		{
 		case PIXEL_FORMAT_UNKNOWN:
 			return FALSE;
 		case PIXEL_FORMAT_YUY2:
 		{
-			if (m_visual2D.Copy(m_dx11, sample.data[0], sample.linesize[0]))
+			if (m_visual2D.Copy(m_dx11, package.data[0], package.linesize[0]))
 			{
-				timestamp = sample.timestamp;
+				timestamp = package.timestamp;
 			}
 		}
 		break;
 		}
 		return TRUE;
 	}
-	BOOL CameraVisual2D::Pop(VideoSample& sample)
+	BOOL CameraVisual2D::Pop(VideoPacket& package)
 	{
 		TinyAutoLock autolock(m_lock);
-		if (m_samples.GetSize() <= 0)
+		if (m_packages.GetSize() <= 0)
 			return FALSE;
-		ITERATOR pos = m_samples.First();
-		const VideoSample& sampleT = m_samples.GetAt(pos);
-		memcpy_s(&sample, sizeof(VideoSample), &sampleT, sizeof(VideoSample));
-		m_samples.RemoveAt(pos);
+		ITERATOR pos = m_packages.First();
+		const VideoPacket& sampleT = m_packages.GetAt(pos);
+		memcpy_s(&package, sizeof(VideoPacket), &sampleT, sizeof(VideoPacket));
+		m_packages.RemoveAt(pos);
 		return TRUE;
 	}
 	void CameraVisual2D::Push(BYTE* bits, LONG size, REFERENCE_TIME timestamp)
@@ -143,49 +143,49 @@ namespace MediaSDK
 		{
 			m_pool.Initialize(3, size);
 		}
-		VideoSample sample;
-		ZeroMemory(&sample, sizeof(sample));
+		VideoPacket package;
+		ZeroMemory(&package, sizeof(package));
 		TinySize sizeT = m_current.GetSize();
-		sample.cx = static_cast<UINT32>(sizeT.cx);
-		sample.cy = static_cast<UINT32>(sizeT.cy);
-		sample.iFormat = m_current.GetFormat();
-		sample.size = size;
-		sample.data[0] = static_cast<BYTE*>(m_pool.Alloc());
-		memcpy_s(sample.data[0], size, bits, size);
-		sample.timestamp = timestamp;
-		switch (sample.iFormat)
+		package.cx = static_cast<UINT32>(sizeT.cx);
+		package.cy = static_cast<UINT32>(sizeT.cy);
+		package.format = m_current.GetFormat();
+		package.size = size;
+		package.data[0] = static_cast<BYTE*>(m_pool.Alloc());
+		memcpy_s(package.data[0], size, bits, size);
+		package.timestamp = timestamp;
+		switch (package.format)
 		{
 		case PIXEL_FORMAT_RGB32:
-			sample.linesize[0] = sample.cx * 4;
+			package.linesize[0] = package.cx * 4;
 			break;
 		case PIXEL_FORMAT_YUY2:
 		case PIXEL_FORMAT_UYVY:
-			sample.linesize[0] = sample.cx * 2;
+			package.linesize[0] = package.cx * 2;
 			break;
 		case PIXEL_FORMAT_I420:
-			sample.data[1] = sample.data[0] + (sample.cx * sample.cy);
-			sample.data[2] = sample.data[1] + (sample.cx * sample.cy / 4);
-			sample.linesize[0] = sample.cx;
-			sample.linesize[1] = sample.cx / 2;
-			sample.linesize[2] = sample.cx / 2;
+			package.data[1] = package.data[0] + (package.cx * package.cy);
+			package.data[2] = package.data[1] + (package.cx * package.cy / 4);
+			package.linesize[0] = package.cx;
+			package.linesize[1] = package.cx / 2;
+			package.linesize[2] = package.cx / 2;
 			break;
 		case PIXEL_FORMAT_YV12:
-			sample.data[2] = sample.data[0] + (sample.cx *  sample.cy);
-			sample.data[1] = sample.data[2] + (sample.cx *  sample.cy / 4);
-			sample.linesize[0] = sample.cx;
-			sample.linesize[1] = sample.cx / 2;
-			sample.linesize[2] = sample.cx / 2;
+			package.data[2] = package.data[0] + (package.cx *  package.cy);
+			package.data[1] = package.data[2] + (package.cx *  package.cy / 4);
+			package.linesize[0] = package.cx;
+			package.linesize[1] = package.cx / 2;
+			package.linesize[2] = package.cx / 2;
 			break;
 		case PIXEL_FORMAT_NV12:
-			sample.data[1] = sample.data[0] + (sample.cx *  sample.cy);
-			sample.linesize[0] = sample.cx;
-			sample.linesize[1] = sample.cx;
+			package.data[1] = package.data[0] + (package.cx *  package.cy);
+			package.linesize[0] = package.cx;
+			package.linesize[1] = package.cx;
 			break;
 		default:
 			return;
 		}
 		TinyAutoLock autolock(m_lock);
-		m_samples.InsertLast(sample);
+		m_packages.InsertLast(package);
 	}
 	void CameraVisual2D::OnCallback(BYTE* bits, LONG size, REFERENCE_TIME timestamp, void*)
 	{

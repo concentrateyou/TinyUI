@@ -102,13 +102,13 @@ namespace MediaSDK
 	{
 		const LAVVideoFormat& vF = m_player.GetVideoFormat();
 		TinySize sizeT = vF.GetSize();
-		VideoSample sample;
+		VideoPacket sample;
 		ZeroMemory(&sample, sizeof(sample));
 		sample.cx = static_cast<UINT32>(sizeT.cx);
 		sample.cy = static_cast<UINT32>(sizeT.cy);
-		sample.iFormat = vF.GetFormat();
+		sample.format = vF.GetFormat();
 		sample.timestamp = timestamp;
-		switch (sample.iFormat)
+		switch (sample.format)
 		{
 		case PIXEL_FORMAT_RGB32:
 			sample.data[0] = bits;

@@ -84,8 +84,8 @@ namespace Decode
 			return AVERROR(EINVAL);
 		so = 0;
 		bo = NULL;
-		m_packet.dts = tag.sampleDTS;
-		m_packet.pts = tag.samplePTS;
+		m_packet.dts = tag.dts;
+		m_packet.pts = tag.pts;
 		m_packet.data = tag.bits;
 		m_packet.size = tag.size;
 		INT iRes = avcodec_send_packet(m_context, &m_packet);
@@ -114,7 +114,7 @@ namespace Decode
 			ASSERT(cy == m_dstsize.cy);
 			bo = m_pRGB32->data[0];
 			so = m_pRGB32->linesize[0] * cy;
-			tag.linesize = m_pRGB32->linesize[0];
+			tag.linesize[0] = m_pRGB32->linesize[0];
 			tag.cy = cy;
 			goto _ERROR;
 		}

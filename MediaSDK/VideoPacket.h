@@ -3,21 +3,16 @@
 
 namespace MediaSDK
 {
-	class VideoPacket
+	typedef struct tagVideoPacket
 	{
-	public:
-		VideoPacket();
-		~VideoPacket();
-	};
-
-	struct VideoSample
-	{
-		UINT32				iFormat;
 		INT64				timestamp;
+		LONG				size;
 		BYTE*				data[MAX_AV_PLANES];
 		UINT32				linesize[MAX_AV_PLANES];
+		UINT32				x;
+		UINT32				y;
 		UINT32				cx;
 		UINT32				cy;
-		UINT32				size;
-	};
+		UINT32				format;
+	}VideoPacket;
 }
